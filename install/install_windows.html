@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to install GetFEM++ from sources on Windows &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="next" title="What’s New in GetFEM++" href="../whatsnew/index.html" />
+    <link rel="prev" title="How to install from sources on MacOS X" href="install_mac.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../whatsnew/index.html" title="What’s New in GetFEM++"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="install_mac.html" title="How to install from sources on MacOS X"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="how-to-install-gf-from-sources-on-windows">
+<span id="ud-install-windows"></span><h1>How to install <em>GetFEM++</em> from sources on Windows<a class="headerlink" href="#how-to-install-gf-from-sources-on-windows" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>See the <a class="reference external" href="../download.html">download and install</a> page for general
+requirements and the download of the last stable version of <em>GetFEM++</em>.</p>
+<p>Building <em>GetFEM++</em> in an environment hostile to open-source like Windows
+is naturally more painful than on Linux or MacOS X. Several possibilities
+exist to build <em>GetFEM++</em> with a commercial C++ compiler (see the <tt class="docutils literal"><span class="pre">mscv</span></tt>
+directory on the git version of <em>GetFEM++</em> for some MSCV project files).
+However, we describe in the following how to build the sequential version of
+<em>GetFEM++</em> with both Python and Matlab interfaces under
+<a class="reference external" href="http://www.mingw.org/">Mingw</a>
+and <a class="reference external" href="http://www.mingw.org/wiki/MSYSwhich">Msys</a> which provide a
+minimal GNU environment for Windows. A similar installation should
+possible with <a class="reference external" href="https://www.cygwin.com/">Cygwin</a>.</p>
+<blockquote>
+<div><ul>
+<li><p class="first">The first step is to install Mingw in 64 bits version
+(x86_64, posix, sjlj options,
+see <a class="reference external" href="https://mingw-w64.org/doku.php/download">Mingw-64 web page</a>).
+For this you can usr an installer or simply download Mingw and copy it
+in the directory <tt class="docutils literal"><span class="pre">C:\mingw64</span></tt></p>
+</li>
+<li><p class="first">Install also Msys 64 bits version the same way (either with an installer
+or directly copy Msys in the directory <tt class="docutils literal"><span class="pre">C:\msys</span></tt>)</p>
+</li>
+<li><p class="first">If it is not done by the installer, add to the Windows path variable the
+directories <tt class="docutils literal"><span class="pre">C:\mingw64\bin;C:\msys;C:\msys\bin</span></tt>. To this aim, go in the
+start menu of Windows, search <tt class="docutils literal"><span class="pre">&quot;system&quot;</span></tt> and select
+<tt class="docutils literal"><span class="pre">&quot;edit</span> <span class="pre">the</span> <span class="pre">system</span> <span class="pre">environement</span> <span class="pre">variables&quot;</span></tt> then edit the path variable.</p>
+</li>
+<li><p class="first">Open a Windows command console and enter <tt class="docutils literal"><span class="pre">msys</span></tt>. This should open an Msys
+shell console. For who is familiar with sh/bash, you normally feel
+in a more civilized environment. Nothing to be too much happy,
+this environment
+is somehow minimalist (it aims to). Normally, Msys creates you a home
+directory (try the command <tt class="docutils literal"><span class="pre">pwd</span></tt> to see the Msys path and note that it
+corresponds to <tt class="docutils literal"><span class="pre">C:\msys\home\login</span></tt> windows path, where <tt class="docutils literal"><span class="pre">login</span></tt> is
+your home directory name). You have first to create a file in that path
+named <tt class="docutils literal"><span class="pre">.profile</span></tt> and containing at list the two following lines:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">export</span> <span class="n">CPATH</span><span class="o">=</span><span class="s">&quot;/usr/local/include&quot;</span>
+<span class="k">export</span> <span class="n">LIBRARY_PATH</span><span class="o">=</span><span class="s">&quot;$LIBRARY_PATH:/usr/local/lib&quot;</span>
+</pre></div>
+</div>
+<p>In theory, this should not be necessary, because <tt class="docutils literal"><span class="pre">/usr/local/include</span></tt>
+and <tt class="docutils literal"><span class="pre">/usr/local/lib</span></tt> are default directories, but ok, in my config,
+it does not work without. Note that you can use any text editor to create
+this file, for instance <tt class="docutils literal"><span class="pre">vim</span></tt> of Msys (there is also good versions of
+emacs for windows or you can use the rudimentary blocnote of Windows).</p>
+</li>
+<li><p class="first">You will have to compile and install BLAS and LAPACK versions (it would
+be possible to avoid that, but it is not a difficult step). Download a
+version of tar.gz source package of blas and lapack into you home Msys
+directory. Untar the two archives (for instance with
+<tt class="docutils literal"><span class="pre">tar</span> <span class="pre">xvzf</span> <span class="pre">blas-?.?.?.tar.gz</span></tt>,  <tt class="docutils literal"><span class="pre">tar</span> <span class="pre">xvzf</span> <span class="pre">lapack-?.?.?.tar.gz</span></tt>,
+<tt class="docutils literal"><span class="pre">?.?.?</span></tt> being the version numbers) and then
+enter into the BLAS source directory, compile and install BLAS with:</p>
+<div class="highlight-c++"><pre>$ cd blas-?.?.?
+$ make
+$ cp blas_LINUX.a /usr/local/lib/libblas.a
+$ cd ..</pre>
+</div>
+<p>Do the same for LAPACK with:</p>
+<div class="highlight-c++"><pre>$ cd lapack-?.?.?
+$ cp make.inc.example make.inc
+$ cp ../BLAS-?.?.?/blas_LINUX.a librefblas.a
+$ make
+$ cp liblapack.a /usr/local/lib
+$ cd ..</pre>
+</div>
+</li>
+<li><p class="first">You now need an installation of QHULL library in order to have access to
+the meshing and Xfem tools of <em>GetFEM++</em>
+(see <a class="reference external" href="http://www.qhull.org">Qhull</a> and
+<a class="reference external" href="http://www.qhull.org/README.txt">Qhull install instructions</a>).
+Download the sources of Qhull in you Msys home (similarly as what you have
+done for BLAS and LAPACK), untar them and enter into the Qhull source
+directory with Msys. You can compile and install Qhull simply with:</p>
+<div class="highlight-c++"><pre>$ make SO=dll
+$ make install</pre>
+</div>
+</li>
+<li><p class="first">Similarly, we will compile and install now a sequential version of
+the sparse linear solver <a class="reference external" href="http://mumps.enseeiht.fr/">MUMPS</a>.
+Again, it is not strictly necessary since a version of
+<a class="reference external" href="http://crd-legacy.lbl.gov/~xiaoye/SuperLU/">Superlu</a> is
+included with the <em>GetFEM++</em> sources, but, especially in 3D, MUMPS can solve
+really larger systems. So, download a MUMPS source package on your
+Msys home directory, untar it and make the following steps:</p>
+<div class="highlight-c++"><pre>$ cd MUMPS_?.?.?
+$ cp Make.inc/Makefile.inc.generic.SEQ Makefile.inc</pre>
+</div>
+<p>Then, edit the <tt class="docutils literal"><span class="pre">Makefile.inc</span></tt> file and replace in it <tt class="docutils literal"><span class="pre">f90</span></tt> by
+<tt class="docutils literal"><span class="pre">gfortran</span></tt> and <tt class="docutils literal"><span class="pre">cc</span></tt> by <tt class="docutils literal"><span class="pre">gcc</span></tt>. Then compile MUMPS and install it with:</p>
+<div class="highlight-c++"><pre>$ make all
+$ cp lib/*.a /usr/local/lib
+$ cp libseq/*.a /usr/local/lib
+$ cp include/*.h /usr/local/include</pre>
+</div>
+</li>
+<li><p class="first">At this stage, you should be able to make a first compilation of <em>GetFEM++</em>
+without the interfaces.  Download the last released version of <em>GetFEM++</em> on
+<a class="reference external" href="../download.html">download and install</a> (you can either download the
+git current version, however, it necessitates the additional installation
+of m4, autoconf, automake and libtool). Then, untar the package, enter into
+the source directory of <em>GetFEM++</em> with Msys and compile with:</p>
+<div class="highlight-c++"><pre>$ ./configure --with-blas=&quot;-lblas -lgfortran&quot;
+$ cd superlu
+$ make
+$ cp .libs/libsuperlu.a /usr/local/lib
+$ cd ..
+$ ./configure --with-blas=&quot;-lblas -lgfortran&quot; --disable-superlu
+$ make
+$ make check</pre>
+</div>
+<p>the <tt class="docutils literal"><span class="pre">make</span> <span class="pre">check</span></tt> is not necessary, but it is to verify that the
+compilation is correctly done. Note the separate compilation of
+the <tt class="docutils literal"><span class="pre">superlu</span></tt> library is due to some difficulties with Msys
+command <tt class="docutils literal"><span class="pre">ar</span></tt>.</p>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="build-with-the-python-interface">
+<h2>Build with the Python interface<a class="headerlink" href="#build-with-the-python-interface" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Additionnaly to build the Python interface, you will have first to install a 64bits version of Python 2 or 3 on your system together with Numpy and Scipy packages. The simpler way is to install Anaconda2 or 3 (it already contains Numpy and Scipy packages which are necessary). For instance with Anaconda2</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Install Anaconda2 and add to windows path <tt class="docutils literal"><span class="pre">C:\install_dir\Anaconda2</span></tt>
+and <tt class="docutils literal"><span class="pre">C:\install_dir\Anaconda2\Scripts</span></tt> where <tt class="docutils literal"><span class="pre">install_dir</span></tt> is the
+installation directory of Anaconda2 (<tt class="docutils literal"><span class="pre">ProgramData</span></tt> by default for
+a system installation)</p>
+</li>
+<li><p class="first">close an re-open a windows command shell and msys</p>
+</li>
+<li><p class="first">run again:</p>
+<div class="highlight-c++"><pre>$ ./configure --with-blas=&quot;-lblas -lgfortran&quot; --disable-superlu</pre>
+</div>
+<p>Python should be detected and the Python interface prepared to be built.</p>
+</li>
+<li><p class="first">Then just run:</p>
+<div class="highlight-c++"><pre>$ make</pre>
+</div>
+<p>It normally builds the interface correctly. Then just add as a Windows
+system variable <tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt> with the
+value <tt class="docutils literal"><span class="pre">c:\msys\home\login\getfem-5.?\interface\src\python</span></tt> where
+<tt class="docutils literal"><span class="pre">login</span></tt> and <tt class="docutils literal"><span class="pre">5.?</span></tt> have tobe adapted. You can either copy the
+directory <tt class="docutils literal"><span class="pre">interface\src\python</span></tt> where the interface has been built
+in a Python 2 directory. You can then run the test programs in
+<tt class="docutils literal"><span class="pre">interface/tests/python</span></tt> using python.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="build-with-the-matlab-interface">
+<h2>Build with the Matlab interface<a class="headerlink" href="#build-with-the-matlab-interface" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Here follows the additional step to build the Matlab interface. You have first, of course to have installed a (recent) version of Matlab on your system.</p>
+<blockquote>
+<div><ul>
+<li><p class="first">You also need a installation of Python, because some Python scripts
+are used to build the interface. You can follow the steps described
+in the previous section for Python interface installation.
+However, for the Matlab interface, Numpy and Scipy are not required.</p>
+</li>
+<li><p class="first">Upload <a class="reference external" href="http://gnumex.sourceforge.net/">gnumex</a> and run it under Matlab
+(see the indications on gnumex website). Make it generate the
+<tt class="docutils literal"><span class="pre">mexopts.bat</span></tt> et <tt class="docutils literal"><span class="pre">mexopts.stp</span></tt> files in an accessible directory.</p>
+</li>
+<li><p class="first">In the source top directory of <em>GetFEM++</em>, add the file <tt class="docutils literal"><span class="pre">gnumex.opts</span></tt>
+with the following lines (to be adapted):</p>
+<div class="highlight-c++"><pre>#!/bin/sh
+MATLAB_ROOT=&quot;c:\Program Files\MATLAB\R20???&quot;
+MATLAB_RELEASE=14
+MATLAB_INC_DIR=&quot;$MATLAB_ROOT\extern\include&quot;
+MEXOPTS=c:\path_to_mexopts\mexopts.bat</pre>
+</div>
+</li>
+<li><p class="first">Re-run the configure script and compile with:</p>
+<div class="highlight-c++"><pre>$ ./configure --with-blas=&quot;-lblas -lgfortran&quot; --disable-superlu --enable-matlab
+$ make</pre>
+</div>
+<p>The Matlab interface should be compiled without error. If there is some
+linker errors, go to the <tt class="docutils literal"><span class="pre">interface\src\matlab</span></tt> directory
+and try to adapt the library list in the matlab/mex call by copy/past the
+command building the interface.</p>
+</li>
+<li><p class="first">Once the interface is properly compiled, you can lauch Matlab, add the
+path of the compiled interface (on the matlab command line) with:</p>
+<div class="highlight-c++"><pre>add_path(&#x27;c:\msys\home\login\getfem-5.?\interface/tests/matlab&#x27;)</pre>
+</div>
+<p>and try the demo matlab programs of the interface in
+<tt class="docutils literal"><span class="pre">interface\tests\matlab</span></tt>. In order not to have to call the <tt class="docutils literal"><span class="pre">addpath</span></tt>
+command each time you open Matlab, you can add a Windows system variable
+<tt class="docutils literal"><span class="pre">MATLABPATH</span></tt> set to
+<tt class="docutils literal"><span class="pre">c:\msys\home\login\getfem-5.?\interface/tests/matlab</span></tt>.
+You can also move the <tt class="docutils literal"><span class="pre">interface\tests\matlab</span></tt> directory into your
+Matlab installation directory.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">How to install <em>GetFEM++</em> from sources on Windows</a><ul>
+<li><a class="reference internal" href="#build-with-the-python-interface">Build with the Python interface</a></li>
+<li><a class="reference internal" href="#build-with-the-matlab-interface">Build with the Matlab interface</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="install_mac.html"
+                        title="前の章へ">How to install from sources on MacOS X</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="../whatsnew/index.html"
+                        title="次の章へ">What&#8217;s New in GetFEM++</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../whatsnew/index.html" title="What’s New in GetFEM++"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="install_mac.html" title="How to install from sources on MacOS X"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Build a mesh &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Build a finite element method on a mesh" href="bfem.html" />
+    <link rel="prev" title="Catch errors" href="catch.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="bfem.html" title="Build a finite element method on a mesh"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="build-a-mesh">
+<span id="ud-bmesh"></span><h1>Build a mesh<a class="headerlink" href="#build-a-mesh" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>As a preliminary, you may want to read this short introduction to the <em>GetFEM++</em>
+<a class="reference external" href="http://getfem.org/getfem_reference/index.html">vocabulary</a>.</p>
+<p><em>GetFEM++</em> has its own structure to store meshes defined in the files
+<tt class="file docutils literal"><span class="pre">getfem/bgeot_mesh_structure.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem/getfem_mesh.h</span></tt>. The main
+structure is defined in <tt class="file docutils literal"><span class="pre">getfem/getfem_mesh.h</span></tt> by the object <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt>.</p>
+<p>This object is able to store any element in any dimension even if you mix
+elements with different dimensions.</p>
+<p>There is only a (very) experimental meshing procedure in <em>GetFEM++</em> to mesh complex geometries. But you can easily load a mesh from any format (some
+procedures are in <tt class="file docutils literal"><span class="pre">getfem/getfem_import.h</span></tt> to load meshes from some public
+domain mesh generators).</p>
+<p>The structure <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt> may also contain a description about a region of the mesh,
+such as a boundary or a set of elements. This is handled via a container of
+convexes and convex faces, <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt>.</p>
+<div class="section" id="add-an-element-to-a-mesh">
+<h2>Add an element to a mesh<a class="headerlink" href="#add-an-element-to-a-mesh" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Suppose the variable <tt class="docutils literal"><span class="pre">mymesh</span></tt> has been declared by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh</span> <span class="n">mymesh</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>then you have two ways to insert a new element to this mesh: from a list of
+points or from a list of indexes of already existing points.</p>
+<p>To enter a new point on a mesh use the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">i</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">add_point</span><span class="p">(</span><span class="n">pt</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">pt</span></tt> is of type <tt class="docutils literal"><span class="pre">bgeot::base_node</span></tt>. The index <tt class="docutils literal"><span class="pre">i</span></tt> is the index of this point on
+the mesh. If the point already exists in the mesh, a new point is not inserted
+and the index of the already existing point is returned. A mesh has a principal
+dimension, which is the dimension of its points. It is not possible to have
+points of different dimensions in a same mesh.</p>
+<p>The most basic function to add a new element to a mesh is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">j</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">add_convex</span><span class="p">(</span><span class="n">pgt</span><span class="p">,</span> <span class="n">it</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This is a template function, with <tt class="docutils literal"><span class="pre">pgt</span></tt> of type <tt class="docutils literal"><span class="pre">bgeot::pgeometric_trans</span></tt> (basically a pointer
+to an instance of type <tt class="docutils literal"><span class="pre">bgeot::geometric_trans</span></tt>) and <tt class="docutils literal"><span class="pre">it</span></tt> is an iterator on a list of indexes of
+already existing points. For instance, if one needs to add a new triangle in a 3D
+mesh, one needs to define first an array with the indexes of the three points:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">bgeot</span><span class="o">::</span><span class="n">size_type</span><span class="o">&gt;</span> <span class="n">ind</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">add_point</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">));</span>
+<span class="n">ind</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">add_point</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">));</span>
+<span class="n">ind</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">add_point</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>then adding the element is done by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">add_convex</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">simplex_geotrans</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">ind</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">bgeot::simplex_geotrans(N,1);</span></tt> denotes the usual linear geometric
+transformation for simplices of dimension N.</p>
+<p>For simplices, a more specialized function exists, which is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">add_simplex</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">ind</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>It is also possible to give directly the list of points with the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">add_convex_by_points</span><span class="p">(</span><span class="n">pgt</span><span class="p">,</span> <span class="n">itp</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where now <tt class="docutils literal"><span class="pre">itp</span></tt> is an iterator on an array of points. For example:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="o">&gt;</span> <span class="n">pts</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">pts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+<span class="n">pts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+<span class="n">pts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">add_convex_by_points</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">simplex_geotrans</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">pts</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>It is possible to use also:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">add_simplex_by_points</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pts</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>For other elements than simplices, it is still possible to use
+<tt class="docutils literal"><span class="pre">mymesh.add_convex_by_points</span></tt> or <tt class="docutils literal"><span class="pre">mymesh.add_convex</span></tt> with the appropriate
+geometric transformation.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">bgeot::parallelepiped_geotrans(N,</span> <span class="pre">1)</span></tt> describes the usual transformation for
+parallelepipeds of dimension <tt class="docutils literal"><span class="pre">N</span></tt> (quadrilateron for <tt class="docutils literal"><span class="pre">N=2</span></tt>, hexahedron for
+<tt class="docutils literal"><span class="pre">N=3</span></tt>, ...)</li>
+<li><tt class="docutils literal"><span class="pre">bgeot::prism_geotrans(N,</span> <span class="pre">1)</span></tt> describes the usual transformation for prisms of
+dimension <tt class="docutils literal"><span class="pre">N</span></tt> (usual prism is for <tt class="docutils literal"><span class="pre">N=3</span></tt>. A generalized prism is the product
+of a simplex of dimension <tt class="docutils literal"><span class="pre">N-1</span></tt> with a segment)</li>
+</ul>
+<p>Specialized functions exist also:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">add_parallelepiped</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">it</span><span class="p">);</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">add_parallelepiped_by_points</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">itp</span><span class="p">);</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">add_prism</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">it</span><span class="p">);</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">add_prism_by_points</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">itp</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The order of the points in the array of points is not important for simplices
+(except if you care about the orientation of your simplices). For other elements, it is important to respect the vertex order shown in <a class="reference internal" href="#ud-fig-elem"><em>Vertex numeration for usual first order elements</em></a> (first order elements).</p>
+<div class="figure align-center" id="ud-fig-elem">
+<a class="reference internal image-reference" href="../_images/getfemuserelem.png"><img alt="../_images/getfemuserelem.png" src="../_images/getfemuserelem.png" style="width: 15cm;" /></a>
+<p class="caption">Vertex numeration for usual first order elements</p>
+</div>
+<p>Note that a general rule, including for higher order transformations, is that the vertex numeration follows the one of the corresponding Lagrange finite element method (see  <a class="reference internal" href="appendixA.html#ud-appendixa"><em>Appendix A. Finite element method list</em></a>).</p>
+</div>
+<div class="section" id="remove-an-element-from-a-mesh">
+<h2>Remove an element from a mesh<a class="headerlink" href="#remove-an-element-from-a-mesh" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>To remove an element from a mesh, simply use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">sup_convex</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">i</span></tt> is the index of the element.</p>
+</div>
+<div class="section" id="simple-structured-meshes">
+<h2>Simple structured meshes<a class="headerlink" href="#simple-structured-meshes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For parallelepiped domains, it is possible to obtain structured meshes with
+simplices, parallelepipeds or prisms elements from three functions defined in
+<tt class="file docutils literal"><span class="pre">getfem/getfem_regular_meshes.h</span></tt>.</p>
+<p>The simplest function to use is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">regular_unit_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">size_type</span><span class="o">&gt;</span> <span class="n">nsubdiv</span><span class="p">,</span>
+                       <span class="n">bgeot</span><span class="o">::</span><span class="n">pgeometric_trans</span> <span class="n">pgt</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">noised</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>which fills the mesh <tt class="docutils literal"><span class="pre">m</span></tt> with a regular mesh of simplices/parallelepipeds/prisms
+(depending on the value of <tt class="docutils literal"><span class="pre">pgt</span></tt>). The number of cells in each direction is given
+by <tt class="docutils literal"><span class="pre">nsubdiv</span></tt>. The following example builds a mesh of quadratic triangles on the
+unit square (the mesh can be scaled and translated afterwards):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span><span class="o">&gt;</span> <span class="n">nsubdiv</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">nsubdiv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="n">nsubdiv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+<span class="n">regular_unit_mesh</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nsubdiv</span><span class="p">,</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">simplex_geotrans</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>More specialized regular mesh functions are also available:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">parallelepiped_regular_simplex_mesh</span><span class="p">(</span><span class="n">mymesh</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">ivect</span><span class="p">,</span> <span class="n">iref</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">parallelepiped_regular_prism_mesh</span><span class="p">(</span><span class="n">mymesh</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">ivect</span><span class="p">,</span> <span class="n">iref</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">parallelepiped_regular_pyramid_mesh</span><span class="p">(</span><span class="n">mymesh</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">ivect</span><span class="p">,</span> <span class="n">iref</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">parallelepiped_regular_mesh</span><span class="p">(</span><span class="n">mymesh</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">ivect</span><span class="p">,</span> <span class="n">iref</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mymesh</span></tt> is a mesh variable in which the structured mesh will be built,
+<tt class="docutils literal"><span class="pre">N</span></tt> is the dimension (limited to 4 for simplices, 5 for prisms, unlimited for
+parallelepipeds), <tt class="docutils literal"><span class="pre">org</span></tt> is of type <tt class="docutils literal"><span class="pre">bgeot::base_node</span></tt> and represents the
+origin of the mesh, <tt class="docutils literal"><span class="pre">ivect</span></tt> is an iterator on an array of <tt class="docutils literal"><span class="pre">N</span></tt> vectors to
+build the parallelepiped domain, <tt class="docutils literal"><span class="pre">iref</span></tt> is an iterator on an array of <tt class="docutils literal"><span class="pre">N</span></tt>
+integers representing the number of division on each direction.</p>
+<p>For instance, to build a mesh with tetrahedrons for a unit cube with
+<img class="math" src="../_images/math/5717220d94fa98a1569df1652d5f96051c44a031.png" alt="10\times~10\times~10" style="vertical-align: -1px"/> cells one can write:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh</span> <span class="n">mymesh</span><span class="p">;</span>
+<span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span> <span class="n">org</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">bgeot</span><span class="o">::</span><span class="n">base_small_vector</span><span class="o">&gt;</span> <span class="n">vect</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_small_vector</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+<span class="n">vect</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_small_vector</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+<span class="n">vect</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_small_vector</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ref</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">parallelepiped_regular_simplex_mesh</span><span class="p">(</span><span class="n">mymesh</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">vect</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">ref</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last"><tt class="docutils literal"><span class="pre">base_node</span></tt> and <tt class="docutils literal"><span class="pre">base_small_vector</span></tt> are almost identical, they are both
+&#8216;&#8217;small&#8217;&#8217; vector classes (they cannot store more than 16 elements), used to
+describe geometrical points, and geometrical vectors. Their memory footprint
+is lower than a <tt class="docutils literal"><span class="pre">std::vector</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="mesh-regions">
+<span id="ud-mesh-regions"></span><h2>Mesh regions<a class="headerlink" href="#mesh-regions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A mesh object can contain many <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt> objects (declaration in
+<tt class="file docutils literal"><span class="pre">getfem/getfem_mesh_region.h</span></tt>). These objects are containers for a set of
+convexes and convex faces. They are used to define boundaries, or a partition of
+the mesh for parallel solvers, etc.:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span><span class="mi">30</span><span class="p">).</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>   <span class="c1">// adds convex 2 into region 30</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span><span class="mi">30</span><span class="p">).</span><span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>   <span class="c1">// adds convex 3 into region 30</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span><span class="mi">30</span><span class="p">).</span><span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span> <span class="c1">// adds face 3 of convex 4 into region 30</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span><span class="mi">30</span><span class="p">).</span><span class="n">sup</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>   <span class="c1">// Removes convex 3 from region 30</span>
+<span class="n">mymesh</span><span class="p">.</span><span class="n">sup_convex</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>       <span class="c1">// Removes convex 4 from both the mesh and all the regions</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">mr_visitor</span> <span class="n">i</span><span class="p">(</span><span class="n">mymesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span> <span class="o">!</span><span class="n">i</span><span class="p">.</span><span class="n">finished</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;convex: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">.</span><span class="n">cv</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; face:&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">.</span><span class="n">f</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="methods-of-the-gf-m-object">
+<h2>Methods of the <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt> object<a class="headerlink" href="#methods-of-the-gf-m-object" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The list is not exhaustive.</p>
+<dl class="function">
+<dt id="mymesh.dim">
+<tt class="descclassname">mymesh.</tt><tt class="descname">dim</tt><big>(</big><big>)</big><a class="headerlink" href="#mymesh.dim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>main dimension of the mesh.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.points_index">
+<tt class="descclassname">mymesh.</tt><tt class="descname">points_index</tt><big>(</big><big>)</big><a class="headerlink" href="#mymesh.points_index" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> object which represents all the indexes
+of valid points of a mesh (see below).</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">mymesh.points()[i]</tt></dt>
+<dd><p>gives the point of index <tt class="docutils literal"><span class="pre">i</span></tt> (a <tt class="docutils literal"><span class="pre">bgeot::base_node</span></tt>).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.convex_index">
+<tt class="descclassname">mymesh.</tt><tt class="descname">convex_index</tt><big>(</big><big>)</big><a class="headerlink" href="#mymesh.convex_index" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> object which represents all the indexes
+of valid elements of a mesh (see below).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.structure_of_convex">
+<tt class="descclassname">mymesh.</tt><tt class="descname">structure_of_convex</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mymesh.structure_of_convex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives the description of the structure of element of index <tt class="docutils literal"><span class="pre">i</span></tt>. The function
+return a <tt class="docutils literal"><span class="pre">bgeot::pconvex_structure</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">mymesh.</tt><tt class="descname">structure_of_convex</tt><big>(</big><em>i)-&gt;nb_faces(</em><big>)</big></dt>
+<dd><p>number of faces of element of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">mymesh.</tt><tt class="descname">structure_of_convex</tt><big>(</big><em>i)-&gt;nb_points(</em><big>)</big></dt>
+<dd><p>number of vertices of element of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">mymesh.</tt><tt class="descname">structure_of_convex</tt><big>(</big><em>i)-&gt;dim(</em><big>)</big></dt>
+<dd><p>intrinsic dimension of element of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">mymesh.</tt><tt class="descname">structure_of_convex</tt><big>(</big><em>i)-&gt;nb_points_of_face(f</em><big>)</big></dt>
+<dd><p>number of vertices of the face of local index <tt class="docutils literal"><span class="pre">f</span></tt> of element
+of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">mymesh.</tt><tt class="descname">structure_of_convex</tt><big>(</big><em>i)-&gt;ind_points_of_face(f</em><big>)</big></dt>
+<dd><p>return a container with the local indexes of all vertices of the
+face of local index <tt class="docutils literal"><span class="pre">f</span></tt> of element of index <tt class="docutils literal"><span class="pre">i</span></tt>. For instance
+<tt class="docutils literal"><span class="pre">mesh.structure_of_convex(i)-&gt;ind_points_of_face(f)[0]</span></tt> is the
+local index of the first vertex.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">mymesh.</tt><tt class="descname">structure_of_convex</tt><big>(</big><em>i)-&gt;face_structure(f</em><big>)</big></dt>
+<dd><p>gives the structure (a <tt class="docutils literal"><span class="pre">bgeot::pconvex_structure</span></tt>) of local index <tt class="docutils literal"><span class="pre">f</span></tt>
+of element of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.ind_points_of_convex">
+<tt class="descclassname">mymesh.</tt><tt class="descname">ind_points_of_convex</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mymesh.ind_points_of_convex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a container with the global indexes of vertices of element of
+index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.points_of_convex">
+<tt class="descclassname">mymesh.</tt><tt class="descname">points_of_convex</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mymesh.points_of_convex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a container with the vertices of element of index <tt class="docutils literal"><span class="pre">i</span></tt>. This
+is an array of <tt class="docutils literal"><span class="pre">bgeot::base_node</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.convex_to_point">
+<tt class="descclassname">mymesh.</tt><tt class="descname">convex_to_point</tt><big>(</big><em>ipt</em><big>)</big><a class="headerlink" href="#mymesh.convex_to_point" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a container with the indexes of all elements attached to the
+point of global index <tt class="docutils literal"><span class="pre">ipt</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.neighbours_of_convex">
+<tt class="descclassname">mymesh.</tt><tt class="descname">neighbours_of_convex</tt><big>(</big><em>ic</em>, <em>f</em><big>)</big><a class="headerlink" href="#mymesh.neighbours_of_convex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a container with the indexes of all elements in <tt class="docutils literal"><span class="pre">mesh</span></tt> having
+the common face of local index <tt class="docutils literal"><span class="pre">f</span></tt> of element <tt class="docutils literal"><span class="pre">ic</span></tt> except element
+<tt class="docutils literal"><span class="pre">ic</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.neighbour_of_convex">
+<tt class="descclassname">mymesh.</tt><tt class="descname">neighbour_of_convex</tt><big>(</big><em>ic</em>, <em>f</em><big>)</big><a class="headerlink" href="#mymesh.neighbour_of_convex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives the index of the first elements in <tt class="docutils literal"><span class="pre">mesh</span></tt> having the common
+face of local index <tt class="docutils literal"><span class="pre">f</span></tt> of element <tt class="docutils literal"><span class="pre">ic</span></tt> except element <tt class="docutils literal"><span class="pre">ic</span></tt>.
+return size_type(-1) if none is found.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.is_convex_having_neighbour">
+<tt class="descclassname">mymesh.</tt><tt class="descname">is_convex_having_neighbour</tt><big>(</big><em>ic</em>, <em>f</em><big>)</big><a class="headerlink" href="#mymesh.is_convex_having_neighbour" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return whether or not the element <tt class="docutils literal"><span class="pre">ic</span></tt> has a neighbour with respect
+to its face of local index <tt class="docutils literal"><span class="pre">f</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.clear">
+<tt class="descclassname">mymesh.</tt><tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#mymesh.clear" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>delete all elements and points from the mesh.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.optimize_structure">
+<tt class="descclassname">mymesh.</tt><tt class="descname">optimize_structure</tt><big>(</big><big>)</big><a class="headerlink" href="#mymesh.optimize_structure" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>compact the structure (renumbers points and convexes such that there
+is no hole in their numbering).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.trans_of_convex">
+<tt class="descclassname">mymesh.</tt><tt class="descname">trans_of_convex</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mymesh.trans_of_convex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return the geometric transformation of the element of index <tt class="docutils literal"><span class="pre">i</span></tt> (in
+a <tt class="docutils literal"><span class="pre">bgeot::pgeometric_trans</span></tt>). See <a class="reference internal" href="../project/index.html#dp"><em>Description of the Project</em></a> for more details about geometric transformations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.normal_of_face_of_convex">
+<tt class="descclassname">mymesh.</tt><tt class="descname">normal_of_face_of_convex</tt><big>(</big><em>ic</em>, <em>f</em>, <em>pt</em><big>)</big><a class="headerlink" href="#mymesh.normal_of_face_of_convex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a <tt class="docutils literal"><span class="pre">bgeot::base_small_vector</span></tt> representing an outward normal
+to the element at the face of local index <tt class="docutils literal"><span class="pre">f</span></tt> at the point of local
+coordinates (coordinates in the element of reference) <tt class="docutils literal"><span class="pre">pt</span></tt>. The
+point <tt class="docutils literal"><span class="pre">pt</span></tt> has no influence if the geometric transformation is
+linear. This is not a unit normal, the norm of the resulting vector
+is the ratio between the surface of the face of the reference
+element and the surface of the face of the real element.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.convex_area_estimate">
+<tt class="descclassname">mymesh.</tt><tt class="descname">convex_area_estimate</tt><big>(</big><em>ic</em><big>)</big><a class="headerlink" href="#mymesh.convex_area_estimate" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives an estimate of the area of convex <tt class="docutils literal"><span class="pre">ic</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.convex_quality_estimate">
+<tt class="descclassname">mymesh.</tt><tt class="descname">convex_quality_estimate</tt><big>(</big><em>ic</em><big>)</big><a class="headerlink" href="#mymesh.convex_quality_estimate" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a rough estimate of the quality of element <tt class="docutils literal"><span class="pre">ic</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.convex_radius_estimate">
+<tt class="descclassname">mymesh.</tt><tt class="descname">convex_radius_estimate</tt><big>(</big><em>ic</em><big>)</big><a class="headerlink" href="#mymesh.convex_radius_estimate" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives an estimate of the radius of element <tt class="docutils literal"><span class="pre">ic</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.region">
+<tt class="descclassname">mymesh.</tt><tt class="descname">region</tt><big>(</big><em>irg</em><big>)</big><a class="headerlink" href="#mymesh.region" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return a <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt>. The region is stored in the mesh, and can
+contain a set of convex numbers and or convex faces.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.has_region">
+<tt class="descclassname">mymesh.</tt><tt class="descname">has_region</tt><big>(</big><em>irg</em><big>)</big><a class="headerlink" href="#mymesh.has_region" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>returns true if the region of index <tt class="docutils literal"><span class="pre">irg</span></tt> has been created.</p>
+</dd></dl>
+
+<p>The methods of the convexes/convex faces container <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt> are:</p>
+<dl class="function">
+<dt id="add">
+<tt class="descname">add</tt><big>(</big><em>ic</em><big>)</big><a class="headerlink" href="#add" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>add the convex of index <tt class="docutils literal"><span class="pre">ic</span></tt> to the region.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">add</tt><big>(</big><em>ic</em>, <em>f</em><big>)</big></dt>
+<dd><p>add the face number <tt class="docutils literal"><span class="pre">f</span></tt> of the convex <tt class="docutils literal"><span class="pre">ic</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sup">
+<tt class="descname">sup</tt><big>(</big><em>ic</em><big>)</big><a class="headerlink" href="#sup" title="この定義へのパーマリンク">¶</a></dt>
+<dt>
+<tt class="descname">sup</tt><big>(</big><em>ic</em>, <em>f</em><big>)</big></dt>
+<dd><p>remove the convex or the convex face from the region.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="is_in">
+<tt class="descname">is_in</tt><big>(</big><em>ic</em><big>)</big><a class="headerlink" href="#is_in" title="この定義へのパーマリンク">¶</a></dt>
+<dt>
+<tt class="descname">is_in</tt><big>(</big><em>ic</em>, <em>f</em><big>)</big></dt>
+<dd><p>return true if the convex (or convex face) is in the region.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="is_only_faces">
+<tt class="descname">is_only_faces</tt><big>(</big><big>)</big><a class="headerlink" href="#is_only_faces" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return true if the region does not contain any convex.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="is_only_convexes">
+<tt class="descname">is_only_convexes</tt><big>(</big><big>)</big><a class="headerlink" href="#is_only_convexes" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return true if the region does not contain any convex face.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="index">
+<tt class="descname">index</tt><big>(</big><big>)</big><a class="headerlink" href="#index" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> containing the list of convexes
+which are stored (or whose faces are stored) in the region.</p>
+</dd></dl>
+
+<p>Iteration over a <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt> should be done with <tt class="docutils literal"><span class="pre">getfem::mr_visitor</span></tt>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span> <span class="o">&amp;</span><span class="n">rg</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">mr_visitor</span> <span class="n">i</span><span class="p">(</span><span class="n">rg</span><span class="p">);</span> <span class="o">!</span><span class="n">i</span><span class="p">.</span><span class="n">finished</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;contains convex &quot;</span> <span class="o">&lt;</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">.</span><span class="n">cv</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">is_face</span><span class="p">())</span> <span class="n">cout</span>  <span class="o">&lt;&lt;</span> <span class="s">&quot;face &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">.</span><span class="n">f</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-dal-bv">
+<h2>Using <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt><a class="headerlink" href="#using-dal-bv" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The object <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> (declared in <tt class="file docutils literal"><span class="pre">getfem/dal_bit_vector.h</span></tt>) is a structure
+heavily used in <em>GetFEM++</em>. It is very close to <tt class="docutils literal"><span class="pre">std::bitset</span></tt> and
+<tt class="docutils literal"><span class="pre">std::vector&lt;bool&gt;</span></tt> but with additional functionalities to represent a set of
+non negative integers and iterate over them.</p>
+<p>If <tt class="docutils literal"><span class="pre">nn</span></tt> is declared to be a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt>, the two
+instructions <tt class="docutils literal"><span class="pre">nn.add(6)</span></tt> or <tt class="docutils literal"><span class="pre">nn[6]</span> <span class="pre">=</span> <span class="pre">true</span></tt> are equivalent and
+means that integer 6 is added to the set.</p>
+<p>In a same way <tt class="docutils literal"><span class="pre">nn.sup(6)</span></tt> or <tt class="docutils literal"><span class="pre">nn[6]</span> <span class="pre">=</span> <span class="pre">false</span></tt> remove the integer 6
+from the set. The instruction <tt class="docutils literal"><span class="pre">nn.add(6,</span> <span class="pre">4)</span></tt> adds 6,7,8,9 to the
+set.</p>
+<p>To iterate on a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt>, it is possible to use iterators
+as usual, but, most of the time, as this object represents a set of
+integers, one just wants to iterate on the integers included into the
+set. The simplest way to do that is to use the pseudo-iterator
+<tt class="docutils literal"><span class="pre">dal::bv_visitor</span></tt>.</p>
+<p>For instance, here is the code to iterate on the points of a mesh and
+print it to the standard output:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">for</span> <span class="p">(</span><span class="n">dal</span><span class="o">::</span><span class="n">bv_visitor</span> <span class="n">i</span><span class="p">(</span><span class="n">mymesh</span><span class="p">.</span><span class="n">points_index</span><span class="p">());</span> <span class="o">!</span><span class="n">i</span><span class="p">.</span><span class="n">finished</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Point of index &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; of the mesh: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">points</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="face-numbering">
+<h2>Face numbering<a class="headerlink" href="#face-numbering" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The numeration of faces on usual elements is given in figure <a class="reference internal" href="#ud-fig-elemf"><em>faces numeration for usual elements</em></a>.</p>
+<div class="figure align-center" id="ud-fig-elemf">
+<a class="reference internal image-reference" href="../_images/getfemuserelemf.png"><img alt="../_images/getfemuserelemf.png" src="../_images/getfemuserelemf.png" style="width: 12cm;" /></a>
+<p class="caption">faces numeration for usual elements</p>
+</div>
+<p>Note that, while the convexes and the points are globally numbered in a <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt>
+object, there is no global numbering of the faces, so the only way to refer to
+a given face, is to give the convex number, and the local face number in the
+convex.</p>
+</div>
+<div class="section" id="save-and-load-meshes">
+<span id="ud-load-save-mesh"></span><h2>Save and load meshes<a class="headerlink" href="#save-and-load-meshes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="from-gf-file-format">
+<h3>From <em>GetFEM++</em> file format<a class="headerlink" href="#from-gf-file-format" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>In <tt class="file docutils literal"><span class="pre">getfem/getfem_mesh.h</span></tt>, two methods are defined to load meshes from file
+and write meshes to a file.</p>
+<dl class="function">
+<dt id="mymesh.write_to_file">
+<tt class="descclassname">mymesh.</tt><tt class="descname">write_to_file</tt><big>(</big><em>const std::string &amp;name</em><big>)</big><a class="headerlink" href="#mymesh.write_to_file" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>save the mesh into a file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymesh.read_from_file">
+<tt class="descclassname">mymesh.</tt><tt class="descname">read_from_file</tt><big>(</big><em>const std::string &amp;name</em><big>)</big><a class="headerlink" href="#mymesh.read_from_file" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>load the mesh from a file.</p>
+</dd></dl>
+
+<p>The following is an example of how to load a mesh and extract information on it:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &lt;getfem/getfem_mesh.h&gt;</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh</span> <span class="n">mymesh</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="n">try</span> <span class="p">{</span>
+    <span class="c1">// read the mesh from the file name given by the first argument</span>
+    <span class="n">mymesh</span><span class="p">.</span><span class="n">read_from_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]));</span>
+
+    <span class="c1">// List all the convexes</span>
+    <span class="n">dal</span><span class="o">::</span><span class="n">bit_vector</span> <span class="n">nn</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">convex_index</span><span class="p">();</span>
+    <span class="n">bgeot</span><span class="o">::</span><span class="n">size_type</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">nn</span><span class="p">;</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">nn</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Convex of index &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+      <span class="n">bgeot</span><span class="o">::</span><span class="n">pconvex_structure</span> <span class="n">cvs</span> <span class="o">=</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">structure_of_convex</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Number of vertices: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">cvs</span><span class="o">-&gt;</span><span class="n">nb_points</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Number of faces: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">cvs</span><span class="o">-&gt;</span><span class="n">nb_faces</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">short_type</span> <span class="n">f</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">f</span> <span class="o">&lt;</span> <span class="n">cvs</span><span class="o">-&gt;</span><span class="n">nb_faces</span><span class="p">();</span> <span class="o">++</span><span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;face &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">f</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; has &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">cvs</span><span class="o">-&gt;</span><span class="n">nb_points_of_face</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; vertices with local indexes: &quot;</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">size_type</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">cvs</span><span class="o">-&gt;</span><span class="n">nb_points_of_face</span><span class="p">(</span><span class="n">f</span><span class="p">);</span> <span class="o">++</span><span class="n">k</span><span class="p">)</span>
+          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">cvs</span><span class="o">-&gt;</span><span class="n">ind_points_of_face</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; and global indexes: &quot;</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">size_type</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">cvs</span><span class="o">-&gt;</span><span class="n">nb_points_of_face</span><span class="p">(</span><span class="n">f</span><span class="p">);</span> <span class="o">++</span><span class="n">k</span><span class="p">)</span>
+          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">mymesh</span><span class="p">.</span><span class="n">ind_points_of_convex</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="n">cvs</span><span class="o">-&gt;</span><span class="n">ind_points_of_face</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="n">k</span><span class="p">]]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="n">GMM_STANDARD_CATCH_ERROR</span><span class="p">;</span> <span class="c1">// catches standard errors</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="import-a-mesh">
+<h3>Import a mesh<a class="headerlink" href="#import-a-mesh" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The file <tt class="file docutils literal"><span class="pre">getfem/getfem_import.h</span></tt> provides the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">import_mesh</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">fmtfilename</span><span class="p">,</span> <span class="n">mesh</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Here the string <tt class="docutils literal"><span class="pre">fmtfilename</span></tt> must contain a descriptor of the
+file format (&#8220;gid&#8221;, &#8220;gmsh&#8221;, &#8220;cdb&#8221;, &#8220;noboite&#8221;, &#8220;am_fmt&#8221;, &#8220;emc2_mesh&#8221;,
+or &#8220;structured&#8221;), followed by a colon and the file name (if there is
+not format descriptor, it is assumed that the file is a native getfem
+mesh and the <tt class="docutils literal"><span class="pre">mesh::read_from_file()</span></tt> method is used). Example:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh</span> <span class="n">m</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">import_mesh</span><span class="p">(</span><span class="s">&quot;gid:../tests/meshes/tripod.GiD.msh&quot;</span><span class="p">,</span><span class="n">m</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Alternatively the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">import_mesh</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">fmt</span><span class="p">,</span>
+                 <span class="n">mesh</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>can be used in an equivalent manner with the string <tt class="docutils literal"><span class="pre">fmt</span></tt> being one of
+the aforementioned format specifiers.</p>
+<p>The &#8220;gid&#8221; format specifier is for meshes generated by <a class="reference external" href="http://gid.cimne.upc.es">GiD</a> and &#8220;gmsh&#8221;
+is for meshes generated by the open-source mesh generator <a class="reference external" href="http://www.geuz.org/gmsh">Gmsh</a>.
+The &#8220;cdb&#8221; format specifier is for reading meshes from <a class="reference external" href="http://www.ansys.com">ANSYS</a> models
+exported in blocked format with the CDWRITE command. Currently the
+<a class="reference external" href="http://www.ansys.com">ANSYS</a> element types 42,45,73,82,87,89,90,92,95,162,182,183,185,186,187
+and 191 can be imported, this however does not include any finite element
+techology linked to these elements but only their geometry.
+The &#8220;noboite&#8221; format is for TetMesh-GHS3D, and the
+&#8220;am_fmt&#8221; and &#8220;emc2_mesh&#8221; are for files built with <a class="reference external" href="http://www-rocq1.inria.fr/gamma/cdrom/www/emc2/eng.htm">EMC2</a> (but 2D only).</p>
+<p>The &#8220;structured&#8221; format is just a short specification for regular meshes:
+the rest of <tt class="docutils literal"><span class="pre">fmtfilename</span></tt> in that case is not a filename, but a string
+whose format is following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">import_mesh</span><span class="p">(</span><span class="s">&quot;structured:GT=&#39;GT_PK(2,1)&#39;;&quot;</span>
+                    <span class="s">&quot;NSUBDIV=[5,5];&quot;</span>
+                    <span class="s">&quot;ORG=[0,0];&quot;</span>
+                    <span class="s">&quot;SIZES=[1,1];&quot;</span>
+                    <span class="s">&quot;NOISED=0&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">GT</span></tt> is the name of the geometric transformation, <tt class="docutils literal"><span class="pre">NSUBDIV</span></tt> a
+vector of the number of subdivisions in each coordinate (default value 2),
+<tt class="docutils literal"><span class="pre">ORG</span></tt> is the origin of the mesh (default value <tt class="docutils literal"><span class="pre">[0,0,...]</span></tt>), <tt class="docutils literal"><span class="pre">SIZES</span></tt>
+is a vector of the sizes in each direction (default value <tt class="docutils literal"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">...]</span></tt>
+and if <tt class="docutils literal"><span class="pre">NOISED=1</span></tt> the nodes of the interior of the mesh are randomly
+&#8220;shaken&#8221; (default value <tt class="docutils literal"><span class="pre">NOISED=0</span></tt>). In that string, all the parameters
+are optional except <tt class="docutils literal"><span class="pre">GT</span></tt>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Build a mesh</a><ul>
+<li><a class="reference internal" href="#add-an-element-to-a-mesh">Add an element to a mesh</a></li>
+<li><a class="reference internal" href="#remove-an-element-from-a-mesh">Remove an element from a mesh</a></li>
+<li><a class="reference internal" href="#simple-structured-meshes">Simple structured meshes</a></li>
+<li><a class="reference internal" href="#mesh-regions">Mesh regions</a></li>
+<li><a class="reference internal" href="#methods-of-the-gf-m-object">Methods of the <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt> object</a></li>
+<li><a class="reference internal" href="#using-dal-bv">Using <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt></a></li>
+<li><a class="reference internal" href="#face-numbering">Face numbering</a></li>
+<li><a class="reference internal" href="#save-and-load-meshes">Save and load meshes</a><ul>
+<li><a class="reference internal" href="#from-gf-file-format">From <em>GetFEM++</em> file format</a></li>
+<li><a class="reference internal" href="#import-a-mesh">Import a mesh</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="catch.html"
+                        title="前の章へ">Catch errors</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="bfem.html"
+                        title="次の章へ">Build a finite element method on a mesh</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="bfem.html" title="Build a finite element method on a mesh"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

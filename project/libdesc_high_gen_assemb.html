@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The high-level generic assembly module in GetFEM++ &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="next" title="The low-level generic assembly module in GetFEM++" href="libdesc_low_gen_assemb.html" />
+    <link rel="prev" title="Level-set module" href="libdesc_levelset.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc_low_gen_assemb.html" title="The low-level generic assembly module in GetFEM++"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_levelset.html" title="Level-set module"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" accesskey="U">Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-high-level-generic-assembly-module-in-gf">
+<span id="dp-libdesc-high-assemb"></span><h1>The high-level generic assembly module in <em>GetFEM++</em><a class="headerlink" href="#the-high-level-generic-assembly-module-in-gf" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The high level generic assembly module of <em>GetFEM++</em> and its weak form language is a key module which allows to describe weak formulation of partial differential equation problems. See the description of the language in the user documentation section <a class="reference internal" href="../userdoc/gasm_high.html#ud-gasm-high"><em>Compute arbitrary terms - high-level generic assembly procedures</em></a>.</p>
+</div>
+<div class="section" id="files">
+<h2>Files<a class="headerlink" href="#files" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File(s)</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_generic_assembly.h</span></tt></td>
+<td>Main header for exported definitions. Only this header has to be included to use the generic assembly. Other headers of the module are for internal use only.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_generic_assembly_tree.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_generic_assembly_tree.cc</span></tt></td>
+<td>Definition of the tree structure and basic operations on it, including reading an assembly string and transform it in a syntax tree and make the invert transformation of a tree into a string.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_generic_assembly_fonction_and_operators.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_generic_assembly_fonction_and_operators.cc</span></tt></td>
+<td>Definition of redefined function and nonlinear operator of the weak form language.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_generic_assembly_semantic.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_generic_assembly_semantic.cc</span></tt></td>
+<td>Semantic analysis and enrichment of the syntax tree. Include some operations such as making the derivation of a tree with respect to a variable or computing the tree corresponding to the gradient of an expression.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_generic_assembly_workspace.cc</span></tt></td>
+<td>Methodes of the workspace object (defined in <tt class="file docutils literal"><span class="pre">getfem_generic_assembly.h</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_generic_assembly_compile_and_exec.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_generic_assembly_compile_and_exec.cc</span></tt></td>
+<td>Definition of the optimized instructions, compilation into a sequel of optimize instructions and execution of the instructions on Gauss point/interpolation points.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_generic_assembly_interpolation.cc</span></tt></td>
+<td>Interpolation operations and interpolate transformations.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="a-few-implementation-details">
+<h2>A few implementation details<a class="headerlink" href="#a-few-implementation-details" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The assembly string is transformed in an assembly tree by a set of function in <tt class="file docutils literal"><span class="pre">src/getfem_generic_assembly.cc</span></tt>. The process has 6 steps:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Lexical analysis with the procedure <tt class="docutils literal"><span class="pre">ga_get_token(...)</span></tt>.</li>
+<li>Syntax analysis and transformation into a syntax tree by <tt class="docutils literal"><span class="pre">ga_read_string(...)</span></tt>.</li>
+<li>Semantic analysis, simplification (pre-computation) of constant expressions and enrichment of the tree by <tt class="docutils literal"><span class="pre">ga_semantic_analysis(...)</span></tt>.</li>
+<li>Symbolic (automatic) differentiation of an assembly tree by <tt class="docutils literal"><span class="pre">ga_derivative(...)</span></tt></li>
+<li>Symbolic (automatic) gradient computation of an assembly tree by <tt class="docutils literal"><span class="pre">ga_gradient(...)</span></tt></li>
+<li>Compilation in a sequence of instructions with optimizations by <tt class="docutils literal"><span class="pre">ga_compile(...)</span></tt>.</li>
+<li>Execution of the sequence of instructions and assembly by <tt class="docutils literal"><span class="pre">ga_exec(...)</span></tt>.</li>
+</ul>
+</div></blockquote>
+<p>These steps are performed only once at the beginning of the assembly. The final tree is compiled in a sequence of optimized instructions which are executed on each Gauss point of each element. The compilation performed some optimizations : repeated terms are automatically detected and evaluated only once, simplifications if the mesh has uniform type of elements, simplifications for vectorized fnite element methods.</p>
+<p>Moreover, there is specifics function for interpolation operations (ga_interpolation(...), ga_interpolation_exec(...), ga_interpolation_Lagrange_fem, ga_interpolation_mti, ga_interpolation_im_data, ...)</p>
+</div>
+<div class="section" id="assembly-tree">
+<h2>Assembly tree<a class="headerlink" href="#assembly-tree" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Assembly strings are transformed into assembly trees by <tt class="docutils literal"><span class="pre">ga_read_string(...)</span></tt>. Assembly trees are syntax trees that are progressively enriched in information in the differents steps (semantic analysis, derivation, compilation).</p>
+<p>The object <tt class="docutils literal"><span class="pre">ga_tree</span></tt> represents an assembly tree. It is a copyable object that only contains a pointer to the root of the tree. Each tree node is an object <tt class="docutils literal"><span class="pre">ga_tree_node</span></tt> that contains the main following information:</p>
+<ul class="simple">
+<li>node_type (function, variable value, variable gradient, operation ...)</li>
+<li>operation type for operation nodes.</li>
+<li>assembly tensor: used at execution time by optimized instructions to compute the intermediary results. The final result is in the assembly string of the root node at the end of the execution (for each Gauss point).</li>
+<li>term type: value, order one term (ith order one test functions),
+order two term (with order two test functions) or with both order one and
+order two test functions (tangent term).</li>
+<li>variable name of tests functions for order 1 or 2 terms.</li>
+<li>pointer to the parent node.</li>
+<li>pointers to the children nodes.</li>
+</ul>
+<p>For example, the assembly tree for the assembly string &#8220;a*Grad_Test2_u.Grad_Test_u&#8221; for the stiffness matrix of a Laplacian problem can be represented as follows with its assembly tensors at each node:</p>
+<div class="figure align-center" id="dp-fig-tree-laplace-tan">
+<a class="reference internal image-reference" href="../_images/tree_simple_laplace_tan.png"><img alt="../_images/tree_simple_laplace_tan.png" src="../_images/tree_simple_laplace_tan.png" style="width: 581.25px; height: 323.25px;" /></a>
+</div>
+</div>
+<div class="section" id="assembly-tensors">
+<h2>Assembly tensors<a class="headerlink" href="#assembly-tensors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Assembly tensors are represented on each node by a <tt class="docutils literal"><span class="pre">bgeot::tensor&lt;double&gt;</span></tt> object. However, there is a specific structure in <tt class="file docutils literal"><span class="pre">src/getfem_generic_assembly.cc</span></tt> for assembly tensors because there is several format of assembly tensors :</p>
+<ul>
+<li><p class="first">Normal tensor. The first and second indices may represent the test function local indices if the node represent a first or second order term. Remember that in <em>GetFEM++</em> all tensors are stored with a Fortran order. This means that for instance a for a <img class="math" src="../_images/math/fc97bd8c8a807bb46f8a711a4b5960235f116360.png" alt="N\times P\times Q" style="vertical-align: -4px"/> tensor one has <tt class="docutils literal"><span class="pre">t(i,</span> <span class="pre">j,</span> <span class="pre">k)</span> <span class="pre">=</span> <span class="pre">t[i</span> <span class="pre">+</span> <span class="pre">j*N</span> <span class="pre">+</span> <span class="pre">k*N*P]</span></tt>.</p>
+</li>
+<li><p class="first">Copied tensor. When a node is detected to have exactly the same expression compared to an already compiled one, the assembly tensor will contain a pointer to the assembly tensor of the already compiled node. The consequence is that no unnecessary copy is made.</p>
+</li>
+<li><p class="first">Sparse tensor with a listed sparsity. When working with a vector field, the finite element method is applied on each component. This results on vector base functions having only one nonzero component and some components are duplicated. The tensor are fully represented because it would be difficul to gain in efficiency with that kind of small sparse tensor format. However, some operation can be optimized with the knoledge of a certain sparsity (and duplication). This can change the order of complexity of a reduction. In order to allows this gain in efficiency, the tensor are labellised with some known sparsity format (vectorisation and format coming from operation applied on vectorized tensors). This results in a certain number of sparsity formats that are listed below:</p>
+<ul>
+<li><p class="first">1: Vectorized base sparsity format: The tensor represent a vectorized
+value. Each value of the condensed tensor is repeated on <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q" style="vertical-align: -4px"/>
+components of the vectorized tensor. The mesh dimensions is denoted
+<img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/>. For instance if <img class="math" src="../_images/math/87686aa0f5136421c8415c7169adcb308e36c7a8.png" alt="\varphi_i" style="vertical-align: -4px"/> are the <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> local
+base functions on an element and the evaluation is on a Gauss point
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" style="vertical-align: 0px"/>, then the non vectorized tensor is
+<img class="math" src="../_images/math/6b07d616edcb7ef12e9533bed584034af94f0620.png" alt="\bar{t}(i) = \varphi_i(x)" style="vertical-align: -4px"/> and the vectorized one is
+<img class="math" src="../_images/math/446df8a10795ffd4dfed4bfa73f3ebb1cf67887e.png" alt="t(j,k) = \varphi_{j/Q}(x) \delta_{k, j \mbox{ mod } Q}" style="vertical-align: -9px"/>
+where <img class="math" src="../_images/math/6e618d44cdd1b76e4df35a7bc9ebd5524f56c49f.png" alt="j/M" style="vertical-align: -5px"/> is the integer division. For <img class="math" src="../_images/math/c310f710722cb94897f7c38d39ca8bae7bc0ccb5.png" alt="M=2" style="vertical-align: 0px"/>,
+<img class="math" src="../_images/math/ff477eb98ac5cc2250dafa9252424e4f03028524.png" alt="Q=2" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/62cbee4f6fd50f986cc39275a4e09aff1d2200a7.png" alt="N=3" style="vertical-align: 0px"/> the components of the two tensors are
+represented in the following table</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Scalar tensor</th>
+<th class="head">Vectorized tensor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/6b07d616edcb7ef12e9533bed584034af94f0620.png" alt="\bar{t}(i) = \varphi_i(x)" style="vertical-align: -4px"/></td>
+<td><img class="math" src="../_images/math/196581fca061d38a98db82b897e3987f1c86d20d.png" alt="t(j,k) = \varphi_{j/Q}(x) \delta_{k, (j \mbox{ mod } Q)}" style="vertical-align: -9px"/></td>
+</tr>
+<tr class="row-odd"><td><img class="math" src="../_images/math/3a1c8a2ef3e84de33b5bdfcc23e32110d51ab1de.png" alt="[\varphi_0(x), \varphi_1(x)]" style="vertical-align: -5px"/></td>
+<td><img class="math" src="../_images/math/409e5f5710cfc6e5d84610e3b6abfe03b490695b.png" alt="[\varphi_0(x), 0, \varphi_1(x), 0, 0, \varphi_0(x), 0, \varphi_1(x)]" style="vertical-align: -5px"/></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">2: Grad condensed format</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Scalar tensor</th>
+<th class="head">Vectorized tensor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/184f1b13a9306b0471b9342d2efd4a7dd5966ad2.png" alt="\bar{t}(i,j) = \partial_j\varphi_i(x)" style="vertical-align: -6px"/></td>
+<td><img class="math" src="../_images/math/6c80b39211b6e273475f7cb1375045ab4065252e.png" alt="t(k,l,m) = \partial_m\varphi_{k/Q}(x) \delta_{l, (m \mbox{ mod } Q)}" style="vertical-align: -9px"/></td>
+</tr>
+<tr class="row-odd"><td><img class="math" src="../_images/math/5c098f045361872866b59fff5fb6a308a047ee1a.png" alt="[\partial_0\varphi_0(x), \partial_0\varphi_1(x)," style="vertical-align: -5px"/> <img class="math" src="../_images/math/c29bb2bcc243a4771105480d2ef8d607d0875731.png" alt="\partial_1\varphi_0(x), \partial_1\varphi_1(x)," style="vertical-align: -4px"/> <img class="math" src="../_images/math/a1f6b79689ebe648a93b0e090547169354c3f228.png" alt="\partial_2\varphi_0(x), \partial_2\varphi_1(x)]" style="vertical-align: -5px"/></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">3: Hessian condensed format</p>
+</li>
+<li><p class="first">10: Vectorized mass: the tensor represent a scalar product of two
+vectorised base functions. This means a tensor <img class="math" src="../_images/math/b7b3f46d049750b33446ef29407305f607221023.png" alt="t(\cdot,\cdot)" style="vertical-align: -4px"/>
+where <img class="math" src="../_images/math/fdd6d8a4b13897b5e9079af24d99b2c1a649ffe7.png" alt="t(i*Q+k, j*Q+l) = 0" style="vertical-align: -4px"/> for <img class="math" src="../_images/math/7fbae26633ee7a308593b4dc810bbc8cb88e764f.png" alt="k \ne l" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/de4fb9a34d83f82a8ba41b6573d2bdd81ed88a42.png" alt="t(i*Q+k, j*Q+k)" style="vertical-align: -4px"/> are equals for <img class="math" src="../_images/math/0137039df48d9c7006809fad34bfc571b60b4f3f.png" alt="0 \le k &lt; Q" style="vertical-align: -4px"/>.</p>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="optimized-instructions">
+<h2>Optimized instructions<a class="headerlink" href="#optimized-instructions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Optimized instructions for variable evaluation, operations, vector and matrix assembly ... to be described.</p>
+</div>
+<div class="section" id="predefined-functions">
+<h2>Predefined functions<a class="headerlink" href="#predefined-functions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="docutils">
+<dt>Some predefined scalar functions are available in <em>GetFEM++</em> weak form language in order to describe a weak formulation (or also to make basic algebraic computations). This is limited to scalar functions of one or two arguments. Due to the automatic differentiation used to obtain the tangent system of described problems, the derivative each function have to be available. The principle retained is the following: For each predefined function is available:</dt>
+<dd><ul class="first last simple">
+<li>A C++ function which computes the value given the argument(s).</li>
+<li>The support of the function in the first each argument in term of a
+(possibly infinite) interval (this is for simplification of expressions).</li>
+<li>The string corresponding of the derivative in terms of already known
+functions</li>
+</ul>
+</dd>
+</dl>
+<p>A new predefined function is easy to add. See init_predefined_functions() in file <tt class="file docutils literal"><span class="pre">src/getfem_generic_assembly.cc</span></tt>. + describe how to give the derivative ...</p>
+</div>
+<div class="section" id="predefined-nonlinear-operators">
+<h2>Predefined nonlinear operators<a class="headerlink" href="#predefined-nonlinear-operators" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>to be described ...</p>
+</div>
+<div class="section" id="state">
+<h2>State<a class="headerlink" href="#state" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Stable.</p>
+</div>
+<div class="section" id="perspectives">
+<h2>Perspectives<a class="headerlink" href="#perspectives" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li>Is a certain extension to complex data possible ?</li>
+<li>More simplifications : study the possibility to automatically factorize some terms (for instance scalar ones) to reduce the number of operations.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The high-level generic assembly module in <em>GetFEM++</em></a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#files">Files</a></li>
+<li><a class="reference internal" href="#a-few-implementation-details">A few implementation details</a></li>
+<li><a class="reference internal" href="#assembly-tree">Assembly tree</a></li>
+<li><a class="reference internal" href="#assembly-tensors">Assembly tensors</a></li>
+<li><a class="reference internal" href="#optimized-instructions">Optimized instructions</a></li>
+<li><a class="reference internal" href="#predefined-functions">Predefined functions</a></li>
+<li><a class="reference internal" href="#predefined-nonlinear-operators">Predefined nonlinear operators</a></li>
+<li><a class="reference internal" href="#state">State</a></li>
+<li><a class="reference internal" href="#perspectives">Perspectives</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="libdesc_levelset.html"
+                        title="前の章へ">Level-set module</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc_low_gen_assemb.html"
+                        title="次の章へ">The low-level generic assembly module in <em>GetFEM++</em></a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc_low_gen_assemb.html" title="The low-level generic assembly module in GetFEM++"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_levelset.html" title="Level-set module"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" >Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

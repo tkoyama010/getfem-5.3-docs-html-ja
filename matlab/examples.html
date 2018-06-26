@@ -1,0 +1,636 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="MatLab Interface" href="index.html" />
+    <link rel="next" title="Draw Command reference" href="plotcmdref.html" />
+    <link rel="prev" title="GetFEM++ organization" href="mlabgf.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="plotcmdref.html" title="Draw Command reference"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="mlabgf.html" title="GetFEM++ organization"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="examples">
+<span id="mlab-examples"></span><h1>Examples<a class="headerlink" href="#examples" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="a-step-by-step-basic-example">
+<span id="mlab-laplacianexample"></span><h2>A step-by-step basic example<a class="headerlink" href="#a-step-by-step-basic-example" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This example shows the basic usage of getfem, on the über-canonical problem above
+all others: solving the <span class="target" id="index-0"></span><tt class="xref std std-envvar docutils literal"><span class="pre">Laplacian</span></tt>, <img class="math" src="../_images/math/9d8850362727d1a8a9e76c4d0cc31f56efe39292.png" alt="-\Delta u = f" style="vertical-align: -4px"/> on a square,
+with the Dirichlet condition <img class="math" src="../_images/math/204955570f9d78fc69195a1d6bec6aa58aa45f2e.png" alt="u = g(x)" style="vertical-align: -4px"/> on the domain boundary. You can find
+the <strong>m-file</strong> of this example under the name <strong>demo_step_by_step.m</strong> in the
+directory <tt class="docutils literal"><span class="pre">interface/tests/matlab/</span></tt> of the <em>GetFEM++</em> distribution.</p>
+<p>The first step is to <strong>create a mesh</strong>. It is possible to create simple structured meshes or unstructured meshes for simple geometries (see <tt class="docutils literal"><span class="pre">gf_mesh('generate',</span> <span class="pre">mesher_object</span> <span class="pre">mo,</span> <span class="pre">scalar</span> <span class="pre">h))</span></tt>) or to rely on an external mesher (see <tt class="docutils literal"><span class="pre">gf_mesh('import',</span> <span class="pre">string</span>
+<span class="pre">FORMAT,</span> <span class="pre">string</span> <span class="pre">FILENAME))</span></tt>).  For this example, we
+just consider a regular <strong>cartesian mesh</strong> whose nodes are
+<img class="math" src="../_images/math/1d8e8e3b20248b84a1b1f24425f487099d4224ce.png" alt="\{x_{i=0\ldots10,j=0..10}=(i/10,j/10)\}" style="vertical-align: -6px"/>:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% creation of a simple cartesian mesh</span>
+<span class="o">&gt;&gt;</span> <span class="n">m</span> <span class="p">=</span> <span class="n">gf_mesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">]);</span>
+<span class="n">m</span> <span class="p">=</span>
+     <span class="n">id</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="n">cid</span><span class="p">:</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>If you try to look at the value of <tt class="docutils literal"><span class="pre">m</span></tt>, you&#8217;ll notice that it appears to be a
+structure containing two integers. The first one is its identifier, the second one
+is its class-id, i.e. an identifier of its type. This small structure is just an
+&#8220;handle&#8221; or &#8220;descriptor&#8221; to the real object, which is stored in the <em>GetFEM++</em> memory
+and cannot be represented via <em>MatLab</em> data structures. Anyway, you can still
+inspect the <em>GetFEM++</em> objects via the command <tt class="docutils literal"><span class="pre">gf_workspace('stats')</span></tt>.</p>
+<p>Now we can try to have a <strong>look at the mesh</strong>, with its vertices numbering and the
+convexes numbering:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% we enable vertices and convexes labels</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_plot_mesh</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;vertices&#39;</span><span class="p">,</span> <span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;convexes&#39;</span><span class="p">,</span> <span class="s">&#39;on&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>As you can see, the mesh is regular, and the numbering of its nodes and convexes
+is also regular (this is guaranteed for cartesian meshes, but do not hope a
+similar numbering for the degrees of freedom).</p>
+<p>The next step is to <strong>create a mesh_fem object</strong>. This one links a mesh with a set
+of FEM:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% create a mesh_fem of for a field of dimension 1 (i.e. a scalar field)</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_QK(2,2)&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The first instruction builds a new gfMeshFem object, the second argument specifies
+that this object will be used to interpolate scalar fields (since the unknown
+<img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is a scalar field). The second instruction assigns the <img class="math" src="../_images/math/4c52e98ff6e755fe0a4161e44dbbc9e40af1a54b.png" alt="Q^2" style="vertical-align: -4px"/> FEM
+to every convex (each basis function is a polynomial of degree 4, remember that
+<img class="math" src="../_images/math/71a51cfdab1b554669a9b87471779e3f41b49b0c.png" alt="P^k\Rightarrow" style="vertical-align: -1px"/> polynomials of degree <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/>, while
+<img class="math" src="../_images/math/40c3965a7783a37bc20ea0ff3df05605ed1ee20e.png" alt="Q^k\Rightarrow" style="vertical-align: -4px"/> polynomials of degree <img class="math" src="../_images/math/b8ea7ee8a282949fd853a01537ec7a2b55e56f75.png" alt="2k" style="vertical-align: 0px"/>). As <img class="math" src="../_images/math/4c52e98ff6e755fe0a4161e44dbbc9e40af1a54b.png" alt="Q^2" style="vertical-align: -4px"/> is a
+polynomial FEM, you can view the expression of its basis functions on the
+reference convex:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">gf_fem_get</span><span class="p">(</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_QK(2,2)&#39;</span><span class="p">),</span> <span class="s">&#39;poly_str&#39;</span><span class="p">);</span>
+<span class="nb">ans</span> <span class="p">=</span>
+    <span class="s">&#39;1 - 3*x - 3*y + 2*x^2 + 9*x*y + 2*y^2 - 6*x^2*y - 6*x*y^2 + 4*x^2*y^2&#39;</span>
+    <span class="s">&#39;4*x - 4*x^2 - 12*x*y + 12*x^2*y + 8*x*y^2 - 8*x^2*y^2&#39;</span>
+    <span class="s">&#39;-x + 2*x^2 + 3*x*y - 6*x^2*y - 2*x*y^2 + 4*x^2*y^2&#39;</span>
+    <span class="s">&#39;4*y - 12*x*y - 4*y^2 + 8*x^2*y + 12*x*y^2 - 8*x^2*y^2&#39;</span>
+    <span class="s">&#39;16*x*y - 16*x^2*y - 16*x*y^2 + 16*x^2*y^2&#39;</span>
+    <span class="s">&#39;-4*x*y + 8*x^2*y + 4*x*y^2 - 8*x^2*y^2&#39;</span>
+    <span class="s">&#39;-y + 3*x*y + 2*y^2 - 2*x^2*y - 6*x*y^2 + 4*x^2*y^2&#39;</span>
+    <span class="s">&#39;-4*x*y + 4*x^2*y + 8*x*y^2 - 8*x^2*y^2&#39;</span>
+    <span class="s">&#39;x*y - 2*x^2*y - 2*x*y^2 + 4*x^2*y^2&#39;</span>
+</pre></div>
+</div>
+<p>It is also possible to make use of the &#8220;object oriented&#8221; features of <em>MatLab</em>. As
+you may have noticed, when a class &#8220;foo&#8221; is provided by the <em>getfem-interface</em>, it is build
+with the function <tt class="docutils literal"><span class="pre">gf_foo</span></tt>, and manipulated with the functions <tt class="docutils literal"><span class="pre">gf_foo_get</span></tt>
+and <tt class="docutils literal"><span class="pre">gf_foo_set</span></tt>. But (with matlab 6.x and better) you may also create the
+object with the <tt class="docutils literal"><span class="pre">gfFoo</span></tt> constructor , and manipulated with the <tt class="docutils literal"><span class="pre">get(..)</span></tt> and
+<tt class="docutils literal"><span class="pre">set(..)</span></tt> methods. For example, the previous steps could have been:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">gfFem</span><span class="p">(</span><span class="s">&#39;FEM_QK(2,2)&#39;</span><span class="p">);</span>
+<span class="n">gfFem</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span><span class="mi">0</span> <span class="n">dim</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">target_dim</span><span class="p">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">=</span><span class="mi">9</span><span class="p">,[</span><span class="n">EQUIV</span><span class="p">,</span> <span class="n">POLY</span><span class="p">,</span> <span class="n">LAGR</span><span class="p">],</span> <span class="n">est</span><span class="p">.</span><span class="n">degree</span><span class="p">=</span><span class="mi">4</span>
+  <span class="o">-&gt;</span> <span class="n">FEM_QK</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">=</span><span class="n">gfMesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">]);</span>
+<span class="n">gfMesh</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span><span class="mi">0</span> <span class="p">[</span><span class="mi">16512</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">dim</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">121</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">100</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">gfMeshFem</span> <span class="n">object</span><span class="p">:</span> <span class="n">ID</span><span class="p">=</span><span class="mi">1</span> <span class="p">[</span><span class="mi">804</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">qdim</span><span class="p">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">=</span><span class="mi">0</span><span class="p">,</span>
+  <span class="n">linked</span> <span class="n">gfMesh</span> <span class="n">object</span><span class="p">:</span> <span class="n">dim</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">121</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">100</span>
+<span class="o">&gt;&gt;</span> <span class="n">set</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="s">&#39;fem&#39;</span><span class="p">,</span> <span class="n">gfFem</span><span class="p">(</span><span class="s">&#39;FEM_QK(2,2)&#39;</span><span class="p">));</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span>
+<span class="n">gfMeshFem</span> <span class="n">object</span><span class="p">:</span> <span class="n">ID</span><span class="p">=</span><span class="mi">1</span> <span class="p">[</span><span class="mi">1316</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">qdim</span><span class="p">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">=</span><span class="mi">441</span><span class="p">,</span>
+  <span class="n">linked</span> <span class="n">gfMesh</span> <span class="n">object</span><span class="p">:</span> <span class="n">dim</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">121</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">100</span>
+</pre></div>
+</div>
+<p>Now, in order to perform numerical integrations on <tt class="docutils literal"><span class="pre">mf</span></tt>, we need to <strong>build a
+mesh_im object</strong>:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% assign the same integration method on all convexes</span>
+<span class="o">&gt;&gt;</span> <span class="n">mim</span> <span class="p">=</span> <span class="n">gf_mesh_im</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">gf_integ</span><span class="p">(</span><span class="s">&#39;IM_EXACT_PARALLELEPIPED(2)&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The integration method will be used to compute the various integrals on each
+element: here we choose to perform exact computations (no <span class="target" id="index-1"></span><tt class="xref std std-envvar docutils literal"><span class="pre">quadrature</span>
+<span class="pre">formula</span></tt>), which is possible since the geometric transformation of these convexes
+from the reference convex is linear (this is true for all simplices, and this is
+also true for the parallelepipeds of our regular mesh, but it is not true for
+general quadrangles), and the chosen FEM is polynomial. Hence it is possible to
+analytically integrate every basis function/product of basis
+functions/gradients/etc. There are many alternative FEM methods and integration
+methods (see <a class="reference internal" href="../userdoc/index.html#ud"><em>User Documentation</em></a>).</p>
+<p>Note however that in the general case, approximate integration methods are a
+better choice than exact integration methods.</p>
+<p>Now we have to <strong>find the</strong> &#8220;<span class="target" id="index-2"></span><tt class="xref std std-envvar docutils literal"><span class="pre">boundary</span></tt>&#8221; <strong>of the domain</strong>, in order to
+set a Dirichlet condition. A mesh object has the ability to store some sets of
+convexes and convex faces. These sets (called &#8220;regions&#8221;) are accessed via an
+integer #id:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% detect the border of the mesh</span>
+<span class="o">&gt;&gt;</span> <span class="n">border</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;outer faces&#39;</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="c">% mark it as boundary #42</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="n">border</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_plot_mesh</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;regions&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">42</span><span class="p">]);</span> <span class="c">% the boundary edges appears in red</span>
+</pre></div>
+</div>
+<p>Here we find the faces of the convexes which are on the boundary of the mesh (i.e.
+the faces which are not shared by two convexes).</p>
+<blockquote>
+<div><p>Remark:</p>
+<blockquote>
+<div>we could have used <tt class="docutils literal"><span class="pre">gf_mesh_get(m,</span> <span class="pre">'OuTEr_faCes')</span></tt>, as the interface is
+case-insensitive, and whitespaces can be replaced by underscores.</div></blockquote>
+</div></blockquote>
+<p>The array <tt class="docutils literal"><span class="pre">border</span></tt> has two rows, on the first row is a convex number, on the
+second row is a face number (which is local to the convex, there is no global
+numbering of faces). Then this set of faces is assigned to the region number 42.</p>
+<p>At this point, we just have to desribe the model and run the solver to get the
+solution! The &#8220;<span class="target" id="index-3"></span><tt class="xref std std-envvar docutils literal"><span class="pre">model</span></tt>&#8221; is created with the <tt class="docutils literal"><span class="pre">gf_model</span></tt> (or <tt class="docutils literal"><span class="pre">gfModel</span></tt>)
+constructor. A model is basically an object which build a global linear system
+(tangent matrix for non-linear problems) and its associated right hand side.
+Typical modifications are insertion of the stiffness matrix for the problem
+considered (linear elasticity, laplacian, etc), handling of a set of contraints,
+Dirichlet condition, addition of a source term to the right hand side etc. The
+global tangent matrix and its right hand side are stored in the &#8220;<span class="target" id="index-4"></span><tt class="xref std std-envvar docutils literal"><span class="pre">model</span></tt>&#8221;
+structure.</p>
+<p>Let us build a problem with an easy solution: <img class="math" src="../_images/math/3803b1b108897a7a96f9be40bc119f9fc5232945.png" alt="u=x(x-1)y(y-1)+x^5" style="vertical-align: -4px"/>, then we
+have <img class="math" src="../_images/math/ca2814fc860136302e0f912015bceeedc2d78564.png" alt="\Delta u=2(x^2+y^2)-2(x+y)+20x^3" style="vertical-align: -4px"/> (the FEM won&#8217;t be able to catch the
+exact solution since we use a <img class="math" src="../_images/math/4c52e98ff6e755fe0a4161e44dbbc9e40af1a54b.png" alt="Q^2" style="vertical-align: -4px"/> method).</p>
+<p>We start with an empty real model:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% empty real model</span>
+<span class="o">&gt;&gt;</span> <span class="n">md</span> <span class="p">=</span> <span class="n">gf_model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>(a model is either <tt class="docutils literal"><span class="pre">'real'</span></tt> or <tt class="docutils literal"><span class="pre">'complex'</span></tt>). And we declare that <tt class="docutils literal"><span class="pre">u</span></tt> is an
+unknown of the system on the finite element method <cite>mf</cite> by:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% declare that &quot;u&quot; is an unknown of the system</span>
+<span class="o">&gt;&gt;</span> <span class="c">% on the finite element method `mf`</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Now, we add a &#8220;generic elliptic&#8221; brick, which handles <img class="math" src="../_images/math/421698cfd92ae92ecf46ef69aa4c2c5132c2ee25.png" alt="-\nabla\cdot(A:\nabla
+u) = \ldots" style="vertical-align: -4px"/> problems, where <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" style="vertical-align: 0px"/> can be a scalar field, a matrix field, or
+an order 4 tensor field. By default, <img class="math" src="../_images/math/f18428217dcd07944b2adbebcafd0978587a770a.png" alt="A=1" style="vertical-align: -1px"/>. We add it on our main variable
+<tt class="docutils literal"><span class="pre">u</span></tt> with:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% add generic elliptic brick on &quot;u&quot;</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Laplacian brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Next we add a Dirichlet condition on the domain boundary:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% add Dirichlet condition</span>
+<span class="o">&gt;&gt;</span> <span class="n">Uexact</span> <span class="p">=</span> <span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;(x-.5).^2 + (y-.5).^2 + x/5 - y/3&#39;</span><span class="p">});</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized fem data&#39;</span><span class="p">,</span> <span class="s">&#39;DirichletData&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">Uexact</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s">&#39;DirichletData&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The two first lines defines a data of the model which represents the value of the
+Dirichlet condition. The third one add a Dirichlet condition to the variable <tt class="docutils literal"><span class="pre">u</span></tt>
+on the boundary number <tt class="docutils literal"><span class="pre">42</span></tt>. The dirichlet condition is imposed with lagrange
+multipliers. Another possibility is to use a penalization. A gfMeshFem argument is
+also required, as the Dirichlet condition <img class="math" src="../_images/math/042c6e5c286ed5f65fe3269bb42836f8080fb818.png" alt="u=g" style="vertical-align: -4px"/> is imposed in a weak form
+<img class="math" src="../_images/math/61ba2a5213522391534194d6b421d073797e6827.png" alt="\int_\Gamma u(x)v(x) = \int_\Gamma g(x)v(x) ~ \forall v" style="vertical-align: -6px"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> is
+taken in the space of multipliers given by here by <tt class="docutils literal"><span class="pre">mf</span></tt>.</p>
+<div class="topic">
+<p class="topic-title first">Remark:</p>
+<p>the polynomial expression was interpolated on <tt class="docutils literal"><span class="pre">mf</span></tt>. It is possible only if
+<tt class="docutils literal"><span class="pre">mf</span></tt> is of Lagrange type. In this first example we use the same gfMeshFem for
+the unknown and for the data such as <tt class="docutils literal"><span class="pre">g</span></tt>, but in the general case, <tt class="docutils literal"><span class="pre">mf</span></tt>
+won&#8217;t be Lagrangian and another (Lagrangian) <cite>mesh_fem</cite> will be used for the
+description of Dirichlet conditions, source terms etc.</p>
+</div>
+<p>A source term can be added with the following lines:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% add source term</span>
+<span class="o">&gt;&gt;</span> <span class="n">f</span> <span class="p">=</span> <span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s">&#39;2(x^2+y^2)-2(x+y)+20x^3&#39;</span> <span class="p">});</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized fem data&#39;</span><span class="p">,</span> <span class="s">&#39;VolumicData&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">f</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add source term brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;VolumicData&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>It only remains now to launch the solver. The linear system is assembled and solve
+with the instruction:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% solve the linear system</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The model now contains the solution (as well as other things, such as the linear
+system which was solved). It is extracted, a display into a <em>MatLab</em> figure:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="c">% extracted solution</span>
+<span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="c">% display</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_plot</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="another-laplacian-with-exact-solution">
+<h2>Another Laplacian with exact solution<a class="headerlink" href="#another-laplacian-with-exact-solution" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This is the <tt class="file docutils literal"><span class="pre">tests/matlab/demo_laplacian.m</span></tt> example.</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="c">% trace on;</span>
+<span class="n">gf_workspace</span><span class="p">(</span><span class="s">&#39;clear all&#39;</span><span class="p">);</span>
+<span class="n">m</span> <span class="p">=</span> <span class="n">gf_mesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">]);</span>
+<span class="c">%m=gf_mesh(&#39;import&#39;,&#39;structured&#39;,&#39;GT=&quot;GT_QK(2,1)&quot;;SIZES=[1,1];NOISED=1;NSUBDIV=[1,1];&#39;)</span>
+
+<span class="c">% create a mesh_fem of for a field of dimension 1 (i.e. a scalar field)</span>
+<span class="n">mf</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="c">% assign the Q2 fem to all convexes of the mesh_fem,</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_QK(2,2)&#39;</span><span class="p">));</span>
+
+<span class="c">% Integration which will be used</span>
+<span class="n">mim</span> <span class="p">=</span> <span class="n">gf_mesh_im</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">gf_integ</span><span class="p">(</span><span class="s">&#39;IM_GAUSS_PARALLELEPIPED(2,4)&#39;</span><span class="p">));</span>
+<span class="c">%mim = gf_mesh_im(m, gf_integ(&#39;IM_STRUCTURED_COMPOSITE(IM_GAUSS_PARALLELEPIPED(2,5),4)&#39;));</span>
+<span class="c">% detect the border of the mesh</span>
+<span class="n">border</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;outer faces&#39;</span><span class="p">);</span>
+<span class="c">% mark it as boundary #1</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;boundary&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">border</span><span class="p">);</span>
+<span class="n">gf_plot_mesh</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;regions&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="c">% the boundary edges appears in red</span>
+<span class="n">pause</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c">% interpolate the exact solution</span>
+<span class="n">Uexact</span> <span class="p">=</span> <span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s">&#39;y.*(y-1).*x.*(x-1)+x.^5&#39;</span> <span class="p">});</span>
+<span class="c">% its second derivative</span>
+<span class="n">F</span>      <span class="p">=</span> <span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s">&#39;-(2*(x.^2+y.^2)-2*x-2*y+20*x.^3)&#39;</span> <span class="p">});</span>
+
+
+<span class="n">md</span><span class="p">=</span><span class="n">gf_model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Laplacian brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized fem data&#39;</span><span class="p">,</span> <span class="s">&#39;VolumicData&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add source term brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;VolumicData&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized fem data&#39;</span><span class="p">,</span> <span class="s">&#39;DirichletData&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">Uexact</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;DirichletData&#39;</span><span class="p">);</span>
+
+<span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">);</span>
+<span class="n">U</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+
+<span class="c">% Version with old bricks</span>
+<span class="c">% b0=gf_mdbrick(&#39;generic elliptic&#39;,mim,mf);</span>
+<span class="c">% b1=gf_mdbrick(&#39;dirichlet&#39;, b0, 1, mf, &#39;penalized&#39;);</span>
+<span class="c">% gf_mdbrick_set(b1, &#39;param&#39;, &#39;R&#39;, mf, Uexact); </span>
+<span class="c">% b2=gf_mdbrick(&#39;source term&#39;,b1);</span>
+<span class="c">% gf_mdbrick_set(b2, &#39;param&#39;, &#39;source_term&#39;, mf, F);</span>
+<span class="c">% mds=gf_mdstate(b1);</span>
+<span class="c">% gf_mdbrick_get(b2, &#39;solve&#39;, mds)</span>
+<span class="c">% U=gf_mdstate_get(mds, &#39;state&#39;);</span>
+
+<span class="nb">disp</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;H1 norm of error: %g&#39;</span><span class="p">,</span> <span class="n">gf_compute</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="n">U</span><span class="o">-</span><span class="n">Uexact</span><span class="p">,</span><span class="s">&#39;H1 norm&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">)));</span>
+
+<span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="n">gf_plot</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;contour&#39;</span><span class="p">,.</span><span class="mi">01</span><span class="p">:.</span><span class="mi">01</span><span class="p">:.</span><span class="mi">1</span><span class="p">);</span> 
+<span class="n">colorbar</span><span class="p">;</span> <span class="n">title</span><span class="p">(</span><span class="s">&#39;computed solution&#39;</span><span class="p">);</span>
+
+<span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span> <span class="n">gf_plot</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="n">U</span><span class="o">-</span><span class="n">Uexact</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">);</span> 
+<span class="n">colorbar</span><span class="p">;</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;difference with exact solution&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="linear-and-non-linear-elasticity">
+<h2>Linear and non-linear elasticity<a class="headerlink" href="#linear-and-non-linear-elasticity" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This example uses a mesh that was generated with <a class="reference external" href="http://gid.cimne.upc.es">GiD</a>. The object is meshed
+with quadratic tetrahedrons. You can find the <tt class="docutils literal"><span class="pre">m-file</span></tt> of this example under
+the name <tt class="file docutils literal"><span class="pre">demo_tripod.m</span></tt> in the directory <tt class="file docutils literal"><span class="pre">tests/matlab</span></tt> of the
+toolbox distribution.</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="nb">disp</span><span class="p">(</span><span class="s">&#39;This demo is an adaption of the original tripod demo&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;which uses the new &quot;brick&quot; framework of getfem&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;The code is shorter, faster and much more powerful&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;You can easily switch between linear/non linear&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;compressible/incompressible elasticity!&#39;</span><span class="p">)</span>
+
+<span class="n">linear</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="n">incompressible</span> <span class="p">=</span> <span class="mi">0</span>
+
+
+<span class="n">gf_workspace</span><span class="p">(</span><span class="s">&#39;clear all&#39;</span><span class="p">);</span>
+<span class="c">% import the mesh</span>
+<span class="n">m</span><span class="p">=</span><span class="n">gfMesh</span><span class="p">(</span><span class="s">&#39;import&#39;</span><span class="p">,</span><span class="s">&#39;gid&#39;</span><span class="p">,</span><span class="s">&#39;../meshes/tripod.GiD.msh&#39;</span><span class="p">);</span>
+<span class="n">mfu</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>     <span class="c">% mesh-fem supporting a 3D-vector field</span>
+<span class="n">mfd</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>     <span class="c">% scalar mesh_fem, for data fields.</span>
+<span class="c">% the mesh_im stores the integration methods for each tetrahedron</span>
+<span class="n">mim</span><span class="p">=</span><span class="n">gfMeshIm</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">gf_integ</span><span class="p">(</span><span class="s">&#39;IM_TETRAHEDRON(5)&#39;</span><span class="p">));</span>
+<span class="c">% we choose a P2 fem for the main unknown</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(3,2)&#39;</span><span class="p">));</span>
+<span class="c">% the material is homogeneous, hence we use a P0 fem for the data</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfd</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(3,0)&#39;</span><span class="p">));</span>
+<span class="c">% display some informations about the mesh</span>
+<span class="nb">disp</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;nbcvs=%d, nbpts=%d, nbdof=%d&#39;</span><span class="p">,</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;nbcvs&#39;</span><span class="p">),</span><span class="c">...</span>
+             <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;nbpts&#39;</span><span class="p">),</span><span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;nbdof&#39;</span><span class="p">)));</span>
+<span class="n">P</span><span class="p">=</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;pts&#39;</span><span class="p">);</span> <span class="c">% get list of mesh points coordinates</span>
+<span class="n">pidtop</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="o">-</span><span class="mi">13</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">1e-6</span><span class="p">);</span> <span class="c">% find those on top of the object</span>
+<span class="n">pidbot</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="o">+</span><span class="mi">10</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">1e-6</span><span class="p">);</span> <span class="c">% find those on the bottom</span>
+<span class="c">% build the list of faces from the list of points</span>
+<span class="n">ftop</span><span class="p">=</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;faces from pid&#39;</span><span class="p">,</span><span class="n">pidtop</span><span class="p">);</span> 
+<span class="n">fbot</span><span class="p">=</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;faces from pid&#39;</span><span class="p">,</span><span class="n">pidbot</span><span class="p">);</span>
+<span class="c">% assign boundary numbers</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;boundary&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">ftop</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;boundary&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">fbot</span><span class="p">);</span>
+
+<span class="n">E</span> <span class="p">=</span> <span class="mf">1e3</span><span class="p">;</span> <span class="n">Nu</span> <span class="p">=</span> <span class="mf">0.3</span><span class="p">;</span>
+<span class="c">% set the Lame coefficients</span>
+<span class="n">lambda</span> <span class="p">=</span> <span class="n">E</span><span class="o">*</span><span class="n">Nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">Nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">Nu</span><span class="p">));</span>
+<span class="n">mu</span> <span class="p">=</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Nu</span><span class="p">));</span>
+
+<span class="c">% create a meshfem for the pressure field (used if incompressible ~= 0)</span>
+<span class="n">mfp</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">);</span> <span class="n">set</span><span class="p">(</span><span class="n">mfp</span><span class="p">,</span> <span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gfFem</span><span class="p">(</span><span class="s">&#39;FEM_PK_DISCONTINUOUS(3,0)&#39;</span><span class="p">));</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">linear</span><span class="p">)</span>
+  <span class="c">% the linearized elasticity , for small displacements</span>
+  <span class="n">b0</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;isotropic_linearized_elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span><span class="n">mfu</span><span class="p">)</span>
+  <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;lambda&#39;</span><span class="p">,</span> <span class="n">lambda</span><span class="p">);</span>
+  <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;mu&#39;</span><span class="p">,</span> <span class="n">mu</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">incompressible</span><span class="p">)</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;linear incompressibility term&#39;</span><span class="p">,</span> <span class="n">b0</span><span class="p">,</span> <span class="n">mfp</span><span class="p">);</span>
+  <span class="k">else</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">b0</span><span class="p">;</span>
+  <span class="k">end</span><span class="p">;</span>
+<span class="k">else</span>
+  <span class="c">% See also demo_nonlinear_elasticity for a better example</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">incompressible</span><span class="p">)</span>
+    <span class="n">b0</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;Mooney Rivlin&#39;</span><span class="p">);</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear elasticity incompressibility term&#39;</span><span class="p">,</span><span class="n">b0</span><span class="p">,</span><span class="n">mfp</span><span class="p">);</span>
+    <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;params&#39;</span><span class="p">,[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">]);</span>
+  <span class="k">else</span>
+    <span class="c">% large deformation with a linearized material law.. not</span>
+    <span class="c">% a very good choice!</span>
+    <span class="n">b0</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;SaintVenant Kirchhoff&#39;</span><span class="p">);</span>
+    <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;params&#39;</span><span class="p">,[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">]);</span>
+    <span class="c">%b0 = gfMdBrick(&#39;nonlinear elasticity&#39;,mim, mfu, &#39;Ciarlet Geymonat&#39;);</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">b0</span><span class="p">;</span>
+  <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c">% set a vertical force on the top of the tripod</span>
+<span class="n">b2</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;source term&#39;</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">set</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span> <span class="s">&#39;source_term&#39;</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="n">mfd</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">0</span><span class="p">;</span><span class="o">-</span><span class="mi">10</span><span class="p">;</span><span class="mi">0</span><span class="p">}));</span>
+
+<span class="c">% attach the tripod to the ground</span>
+<span class="n">b3</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;dirichlet&#39;</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;penalized&#39;</span><span class="p">);</span>
+
+<span class="n">mds</span><span class="p">=</span><span class="n">gfMdState</span><span class="p">(</span><span class="n">b3</span><span class="p">)</span>
+
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;running solve...&#39;</span><span class="p">)</span>
+
+<span class="n">t0</span><span class="p">=</span><span class="n">cputime</span><span class="p">;</span> 
+
+<span class="n">get</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="n">mds</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="s">&#39;lsolver&#39;</span><span class="p">,</span> <span class="s">&#39;superlu&#39;</span><span class="p">);</span>
+<span class="nb">disp</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;solve done in %.2f sec&#39;</span><span class="p">,</span> <span class="n">cputime</span><span class="o">-</span><span class="n">t0</span><span class="p">));</span>
+
+<span class="n">mfdu</span><span class="p">=</span><span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="c">% the P2 fem is not derivable across elements, hence we use a discontinuous</span>
+<span class="c">% fem for the derivative of U.</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_PK_DISCONTINUOUS(3,1)&#39;</span><span class="p">));</span>
+<span class="n">VM</span><span class="p">=</span><span class="n">get</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;von mises&#39;</span><span class="p">,</span><span class="n">mds</span><span class="p">,</span><span class="n">mfdu</span><span class="p">);</span>
+
+<span class="n">U</span><span class="p">=</span><span class="n">get</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="s">&#39;state&#39;</span><span class="p">);</span> <span class="n">U</span><span class="p">=</span><span class="n">U</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;nbdof&#39;</span><span class="p">));</span>
+
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;plotting ... can also take some minutes!&#39;</span><span class="p">);</span>
+
+<span class="c">% we plot the von mises on the deformed object, in superposition</span>
+<span class="c">% with the initial mesh.</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">linear</span><span class="p">),</span>
+  <span class="n">gf_plot</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="n">VM</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;cvlst&#39;</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;outer faces&#39;</span><span class="p">),</span><span class="c">...</span>
+	  <span class="s">&#39;deformation&#39;</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span><span class="n">mfu</span><span class="p">);</span>
+<span class="k">else</span>
+  <span class="n">gf_plot</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="n">VM</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;cvlst&#39;</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;outer faces&#39;</span><span class="p">),</span><span class="c">...</span>
+	  <span class="s">&#39;deformation&#39;</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+
+<span class="n">caxis</span><span class="p">([</span><span class="mi">0</span> <span class="mi">100</span><span class="p">]);</span>
+<span class="n">colorbar</span><span class="p">;</span> <span class="n">view</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">);</span> <span class="n">camlight</span><span class="p">;</span>
+<span class="n">gf_colormap</span><span class="p">(</span><span class="s">&#39;tripod&#39;</span><span class="p">);</span>
+
+<span class="c">% the von mises stress is exported into a VTK file</span>
+<span class="c">% (which can be viewed with &#39;mayavi -d tripod.vtk -m BandedSurfaceMap&#39;)</span>
+<span class="c">% see http://mayavi.sourceforge.net/</span>
+<span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="s">&#39;export to vtk&#39;</span><span class="p">,</span><span class="s">&#39;tripod.vtk&#39;</span><span class="p">,</span><span class="s">&#39;ascii&#39;</span><span class="p">,</span><span class="n">VM</span><span class="p">,</span><span class="s">&#39;vm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here is the final figure, displaying the <span class="target" id="index-5"></span><tt class="xref std std-envvar docutils literal"><span class="pre">Von</span> <span class="pre">Mises</span></tt> stress:</p>
+<div class="figure align-center" id="malb-fig-tripod-vm">
+<a class="reference internal image-reference" href="../_images/tripodvonmiseswithmesh.png"><img alt="../_images/tripodvonmiseswithmesh.png" src="../_images/tripodvonmiseswithmesh.png" style="width: 300pt;" /></a>
+<p class="caption">deformed tripod</p>
+</div>
+</div>
+<div class="section" id="avoiding-the-bricks-framework">
+<h2>Avoiding the bricks framework<a class="headerlink" href="#avoiding-the-bricks-framework" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The model bricks are very convenient, as they hide most of the details of the
+assembly of the final linear systems. However it is also possible to stay at a
+lower level, and handle the assembly of linear systems, and their resolution,
+directly in <em>MatLab</em>. For example, the demonstration <tt class="file docutils literal"><span class="pre">demo_tripod_alt.m</span></tt> is
+very similar to the <tt class="file docutils literal"><span class="pre">demo_tripod.m</span></tt> except that the assembly is explicit:</p>
+<div class="highlight-matlab"><pre>nbd=get(mfd, &#x27;nbdof&#x27;);
+F = gf_asm(&#x27;boundary_source&#x27;, 1, mim, mfu, mfd, repmat([0;-10;0],1,nbd));
+K = gf_asm(&#x27;linear_elasticity&#x27;, mim, mfu, mfd, ...
+           lambda*ones(1,nbd),mu*ones(1,nbd));
+
+% handle Dirichlet condition
+[H,R]=gf_asm(&#x27;dirichlet&#x27;, 2, mim, mfu, mfd, repmat(eye(3),[1,1,nbd]), zeros(3, nbd));
+[N,U0]=gf_spmat_get(H, &#x27;dirichlet_nullspace&#x27;, R);
+KK=N&#x27;*K*N;
+FF=N&#x27;*F;
+% solve ...
+disp(&#x27;solving...&#x27;); t0 = cputime;
+lsolver = 1 % change this to compare the different solvers
+if (lsolver == 1),     % conjugate gradient
+  P=gfPrecond(&#x27;ildlt&#x27;,KK);
+  UU=gf_linsolve(&#x27;cg&#x27;,KK,FF,P,&#x27;noisy&#x27;,&#x27;res&#x27;,1e-9);
+elseif (lsolver == 2), % superlu
+  UU=gf_linsolve(&#x27;superlu&#x27;,KK,FF);
+else                   % the matlab &quot;slash&quot; operator
+  UU=KK \ FF;
+end;
+disp(sprintf(&#x27;linear system solved in \%.2f sec&#x27;, cputime-t0));
+U=(N*UU).&#x27;+U0;</pre>
+</div>
+<p>In <em>getfem-interface</em>, the assembly of vectors, and matrices is done via the <tt class="docutils literal"><span class="pre">gf_asm</span></tt>
+function. The Dirichlet condition <img class="math" src="../_images/math/0a8209de9a11595e255d5043a87420c5e234e20f.png" alt="u(x) = r(x)" style="vertical-align: -4px"/> is handled in the weak form
+<img class="math" src="../_images/math/877672265d6936a421dd14e46f28a716c12fb47d.png" alt="\int (h(x)u(x)).v(x) = \int r(x).v(x)\quad \forall v" style="vertical-align: -6px"/> (where <img class="math" src="../_images/math/1f745cf4286f88b236750e1e9a8abe3dacd9dc39.png" alt="h(x)" style="vertical-align: -4px"/>
+is a <img class="math" src="../_images/math/77d7104f34af16053b63ce7cfa87265d915c6105.png" alt="3\times3" style="vertical-align: 0px"/> matrix field &#8211; here it is constant and equal to the
+identity). The reduced system <tt class="docutils literal"><span class="pre">KK</span> <span class="pre">UU</span> <span class="pre">=</span> <span class="pre">FF</span></tt> is then built via the elimination of
+Dirichlet constraints from the original system. Note that it might be more
+efficient (and simpler) to deal with Dirichlet condition via a penalization
+technique.</p>
+</div>
+<div class="section" id="other-examples">
+<h2>Other examples<a class="headerlink" href="#other-examples" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li>the <tt class="file docutils literal"><span class="pre">demo_refine.m</span></tt> script shows a simple 2D or 3D bar whose extremity is
+clamped. An adaptative refinement is used to obtain a better approximation in
+the area where the stress is singular (the transition between the clamped area
+and the neumann boundary).</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_nonlinear_elasticity.m</span></tt> script shows a 3D bar which is is
+bended and twisted. This is a quasi-static problem as the deformation is
+applied in many steps. At each step, a non-linear (large deformations)
+elasticity problem is solved.</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_stokes_3D_tank.m</span></tt> script shows a Stokes (viscous fluid) problem
+in a tank. The <tt class="file docutils literal"><span class="pre">demo_stokes_3D_tank_draw.m</span></tt> shows how to draw a nice plot
+of the solution, with mesh slices and stream lines. Note that the
+<tt class="file docutils literal"><span class="pre">demo_stokes_3D_tank_alt.m</span></tt> is the old example, which uses the deprecated
+<tt class="docutils literal"><span class="pre">gf_solve</span></tt> function.</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_bilaplacian.m</span></tt> script is just an adaption of the <em>GetFEM++</em> example
+<tt class="file docutils literal"><span class="pre">tests/bilaplacian.cc</span></tt>. Solve the bilaplacian (or a Kirchhoff-Love plate
+model) on a square.</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_plasticity.m</span></tt> script is an adaptation of the <em>GetFEM++</em> example
+<tt class="file docutils literal"><span class="pre">tests/plasticity.cc</span></tt>: a 2D or 3D bar is bended in many steps, and the
+plasticity of the material is taken into account (plastification occurs when
+the material&#8217;s Von Mises exceeds a given threshold).</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_wave2D.m</span></tt> is a 2D scalar wave equation example (diffraction of
+a plane wave by a cylinder), with high order geometric transformations and high
+order FEMs.</li>
+</ul>
+</div>
+<div class="section" id="using-matlab-object-oriented-features">
+<h2>Using Matlab Object-Oriented features<a class="headerlink" href="#using-matlab-object-oriented-features" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The basic functions of the <em>GetFEM++</em> toolbox do not use any advanced <em>MatLab</em> features
+(except that the handles to getfem objects are stored in a small <em>MatLab</em>
+structure). But the toolbox comes with a set of <em>MatLab</em> objects, which encapsulate
+the handles and make them look as real <em>MatLab</em> objects. The aim is not to provide
+extra-functionalities, but to have a better integration of the toolbox with
+<em>MatLab</em>.</p>
+<p>Here is an example of its use:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">=</span><span class="n">gf_mesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">m</span> <span class="p">=</span>
+     <span class="n">id</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="n">cid</span><span class="p">:</span> <span class="mi">0</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">m2</span><span class="p">=</span><span class="n">gfMesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">gfMesh</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span><span class="mi">1</span> <span class="p">[</span><span class="mi">17512</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">dim</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">121</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">100</span>
+<span class="c">% while \kw{m} is a simple structure, \kw{m2} has been flagged by |mlab|</span>
+<span class="c">% as  an object of class gfMesh.  Since the \texttt{display} method for</span>
+<span class="c">% these  objects  have  been  overloaded,  the  toolbox  displays  some</span>
+<span class="c">% information about the mesh instead of the content of the structure.</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;nbpts&#39;</span><span class="p">)</span>
+<span class="nb">ans</span> <span class="p">=</span>
+   <span class="mi">121</span>
+<span class="c">% pseudo member access (which calls ##gf_mesh_get(m2,&#39;nbpts&#39;))</span>
+<span class="o">&gt;&gt;</span> <span class="n">m2</span><span class="p">.</span><span class="n">nbpts</span>
+<span class="nb">ans</span> <span class="p">=</span>
+   <span class="mi">121</span>
+</pre></div>
+</div>
+<p>Refer to the OO-commands reference <a class="reference internal" href="oocmd.html#mlab-oocmd"><em>GetFEM++ OO-commands</em></a> for more details.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#a-step-by-step-basic-example">A step-by-step basic example</a></li>
+<li><a class="reference internal" href="#another-laplacian-with-exact-solution">Another Laplacian with exact solution</a></li>
+<li><a class="reference internal" href="#linear-and-non-linear-elasticity">Linear and non-linear elasticity</a></li>
+<li><a class="reference internal" href="#avoiding-the-bricks-framework">Avoiding the bricks framework</a></li>
+<li><a class="reference internal" href="#other-examples">Other examples</a></li>
+<li><a class="reference internal" href="#using-matlab-object-oriented-features">Using Matlab Object-Oriented features</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="mlabgf.html"
+                        title="前の章へ"><em>GetFEM++</em> organization</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="plotcmdref.html"
+                        title="次の章へ">Draw Command reference</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="plotcmdref.html" title="Draw Command reference"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="mlabgf.html" title="GetFEM++ organization"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

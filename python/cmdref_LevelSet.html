@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LevelSet &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="Mesh" href="cmdref_Mesh.html" />
+    <link rel="prev" title="Integ" href="cmdref_Integ.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Mesh.html" title="Mesh"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Integ.html" title="Integ"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="levelset">
+<h1>LevelSet<a class="headerlink" href="#levelset" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.LevelSet">
+<em class="property">class </em><tt class="descname">LevelSet</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.LevelSet" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM LevelSet object</p>
+<p>The level-set object is represented by a primary level-set and optionally
+a secondary level-set used to represent fractures (if p(x) is the primary
+level-set function and s(x) is the secondary level-set, the crack is
+defined by <img class="math" src="../_images/math/43407f6a2b5d524f6e57c70c914ef7dca7d505b3.png" alt="p(x)=0" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/56e9bde60a377cc43d16572897b612a0dcefd914.png" alt="s(x)\leq0" style="vertical-align: -4px"/> : the role of the secondary is to determine
+the crack front/tip).</p>
+<p>note:</p>
+<blockquote>
+<div>All tools listed below need the package qhull installed on your
+system. This package is widely available. It computes convex hull and
+delaunay triangulations in arbitrary dimension.</div></blockquote>
+<p>General constructor for LevelSet objects</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">LS</span> <span class="pre">=</span> <span class="pre">LevelSet(Mesh</span> <span class="pre">m,</span> <span class="pre">int</span> <span class="pre">d[,</span> <span class="pre">string</span> <span class="pre">'ws'|</span> <span class="pre">string</span> <span class="pre">f1[,</span> <span class="pre">string</span> <span class="pre">f2</span> <span class="pre">|</span> <span class="pre">string</span> <span class="pre">'ws']])</span></tt>
+Create a LevelSet object on a Mesh represented by a primary function
+(and optional secondary function, both) defined on a lagrange MeshFem of
+degree <cite>d</cite>.</p>
+<p>If <cite>ws</cite> (with secondary) is set; this levelset is represented by a
+primary function and a secondary function. If <cite>f1</cite> is set; the primary
+function is defined by that expression (with the syntax of the high
+generic assembly language). If <cite>f2</cite> is set; this levelset
+is represented by a primary function and a secondary function defined
+by these expressions.</p>
+</li>
+</ul>
+<dl class="method">
+<dt id="getfem.LevelSet.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.LevelSet.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a (unique) string representation of the LevelSet.</p>
+<p>This can be used to perform comparisons between two
+different LevelSet objects.
+This function is to be completed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.LevelSet.degree">
+<tt class="descname">degree</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.LevelSet.degree" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the degree of lagrange representation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.LevelSet.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.LevelSet.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a LevelSet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.LevelSet.memsize">
+<tt class="descname">memsize</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.LevelSet.memsize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the amount of memory (in bytes) used by the level-set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.LevelSet.mf">
+<tt class="descname">mf</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.LevelSet.mf" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a reference on the MeshFem object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.LevelSet.set_values">
+<tt class="descname">set_values</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.LevelSet.set_values" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: LevelSet.set_values(self, {mat v1|string func_1}[, mat v2|string func_2])</p>
+<p>Set values of the vector of dof for the level-set functions.</p>
+<p>Set the primary function with the vector of dof <cite>v1</cite> (or the expression
+<cite>func_1</cite>) and the secondary function (if any) with  the vector of dof
+<cite>v2</cite> (or the expression <cite>func_2</cite>)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.LevelSet.simplify">
+<tt class="descname">simplify</tt><big>(</big><em>eps=0.01</em><big>)</big><a class="headerlink" href="#getfem.LevelSet.simplify" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Simplify dof of level-set optionally with the parameter <cite>eps</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.LevelSet.values">
+<tt class="descname">values</tt><big>(</big><em>nls</em><big>)</big><a class="headerlink" href="#getfem.LevelSet.values" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the vector of dof for <cite>nls</cite> funtion.</p>
+<p>If <cite>nls</cite> is 0, the method return the vector of dof for the primary
+level-set funtion. If <cite>nls</cite> is 1, the method return the vector of
+dof for the secondary level-set function (if any).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Integ.html"
+                        title="前の章へ">Integ</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Mesh.html"
+                        title="次の章へ">Mesh</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Mesh.html" title="Mesh"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Integ.html" title="Integ"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

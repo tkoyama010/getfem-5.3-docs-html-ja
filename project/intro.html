@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the Project" href="index.html" />
+    <link rel="next" title="How to contribute / Git repository on Savannah" href="contribute.html" />
+    <link rel="prev" title="Description of the Project" href="index.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="contribute.html" title="How to contribute / Git repository on Savannah"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Description of the Project"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<span id="dp-intro"></span><h1>Introduction<a class="headerlink" href="#introduction" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The aim of this document is to report details of the internal of <em>GetFEM++</em>
+useful for developers that have no place in the user documentation.
+It is also to outline the main prospects for the future development
+of <em>GetFEM++</em>. A list of modifications to be done and main tasks is updated
+on Savannah <a class="reference external" href="https://savannah.nongnu.org/task/?group=getfem"><a class="reference external" href="https://savannah.nongnu.org/task/?group=getfem">https://savannah.nongnu.org/task/?group=getfem</a></a>.</p>
+<p>The <em>GetFEM++</em> project focuses on the development of an open source generic
+finite element library.
+The goal is to provide a finite element framework which allows to
+easily build numerical code for the modelisation of system described
+by partial differential equations (p.d.e.). A special attention is paid
+to the flexibility of the use of the library in the sense that the
+switch from a method offered by the library to another is made as easy
+as possible.</p>
+<p>The major point allowing this, compared to traditional finite element
+codes, is the complete separation between the description of p.d.e.
+models and finite element methods. Moreover, a separation is made
+between integration methods (exact or approximated), geometric
+transformations (linear or not) and finite element methods of
+arbitrary degrees described on a reference element. <em>GetFEM++</em> can
+be used to build very general finite elements codes, where the
+finite elements, integration methods, dimension of the meshes,
+are just some parameters that can
+be changed very easily, thus allowing a large spectrum of experimentations.
+Numerous examples are available in the <tt class="file docutils literal"><span class="pre">tests</span></tt> directory of the
+distribution.</p>
+<p>The goal is also to make the addition of new finite element method
+as simple as possible. For standard method, a description of the
+finite element shape functions and the type of connection of degrees
+of freedom on the reference element is sufficient. Extensions are
+provided for Hermite elements, piecewise polynomial, non-polynomial,
+vectorial elements and XFem. Examples of predefined
+available methods are <img class="math" src="../_images/math/76ebaba4ae3d5c911d6e31ad855d502ad88d48a6.png" alt="P_k" style="vertical-align: -3px"/> on simplices in arbitrary degrees and
+dimensions, <img class="math" src="../_images/math/1d12d36ff17f66936fc1fecced3d3e2ecaca2b41.png" alt="Q_k" style="vertical-align: -4px"/> on parallelepipeds, <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/>
+with bubble functions, Hermite elements, elements with hierarchic
+basis (for multigrid methods for instance),
+discontinuous <img class="math" src="../_images/math/76ebaba4ae3d5c911d6e31ad855d502ad88d48a6.png" alt="P_k" style="vertical-align: -3px"/> or <img class="math" src="../_images/math/1d12d36ff17f66936fc1fecced3d3e2ecaca2b41.png" alt="Q_k" style="vertical-align: -4px"/>, XFem, Argyris, HCT, Raviart-Thomas.</p>
+<p>The library also includes the usual tools for finite elements such as assembly
+procedures for classical PDEs, interpolation methods, computation of norms,
+mesh operations, boundary conditions, post-processing tools such as
+extraction of slices from a mesh ...</p>
+<p>The aim of the <em>GetFEM++</em> project is not to provide a ready to use
+finite element code allowing for instance structural mechanics
+computations with a graphic interface. It is basically a library
+allowing the build of C++  finite element codes.
+However, the Python, Scilab and matlab interfaces allows to easily build application
+coupling the definition of the problem, the finite element methods
+selection and the graphical post-processing.</p>
+<p>Copyright © 2004-2018 <em>GetFEM++</em> project.</p>
+<p>The text of the <em>GetFEM++</em> website and the documentations are available for modification and reuse under the terms of the <a class="reference external" href="http://www.gnu.org/licenses/fdl.html">GNU Free Documentation License</a></p>
+<p>GetFEM++  is  free software;  you  can  redistribute  it  and/or modify it
+under  the  terms  of the  GNU  Lesser General Public License as published
+by  the  Free Software Foundation;  either version 3 of the License,  or
+(at your option) any later version along with the GCC Runtime Library
+Exception either version 3.1 or (at your option) any later version.
+This program  is  distributed  in  the  hope  that it will be useful,  but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or  FITNESS  FOR  A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License and GCC Runtime Library Exception for more details.
+You  should  have received a copy of the GNU Lesser General Public License
+along  with  this program;  if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="index.html"
+                        title="前の章へ">Description of the Project</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="contribute.html"
+                        title="次の章へ">How to contribute / Git repository on Savannah</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="contribute.html" title="How to contribute / Git repository on Savannah"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Description of the Project"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

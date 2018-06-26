@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_mesh_set &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_mesh_fem" href="cmdref_gf_mesh_fem.html" />
+    <link rel="prev" title="gf_mesh_get" href="cmdref_gf_mesh_get.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_fem.html" title="gf_mesh_fem"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_get.html" title="gf_mesh_get"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-mesh-set">
+<h1>gf_mesh_set<a class="headerlink" href="#gf-mesh-set" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>PIDs = gf_mesh_set(mesh M, &#x27;pts&#x27;, mat PTS)
+PIDs = gf_mesh_set(mesh M, &#x27;add point&#x27;, mat PTS)
+gf_mesh_set(mesh M, &#x27;del point&#x27;, ivec PIDs)
+CVIDs = gf_mesh_set(mesh M, &#x27;add convex&#x27;, geotrans GT, mat PTS)
+gf_mesh_set(mesh M, &#x27;del convex&#x27;, mat CVIDs)
+gf_mesh_set(mesh M, &#x27;del convex of dim&#x27;, ivec DIMs)
+gf_mesh_set(mesh M, &#x27;translate&#x27;, vec V)
+gf_mesh_set(mesh M, &#x27;transform&#x27;, mat T)
+gf_mesh_set(mesh M, &#x27;boundary&#x27;, int rnum, mat CVFIDs)
+gf_mesh_set(mesh M, &#x27;region&#x27;, int rnum, mat CVFIDs)
+gf_mesh_set(mesh M, &#x27;extend region&#x27;, int rnum, mat CVFIDs)
+gf_mesh_set(mesh M, &#x27;region intersect&#x27;, int r1, int r2)
+gf_mesh_set(mesh M, &#x27;region merge&#x27;, int r1, int r2)
+gf_mesh_set(mesh M, &#x27;region subtract&#x27;, int r1, int r2)
+gf_mesh_set(mesh M, &#x27;delete boundary&#x27;, int rnum, mat CVFIDs)
+gf_mesh_set(mesh M, &#x27;delete region&#x27;, ivec RIDs)
+gf_mesh_set(mesh M, &#x27;merge&#x27;, mesh m2[, scalar  tol])
+gf_mesh_set(mesh M, &#x27;optimize structure&#x27;[, int with_renumbering])
+gf_mesh_set(mesh M, &#x27;refine&#x27;[, ivec CVIDs])</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function for modification of a mesh object.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">PIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'pts',</span> <span class="pre">mat</span> <span class="pre">PTS)</span></tt></p>
+<blockquote>
+<div>Replace the coordinates of the mesh points with those given in <cite>PTS</cite>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'add</span> <span class="pre">point',</span> <span class="pre">mat</span> <span class="pre">PTS)</span></tt></p>
+<blockquote>
+<div><p>Insert new points in the mesh and return their #ids.</p>
+<p><cite>PTS</cite> should be an <tt class="docutils literal"><span class="pre">nxm</span></tt> matrix , where <tt class="docutils literal"><span class="pre">n</span></tt> is the mesh
+dimension, and <tt class="docutils literal"><span class="pre">m</span></tt> is the number of points that will be
+added to the mesh. On output, <cite>PIDs</cite> contains the point #ids
+of these new points.</p>
+<p>Remark: if some points are already part of the mesh (with a small
+tolerance of approximately <tt class="docutils literal"><span class="pre">1e-8</span></tt>), they won&#8217;t be inserted again,
+and <cite>PIDs</cite> will contain the previously assigned #ids of these
+points.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'del</span> <span class="pre">point',</span> <span class="pre">ivec</span> <span class="pre">PIDs)</span></tt></p>
+<blockquote>
+<div><p>Removes one or more points from the mesh.</p>
+<p><cite>PIDs</cite> should contain the point #ids, such as the one returned by
+the &#8216;add point&#8217; command.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'add</span> <span class="pre">convex',</span> <span class="pre">geotrans</span> <span class="pre">GT,</span> <span class="pre">mat</span> <span class="pre">PTS)</span></tt></p>
+<blockquote>
+<div><p>Add a new convex into the mesh.</p>
+<p>The convex structure (triangle, prism,...) is given by <cite>GT</cite>
+(obtained with gf_geotrans(&#8216;...&#8217;)), and its points are given by
+the columns of <cite>PTS</cite>. On return, <cite>CVIDs</cite> contains the convex #ids.
+<cite>PTS</cite> might be a 3-dimensional array in order to insert more than
+one convex (or a two dimensional array correctly shaped according
+to Fortran ordering).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'del</span> <span class="pre">convex',</span> <span class="pre">mat</span> <span class="pre">CVIDs)</span></tt></p>
+<blockquote>
+<div><p>Remove one or more convexes from the mesh.</p>
+<p><cite>CVIDs</cite> should contain the convexes #ids, such as the ones
+returned by the &#8216;add convex&#8217; command.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'del</span> <span class="pre">convex</span> <span class="pre">of</span> <span class="pre">dim',</span> <span class="pre">ivec</span> <span class="pre">DIMs)</span></tt></p>
+<blockquote>
+<div><p>Remove all convexes of dimension listed in <cite>DIMs</cite>.</p>
+<p>For example; <tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'del</span> <span class="pre">convex</span> <span class="pre">of</span> <span class="pre">dim',</span> <span class="pre">[1,2])</span></tt> remove
+all line segments, triangles and quadrangles.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'translate',</span> <span class="pre">vec</span> <span class="pre">V)</span></tt></p>
+<blockquote>
+<div>Translates each point of the mesh from <cite>V</cite>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'transform',</span> <span class="pre">mat</span> <span class="pre">T)</span></tt></p>
+<blockquote>
+<div><p>Applies the matrix <cite>T</cite> to each point of the mesh.</p>
+<p>Note that <cite>T</cite> is not required to be a <tt class="docutils literal"><span class="pre">NxN</span></tt> matrix (with
+<tt class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'dim')</span></tt>). Hence it is possible to transform
+a 2D mesh into a 3D one (and reciprocally).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'boundary',</span> <span class="pre">int</span> <span class="pre">rnum,</span> <span class="pre">mat</span> <span class="pre">CVFIDs)</span></tt></p>
+<blockquote>
+<div>DEPRECATED FUNCTION. Use &#8216;region&#8217; instead.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'region',</span> <span class="pre">int</span> <span class="pre">rnum,</span> <span class="pre">mat</span> <span class="pre">CVFIDs)</span></tt></p>
+<blockquote>
+<div><p>Assigns the region number <cite>rnum</cite> to the set of convexes or/and convex
+faces provided in the matrix <cite>CVFIDs</cite>.</p>
+<p>The first row of <cite>CVFIDs</cite> contains convex #ids, and the second row
+contains a face number in the convex (or 0
+for the whole convex (regions are usually used to store a list of
+convex faces, but you may also use them to store a list of convexes).</p>
+<p>If a vector is provided (or a one row matrix) the region will represent
+the corresponding set of convex.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'extend</span> <span class="pre">region',</span> <span class="pre">int</span> <span class="pre">rnum,</span> <span class="pre">mat</span> <span class="pre">CVFIDs)</span></tt></p>
+<blockquote>
+<div>Extends the region identified by the region number <cite>rnum</cite> to include
+the set of convexes or/and convex faces provided in the matrix
+<cite>CVFIDs</cite>, see also <tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'set</span> <span class="pre">region)</span></tt>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'region</span> <span class="pre">intersect',</span> <span class="pre">int</span> <span class="pre">r1,</span> <span class="pre">int</span> <span class="pre">r2)</span></tt></p>
+<blockquote>
+<div>Replace the region number <cite>r1</cite> with its intersection with region number <cite>r2</cite>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'region</span> <span class="pre">merge',</span> <span class="pre">int</span> <span class="pre">r1,</span> <span class="pre">int</span> <span class="pre">r2)</span></tt></p>
+<blockquote>
+<div>Merge region number <cite>r2</cite> into region number <cite>r1</cite>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'region</span> <span class="pre">subtract',</span> <span class="pre">int</span> <span class="pre">r1,</span> <span class="pre">int</span> <span class="pre">r2)</span></tt></p>
+<blockquote>
+<div>Replace the region number <cite>r1</cite> with its difference with region
+number <cite>r2</cite>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'delete</span> <span class="pre">boundary',</span> <span class="pre">int</span> <span class="pre">rnum,</span> <span class="pre">mat</span> <span class="pre">CVFIDs)</span></tt></p>
+<blockquote>
+<div>DEPRECATED FUNCTION. Use &#8216;delete region&#8217; instead.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'delete</span> <span class="pre">region',</span> <span class="pre">ivec</span> <span class="pre">RIDs)</span></tt></p>
+<blockquote>
+<div>Remove the regions whose #ids are listed in <cite>RIDs</cite></div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'merge',</span> <span class="pre">mesh</span> <span class="pre">m2[,</span> <span class="pre">scalar</span>&nbsp; <span class="pre">tol])</span></tt></p>
+<blockquote>
+<div><p>Merge with the mesh <cite>m2</cite>.</p>
+<p>Overlapping points, within a tolerance radius <cite>tol</cite>, will not be
+duplicated. If <cite>m2</cite> is a mesh_fem object, its linked mesh will be used.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'optimize</span> <span class="pre">structure'[,</span> <span class="pre">int</span> <span class="pre">with_renumbering])</span></tt></p>
+<blockquote>
+<div><p>Reset point and convex numbering.</p>
+<p>After optimisation, the points (resp. convexes) will
+be consecutively numbered from 1 to gf_mesh_get(mesh M, &#8216;max pid&#8217;)
+(resp. gf_mesh_get(mesh M, &#8216;max cvid&#8217;)).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_set(mesh</span> <span class="pre">M,</span> <span class="pre">'refine'[,</span> <span class="pre">ivec</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Use a Bank strategy for mesh refinement.</p>
+<p>If <cite>CVIDs</cite> is not given, the whole mesh is refined. Note
+that the regions, and the finite element methods and
+integration methods of the mesh_fem and mesh_im objects linked
+to this mesh will be automagically refined.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_get.html"
+                        title="前の章へ">gf_mesh_get</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_fem.html"
+                        title="次の章へ">gf_mesh_fem</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_fem.html" title="gf_mesh_fem"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_get.html" title="gf_mesh_get"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

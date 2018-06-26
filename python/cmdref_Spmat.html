@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spmat &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="Module asm" href="cmdref_Module asm.html" />
+    <link rel="prev" title="Slice" href="cmdref_Slice.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Module asm.html" title="Module asm"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Slice.html" title="Slice"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="spmat">
+<h1>Spmat<a class="headerlink" href="#spmat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.Spmat">
+<em class="property">class </em><tt class="descname">Spmat</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.Spmat" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM Spmat object</p>
+<p>Create a new sparse matrix in getfem++ format. These sparse matrix can be stored as CSC (compressed column
+sparse), which is the format used by Matlab, or they can be stored as WSC
+(internal format to getfem). The CSC matrices are not writable (it would
+be very inefficient), but they are optimized for multiplication with
+vectors, and memory usage. The WSC are writable, they are very fast with
+respect to random read/write operation. However their memory overhead is
+higher than CSC matrices, and they are a little bit slower for
+matrix-vector multiplications.</p>
+<p>By default, all newly created matrices are build as WSC matrices. This can
+be changed later with <tt class="docutils literal"><span class="pre">Spmat.to_csc(...)</span></tt>, or may be changed
+automatically by getfem (for example <tt class="docutils literal"><span class="pre">gf_linsolve()</span></tt> converts the
+matrices to CSC).</p>
+<p>The matrices may store REAL or COMPLEX values.</p>
+<p>General constructor for Spmat objects</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">Spmat('empty',</span> <span class="pre">int</span> <span class="pre">m</span> <span class="pre">[,</span> <span class="pre">int</span> <span class="pre">n])</span></tt>
+Create a new empty (i.e. full of zeros) sparse matrix, of dimensions
+<cite>m x n</cite>. If <cite>n</cite> is omitted, the matrix dimension is <cite>m x m</cite>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">Spmat('copy',</span> <span class="pre">mat</span> <span class="pre">K</span> <span class="pre">[,</span> <span class="pre">list</span> <span class="pre">I</span> <span class="pre">[,</span> <span class="pre">list</span> <span class="pre">J]])</span></tt>
+Duplicate a matrix <cite>K</cite> (which might be a SpMat). If index <cite>I</cite> and/or <cite>J</cite> are given, the matrix will
+be a submatrix of <cite>K</cite>. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">m</span> <span class="o">=</span> <span class="n">Spmat</span><span class="p">(</span><span class="s">&#39;copy&#39;</span><span class="p">,</span> <span class="n">Spmat</span><span class="p">(</span><span class="s">&#39;empty&#39;</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">),</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>will return a 40x5 matrix.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">Spmat('identity',</span> <span class="pre">int</span> <span class="pre">n)</span></tt>
+Create a <cite>n x n</cite> identity matrix.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">Spmat('mult',</span> <span class="pre">Spmat</span> <span class="pre">A,</span> <span class="pre">Spmat</span> <span class="pre">B)</span></tt>
+Create a sparse matrix as the product of the sparse matrices <cite>A</cite> and
+<cite>B</cite>. It requires that <cite>A</cite> and <cite>B</cite> be both real or both complex, you
+may have to use <tt class="docutils literal"><span class="pre">Spmat.to_complex()</span></tt></p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">Spmat('add',</span> <span class="pre">Spmat</span> <span class="pre">A,</span> <span class="pre">Spmat</span> <span class="pre">B)</span></tt>
+Create a sparse matrix as the sum of the sparse matrices <cite>A</cite> and <cite>B</cite>.
+Adding a real matrix with a complex matrix is possible.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">Spmat('diag',</span> <span class="pre">mat</span> <span class="pre">D</span> <span class="pre">[,</span> <span class="pre">ivec</span> <span class="pre">E</span> <span class="pre">[,</span> <span class="pre">int</span> <span class="pre">n</span> <span class="pre">[,int</span> <span class="pre">m]]])</span></tt>
+Create a diagonal matrix. If <cite>E</cite> is given, <cite>D</cite> might be a matrix and
+each column of <cite>E</cite> will contain the sub-diagonal number that will be
+filled with the corresponding column of <cite>D</cite>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">Spmat('load','hb'|'harwell-boeing'|'mm'|'matrix-market',</span> <span class="pre">string</span> <span class="pre">filename)</span></tt>
+Read a sparse matrix from an Harwell-Boeing or a Matrix-Market file
+.</p>
+</li>
+</ul>
+<dl class="method">
+<dt id="getfem.Spmat.add">
+<tt class="descname">add</tt><big>(</big><em>I</em>, <em>J</em>, <em>V</em><big>)</big><a class="headerlink" href="#getfem.Spmat.add" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add <cite>V</cite> to the sub-matrix &#8216;M(I,J)&#8217;.</p>
+<p><cite>V</cite> might be a sparse matrix or a full matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.assign">
+<tt class="descname">assign</tt><big>(</big><em>I</em>, <em>J</em>, <em>V</em><big>)</big><a class="headerlink" href="#getfem.Spmat.assign" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Copy V into the sub-matrix &#8216;M(I,J)&#8217;.</p>
+<p><cite>V</cite> might be a sparse matrix or a full matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a (unique) string representation of the Spmat.</p>
+<p>This can be used to perform comparisons between two
+different Spmat objects.
+This function is to be completed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.clear">
+<tt class="descname">clear</tt><big>(</big><em>I=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Spmat.clear" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Spmat.clear(self[, list I[, list J]])</p>
+<p>Erase the non-zero entries of the matrix.</p>
+<p>The optional arguments <cite>I</cite> and <cite>J</cite> may be specified to clear a
+sub-matrix instead of the entire matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.conjugate">
+<tt class="descname">conjugate</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.conjugate" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Conjugate each element of the matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.csc_ind">
+<tt class="descname">csc_ind</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.csc_ind" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the two usual index arrays of CSC storage.</p>
+<p>If <cite>M</cite> is not stored as a CSC matrix, it is converted into CSC.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.csc_val">
+<tt class="descname">csc_val</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.csc_val" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the array of values of all non-zero entries of <cite>M</cite>.</p>
+<p>If <cite>M</cite> is not stored as a CSC matrix, it is converted into CSC.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.determinant">
+<tt class="descname">determinant</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.determinant" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>returns the matrix determinant calculated using MUMPS.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.diag">
+<tt class="descname">diag</tt><big>(</big><em>E=None</em><big>)</big><a class="headerlink" href="#getfem.Spmat.diag" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the diagonal of <cite>M</cite> as a vector.</p>
+<p>If <cite>E</cite> is used, return the sub-diagonals whose ranks are given in E.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.dirichlet_nullspace">
+<tt class="descname">dirichlet_nullspace</tt><big>(</big><em>R</em><big>)</big><a class="headerlink" href="#getfem.Spmat.dirichlet_nullspace" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Solve the dirichlet conditions <cite>M.U=R</cite>.</p>
+<p>A solution <cite>U0</cite> which has a minimum L2-norm is returned, with a
+sparse matrix <cite>N</cite> containing an orthogonal basis of the kernel of
+the (assembled) constraints matrix <cite>M</cite> (hence, the PDE linear system
+should be solved on this subspace): the initial problem</p>
+<p><cite>K.U = B</cite> with constraints <cite>M.U = R</cite></p>
+<p>is replaced by</p>
+<p><cite>(N&#8217;.K.N).UU = N&#8217;.B</cite> with <cite>U = N.UU + U0</cite></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a Spmat object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.full">
+<tt class="descname">full</tt><big>(</big><em>I=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Spmat.full" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Sm = Spmat.full(self[, list I[, list J]])</p>
+<p>Return a full (sub-)matrix.</p>
+<p>The optional arguments <cite>I</cite> and <cite>J</cite>, are the sub-intervals for the
+rows and columns that are to be extracted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.is_complex">
+<tt class="descname">is_complex</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.is_complex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 1 if the matrix contains complex values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.mult">
+<tt class="descname">mult</tt><big>(</big><em>V</em><big>)</big><a class="headerlink" href="#getfem.Spmat.mult" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Product of the sparse matrix <cite>M</cite> with a vector <cite>V</cite>.</p>
+<p>For matrix-matrix multiplications, see Spmat(&#8216;mult&#8217;).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.nnz">
+<tt class="descname">nnz</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.nnz" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the number of non-null values stored in the sparse matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.save">
+<tt class="descname">save</tt><big>(</big><em>format</em>, <em>filename</em><big>)</big><a class="headerlink" href="#getfem.Spmat.save" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Export the sparse matrix.</p>
+<p>the format of the file may be &#8216;hb&#8217; for Harwell-Boeing, or &#8216;mm&#8217;
+for Matrix-Market.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.scale">
+<tt class="descname">scale</tt><big>(</big><em>v</em><big>)</big><a class="headerlink" href="#getfem.Spmat.scale" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Multiplies the matrix by a scalar value <cite>v</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.set_diag">
+<tt class="descname">set_diag</tt><big>(</big><em>D</em>, <em>E=None</em><big>)</big><a class="headerlink" href="#getfem.Spmat.set_diag" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Change the diagonal (or sub-diagonals) of the matrix.</p>
+<p>If <cite>E</cite> is given, <cite>D</cite> might be a matrix and each column of <cite>E</cite> will
+contain the sub-diagonal number that will be filled with the
+corresponding column of <cite>D</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.size">
+<tt class="descname">size</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.size" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a vector where <cite>ni</cite> and <cite>nj</cite> are the dimensions of the matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.storage">
+<tt class="descname">storage</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.storage" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the storage type currently used for the matrix.</p>
+<p>The storage is returned as a string, either &#8216;CSC&#8217; or &#8216;WSC&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.tmult">
+<tt class="descname">tmult</tt><big>(</big><em>V</em><big>)</big><a class="headerlink" href="#getfem.Spmat.tmult" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Product of <cite>M</cite> transposed (conjugated if <cite>M</cite> is complex) with the
+vector <cite>V</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.to_complex">
+<tt class="descname">to_complex</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.to_complex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Store complex numbers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.to_csc">
+<tt class="descname">to_csc</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.to_csc" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Convert the matrix to CSC storage.</p>
+<p>CSC storage is recommended for matrix-vector multiplications.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.to_wsc">
+<tt class="descname">to_wsc</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.to_wsc" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Convert the matrix to WSC storage.</p>
+<p>Read and write operation are quite fast with WSC storage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.transconj">
+<tt class="descname">transconj</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.transconj" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Transpose and conjugate the matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Spmat.transpose">
+<tt class="descname">transpose</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Spmat.transpose" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Transpose the matrix.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Slice.html"
+                        title="前の章へ">Slice</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Module asm.html"
+                        title="次の章へ">Module asm</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Module asm.html" title="Module asm"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Slice.html" title="Slice"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

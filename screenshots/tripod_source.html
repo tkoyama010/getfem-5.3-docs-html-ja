@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Matlab source code for the tripod &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="next" title="Matlab source code for the Stokes equation example" href="stokes-source.html" />
+    <link rel="prev" title="GetFEM++ in action ..." href="shots.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="stokes-source.html" title="Matlab source code for the Stokes equation example"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="shots.html" title="GetFEM++ in action ..."
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="matlab-source-code-for-the-tripod">
+<span id="tripod-source"></span><h1>Matlab source code for the tripod<a class="headerlink" href="#matlab-source-code-for-the-tripod" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This is the <tt class="file docutils literal"><span class="pre">tests/matlab/demo_tripod.m</span></tt> example.</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="nb">disp</span><span class="p">(</span><span class="s">&#39;This demo is an adaption of the original tripod demo&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;which uses the new &quot;brick&quot; framework of getfem&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;The code is shorter, faster and much more powerful&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;You can easily switch between linear/non linear&#39;</span><span class="p">)</span>
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;compressible/incompressible elasticity!&#39;</span><span class="p">)</span>
+
+<span class="n">linear</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="n">incompressible</span> <span class="p">=</span> <span class="mi">0</span>
+
+
+<span class="n">gf_workspace</span><span class="p">(</span><span class="s">&#39;clear all&#39;</span><span class="p">);</span>
+<span class="c">% import the mesh</span>
+<span class="n">m</span><span class="p">=</span><span class="n">gfMesh</span><span class="p">(</span><span class="s">&#39;import&#39;</span><span class="p">,</span><span class="s">&#39;gid&#39;</span><span class="p">,</span><span class="s">&#39;../meshes/tripod.GiD.msh&#39;</span><span class="p">);</span>
+<span class="n">mfu</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>     <span class="c">% mesh-fem supporting a 3D-vector field</span>
+<span class="n">mfd</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>     <span class="c">% scalar mesh_fem, for data fields.</span>
+<span class="c">% the mesh_im stores the integration methods for each tetrahedron</span>
+<span class="n">mim</span><span class="p">=</span><span class="n">gfMeshIm</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">gf_integ</span><span class="p">(</span><span class="s">&#39;IM_TETRAHEDRON(5)&#39;</span><span class="p">));</span>
+<span class="c">% we choose a P2 fem for the main unknown</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(3,2)&#39;</span><span class="p">));</span>
+<span class="c">% the material is homogeneous, hence we use a P0 fem for the data</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfd</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(3,0)&#39;</span><span class="p">));</span>
+<span class="c">% display some informations about the mesh</span>
+<span class="nb">disp</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;nbcvs=%d, nbpts=%d, nbdof=%d&#39;</span><span class="p">,</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;nbcvs&#39;</span><span class="p">),</span><span class="c">...</span>
+             <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;nbpts&#39;</span><span class="p">),</span><span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;nbdof&#39;</span><span class="p">)));</span>
+<span class="n">P</span><span class="p">=</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;pts&#39;</span><span class="p">);</span> <span class="c">% get list of mesh points coordinates</span>
+<span class="n">pidtop</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="o">-</span><span class="mi">13</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">1e-6</span><span class="p">);</span> <span class="c">% find those on top of the object</span>
+<span class="n">pidbot</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="o">+</span><span class="mi">10</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">1e-6</span><span class="p">);</span> <span class="c">% find those on the bottom</span>
+<span class="c">% build the list of faces from the list of points</span>
+<span class="n">ftop</span><span class="p">=</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;faces from pid&#39;</span><span class="p">,</span><span class="n">pidtop</span><span class="p">);</span> 
+<span class="n">fbot</span><span class="p">=</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;faces from pid&#39;</span><span class="p">,</span><span class="n">pidbot</span><span class="p">);</span>
+<span class="c">% assign boundary numbers</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;boundary&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">ftop</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;boundary&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">fbot</span><span class="p">);</span>
+
+<span class="n">E</span> <span class="p">=</span> <span class="mf">1e3</span><span class="p">;</span> <span class="n">Nu</span> <span class="p">=</span> <span class="mf">0.3</span><span class="p">;</span>
+<span class="c">% set the Lame coefficients</span>
+<span class="n">lambda</span> <span class="p">=</span> <span class="n">E</span><span class="o">*</span><span class="n">Nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">Nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">Nu</span><span class="p">));</span>
+<span class="n">mu</span> <span class="p">=</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Nu</span><span class="p">));</span>
+
+<span class="c">% create a meshfem for the pressure field (used if incompressible ~= 0)</span>
+<span class="n">mfp</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">);</span> <span class="n">set</span><span class="p">(</span><span class="n">mfp</span><span class="p">,</span> <span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gfFem</span><span class="p">(</span><span class="s">&#39;FEM_PK_DISCONTINUOUS(3,0)&#39;</span><span class="p">));</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">linear</span><span class="p">)</span>
+  <span class="c">% the linearized elasticity , for small displacements</span>
+  <span class="n">b0</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;isotropic_linearized_elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span><span class="n">mfu</span><span class="p">)</span>
+  <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;lambda&#39;</span><span class="p">,</span> <span class="n">lambda</span><span class="p">);</span>
+  <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;mu&#39;</span><span class="p">,</span> <span class="n">mu</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">incompressible</span><span class="p">)</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;linear incompressibility term&#39;</span><span class="p">,</span> <span class="n">b0</span><span class="p">,</span> <span class="n">mfp</span><span class="p">);</span>
+  <span class="k">else</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">b0</span><span class="p">;</span>
+  <span class="k">end</span><span class="p">;</span>
+<span class="k">else</span>
+  <span class="c">% See also demo_nonlinear_elasticity for a better example</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">incompressible</span><span class="p">)</span>
+    <span class="n">b0</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;Mooney Rivlin&#39;</span><span class="p">);</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear elasticity incompressibility term&#39;</span><span class="p">,</span><span class="n">b0</span><span class="p">,</span><span class="n">mfp</span><span class="p">);</span>
+    <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;params&#39;</span><span class="p">,[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">]);</span>
+  <span class="k">else</span>
+    <span class="c">% large deformation with a linearized material law.. not</span>
+    <span class="c">% a very good choice!</span>
+    <span class="n">b0</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;SaintVenant Kirchhoff&#39;</span><span class="p">);</span>
+    <span class="n">set</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span><span class="s">&#39;params&#39;</span><span class="p">,[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">]);</span>
+    <span class="c">%b0 = gfMdBrick(&#39;nonlinear elasticity&#39;,mim, mfu, &#39;Ciarlet Geymonat&#39;);</span>
+    <span class="n">b1</span> <span class="p">=</span> <span class="n">b0</span><span class="p">;</span>
+  <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c">% set a vertical force on the top of the tripod</span>
+<span class="n">b2</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;source term&#39;</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">set</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="s">&#39;param&#39;</span><span class="p">,</span> <span class="s">&#39;source_term&#39;</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="n">mfd</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">0</span><span class="p">;</span><span class="o">-</span><span class="mi">10</span><span class="p">;</span><span class="mi">0</span><span class="p">}));</span>
+
+<span class="c">% attach the tripod to the ground</span>
+<span class="n">b3</span> <span class="p">=</span> <span class="n">gfMdBrick</span><span class="p">(</span><span class="s">&#39;dirichlet&#39;</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;penalized&#39;</span><span class="p">);</span>
+
+<span class="n">mds</span><span class="p">=</span><span class="n">gfMdState</span><span class="p">(</span><span class="n">b3</span><span class="p">)</span>
+
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;running solve...&#39;</span><span class="p">)</span>
+
+<span class="n">t0</span><span class="p">=</span><span class="n">cputime</span><span class="p">;</span> 
+
+<span class="n">get</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="n">mds</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="s">&#39;lsolver&#39;</span><span class="p">,</span> <span class="s">&#39;superlu&#39;</span><span class="p">);</span>
+<span class="nb">disp</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;solve done in %.2f sec&#39;</span><span class="p">,</span> <span class="n">cputime</span><span class="o">-</span><span class="n">t0</span><span class="p">));</span>
+
+<span class="n">mfdu</span><span class="p">=</span><span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="c">% the P2 fem is not derivable across elements, hence we use a discontinuous</span>
+<span class="c">% fem for the derivative of U.</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="s">&#39;fem&#39;</span><span class="p">,</span><span class="n">gf_fem</span><span class="p">(</span><span class="s">&#39;FEM_PK_DISCONTINUOUS(3,1)&#39;</span><span class="p">));</span>
+<span class="n">VM</span><span class="p">=</span><span class="n">get</span><span class="p">(</span><span class="n">b0</span><span class="p">,</span> <span class="s">&#39;von mises&#39;</span><span class="p">,</span><span class="n">mds</span><span class="p">,</span><span class="n">mfdu</span><span class="p">);</span>
+
+<span class="n">U</span><span class="p">=</span><span class="n">get</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="s">&#39;state&#39;</span><span class="p">);</span> <span class="n">U</span><span class="p">=</span><span class="n">U</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;nbdof&#39;</span><span class="p">));</span>
+
+<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;plotting ... can also take some minutes!&#39;</span><span class="p">);</span>
+
+<span class="c">% we plot the von mises on the deformed object, in superposition</span>
+<span class="c">% with the initial mesh.</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">linear</span><span class="p">),</span>
+  <span class="n">gf_plot</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="n">VM</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;cvlst&#39;</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;outer faces&#39;</span><span class="p">),</span><span class="c">...</span>
+	  <span class="s">&#39;deformation&#39;</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span><span class="n">mfu</span><span class="p">);</span>
+<span class="k">else</span>
+  <span class="n">gf_plot</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="n">VM</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;cvlst&#39;</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;outer faces&#39;</span><span class="p">),</span><span class="c">...</span>
+	  <span class="s">&#39;deformation&#39;</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+
+<span class="n">caxis</span><span class="p">([</span><span class="mi">0</span> <span class="mi">100</span><span class="p">]);</span>
+<span class="n">colorbar</span><span class="p">;</span> <span class="n">view</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">);</span> <span class="n">camlight</span><span class="p">;</span>
+<span class="n">gf_colormap</span><span class="p">(</span><span class="s">&#39;tripod&#39;</span><span class="p">);</span>
+
+<span class="c">% the von mises stress is exported into a VTK file</span>
+<span class="c">% (which can be viewed with &#39;mayavi -d tripod.vtk -m BandedSurfaceMap&#39;)</span>
+<span class="c">% see http://mayavi.sourceforge.net/</span>
+<span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mfdu</span><span class="p">,</span><span class="s">&#39;export to vtk&#39;</span><span class="p">,</span><span class="s">&#39;tripod.vtk&#39;</span><span class="p">,</span><span class="s">&#39;ascii&#39;</span><span class="p">,</span><span class="n">VM</span><span class="p">,</span><span class="s">&#39;vm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="shots.html"
+                        title="前の章へ">GetFEM++ in action ...</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="stokes-source.html"
+                        title="次の章へ">Matlab source code for the Stokes equation example</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="stokes-source.html" title="Matlab source code for the Stokes equation example"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="shots.html" title="GetFEM++ in action ..."
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

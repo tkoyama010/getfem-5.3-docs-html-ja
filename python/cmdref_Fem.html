@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fem &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="GeoTrans" href="cmdref_GeoTrans.html" />
+    <link rel="prev" title="Eltm" href="cmdref_Eltm.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_GeoTrans.html" title="GeoTrans"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Eltm.html" title="Eltm"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fem">
+<h1>Fem<a class="headerlink" href="#fem" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.Fem">
+<em class="property">class </em><tt class="descname">Fem</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.Fem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM Fem object</p>
+<p>This object represents a finite element method on a reference element.</p>
+<p>General constructor for Fem objects</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">F</span> <span class="pre">=</span> <span class="pre">Fem('interpolated_fem',</span> <span class="pre">MeshFem</span> <span class="pre">mf,</span> <span class="pre">MeshIm</span> <span class="pre">mim,</span> <span class="pre">[ivec</span> <span class="pre">blocked_dof])</span></tt>
+Build a special Fem which is interpolated from another MeshFem.</p>
+<p>Using this special finite element, it is possible to interpolate a given
+MeshFem <cite>mf</cite> on another mesh, given the integration method <cite>mim</cite> that will
+be used on this mesh.</p>
+<p>Note that this finite element may be quite slow, and eats much
+memory.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">F</span> <span class="pre">=</span> <span class="pre">Fem(string</span> <span class="pre">fem_name)</span></tt>
+The <cite>fem_name</cite> should contain a description of the finite element
+method. Please refer to the getfem++ manual (especially the
+description of finite element and integration methods) for a complete
+reference. Here is a list of some of them:</p>
+<ul class="simple">
+<li>FEM_PK(n,k) :
+classical Lagrange element Pk on a simplex of dimension <cite>n</cite>.</li>
+<li>FEM_PK_DISCONTINUOUS(n,k[,alpha]) :
+discontinuous Lagrange element Pk on a simplex of dimension <cite>n</cite>.</li>
+<li>FEM_QK(n,k) :
+classical Lagrange element Qk on quadrangles, hexahedrons etc.</li>
+<li>FEM_QK_DISCONTINUOUS(n,k[,alpha]) :
+discontinuous Lagrange element Qk on quadrangles, hexahedrons etc.</li>
+<li>FEM_Q2_INCOMPLETE(n) :
+incomplete Q2 elements with 8 and 20 dof (serendipity Quad 8 and
+Hexa 20 elements).</li>
+<li>FEM_PK_PRISM(n,k) :
+classical Lagrange element Pk on a prism of dimension <cite>n</cite>.</li>
+<li>FEM_PK_PRISM_DISCONTINUOUS(n,k[,alpha]) :
+classical discontinuous Lagrange element Pk on a prism.</li>
+<li>FEM_PK_WITH_CUBIC_BUBBLE(n,k) :
+classical Lagrange element Pk on a simplex with an additional
+volumic bubble function.</li>
+<li>FEM_P1_NONCONFORMING :
+non-conforming P1 method on a triangle.</li>
+<li>FEM_P1_BUBBLE_FACE(n) :
+P1 method on a simplex with an additional bubble function on face 0.</li>
+<li>FEM_P1_BUBBLE_FACE_LAG :
+P1 method on a simplex with an additional lagrange dof on face 0.</li>
+<li>FEM_PK_HIERARCHICAL(n,k) :
+PK element with a hierarchical basis.</li>
+<li>FEM_QK_HIERARCHICAL(n,k) :
+QK element with a hierarchical basis</li>
+<li>FEM_PK_PRISM_HIERARCHICAL(n,k) :
+PK element on a prism with a hierarchical basis.</li>
+<li>FEM_STRUCTURED_COMPOSITE(Fem f,k) :
+Composite Fem <cite>f</cite> on a grid with <cite>k</cite> divisions.</li>
+<li>FEM_PK_HIERARCHICAL_COMPOSITE(n,k,s) :
+Pk composite element on a grid with <cite>s</cite> subdivisions and with a
+hierarchical basis.</li>
+<li>FEM_PK_FULL_HIERARCHICAL_COMPOSITE(n,k,s) :
+Pk composite element with <cite>s</cite> subdivisions and a hierarchical basis
+on both degree and subdivision.</li>
+<li>FEM_PRODUCT(A,B) :
+tensorial product of two polynomial elements.</li>
+<li>FEM_HERMITE(n) :
+Hermite element P3 on a simplex of dimension <cite>n = 1, 2, 3</cite>.</li>
+<li>FEM_ARGYRIS :
+Argyris element P5 on the triangle.</li>
+<li>FEM_HCT_TRIANGLE :
+Hsieh-Clough-Tocher element on the triangle (composite P3 element
+which is C1), should be used with IM_HCT_COMPOSITE() integration
+method.</li>
+<li>FEM_QUADC1_COMPOSITE :
+Quadrilateral element, composite P3 element and C1 (16 dof).</li>
+<li>FEM_REDUCED_QUADC1_COMPOSITE :
+Quadrilateral element, composite P3 element and C1 (12 dof).</li>
+<li>FEM_RT0(n) :
+Raviart-Thomas element of order 0 on a simplex of dimension <cite>n</cite>.</li>
+<li>FEM_NEDELEC(n) :
+Nedelec edge element of order 0 on a simplex of dimension <cite>n</cite>.</li>
+</ul>
+<p>Of course, you have to ensure that the selected fem is compatible with
+the geometric transformation: a Pk fem has no meaning on a quadrangle.</p>
+</li>
+</ul>
+<dl class="method">
+<dt id="getfem.Fem.base_value">
+<tt class="descname">base_value</tt><big>(</big><em>p</em><big>)</big><a class="headerlink" href="#getfem.Fem.base_value" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Evaluate all basis functions of the FEM at point <cite>p</cite>.</p>
+<p><cite>p</cite> is supposed to be in the reference convex!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Ouput a (unique) string representation of the Fem.</p>
+<p>This can be used to perform comparisons between two different Fem
+objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.dim">
+<tt class="descname">dim</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.dim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the dimension (dimension of the reference convex) of the Fem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a Fem object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.estimated_degree">
+<tt class="descname">estimated_degree</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.estimated_degree" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return an estimation of the polynomial degree of the Fem.</p>
+<p>This is an estimation for fem which are not polynomials.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.grad_base_value">
+<tt class="descname">grad_base_value</tt><big>(</big><em>p</em><big>)</big><a class="headerlink" href="#getfem.Fem.grad_base_value" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Evaluate the gradient of all base functions of the Fem at point <cite>p</cite>.</p>
+<p><cite>p</cite> is supposed to be in the reference convex!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.hess_base_value">
+<tt class="descname">hess_base_value</tt><big>(</big><em>p</em><big>)</big><a class="headerlink" href="#getfem.Fem.hess_base_value" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Evaluate the Hessian of all base functions of the Fem at point <cite>p</cite>.</p>
+<p><cite>p</cite> is supposed to be in the reference convex!.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.index_of_global_dof">
+<tt class="descname">index_of_global_dof</tt><big>(</big><em>cv</em><big>)</big><a class="headerlink" href="#getfem.Fem.index_of_global_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the index of global dof for special fems such as interpolated fem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.is_equivalent" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 0 if the Fem is not equivalent.</p>
+<p>Equivalent Fem are evaluated on the reference convex. This is
+the case of most classical Fem&#8217;s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.is_lagrange">
+<tt class="descname">is_lagrange</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.is_lagrange" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 0 if the Fem is not of Lagrange type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.is_polynomial">
+<tt class="descname">is_polynomial</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.is_polynomial" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 0 if the basis functions are not polynomials.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.nbdof">
+<tt class="descname">nbdof</tt><big>(</big><em>cv=None</em><big>)</big><a class="headerlink" href="#getfem.Fem.nbdof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the number of dof for the Fem.</p>
+<p>Some specific Fem (for example &#8216;interpolated_fem&#8217;) may require a
+convex number <cite>cv</cite> to give their result. In most of the case, you
+can omit this convex number.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.poly_str">
+<tt class="descname">poly_str</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.poly_str" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the polynomial expressions of its basis functions in
+the reference convex.</p>
+<p>The result is expressed as a tuple of
+strings. Of course this will fail on non-polynomial Fem&#8217;s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.pts">
+<tt class="descname">pts</tt><big>(</big><em>cv=None</em><big>)</big><a class="headerlink" href="#getfem.Fem.pts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get the location of the dof on the reference element.</p>
+<p>Some specific Fem may require a convex number <cite>cv</cite> to give their
+result (for example &#8216;interpolated_fem&#8217;). In most of the case, you
+can omit this convex number.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Fem.target_dim">
+<tt class="descname">target_dim</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Fem.target_dim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the dimension of the target space.</p>
+<p>The target space dimension is usually 1, except for vector Fem.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Eltm.html"
+                        title="前の章へ">Eltm</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_GeoTrans.html"
+                        title="次の章へ">GeoTrans</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_GeoTrans.html" title="GeoTrans"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Eltm.html" title="Eltm"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Model module &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="next" title="Continuation module" href="libdesc_cont.html" />
+    <link rel="prev" title="The low-level generic assembly module in GetFEM++" href="libdesc_low_gen_assemb.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc_cont.html" title="Continuation module"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_low_gen_assemb.html" title="The low-level generic assembly module in GetFEM++"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" accesskey="U">Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="model-module">
+<span id="dp-libdesc-model"></span><h1>Model module<a class="headerlink" href="#model-module" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Describe a model (variable, data and equation terms linking the variables).</p>
+</div>
+<div class="section" id="files">
+<h2>Files<a class="headerlink" href="#files" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File(s)</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_models.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_models.cc</span></tt></td>
+<td>Defines the object models, its internal and the standard bricks (linear elasticity, generic elliptic brick, Dirichlet boundary conditions ...).</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_model_solvers.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_model_solvers.cc</span></tt></td>
+<td>Defines the the standard solvers for the model object.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_common.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_common.cc</span></tt></td>
+<td>Common algorithms for contact/friction conditions on deformable bodies</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_integral.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_integral.cc</span></tt></td>
+<td>Small sliding Contact/friction bricks of integral type.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_large_sliding.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_large_sliding.cc</span></tt></td>
+<td>Large sliding contact/friction bricks.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_nodal.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_contact_and_friction_nodal.cc</span></tt></td>
+<td>Small sliding nodal Contact/friction bricks.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_Navier_Stokes.h</span></tt></td>
+<td>An attempt for Navier-Stokes bricks. To be improved.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_fourth_order.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_fourth_order.cc</span></tt></td>
+<td>Bilaplacian and Kirchhoff-Love plate bricks</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_linearized_plates.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_linearized_plates.cc</span></tt></td>
+<td>Mindlin-Reissner plate brick</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_nonlinear_elasticity.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_nonlinear_elasticity.cc</span></tt></td>
+<td>Large deformation elasticity bricks.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_plasticity.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_plasticity.cc</span></tt></td>
+<td>Plasticity bricks.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="state">
+<h2>State<a class="headerlink" href="#state" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Constant evolution to includes nex models.</p>
+</div>
+<div class="section" id="perspectives">
+<h2>Perspectives<a class="headerlink" href="#perspectives" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>More plate, road and shell bricks, plasticity in large deformation, ...</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Model module</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#files">Files</a></li>
+<li><a class="reference internal" href="#state">State</a></li>
+<li><a class="reference internal" href="#perspectives">Perspectives</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="libdesc_low_gen_assemb.html"
+                        title="前の章へ">The low-level generic assembly module in <em>GetFEM++</em></a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc_cont.html"
+                        title="次の章へ">Continuation module</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc_cont.html" title="Continuation module"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_low_gen_assemb.html" title="The low-level generic assembly module in GetFEM++"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" >Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

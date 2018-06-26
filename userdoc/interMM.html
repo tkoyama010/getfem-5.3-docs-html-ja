@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Interpolation of arbitary quantities &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Incorporate new finite element methods in GetFEM++" href="ifem.html" />
+    <link rel="prev" title="Some Standard assembly procedures (low-level generic assembly)" href="asm.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="ifem.html" title="Incorporate new finite element methods in GetFEM++"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="asm.html" title="Some Standard assembly procedures (low-level generic assembly)"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="interpolation-of-arbitary-quantities">
+<span id="ud-intermm"></span><h1>Interpolation of arbitary quantities<a class="headerlink" href="#interpolation-of-arbitary-quantities" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Once a solution has been computed, it is quite easy to extract any quantity of interest on it with the interpolation functions for instance for post-treatment.</p>
+<div class="section" id="basic-interpolation">
+<h2>Basic interpolation<a class="headerlink" href="#basic-interpolation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The file <tt class="file docutils literal"><span class="pre">getfem/getfem_interpolation.h</span></tt> defines the function
+<tt class="docutils literal"><span class="pre">getfem::interpolation(...)</span></tt> to interpolate a solution from a given mesh/finite
+element method on another mesh and/or another Lagrange finite element method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">interpolation</span><span class="p">(</span><span class="n">mf1</span><span class="p">,</span> <span class="n">mf2</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">extrapolation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mf1</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> and describes the finite element
+method on which the source field <tt class="docutils literal"><span class="pre">U</span></tt> is defined, <tt class="docutils literal"><span class="pre">mf2</span></tt> is the finite element
+method on which <tt class="docutils literal"><span class="pre">U</span></tt> will be interpolated. <tt class="docutils literal"><span class="pre">extrapolation</span></tt> is an optional
+parameter. The values are <tt class="docutils literal"><span class="pre">0</span></tt> not to allow the extrapolation, <tt class="docutils literal"><span class="pre">1</span></tt> for an
+extrapolation of the exterior points near the boundary and <tt class="docutils literal"><span class="pre">2</span></tt> for the
+extrapolation of all exterior points (could be expensive).</p>
+<p>The dimension of <tt class="docutils literal"><span class="pre">U</span></tt> should be a multiple of <tt class="docutils literal"><span class="pre">mf1.nb_dof()</span></tt>, and the
+interpolated data <tt class="docutils literal"><span class="pre">V</span></tt> should be correctly sized (multiple of <tt class="docutils literal"><span class="pre">mf2.nb_dof()</span></tt>).</p>
+<p>... important:</p>
+<div class="highlight-c++"><pre>``mf2`` should be of Lagrange type for the interpolation to make sense but the
+meshes linked to ``mf1`` and ``mf2`` may be different (and this is the
+interest of this function). There is no restriction for the dimension of the
+domain (you can interpolate a 2D mesh on a line etc.).</pre>
+</div>
+<p>If you need to perform more than one interpolation between the same finite element
+methods, it might be more efficient to use the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">interpolation</span><span class="p">(</span><span class="n">mf1</span><span class="p">,</span> <span class="n">mf2</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">extrapolation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">M</span></tt> is a row matrix which will be filled with the linear map representing
+the interpolation (i.e. such that <tt class="docutils literal"><span class="pre">V</span> <span class="pre">=</span> <span class="pre">MU</span></tt>). The matrix should have the correct
+dimensions (i.e. <tt class="docutils literal"><span class="pre">mf2.nb_dof()``x``mf1.nb_dof()</span></tt>). Once this matrix is built,
+the interpolation is done with a simple matrix multiplication:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">mult</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="interpolation-based-on-the-high-level-weak-form-language">
+<h2>Interpolation based on the high-level weak form language<a class="headerlink" href="#interpolation-based-on-the-high-level-weak-form-language" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is possible to extract some arbitrary expressions on possibly several fields thanks to the weak form language and the interpolation functions.</p>
+<p>This is specially dedicated to the model object (but it can also be used with a ga_workspace object). For instance if <tt class="docutils literal"><span class="pre">md</span></tt> is a valid object containing some defined variables <tt class="docutils literal"><span class="pre">u</span></tt> (vectorial) and <tt class="docutils literal"><span class="pre">p</span></tt> (scalar), one can interpolate on a Lagrange finite element method an expression such as <tt class="docutils literal"><span class="pre">p*Trace(Grad_u)</span></tt>. The resulting expression can be scalar, vectorial or tensorial. The size of the resulting vector is automatically adapted.</p>
+<p>The high-level generic interpolation functions are defined in the file <tt class="file docutils literal"><span class="pre">getfem/getfem_generic_assembly.h</span></tt>.</p>
+<p>There is different interpolation functions corresponding to the interpolation on a Lagrange fem on the same mesh, the interpolation on a cloud on points or on a <tt class="docutils literal"><span class="pre">getfem::im_data</span></tt> object.</p>
+<p>Interpolation on a Lagrange fem:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">getfem</span><span class="o">::</span><span class="n">ga_interpolation_Lagrange_fem</span><span class="p">(</span><span class="n">workspace</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">workspace</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::ga_workspace</span></tt> object which aims to store the different variables and data (see  <a class="reference internal" href="gasm_high.html#ud-gasm-high"><em>Compute arbitrary terms - high-level generic assembly procedures</em></a>), <tt class="docutils literal"><span class="pre">mf</span></tt> is the <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object reresenting the Lagrange fem on which the interpolation is to be done and <tt class="docutils literal"><span class="pre">result</span></tt> is a <tt class="docutils literal"><span class="pre">beot::base_vector</span></tt> which store the interpolatin. Note that the workspace should contain the epression to be interpolated.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">getfem</span><span class="o">::</span><span class="n">ga_interpolation_Lagrange_fem</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">rg</span><span class="o">=</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">all_convexes</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::model</span></tt> object (containing the variables and data), <tt class="docutils literal"><span class="pre">expr</span></tt> (std::string object) is the expression to be interpolated, <tt class="docutils literal"><span class="pre">mf</span></tt> is the <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object reresenting the Lagrange fem on which the interpolation is to be done, <tt class="docutils literal"><span class="pre">result</span></tt> is the vector in which the interpolation is stored and <tt class="docutils literal"><span class="pre">rg</span></tt> is the optional mesh region.</p>
+<p>Interpolation on a cloud of points:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">getfem</span><span class="o">::</span><span class="n">ga_interpolation_mti</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">mti</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">extrapolation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">rg</span><span class="o">=</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">all_convexes</span><span class="p">(),</span> <span class="n">nbpoints</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::model</span></tt> object (containing the variables and data), <tt class="docutils literal"><span class="pre">expr</span></tt> (std::string object) is the expression to be interpolated, <tt class="docutils literal"><span class="pre">mti</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::mesh_trans_inv</span></tt> object which stores the cloud of points (see <tt class="file docutils literal"><span class="pre">getfem/getfem_interpolation.h</span></tt>), <tt class="docutils literal"><span class="pre">result</span></tt> is the vector in which the interpolation is stored, <tt class="docutils literal"><span class="pre">extrapolation</span></tt> is an option for extrapolating the field outside the mesh for outside points, <tt class="docutils literal"><span class="pre">rg</span></tt> is the optional mesh region and <tt class="docutils literal"><span class="pre">nbpoints</span></tt> is the optional maximal number of points.</p>
+<p>Interpolation on an im_data object (on the Gauss points of an integration method):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">getfem</span><span class="o">::</span><span class="n">ga_interpolation_im_data</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">im_data</span> <span class="o">&amp;</span><span class="n">imd</span><span class="p">,</span>
+ <span class="n">base_vector</span> <span class="o">&amp;</span><span class="n">result</span><span class="p">,</span> <span class="k">const</span> <span class="n">mesh_region</span> <span class="o">&amp;</span><span class="n">rg</span><span class="o">=</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">all_convexes</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::model</span></tt> object (containing the variables and data), <tt class="docutils literal"><span class="pre">expr</span></tt> (std::string object) is the expression to be interpolated, <tt class="docutils literal"><span class="pre">imd</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::im_data</span></tt> object which refers to a integration method (see <tt class="file docutils literal"><span class="pre">getfem/getfem_im_data.h</span></tt>), <tt class="docutils literal"><span class="pre">result</span></tt> is the vector in which the interpolation is stored and <tt class="docutils literal"><span class="pre">rg</span></tt> is the optional mesh region.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Interpolation of arbitary quantities</a><ul>
+<li><a class="reference internal" href="#basic-interpolation">Basic interpolation</a></li>
+<li><a class="reference internal" href="#interpolation-based-on-the-high-level-weak-form-language">Interpolation based on the high-level weak form language</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="asm.html"
+                        title="前の章へ">Some Standard assembly procedures (low-level generic assembly)</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="ifem.html"
+                        title="次の章へ">Incorporate new finite element methods in <em>GetFEM++</em></a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="ifem.html" title="Incorporate new finite element methods in GetFEM++"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="asm.html" title="Some Standard assembly procedures (low-level generic assembly)"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

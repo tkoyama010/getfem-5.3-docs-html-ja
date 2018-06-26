@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_mesh &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_mesh_get" href="cmdref_gf_mesh_get.html" />
+    <link rel="prev" title="gf_linsolve" href="cmdref_gf_linsolve.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_get.html" title="gf_mesh_get"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_linsolve.html" title="gf_linsolve"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-mesh">
+<h1>gf_mesh<a class="headerlink" href="#gf-mesh" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>M = gf_mesh(&#x27;empty&#x27;, int dim)
+M = gf_mesh(&#x27;cartesian&#x27;, vec X[, vec Y[, vec Z,..]])
+M = gf_mesh(&#x27;pyramidal&#x27;, vec X[, vec Y[, vec Z,..]])
+M = gf_mesh(&#x27;cartesian Q1&#x27;, vec X, vec Y[, vec Z,..])
+M = gf_mesh(&#x27;triangles grid&#x27;, vec X, vec Y)
+M = gf_mesh(&#x27;regular simplices&#x27;, vec X[, vec Y[, vec Z,...]][&#x27;degree&#x27;, int k][&#x27;noised&#x27;])
+M = gf_mesh(&#x27;curved&#x27;, mesh m, vec F)
+M = gf_mesh(&#x27;prismatic&#x27;, mesh m, int nl[, int degree])
+M = gf_mesh(&#x27;pt2D&#x27;, mat P, imat T[, int n])
+M = gf_mesh(&#x27;ptND&#x27;, mat P, imat T)
+M = gf_mesh(&#x27;load&#x27;, string filename)
+M = gf_mesh(&#x27;from string&#x27;, string s)
+M = gf_mesh(&#x27;import&#x27;, string format, string filename)
+M = gf_mesh(&#x27;clone&#x27;, mesh m2)
+M = gf_mesh(&#x27;generate&#x27;, mesher_object mo, scalar h[, int K = 1[, mat vertices]])</pre>
+</div>
+<p><strong>Description :</strong></p>
+<p>General constructor for mesh objects.</p>
+<blockquote>
+<div>This object is able to store any element in any dimension even if you mix
+elements with different dimensions.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('empty',</span> <span class="pre">int</span> <span class="pre">dim)</span></tt></p>
+<blockquote>
+<div>Create a new empty mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('cartesian',</span> <span class="pre">vec</span> <span class="pre">X[,</span> <span class="pre">vec</span> <span class="pre">Y[,</span> <span class="pre">vec</span> <span class="pre">Z,..]])</span></tt></p>
+<blockquote>
+<div>Build quickly a regular mesh of quadrangles, cubes, etc.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('pyramidal',</span> <span class="pre">vec</span> <span class="pre">X[,</span> <span class="pre">vec</span> <span class="pre">Y[,</span> <span class="pre">vec</span> <span class="pre">Z,..]])</span></tt></p>
+<blockquote>
+<div>Build quickly a regular mesh of pyramids, etc.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('cartesian</span> <span class="pre">Q1',</span> <span class="pre">vec</span> <span class="pre">X,</span> <span class="pre">vec</span> <span class="pre">Y[,</span> <span class="pre">vec</span> <span class="pre">Z,..])</span></tt></p>
+<blockquote>
+<div>Build quickly a regular mesh of quadrangles, cubes, etc. with
+Q1 elements.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('triangles</span> <span class="pre">grid',</span> <span class="pre">vec</span> <span class="pre">X,</span> <span class="pre">vec</span> <span class="pre">Y)</span></tt></p>
+<blockquote>
+<div><p>Build quickly a regular mesh of triangles.</p>
+<p>This is a very limited and somehow deprecated function (See also
+&lt;literal&gt;&lt;/literal&gt;gf_mesh(&#8216;ptND&#8217;)&lt;literal&gt;&lt;/literal&gt;, &lt;literal&gt;&lt;/literal&gt;gf_mesh(&#8216;regular simplices&#8217;)&lt;literal&gt;&lt;/literal&gt; and
+&lt;literal&gt;&lt;/literal&gt;gf_mesh(&#8216;cartesian&#8217;)&lt;literal&gt;&lt;/literal&gt;).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('regular</span> <span class="pre">simplices',</span> <span class="pre">vec</span> <span class="pre">X[,</span> <span class="pre">vec</span> <span class="pre">Y[,</span> <span class="pre">vec</span> <span class="pre">Z,...]]['degree',</span> <span class="pre">int</span> <span class="pre">k]['noised'])</span></tt></p>
+<blockquote>
+<div><p>Mesh a n-dimensionnal parallelepipeded with simplices (triangles,
+tetrahedrons etc) .</p>
+<p>The optional degree may be used to build meshes with non linear
+geometric transformations.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('curved',</span> <span class="pre">mesh</span> <span class="pre">m,</span> <span class="pre">vec</span> <span class="pre">F)</span></tt></p>
+<blockquote>
+<div><p>Build a curved (n+1)-dimensions mesh from a n-dimensions mesh &lt;literal&gt;m&lt;/literal&gt;.</p>
+<p>The points of the new mesh have one additional coordinate, given by
+the vector &lt;literal&gt;F&lt;/literal&gt;. This can be used to obtain meshes for shells. &lt;literal&gt;m&lt;/literal&gt; may
+be a mesh_fem object, in that case its linked mesh will be used.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('prismatic',</span> <span class="pre">mesh</span> <span class="pre">m,</span> <span class="pre">int</span> <span class="pre">nl[,</span> <span class="pre">int</span> <span class="pre">degree])</span></tt></p>
+<blockquote>
+<div><p>Extrude a prismatic mesh &lt;literal&gt;M&lt;/literal&gt; from a mesh &lt;literal&gt;m&lt;/literal&gt;.</p>
+<p>In the additional dimension there are &lt;literal&gt;nl&lt;/literal&gt; layers of elements
+distributed from &lt;literal&gt;&lt;/literal&gt;0&lt;literal&gt;&lt;/literal&gt; to &lt;literal&gt;&lt;/literal&gt;1&lt;literal&gt;&lt;/literal&gt;.
+If the optional parameter &lt;literal&gt;degree&lt;/literal&gt; is provided with a value greater
+than the default value of &lt;literal&gt;&lt;/literal&gt;1&lt;literal&gt;&lt;/literal&gt;, a non-linear transformation of
+corresponding degree is considered in the extrusion direction.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('pt2D',</span> <span class="pre">mat</span> <span class="pre">P,</span> <span class="pre">imat</span> <span class="pre">T[,</span> <span class="pre">int</span> <span class="pre">n])</span></tt></p>
+<blockquote>
+<div><p>Build a mesh from a 2D triangulation.</p>
+<p>Each column of &lt;literal&gt;P&lt;/literal&gt; contains a point coordinate, and each column of &lt;literal&gt;T&lt;/literal&gt;
+contains the point indices of a triangle. &lt;literal&gt;n&lt;/literal&gt; is optional and is a
+zone number. If &lt;literal&gt;n&lt;/literal&gt; is specified then only the zone number &lt;literal&gt;n&lt;/literal&gt; is
+converted (in that case, &lt;literal&gt;T&lt;/literal&gt; is expected to have 4 rows, the fourth
+containing these zone numbers).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('ptND',</span> <span class="pre">mat</span> <span class="pre">P,</span> <span class="pre">imat</span> <span class="pre">T)</span></tt></p>
+<blockquote>
+<div><p>Build a mesh from a n-dimensional &#8220;triangulation&#8221;.</p>
+<p>Similar function to &#8216;pt2D&#8217;, for building simplexes meshes from a
+triangulation given in &lt;literal&gt;T&lt;/literal&gt;, and a list of points given in &lt;literal&gt;P&lt;/literal&gt;. The
+dimension of the mesh will be the number of rows of &lt;literal&gt;P&lt;/literal&gt;, and the
+dimension of the simplexes will be the number of rows of &lt;literal&gt;T&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('load',</span> <span class="pre">string</span> <span class="pre">filename)</span></tt></p>
+<blockquote>
+<div><p>Load a mesh from a getfem++ ascii mesh file.</p>
+<p>See also &lt;literal&gt;&lt;/literal&gt;gf_mesh_get(mesh M, &#8216;save&#8217;, string filename)&lt;literal&gt;&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('from</span> <span class="pre">string',</span> <span class="pre">string</span> <span class="pre">s)</span></tt></p>
+<blockquote>
+<div><p>Load a mesh from a string description.</p>
+<p>For example, a string returned by &lt;literal&gt;&lt;/literal&gt;gf_mesh_get(mesh M, &#8216;char&#8217;)&lt;literal&gt;&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('import',</span> <span class="pre">string</span> <span class="pre">format,</span> <span class="pre">string</span> <span class="pre">filename)</span></tt></p>
+<blockquote>
+<div><p>Import a mesh.</p>
+<p>&lt;literal&gt;format&lt;/literal&gt; may be:</p>
+<ul class="simple">
+<li>&#8216;gmsh&#8217; for a mesh created with &lt;literal&gt;Gmsh&lt;/literal&gt;</li>
+<li>&#8216;gid&#8217; for a mesh created with &lt;literal&gt;GiD&lt;/literal&gt;</li>
+<li>&#8216;cdb&#8217; for a mesh created with &lt;literal&gt;ANSYS&lt;/literal&gt;</li>
+<li>&#8216;am_fmt&#8217; for a mesh created with &lt;literal&gt;EMC2&lt;/literal&gt;</li>
+</ul>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('clone',</span> <span class="pre">mesh</span> <span class="pre">m2)</span></tt></p>
+<blockquote>
+<div>Create a copy of a mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh('generate',</span> <span class="pre">mesher_object</span> <span class="pre">mo,</span> <span class="pre">scalar</span> <span class="pre">h[,</span> <span class="pre">int</span> <span class="pre">K</span> <span class="pre">=</span> <span class="pre">1[,</span> <span class="pre">mat</span> <span class="pre">vertices]])</span></tt></p>
+<blockquote>
+<div>Call the experimental mesher of Getfem on the geometry
+represented by &lt;literal&gt;mo&lt;/literal&gt;. please control the conformity of the produced mesh.
+You can help the mesher by adding a priori vertices in the array
+&lt;literal&gt;vertices&lt;/literal&gt; which should be of size &lt;literal&gt;&lt;/literal&gt;n x m&lt;literal&gt;&lt;/literal&gt; where &lt;literal&gt;&lt;/literal&gt;n&lt;literal&gt;&lt;/literal&gt; n is the
+dimension of the mesh and &lt;literal&gt;&lt;/literal&gt;m&lt;literal&gt;&lt;/literal&gt; the number of points. &lt;literal&gt;h&lt;/literal&gt; is
+approximate diameter of the elements. &lt;literal&gt;K&lt;/literal&gt; is the degree of the
+mesh ( &gt; 1 for curved boundaries).  The mesher try to optimize the
+quality of the elements. This operation may be time consuming.
+Note that if the mesh generation fails, because of some random
+procedure used, it can be run again since it will not give necessarily
+the same result due to random procedures used.
+The messages send to the console by the mesh generation can be
+desactivated using &lt;literal&gt;gf_util(&#8216;trace level&#8217;, 2)&lt;/literal&gt;. More information
+can be obtained by &lt;literal&gt;gf_util(&#8216;trace level&#8217;, 4)&lt;/literal&gt;. See &lt;literal&gt;&lt;/literal&gt;gf_mesher_object&lt;literal&gt;&lt;/literal&gt;
+to manipulate geometric primitives in order to desribe the geometry.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_linsolve.html"
+                        title="前の章へ">gf_linsolve</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_get.html"
+                        title="次の章へ">gf_mesh_get</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_get.html" title="gf_mesh_get"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_linsolve.html" title="gf_linsolve"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

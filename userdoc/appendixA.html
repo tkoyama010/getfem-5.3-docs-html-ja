@@ -1,0 +1,2078 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Appendix A. Finite element method list &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Appendix B. Cubature method list" href="appendixB.html" />
+    <link rel="prev" title="ALE Support for object having a large rigid body motion" href="model_ALE_rotating.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="appendixB.html" title="Appendix B. Cubature method list"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_ALE_rotating.html" title="ALE Support for object having a large rigid body motion"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="appendix-a-finite-element-method-list">
+<span id="ud-appendixa"></span><h1>Appendix A. Finite element method list<a class="headerlink" href="#appendix-a-finite-element-method-list" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<blockquote>
+<div><table border="1" class="figure docutils">
+<caption>Symbols representing degree of freedom types</caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols00.png"><img alt="../_images/getfemlistsymbols00.png" class="align-center" src="../_images/getfemlistsymbols00.png" style="width: 33.5px; height: 28.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols01.png"><img alt="../_images/getfemlistsymbols01.png" class="align-center" src="../_images/getfemlistsymbols01.png" style="width: 375.0px; height: 28.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols02.png"><img alt="../_images/getfemlistsymbols02.png" class="align-center" src="../_images/getfemlistsymbols02.png" style="width: 233.5px; height: 129.0px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td>Value of the function at the node.</td>
+<td>Value of the gradient along of the first coordinate.</td>
+<td>Value of the gradient along of the second coordinate.</td>
+</tr>
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols03.png"><img alt="../_images/getfemlistsymbols03.png" class="align-center" src="../_images/getfemlistsymbols03.png" style="width: 255.5px; height: 107.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols04.png"><img alt="../_images/getfemlistsymbols04.png" class="align-center" src="../_images/getfemlistsymbols04.png" style="width: 96.0px; height: 100.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols05.png"><img alt="../_images/getfemlistsymbols05.png" class="align-center" src="../_images/getfemlistsymbols05.png" style="width: 134.5px; height: 43.0px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td>Value of the gradient along of the thrid coordinate for 3D elements.</td>
+<td>Value of the whole gradient at the node.</td>
+<td>Value of the normal derivative to a face.</td>
+</tr>
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols06.png"><img alt="../_images/getfemlistsymbols06.png" class="align-center" src="../_images/getfemlistsymbols06.png" style="width: 436.0px; height: 41.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols07.png"><img alt="../_images/getfemlistsymbols07.png" class="align-center" src="../_images/getfemlistsymbols07.png" style="width: 316.5px; height: 165.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols08.png"><img alt="../_images/getfemlistsymbols08.png" class="align-center" src="../_images/getfemlistsymbols08.png" style="width: 361.0px; height: 129.0px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td>Value of the second derivative along the first coordinate (twice).</td>
+<td>Value of the second derivative along the second coordinate (twice).</td>
+<td>Value of the second cross derivative in 2D or second derivative
+along the thrid coordinate (twice) in 3D.</td>
+</tr>
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols09.png"><img alt="../_images/getfemlistsymbols09.png" class="align-center" src="../_images/getfemlistsymbols09.png" style="width: 162.5px; height: 165.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols10.png"><img alt="../_images/getfemlistsymbols10.png" class="align-center" src="../_images/getfemlistsymbols10.png" style="width: 134.5px; height: 28.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols11.png"><img alt="../_images/getfemlistsymbols11.png" class="align-center" src="../_images/getfemlistsymbols11.png" style="width: 134.5px; height: 43.0px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td>Value of the whole second derivative (hessian) at the node.</td>
+<td>Scalar product with a certain vector (for instance an edge) for a
+vector elements.</td>
+<td>Scalar product with the normal to a face for a vector elements.</td>
+</tr>
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols12.png"><img alt="../_images/getfemlistsymbols12.png" class="align-center" src="../_images/getfemlistsymbols12.png" style="width: 91.5px; height: 86.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistsymbols13.png"><img alt="../_images/getfemlistsymbols13.png" class="align-center" src="../_images/getfemlistsymbols13.png" style="width: 46.0px; height: 41.5px;" /></a>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Bubble function on an element or a face, to be specified.</td>
+<td>Lagrange hierarchical d.o.f. value at the node in a space of details.</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Let us recall that all finite element methods defined in <em>GetFEM++</em> are declared in the
+file <tt class="docutils literal"><span class="pre">getfem_fem.h</span></tt> and that a descriptor on a finite element method is obtained
+thanks to the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">pfem</span> <span class="n">pf</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">fem_descriptor</span><span class="p">(</span><span class="s">&quot;name of method&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">&quot;name</span> <span class="pre">of</span> <span class="pre">method&quot;</span></tt> is a string to be choosen among the existing methods.</p>
+<div class="section" id="classical-lagrange-elements-on-simplices">
+<h2>Classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange elements on simplices<a class="headerlink" href="#classical-lagrange-elements-on-simplices" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="figure align-center" id="ud-fig-segmentpk">
+<a class="reference internal image-reference" href="../_images/getfemlistsegmentPk.png"><img alt="../_images/getfemlistsegmentPk.png" src="../_images/getfemlistsegmentPk.png" style="width: 953.4px; height: 378.6px;" /></a>
+<p class="caption">Examples of classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange elements on a segment</p>
+</div>
+<p>It is possible to define a classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange element of arbitrary
+dimension and arbitrary degree. Each degree of freedom of such an element
+corresponds to the value of the function on a corresponding node. The grid of
+node is the so-called Lagrange grid. Figures <a class="reference internal" href="#ud-fig-segmentpk"><em>Examples of classical  Lagrange elements on a segment</em></a>.</p>
+<blockquote>
+<div><table border="1" class="figure docutils" id="ud-fig-trianglepk">
+<caption>Examples of classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange elements on a triangle.</caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlisttriangleP1.png"><img alt="../_images/getfemlisttriangleP1.png" class="align-center" src="../_images/getfemlisttriangleP1.png" style="width: 261.0px; height: 298.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlisttriangleP2.png"><img alt="../_images/getfemlisttriangleP2.png" class="align-center" src="../_images/getfemlisttriangleP2.png" style="width: 294.5px; height: 318.0px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/>, 3 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> element, 6 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlisttriangleP3.png"><img alt="../_images/getfemlisttriangleP3.png" class="align-center" src="../_images/getfemlisttriangleP3.png" style="width: 291.5px; height: 294.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlisttriangleP6.png"><img alt="../_images/getfemlisttriangleP6.png" class="align-center" src="../_images/getfemlisttriangleP6.png" style="width: 283.5px; height: 275.0px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/>, 10 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/d1f87397a1a9e553a7da9d6b590d1da2da5bb874.png" alt="P_6" style="vertical-align: -3px"/> element, 28 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>The number of degrees of freedom for a classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange element of
+dimension <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/> and degree <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/> is <img class="math" src="../_images/math/8e6708174d7fb02035072e6f8d81188ded0fefd3.png" alt="\Frac{(P+K)!}{P!K!}" style="vertical-align: -13px"/>. For
+instance, in dimension 2 <img class="math" src="../_images/math/833c9e67659dbd6950b2db8bb9e080e957b0b2bb.png" alt="(P = 2)" style="vertical-align: -4px"/>, this value is <img class="math" src="../_images/math/25b14b2c7ecae18f3f9519f0482afee2b20cf5b1.png" alt="\Frac{(K+1)
+(K+2)}{2}" style="vertical-align: -13px"/> and in dimension 3 <img class="math" src="../_images/math/b935027a07a50365ba908a3cdb62f8ea86675b21.png" alt="(P = 3)" style="vertical-align: -4px"/>, it is <img class="math" src="../_images/math/7f2ea274fc10d158c1ee45c44f53be72ad8bd759.png" alt="\Frac{(K+1) (K+2)
+(K+3)}{6}" style="vertical-align: -13px"/>.</p>
+<blockquote>
+<div><table border="1" class="figure docutils" id="ud-fig-tetrahedronpk">
+<caption>Examples of classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange elements on a tetrahedron.</caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlisttetrahedronP1.png"><img alt="../_images/getfemlisttetrahedronP1.png" class="align-center" src="../_images/getfemlisttetrahedronP1.png" style="width: 261.0px; height: 298.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlisttetrahedronP2.png"><img alt="../_images/getfemlisttetrahedronP2.png" class="align-center" src="../_images/getfemlisttetrahedronP2.png" style="width: 261.0px; height: 298.5px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> element, 4 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> element, 10 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlisttetrahedronP4.png"><img alt="../_images/getfemlisttetrahedronP4.png" class="align-center" src="../_images/getfemlisttetrahedronP4.png" style="width: 257.0px; height: 253.0px;" /></a>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/d6467cab96a8b0fa5724824ac7d13187e9a84c31.png" alt="P_4" style="vertical-align: -3px"/> element, 35 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>The particular way used in <em>GetFEM++</em> to numerate the nodes are also shown in figures
+<a class="reference internal" href="#ud-fig-segmentpk"><em>segment</em></a>, <a class="reference internal" href="#ud-fig-trianglepk"><em>triangle</em></a> and
+<a class="reference internal" href="#ud-fig-tetrahedronpk"><em>tetrahedron</em></a>. Using another numeration, let</p>
+<div class="math">
+<p><img src="../_images/math/238f1789f884d232d23ff6f4dc19c8ca6553b3ae.png" alt="i_0, i_1, ... i_P,"/></p>
+</div><p>be somme indices such that</p>
+<div class="math">
+<p><img src="../_images/math/2cf13dc169542063071ceb59c214c142636e47c1.png" alt="0 \leq i_0, i_1, ... i_P \leq K, \ \mbox{ and } \ \sum_{n = 0}^{P} i_n = K."/></p>
+</div><p>Then, the coordinate of a node can be computed as</p>
+<div class="math">
+<p><img src="../_images/math/0ecff3c7063394dd175d7752f231be379faeebef.png" alt="a_{i_0, i_1, ... i_P} = \sum_{n = 0}^{P} \Frac{i_n}{K}S_n, \ \ \mbox{ for } K \neq 0,"/></p>
+</div><p>where <img class="math" src="../_images/math/aabcf179dbce3462fd6385bf5309d72783514da2.png" alt="S_0, S_1, ... S_N" style="vertical-align: -4px"/> are the vertices of the simplex (for <img class="math" src="../_images/math/09d710171ef1ee2eb117d0478b092cea0a370543.png" alt="K = 0" style="vertical-align: 0px"/>
+the particular choice <img class="math" src="../_images/math/5add1bd413fc1049a440a6605cb81c73bea96bf6.png" alt="a_{0, 0, ... 0} = \ds \sum_{n = 0}^{P}
+\Frac{1}{P+1}S_n" style="vertical-align: -21px"/> has been chosen). Then each base function, corresponding of each
+node <img class="math" src="../_images/math/32ebf413db2a152be9471b3b7532f7ec05713105.png" alt="a_{i_0, i_1, ... i_P}" style="vertical-align: -6px"/> is defined by</p>
+<div class="math">
+<p><img src="../_images/math/4b626569a55adafa84f8973561dd441296f01e26.png" alt="\phi_{i_0, i_1, ... i_P} = \prod_{n = 0}^{P} \prod_{j=0}^{i_n-1} \left(\Frac{K \lambda_n - j}{j+1}\right)."/></p>
+</div><p>where <img class="math" src="../_images/math/2b98e716a26dd452a7c8229756391407d7931532.png" alt="\lambda_n" style="vertical-align: -3px"/> are the barycentric coordinates, i.e. the polynomials of
+degree 1 whose value is <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/> on the vertex <img class="math" src="../_images/math/c74a070eea97d9363f58a257e05e75fc69efa753.png" alt="S_n" style="vertical-align: -3px"/> and whose value is
+<img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0" style="vertical-align: 0px"/> on other vertices. On the reference element, one has</p>
+<div class="math">
+<p><img src="../_images/math/a1afd228cef15ed8b009eaefb5287611108d82ea.png" alt="\lambda_n = x_n, \ \ 0 \leq n &lt; P,"/></p>
+</div><div class="math">
+<p><img src="../_images/math/f22724c7fadeb2ae609c7a23473b9bb23a0291d3.png" alt="\lambda_P = 1 - x_0 - x_1 - ... - x_{P-1}."/></p>
+</div><p>When between two elements of the same degrees (even with different dimensions),
+the d.o.f. of a common face are linked, the element is of class <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/>. This
+means that the global polynomial is continuous. If you try to link elements of
+different degrees, you will get some trouble with the unlinked d.o.f. This is not
+automatically supported by <em>GetFEM++</em>, so you will have to support it (add constraints
+on these d.o.f.).</p>
+<p>For some applications (computation of a gradient for instance) one may not want
+the d.o.f. of a common face to be linked. This is why there are two versions of
+the classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange element.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange element <tt class="docutils literal"><span class="pre">&quot;FEM_PK(P,</span> <span class="pre">K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/69f7836eda1e858fd043e3f9f1fe53aa4c545ca4.png" alt="0 \leq K \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/77296a16b9bfc2670ac0e9b38fa2a891cdc57515.png" alt="~ 1 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/bb3f02029e17cef8b3f9c2fb181081f83cc74cf6.png" alt="\Frac{(K+P)!}{K! P!}" style="vertical-align: -13px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Discontinuous <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange element <tt class="docutils literal"><span class="pre">&quot;FEM_PK_DISCONTINUOUS(P,</span> <span class="pre">K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/69f7836eda1e858fd043e3f9f1fe53aa4c545ca4.png" alt="0 \leq K \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/77296a16b9bfc2670ac0e9b38fa2a891cdc57515.png" alt="~ 1 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/bb3f02029e17cef8b3f9c2fb181081f83cc74cf6.png" alt="\Frac{(K+P)!}{K! P!}" style="vertical-align: -13px"/></td>
+<td>discontinuous</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Even though Lagrange elements are defined for arbitrary degrees, to choose a high
+degree can be problematic for a large number of applications due to the &#8220;noisy&#8221;
+caracteristic of the lagrange basis. These elements are recommended for the basic
+interpolation but for p.d.e. applications elements with hierarchical basis are
+preferable (see the corresponding section).</p>
+</div>
+<div class="section" id="classical-lagrange-elements-on-other-geometries">
+<h2>Classical Lagrange elements on other geometries<a class="headerlink" href="#classical-lagrange-elements-on-other-geometries" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Classical Lagrange elements on parallelepipeds or prisms are obtained as tensor
+product of Lagrange elements on simplices. When two elements are defined, one on a
+dimension <img class="math" src="../_images/math/a8dc91b201c313dca50366fabb5fe04f4a5a6b16.png" alt="P^1" style="vertical-align: 0px"/> and the other in dimension <img class="math" src="../_images/math/c421cb86ac181d6d580e6ce0ee480fcb50e97fa0.png" alt="P^2" style="vertical-align: 0px"/>, one obtains the base
+functions of the tensorial product (on the reference element) as</p>
+<div class="math">
+<p><img src="../_images/math/f1579fce5db80acf156b652620fdc8d4947db614.png" alt="\widehat{\varphi}_{ij}(x,y) = \widehat{\varphi}^1_i(x) \widehat{\varphi}^2_j(y), ~~ x \in \Reel^{P^1}, y \in  \Reel^{P^2},"/></p>
+</div><p>where <img class="math" src="../_images/math/f7bf4393540415364175a89be310fd1e41ae2acb.png" alt="\widehat{\varphi}^1_i" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/15e444dbb219ba9f9d525bad5a611ff506f7bb7e.png" alt="\widehat{\varphi}^2_i" style="vertical-align: -5px"/> are respectively the base functions
+of the first and second element.</p>
+<blockquote>
+<div><table border="1" class="figure docutils" id="ud-fig-prodpkdeux">
+<caption>Examples of classical <img class="math" src="../_images/math/4ca81821dd88dc67ea4df97840e93fa7710af178.png" alt="Q_K" style="vertical-align: -4px"/> Lagrange elements in dimension 2.</caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistquadQ1.png"><img alt="../_images/getfemlistquadQ1.png" class="align-center" src="../_images/getfemlistquadQ1.png" style="width: 261.0px; height: 298.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistquadQ3.png"><img alt="../_images/getfemlistquadQ3.png" class="align-center" src="../_images/getfemlistquadQ3.png" style="width: 303.0px; height: 275.0px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/c16e423c8f499e0bef8c20078b04126aeb9417bc.png" alt="Q_1" style="vertical-align: -4px"/> element, 4 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/1d2aa7380ca1674e2159cbb686c162838f61a2a4.png" alt="Q_3" style="vertical-align: -4px"/> element, 16 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>The <img class="math" src="../_images/math/4ca81821dd88dc67ea4df97840e93fa7710af178.png" alt="Q_K" style="vertical-align: -4px"/> element on a parallelepiped of dimension <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/> is obtained as
+the tensorial product of <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/> classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> elements on the segment.
+Examples in dimension 2 are shown in figure <a class="reference internal" href="#ud-fig-prodpkdeux"><em>dimension 2</em></a>
+and in dimension 3 in figure <a class="reference internal" href="#ud-fig-prodpktrois"><em>dimension 3</em></a>.</p>
+<p>A prism in dimension <img class="math" src="../_images/math/dc81a702a808a22a39ab369e824a2bbf78e0a332.png" alt="P &gt; 1" style="vertical-align: -1px"/> is the direct product of a simplex of dimension
+<img class="math" src="../_images/math/a7317f06d032356dd7c23dd2901026f91ab4f4c8.png" alt="P-1" style="vertical-align: -1px"/> with a segment. The <img class="math" src="../_images/math/ecbaf3e8115c13e5d91c4725adcb550226a3dc1d.png" alt="P_K \otimes P_K" style="vertical-align: -3px"/> element on this prism is
+the tensorial product of the classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> element on a simplex of
+dimension <img class="math" src="../_images/math/a7317f06d032356dd7c23dd2901026f91ab4f4c8.png" alt="P-1" style="vertical-align: -1px"/> with the classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> element on a segment. For
+<img class="math" src="../_images/math/81d8964aeecc898dc57e776d17a8976df8558a50.png" alt="P=2" style="vertical-align: 0px"/> this coincide with a parallelepiped. Examples in dimension <img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/>
+are shown in figure <a class="reference internal" href="#ud-fig-prodpktrois"><em>dimension 3</em></a>. This is also possible
+not to have the same degree on each dimension. An example is shown on figure
+<a class="reference internal" href="#ud-fig-prism-p2-p1"><em>dimension 3, prism</em></a>.</p>
+<blockquote>
+<div><table border="1" class="figure docutils" id="ud-fig-prodpktrois">
+<caption>Examples of classical Lagrange elements in dimension 3.</caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistcubeQ1.png"><img alt="../_images/getfemlistcubeQ1.png" class="align-center" src="../_images/getfemlistcubeQ1.png" style="width: 418.0px; height: 457.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistcubeQ3.png"><img alt="../_images/getfemlistcubeQ3.png" class="align-center" src="../_images/getfemlistcubeQ3.png" style="width: 415.5px; height: 409.5px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/c16e423c8f499e0bef8c20078b04126aeb9417bc.png" alt="Q_1" style="vertical-align: -4px"/> element, 8 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/1d2aa7380ca1674e2159cbb686c162838f61a2a4.png" alt="Q_3" style="vertical-align: -4px"/> element, 64 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistprismP1.png"><img alt="../_images/getfemlistprismP1.png" class="align-center" src="../_images/getfemlistprismP1.png" style="width: 298.5px; height: 457.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistprismP3.png"><img alt="../_images/getfemlistprismP3.png" class="align-center" src="../_images/getfemlistprismP3.png" style="width: 257.0px; height: 409.5px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/36025feaea57b8dccc4ec9f001e502cf14af7d20.png" alt="P_1 \otimes P_1" style="vertical-align: -4px"/> element, 6 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7406d3f96be68efd0713ab30e4c2dd58c07b8374.png" alt="P_3 \otimes P_3" style="vertical-align: -3px"/> element, 40 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center" id="ud-fig-prism-p2-p1">
+<a class="reference internal image-reference" href="../_images/getfemlistprismP2P1.png"><img alt="../_images/getfemlistprismP2P1.png" src="../_images/getfemlistprismP2P1.png" style="width: 353.4px; height: 550.2px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/9e26a56885d6d5fc4ce71bda251a92823ae20574.png" alt="P_2 \otimes P_1" style="vertical-align: -4px"/> Lagrange element on a prism, 12 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/4ca81821dd88dc67ea4df97840e93fa7710af178.png" alt="Q_K" style="vertical-align: -4px"/> Lagrange element on parallelepipeds <tt class="docutils literal"><span class="pre">&quot;FEM_QK(P,</span> <span class="pre">K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/755039d9c9216a391bf3893c3972bea5ab6db6d5.png" alt="KP" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/69f7836eda1e858fd043e3f9f1fe53aa4c545ca4.png" alt="0 \leq K \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/77296a16b9bfc2670ac0e9b38fa2a891cdc57515.png" alt="~ 1 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/0d8b5f428056aa3286556e80362477b30878fc06.png" alt="(K+1)^P" style="vertical-align: -4px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/ecbaf3e8115c13e5d91c4725adcb550226a3dc1d.png" alt="P_K \otimes P_K" style="vertical-align: -3px"/> Lagrange element on prisms <tt class="docutils literal"><span class="pre">&quot;FEM_PK_PRISM(P,</span> <span class="pre">K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/a987fdf3055ad7a9941c53321a831fe0285fc9e3.png" alt="2K" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/69f7836eda1e858fd043e3f9f1fe53aa4c545ca4.png" alt="0 \leq K \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/08c785dd40a8a8efcdc132533d596a902c349160.png" alt="~ 2 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/87a5625b7dbd7fc42e0e09284975cab07c7c8b08.png" alt="(K+1)" style="vertical-align: -4px"/> <img class="math" src="../_images/math/5b5dc29156787ff74f633f6a09709a9b11d57ce0.png" alt="\times~\Frac{(K+P-1)!}{K! (P-1)!}" style="vertical-align: -17px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/4646e141b5e139a165df95bb9672e948eef0ccb2.png" alt="P_{K_1} \otimes P_{K_2}" style="vertical-align: -5px"/> Lagrange element on prisms <tt class="docutils literal"><span class="pre">&quot;FEM_PRODUCT(FEM_PK(P-1,</span> <span class="pre">K1),</span> <span class="pre">FEM_PK(1,</span> <span class="pre">K2))&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/9d461c914ec4da49cc3a4cdfc9a02fe5c15cdd16.png" alt="K_1+K_2" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/be1e274fb2d4b133b1ac6357850407a6d9f66198.png" alt="0 \leq K_1,K_2 \leq 255" style="vertical-align: -4px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/08c785dd40a8a8efcdc132533d596a902c349160.png" alt="~ 2 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/8879e12745e436d010167f0dee1eac7c19b94a30.png" alt="(K_2+1)" style="vertical-align: -4px"/> <img class="math" src="../_images/math/623dc32bc4e3b863e5bf3da65a66db99ff81dcda.png" alt="\times~\Frac{(K_1+P-1)!}{K_1! (P-1)!}" style="vertical-align: -17px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/getfemlistincomplete.png"><img alt="../_images/getfemlistincomplete.png" src="../_images/getfemlistincomplete.png" style="width: 951.6px; height: 548.4px;" /></a>
+<p class="caption">Incomplete <img class="math" src="../_images/math/f83bf0891a57ba8a1ee68d8c72f141ccbc14186d.png" alt="Q_2" style="vertical-align: -4px"/> elements in dimension two and three, 8 or 20 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Incomplete <img class="math" src="../_images/math/f83bf0891a57ba8a1ee68d8c72f141ccbc14186d.png" alt="Q_2" style="vertical-align: -4px"/> Lagrange element on parallelepipeds (Quad 8 and Hexa 20 serendipity elements) <tt class="docutils literal"><span class="pre">&quot;FEM_Q2_INCOMPLETE(P)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>3</td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/5214e594d217a7d0f787e7e648b56fe46156e463.png" alt="~ 2 \leq P \leq 3" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/f030e798d25add8186aa57469035ab836a9e81a8.png" alt="8\ \text{for}\ P = 2~~~~~" style="vertical-align: -1px"/> <img class="math" src="../_images/math/f222c3fbc2026d16383a27c56f98dc23390e7e9e.png" alt="20\ \text{for}\ P = 3" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="elements-with-hierarchical-basis">
+<h2>Elements with hierarchical basis<a class="headerlink" href="#elements-with-hierarchical-basis" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The idea behind hierarchical basis is the description of the solution at different
+level: a rough level, a more refined level ... In the same discretization some
+degrees of freedom represent the rough description, some other the more rafined
+and so on. This corresponds to imbricated spaces of discretization. The
+hierarchical basis contains a basis of each of these spaces (this is not the case
+in classical Lagrange elements when the mesh is refined).</p>
+<p>Among the advantages, the condition number of rigidity matrices can be greatly
+improved, it allows local raffinement and a resolution with a multigrid approach.</p>
+<div class="section" id="hierarchical-elements-with-respect-to-the-degree">
+<h3>Hierarchical elements with respect to the degree<a class="headerlink" href="#hierarchical-elements-with-respect-to-the-degree" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-seg-hier">
+<a class="reference internal image-reference" href="../_images/getfemlistsegmenthier.png"><img alt="../_images/getfemlistsegmenthier.png" src="../_images/getfemlistsegmenthier.png" style="width: 646.8px; height: 366.6px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Hierarchical element on a segment, <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/d9f6c1b48c702cd2b8d4362a98b74527c93478cb.png" alt="P_{K}" style="vertical-align: -3px"/> Classical Lagrange element on simplices but with a hierarchical basis with respect to the degree <tt class="docutils literal"><span class="pre">&quot;FEM_PK_HIERARCHICAL(P,K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/8d63b8400564a9fa43c1dff52adeb5a4c4a8a558.png" alt="0 \leq K\leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/77296a16b9bfc2670ac0e9b38fa2a891cdc57515.png" alt="~ 1 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/bb3f02029e17cef8b3f9c2fb181081f83cc74cf6.png" alt="\Frac{(K+P)!}{K! P!}" style="vertical-align: -13px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/1689880ea6534e15062f72cbbd00eccf5ae60495.png" alt="Q_{K}" style="vertical-align: -4px"/> Classical Lagrange element on parallelepipeds but with a hierarchical basis with respect to the degree <tt class="docutils literal"><span class="pre">&quot;FEM_QK_HIERARCHICAL(P,K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/8d63b8400564a9fa43c1dff52adeb5a4c4a8a558.png" alt="0 \leq K\leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/77296a16b9bfc2670ac0e9b38fa2a891cdc57515.png" alt="~ 1 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/0d8b5f428056aa3286556e80362477b30878fc06.png" alt="(K+1)^P" style="vertical-align: -4px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/d9f6c1b48c702cd2b8d4362a98b74527c93478cb.png" alt="P_{K}" style="vertical-align: -3px"/> Classical Lagrange element on prisms but with a hierarchical basis with respect to the degree <tt class="docutils literal"><span class="pre">&quot;FEM_PK_PRISM_HIERARCHICAL(P,K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/8d63b8400564a9fa43c1dff52adeb5a4c4a8a558.png" alt="0 \leq K\leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/08c785dd40a8a8efcdc132533d596a902c349160.png" alt="~ 2 \leq P \leq 255" style="vertical-align: -3px"/></td>
+<td><img class="math" src="../_images/math/87a5625b7dbd7fc42e0e09284975cab07c7c8b08.png" alt="(K+1)" style="vertical-align: -4px"/> <img class="math" src="../_images/math/5b5dc29156787ff74f633f6a09709a9b11d57ce0.png" alt="\times~\Frac{(K+P-1)!}{K! (P-1)!}" style="vertical-align: -17px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>some particular choices: <img class="math" src="../_images/math/d6467cab96a8b0fa5724824ac7d13187e9a84c31.png" alt="P_4" style="vertical-align: -3px"/> will be built with the basis of the
+<img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/>, the additional basis of the <img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> then the additional basis of the <img class="math" src="../_images/math/d6467cab96a8b0fa5724824ac7d13187e9a84c31.png" alt="P_4" style="vertical-align: -3px"/>.</p>
+<p><img class="math" src="../_images/math/d1f87397a1a9e553a7da9d6b590d1da2da5bb874.png" alt="P_6" style="vertical-align: -3px"/> will be built with the basis of the <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/>, the additional basis
+:of the <img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> then the additional basis of the <img class="math" src="../_images/math/d1f87397a1a9e553a7da9d6b590d1da2da5bb874.png" alt="P_6" style="vertical-align: -3px"/> (not with the
+:basis of the <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/>, the additional basis of the <img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/> then the
+:additional basis of the <img class="math" src="../_images/math/d1f87397a1a9e553a7da9d6b590d1da2da5bb874.png" alt="P_6" style="vertical-align: -3px"/>, it is possible to build the latter with
+:<tt class="docutils literal"><span class="pre">&quot;FEM_GEN_HIERARCHICAL(a,b)&quot;</span></tt>)</p>
+</div>
+<div class="section" id="composite-elements">
+<h3>Composite elements<a class="headerlink" href="#composite-elements" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The principal interest of the composite elements is to build hierarchical
+elements. But this tool can also be used to build piecewise polynomial elements.</p>
+<div class="figure align-center" id="ud-fig-triangle-comp">
+<a class="reference internal image-reference" href="../_images/getfemlisttriangleP1comp.png"><img alt="../_images/getfemlisttriangleP1comp.png" src="../_images/getfemlisttriangleP1comp.png" style="width: 334.8px; height: 363.6px;" /></a>
+<p class="caption">composite element <tt class="docutils literal"><span class="pre">&quot;FEM_STRUCTURED_COMPOSITE(FEM_PK(2,1),</span> <span class="pre">3)&quot;</span></tt></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Composition of a finite element method on an element with <tt class="docutils literal"><span class="pre">S</span></tt> subdivisions <tt class="docutils literal"><span class="pre">&quot;FEM_STRUCTURED_COMPOSITE(FEM1,</span> <span class="pre">S)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>degree of FEM1</td>
+<td>dimension of FEM1</td>
+<td>variable</td>
+<td>variable</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>If <tt class="docutils literal"><span class="pre">FEM1</span></tt> is</td>
+<td>piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>It is important to use a corresponding composite integration method.</p>
+</div>
+<div class="section" id="hierarchical-composite-elements">
+<h3>Hierarchical composite elements<a class="headerlink" href="#hierarchical-composite-elements" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-triangle-compdeux">
+<a class="reference internal image-reference" href="../_images/getfemlisttriangleP1comphier.png"><img alt="../_images/getfemlisttriangleP1comphier.png" src="../_images/getfemlisttriangleP1comphier.png" style="width: 334.8px; height: 363.6px;" /></a>
+<p class="caption">hierarchical composite element <tt class="docutils literal"><span class="pre">&quot;FEM_PK_HIERARCHICAL_COMPOSITE(2,1,3)&quot;</span></tt></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Hierarchical composition of a <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> finite element method on a simplex with <tt class="docutils literal"><span class="pre">S</span></tt> subdivisions <tt class="docutils literal"><span class="pre">&quot;FEM_PK_HIERARCHICAL_COMPOSITE(P,K,S)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/30bbdd2702d0e7d38340d3e1cbfb69fb8995bb49.png" alt="\Frac{(SK+P)!}{(SK)! P!}" style="vertical-align: -17px"/></td>
+<td>variable</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Hierarchical composition of a hierarchical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> finite element method on a simplex with <tt class="docutils literal"><span class="pre">S</span></tt> subdivisions <tt class="docutils literal"><span class="pre">&quot;FEM_PK_FULL_HIERARCHICAL_COMPOSITE(P,K,S)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/30bbdd2702d0e7d38340d3e1cbfb69fb8995bb49.png" alt="\Frac{(SK+P)!}{(SK)! P!}" style="vertical-align: -17px"/></td>
+<td>variable</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes <img class="math" src="../_images/math/acc6ea0ab4b4beb64d71bb4360858231d2f4b216.png" alt="(M = Id)" style="vertical-align: -4px"/></td>
+<td>piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Other constructions are possible thanks to <tt class="docutils literal"><span class="pre">&quot;FEM_GEN_HIERARCHICAL(FEM1,</span> <span class="pre">FEM2)&quot;</span></tt>
+and <tt class="docutils literal"><span class="pre">&quot;FEM_STRUCTURED_COMPOSITE(FEM1,</span> <span class="pre">S)&quot;</span></tt>.</p>
+<p>It is important to use a corresponding composite integration method.</p>
+</div>
+</div>
+<div class="section" id="classical-vector-elements">
+<h2>Classical vector elements<a class="headerlink" href="#classical-vector-elements" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="raviart-thomas-of-lowest-order-elements">
+<h3>Raviart-Thomas of lowest order elements<a class="headerlink" href="#raviart-thomas-of-lowest-order-elements" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-triangle-comptrois">
+<a class="reference internal image-reference" href="../_images/getfemlistRT0.png"><img alt="../_images/getfemlistRT0.png" src="../_images/getfemlistRT0.png" style="width: 951.6px; height: 861.6px;" /></a>
+<p class="caption">RT0 elements in dimension two and three. (P+1 dof, H(div))</p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Raviart-Thomas of lowest order element on simplices <tt class="docutils literal"><span class="pre">&quot;FEM_RT0(P)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/34da752841a60d1b0f8e80a1364852e53be8f362.png" alt="P+1" style="vertical-align: -2px"/></td>
+<td>H(div)</td>
+<td>Yes <img class="math" src="../_images/math/9bf02d1d89a735ed8dfad29559b0a97d8e3cada2.png" alt="(Q = P)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Raviart-Thomas of lowest order element on parallelepipeds (quadrilaterals, hexahedrals) <tt class="docutils literal"><span class="pre">&quot;FEM_RT0Q(P)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/8b4e7abf8a84a42436a008b79905964b3c5911e8.png" alt="2P" style="vertical-align: 0px"/></td>
+<td>H(div)</td>
+<td>Yes <img class="math" src="../_images/math/9bf02d1d89a735ed8dfad29559b0a97d8e3cada2.png" alt="(Q = P)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="nedelec-or-whitney-edge-elements">
+<h3>Nedelec (or Whitney) edge elements<a class="headerlink" href="#nedelec-or-whitney-edge-elements" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-triangle-compquatre">
+<a class="reference internal image-reference" href="../_images/getfemlistnedelec.png"><img alt="../_images/getfemlistnedelec.png" src="../_images/getfemlistnedelec.png" style="width: 753.6px; height: 319.8px;" /></a>
+<p class="caption">Nedelec edge elements in dimension two and three. (P(P+1)/2 dof, H(rot))</p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Nedelec (or Whitney) edge element <cite>&#8220;FEM_NEDELEC(P)&#8221;`</cite></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/9c8304106607705ba42e9d4555543a2dc9254541.png" alt="P(P+1)/2" style="vertical-align: -5px"/></td>
+<td>H(rot)</td>
+<td>Yes <img class="math" src="../_images/math/9bf02d1d89a735ed8dfad29559b0a97d8e3cada2.png" alt="(Q = P)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="specific-elements-in-dimension-1">
+<h2>Specific elements in dimension 1<a class="headerlink" href="#specific-elements-in-dimension-1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="gausslobatto-element">
+<h3>GaussLobatto element<a class="headerlink" href="#gausslobatto-element" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The 1D GaussLobatto <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> element is similar to the classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/>
+fem on the segment, but the nodes are given by the Gauss-Lobatto-Legendre
+quadrature rule of order <img class="math" src="../_images/math/c84f7cc9b72aea7afa42a289868f596f54947768.png" alt="2K-1" style="vertical-align: -1px"/>. This FEM is known to lead to better
+conditioned linear systems, and can be used with the corresponding quadrature to
+perform mass-lumping (on segments or parallelepipeds).</p>
+<p>The polynomials coefficients have been pre-computed with Maple (they require the
+inversion of an ill-conditioned system), hence they are only available for the
+following values of <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/>: <img class="math" src="../_images/math/5c39dbe87ea502a5e09dd866cd7b5935905ad134.png" alt="1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+14, 16, 24, 32" style="vertical-align: -4px"/>. Note that for <img class="math" src="../_images/math/5af2e9ebb9aad97fdf868342a2b749153e8583b2.png" alt="K=1" style="vertical-align: -1px"/> and <img class="math" src="../_images/math/5b454887e70b45dab09242b99740a3fe71eaea2f.png" alt="K=2" style="vertical-align: 0px"/>, this is the classical
+<img class="math" src="../_images/math/c946bff7a6f8eaaab33fa3229b9e5f3b2111ee28.png" alt="P1" style="vertical-align: -1px"/> and <img class="math" src="../_images/math/77d9a9ade22342975dd98f9f1205c29df2369a02.png" alt="P2" style="vertical-align: 0px"/> fem.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>GaussLobatto <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> element on the segment <tt class="docutils literal"><span class="pre">&quot;FEM_PK_GAUSSLOBATTO1D(K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/370a8ce6987cd7748ec7f25fb35e94582eaec2a0.png" alt="K+1" style="vertical-align: -2px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="hermite-element">
+<h3>Hermite element<a class="headerlink" href="#hermite-element" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-segment-hermite">
+<a class="reference internal image-reference" href="../_images/getfemlistsegmenthermite.png"><img alt="../_images/getfemlistsegmenthermite.png" src="../_images/getfemlistsegmenthermite.png" style="width: 466.8px; height: 48.6px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/> Hermite element on a segment, 4 d.o.f., <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></p>
+</div>
+<p>Base functions on the reference element</p>
+<div class="math">
+<p><img src="../_images/math/469c98f6b03d284ccd5a2cb4b4ff13a8f0a2c08e.png" alt="\begin{array}{ll}
+  \widehat{\varphi}_0 = (2x+1)(x-1)^2,&amp;\ \ \ \widehat{\varphi}_1 = x(x-1)^2, \\
+  \widehat{\varphi}_2 = x^2(3-2x),&amp; \ \ \ \widehat{\varphi}_3 = x^2(x - 1).
+\end{array}"/></p>
+</div><p>This element is close to be <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent but it is not. On the real
+element the value of the gradient on vertices will be multiplied by the gradient
+of the geometric transformation. The matrix <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is not equal to identity but
+is still diagonal.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Hermite element on the segment <tt class="docutils literal"><span class="pre">&quot;FEM_HERMITE(1)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/c7cab1a05e1e0c1d51a6a219d96577a16b7abf9d.png" alt="4" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="lagrange-element-with-an-additional-bubble-function">
+<h3>Lagrange element with an additional bubble function<a class="headerlink" href="#lagrange-element-with-an-additional-bubble-function" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-segment-bubble">
+<a class="reference internal image-reference" href="../_images/getfemlistsegmentbubble.png"><img alt="../_images/getfemlistsegmentbubble.png" src="../_images/getfemlistsegmentbubble.png" style="width: 313.2px; height: 76.8px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> Lagrange element on a segment with additional internal bubble function, 3 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Lagrange <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> element with an additional internal bubble function <tt class="docutils literal"><span class="pre">&quot;FEM_PK_WITH_CUBIC_BUBBLE(1,</span> <span class="pre">1)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="specific-elements-in-dimension-2">
+<h2>Specific elements in dimension 2<a class="headerlink" href="#specific-elements-in-dimension-2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="elements-with-additional-bubble-functions">
+<h3>Elements with additional bubble functions<a class="headerlink" href="#elements-with-additional-bubble-functions" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><table border="1" class="figure docutils" id="ud-fig-triangle-p1-bubble">
+<caption>Lagrange element on a triangle with additional internal bubble function</caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlisttriangleP1bubble.png"><img alt="../_images/getfemlisttriangleP1bubble.png" class="align-center" src="../_images/getfemlisttriangleP1bubble.png" style="width: 264.0px; height: 298.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlisttriangleP2bubble.png"><img alt="../_images/getfemlisttriangleP2bubble.png" class="align-center" src="../_images/getfemlisttriangleP2bubble.png" style="width: 271.0px; height: 298.5px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> with additional bubble function, 4 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> with additional bubble function, 7 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Lagrange <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> or <img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> element with an additional internal bubble function <tt class="docutils literal"><span class="pre">&quot;FEM_PK_WITH_CUBIC_BUBBLE(2,</span> <span class="pre">K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/c7cab1a05e1e0c1d51a6a219d96577a16b7abf9d.png" alt="4" style="vertical-align: -1px"/> or <img class="math" src="../_images/math/e0a0db32027a732ac57d37ef2ae9bb150f65b108.png" alt="7" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center" id="ud-fig-triangle-p1-bubblepie">
+<a class="reference internal image-reference" href="../_images/getfemlisttriangleP1linbubble.png"><img alt="../_images/getfemlisttriangleP1linbubble.png" src="../_images/getfemlisttriangleP1linbubble.png" style="width: 316.8px; height: 358.2px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> Lagrange element on a triangle with additional internal piecewise linear bubble function</p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Lagrange <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> with an additional internal piecewise linear bubble function <tt class="docutils literal"><span class="pre">&quot;FEM_P1_PIECEWISE_LINEAR_BUBBLE&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/c7cab1a05e1e0c1d51a6a219d96577a16b7abf9d.png" alt="4" style="vertical-align: -1px"/> or <img class="math" src="../_images/math/e0a0db32027a732ac57d37ef2ae9bb150f65b108.png" alt="7" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center" id="ud-fig-triangle-p1-bubble-face">
+<a class="reference internal image-reference" href="../_images/getfemlisttriangleP1bubbleface.png"><img alt="../_images/getfemlisttriangleP1bubbleface.png" src="../_images/getfemlisttriangleP1bubbleface.png" style="width: 316.8px; height: 358.2px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> Lagrange element on a triangle with additional bubble function on face 0, 4 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Lagrange <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> element with an additional bubble function on face 0 <tt class="docutils literal"><span class="pre">&quot;FEM_P1_BUBBLE_FACE(2)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/c7cab1a05e1e0c1d51a6a219d96577a16b7abf9d.png" alt="4" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center" id="ud-fig-triangle-p1-p2-face">
+<a class="reference internal image-reference" href="../_images/getfemlisttriangleP1withP2face.png"><img alt="../_images/getfemlisttriangleP1withP2face.png" src="../_images/getfemlisttriangleP1withP2face.png" style="width: 313.2px; height: 358.2px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> Lagrange element on a triangle with additional d.o.f on face 0, 4 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> Lagrange element on a triangle with additional d.o.f on face 0 <tt class="docutils literal"><span class="pre">&quot;FEM_P1_BUBBLE_FACE_LAG&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/c7cab1a05e1e0c1d51a6a219d96577a16b7abf9d.png" alt="4" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="non-conforming-element">
+<h3>Non-conforming <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> element<a class="headerlink" href="#non-conforming-element" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-triangle-non-conforming">
+<a class="reference internal image-reference" href="../_images/getfemlisttriangleP1nonconforming.png"><img alt="../_images/getfemlisttriangleP1nonconforming.png" src="../_images/getfemlisttriangleP1nonconforming.png" style="width: 321.6px; height: 325.2px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> non-conforming element on a triangle, 3 d.o.f., discontinuous</p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> non-conforming element on a triangle <tt class="docutils literal"><span class="pre">&quot;FEM_P1_NONCONFORMING&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/cda0cdc1ff667e83a580e697d8f731c79c335af6.png" alt="discontinuous" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h3>Hermite element<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-triangle-hermite">
+<a class="reference internal image-reference" href="../_images/getfemlisttrianglehermite.png"><img alt="../_images/getfemlisttrianglehermite.png" src="../_images/getfemlisttrianglehermite.png" style="width: 349.8px; height: 351.6px;" /></a>
+<p class="caption">Hermite element on a triangle, <img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/>, 10 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p>Base functions on the reference element:</p>
+<div class="math">
+<p><img src="../_images/math/e0bc092807ded98e32cfb9f2dfdb0459a2496156.png" alt="\begin{array}{ll}
+\widehat{\varphi}_0 = (1-x-y)(1+x+y-2x^2-2y^2-11xy),~~ &amp; (\widehat{\varphi}_0(0,0) = 1), \\
+\widehat{\varphi}_1 = x(1-x-y)(1-x-2y), &amp; (\partial_x\widehat{\varphi}_1(0,0) = 1), \\
+\widehat{\varphi}_2 = y(1-x-y)(1-2x-y), &amp; (\partial_y\widehat{\varphi}_2(0,0) = 1), \\
+\widehat{\varphi}_3 = -2x^3 + 7 x^2y + 7xy^2 + 3x^2 - 7xy, &amp; (\widehat{\varphi}_3(1,0) = 1), \\
+\widehat{\varphi}_4 = x^3-2x^2y-2xy^2-x^2+2xy, &amp; (\partial_x\widehat{\varphi}_4(1,0) = 1), \\
+\widehat{\varphi}_5 = xy(y+2x-1), &amp; (\partial_y\widehat{\varphi}_5(1,0) = 1), \\
+\widehat{\varphi}_6 = 7x^2y + 7xy^2 - 2y^3+3y^2-7xy, &amp; (\widehat{\varphi}_6(0,1) = 1), \\
+\widehat{\varphi}_7 = xy(x+2y-1), &amp; (\partial_x\widehat{\varphi}_7(0,1) = 1), \\
+\widehat{\varphi}_8 = y^3-2x^2y-2xy^2-y^2+2xy, &amp; (\partial_y\widehat{\varphi}_8(0,1) = 1), \\
+\widehat{\varphi}_9 = 27xy(1-x-y), &amp; (\widehat{\varphi}_9(1/3,1/3) = 1), \\
+\end{array}"/></p>
+</div><p>This element is not <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent (The matrix <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is not equal to
+identity). On the real element linear combinations of <img class="math" src="../_images/math/2cdaa5fafca75fac5aab19b7bb440e55e369d6d1.png" alt="\widehat{\varphi}_4" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/818ef86f9b9557736961edb5f943ce3e2765048a.png" alt="\widehat{\varphi}_7" style="vertical-align: -4px"/> are used to match the gradient on the corresponding vertex.
+Idem for the two couples <img class="math" src="../_images/math/e8bb0ac8d895141d84daba602431c65371c2135c.png" alt="(\widehat{\varphi}_5" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/d5e4e3b2d2ab5c6ae701926a04c9d92004d0dd16.png" alt="\widehat{\varphi}_8)" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/acc65aec9ad9d5bf8b4fde1d43f3a1df80dcca67.png" alt="(\widehat{\varphi}_6" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/e400e12f1aeba49fb777d754ef2f7a4b08890877.png" alt="\widehat{\varphi}_9)" style="vertical-align: -4px"/> for the two other vertices.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Hermite element on a triangle <tt class="docutils literal"><span class="pre">&quot;FEM_HERMITE(2)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/fc606f7f1e530731ab4f1cc364c01dc64a4455ee.png" alt="10" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="morley-element">
+<h3>Morley element<a class="headerlink" href="#morley-element" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-triangle-morley">
+<a class="reference internal image-reference" href="../_images/getfemlistmorley.png"><img alt="../_images/getfemlistmorley.png" src="../_images/getfemlistmorley.png" style="width: 381.6px; height: 398.4px;" /></a>
+<p class="caption">triangle Morley element, <img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/>, 6 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p>This element is not <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent (The matrix <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is not equal to
+identity). In particular, it can be used for non-conforming discretization of
+fourth order problems, despite the fact that it is not <img class="math" src="../_images/math/acf8d1a01e60ae3e16d53aa18d6b21e56b536c4d.png" alt="{\cal C}^1" style="vertical-align: 0px"/>.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Morley element on a triangle <tt class="docutils literal"><span class="pre">&quot;FEM_MORLEY&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/601a7806cbfad68196c43a4665871f8c3186802e.png" alt="6" style="vertical-align: 0px"/></td>
+<td>discontinuous</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="argyris-element">
+<h3>Argyris element<a class="headerlink" href="#argyris-element" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-argyris">
+<a class="reference internal image-reference" href="../_images/getfemlistargyris.png"><img alt="../_images/getfemlistargyris.png" src="../_images/getfemlistargyris.png" style="width: 416.4px; height: 413.4px;" /></a>
+<p class="caption">Argyris element, <img class="math" src="../_images/math/63103f61ea87d78047bf2b5be31547472b6af3ed.png" alt="P_5" style="vertical-align: -3px"/>, 21 d.o.f., <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></p>
+</div>
+<p>The base functions on the reference element are:</p>
+<div class="math">
+<p><img src="../_images/math/b00c09363b6dae302379187994bb6be8db085e9a.png" alt="\begin{array}{ll}
+\widehat{\varphi}_{0}(x,y) = 1 - 10x^3 - 10y^3 + 15x^4 - 30x^2y^2 + 15y^4 - 6x^5 + 30x^3y^2 + 30x^2y^3 - 6y^5, &amp; (\widehat{\varphi}_0(0,0) = 1), \\
+\widehat{\varphi}_{1}(x,y) = x - 6x^3 - 11xy^2 + 8x^4 + 10x^2y^2 + 18xy^3 - 3x^5 + x^3y^2 - 10x^2y^3 - 8xy^4, &amp; (\partial_x\widehat{\varphi}_1(0,0) = 1),\\
+\widehat{\varphi}_{2}(x,y) = y - 11x^2y - 6y^3 + 18x^3y + 10x^2y^2 + 8y^4 - 8x^4y - 10x^3y^2 + x^2y^3 - 3y^5, &amp; (\partial_y\widehat{\varphi}_2(0,0) = 1),\\
+\widehat{\varphi}_{3}(x,y) = 0.5x^2 - 1.5x^3 + 1.5x^4 - 1.5x^2y^2 - 0.5x^5 + 1.5x^3y^2 + x^2y^3, &amp; (\partial^2_{xx}\widehat{\varphi}_3(0,0) = 1),\\
+\widehat{\varphi}_{4}(x,y) = xy - 4x^2y - 4xy^2 + 5x^3y + 10x^2y^2 + 5xy^3 - 2x^4y - 6x^3y^2 - 6x^2y^3 - 2xy^4, &amp; (\partial^2_{xy}\widehat{\varphi}_{4}(0,0) = 1),\\
+\widehat{\varphi}_{5}(x,y) = 0.5y^2 - 1.5y^3 - 1.5x^2y^2 + 1.5y^4 + x^3y^2 + 1.5x^2y^3 - 0.5y^5, &amp; (\partial^2_{yy}\widehat{\varphi}_{5}(0,0) = 1),\\
+\widehat{\varphi}_{6}(x,y) = 10x^3 - 15x^4 + 15x^2y^2 + 6x^5 - 15x^3y^2 - 15x^2y^3, &amp; (\widehat{\varphi}_6(1,0) = 1),\\
+\widehat{\varphi}_{7}(x,y) = -4x^3 + 7x^4 - 3.5x^2y^2 - 3x^5 + 3.5x^3y^2 + 3.5x^2y^3, &amp; (\partial_x\widehat{\varphi}_7(1,0) = 1),\\
+\widehat{\varphi}_{8}(x,y) = -5x^2y + 14x^3y + 18.5x^2y^2 - 8x^4y - 18.5x^3y^2 - 13.5x^2y^3, &amp; (\partial_y\widehat{\varphi}_8(1,0) = 1),\\
+\widehat{\varphi}_{9}(x,y) = 0.5x^3 - x^4 + 0.25x^2y^2 + 0.5x^5 - 0.25x^3y^2 - 0.25x^2y^3, &amp; (\partial^2_{xx}\widehat{\varphi}_{9}(1,0) = 1),\\
+\widehat{\varphi}_{10}(x,y) = x^2y - 3x^3y - 3.5x^2y^2 + 2x^4y + 3.5x^3y^2 + 2.5x^2y^3, &amp; (\partial^2_{xy}\widehat{\varphi}_{10}(1,0) = 1),\\
+\widehat{\varphi}_{11}(x,y) = 1.25x^2y^2 - 0.75x^3y^2 - 1.25x^2y^3, &amp; (\partial^2_{yy}\widehat{\varphi}_{11}(1,0) = 1),\\
+\widehat{\varphi}_{12}(x,y) = 10y^3 + 15x^2y^2 - 15y^4 - 15x^3y^2 - 15x^2y^3 + 6y^5, &amp; (\widehat{\varphi}_{12}(0,1) = 1),\\
+\widehat{\varphi}_{13}(x,y) = -5xy^2 + 18.5x^2y^2 + 14xy^3 - 13.5x^3y^2 - 18.5x^2y^3 - 8xy^4, &amp; (\partial_x\widehat{\varphi}_{13}(0,1) = 1),\\
+\widehat{\varphi}_{14}(x,y) = -4y^3 - 3.5x^2y^2 + 7y^4 + 3.5x^3y^2 + 3.5x^2y^3 - 3y^5, &amp; (\partial_y\widehat{\varphi}_{14}(0,0) = 1),\\
+\widehat{\varphi}_{15}(x,y) = 1.25x^2y^2 - 1.25x^3y^2 - 0.75x^2y^3, &amp; (\partial^2_{xx}\widehat{\varphi}_{15}(0,1) = 1),\\
+\widehat{\varphi}_{16}(x,y) = xy^2 - 3.5x^2y^2 - 3xy^3 + 2.5x^3y^2 + 3.5x^2y^3 + 2xy^4, &amp; (\partial^2_{xy}\widehat{\varphi}_{16}(0,1) = 1),\\
+\widehat{\varphi}_{17}(x,y) = 0.5y^3 + 0.25x^2y^2 - y^4 - 0.25x^3y^2 - 0.25x^2y^3 + 0.5y^5, &amp; (\partial^2_{yy}\widehat{\varphi}_{17}(0,1) = 1),\\
+\widehat{\varphi}_{18}(x,y) = \sqrt{2}(-8x^2y^2 + 8x^3y^2 + 8x^2y^3), &amp; ~\hspace{-10.5em}(\sqrt{0.5}(\partial_{x}\widehat{\varphi}_{18}(0.5,0.5) + \partial_{y}\widehat{\varphi}_{18}(0.5,0.5)) = 1),\\
+\widehat{\varphi}_{19}(x,y) = -16xy^2 + 32x^2y^2 + 32xy^3 - 16x^3y^2 - 32x^2y^3 - 16xy^4, &amp; (-\partial_{x}\widehat{\varphi}_{19}(0,0.5) = 1),\\
+\widehat{\varphi}_{20}(x,y) = -16x^2y + 32x^3y + 32x^2y^2 - 16x^4y - 32x^3y^2 - 16x^2y^3, &amp; (-\partial_{y}\widehat{\varphi}_{20}(0.5,0) = 1),\\
+\end{array}"/></p>
+</div><p>This element is not <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent (The matrix <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is not equal to
+identity). On the real element linear combinations of the transformed base
+functions <img class="math" src="../_images/math/242bbb528758ba169374a3ccb4c62650325f346c.png" alt="\widehat{\varphi}_i" style="vertical-align: -4px"/> are used to match the gradient, the second
+derivatives and the normal derivatives on the faces. Note that the use of the
+matrix <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> allows to define Argyris element even with nonlinear geometric
+transformations (for instance to treat curved boundaries).</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Argyris element on a triangle <tt class="docutils literal"><span class="pre">&quot;FEM_ARGYRIS&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/79069377f91364c2f87a64e5f9f562a091c8a6c1.png" alt="5" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/f25d31faf472ddb4c698a14522fe8125c06f8dd8.png" alt="21" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="hsieh-clough-tocher-element">
+<h3>Hsieh-Clough-Tocher element<a class="headerlink" href="#hsieh-clough-tocher-element" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-hct-tr">
+<a class="reference internal image-reference" href="../_images/getfemlistHCT.png"><img alt="../_images/getfemlistHCT.png" src="../_images/getfemlistHCT.png" style="width: 396.6px; height: 394.8px;" /></a>
+<p class="caption">Hsieh-Clough-Tocher (HCT) element, <img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/>, 12 d.o.f., <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></p>
+</div>
+<p>This element is not <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent. This is a composite element.
+Polynomial of degree 3 on each of the three sub-triangles (see figure
+<a class="reference internal" href="#ud-fig-hct-tr"><em>Hsieh-Clough-Tocher (HCT) element, , 12 d.o.f., </em></a> and <a class="reference internal" href="../biblio.html#ciarlet1978" id="id2">[ciarlet1978]</a>). It is strongly advised to use a
+<tt class="docutils literal"><span class="pre">&quot;IM_HCT_COMPOSITE&quot;</span></tt> integration method with this finite element. The numeration
+of the dof is the following: 0, 3 and 6 for the lagrange dof on the first second
+and third vertex respectively; 1, 4, 7 for the derivative with respects to the
+first variable; 2, 5, 8 for the derivative with respects to the second variable
+and 9, 10, 11 for the normal derivatives on face 0, 1, 2 respectively.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>HCT element on a triangle <tt class="docutils literal"><span class="pre">&quot;FEM_HCT_TRIANGLE&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/edf074831eb5bc9e61d6d6e09f525a86e3068f6a.png" alt="12" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center" id="ud-fig-reduced-hct-tr">
+<a class="reference internal image-reference" href="../_images/getfemlistreducedHCT.png"><img alt="../_images/getfemlistreducedHCT.png" src="../_images/getfemlistreducedHCT.png" style="width: 348.6px; height: 348.6px;" /></a>
+<p class="caption">Reduced Hsieh-Clough-Tocher (reduced HCT) element, <img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/>, 9 d.o.f., <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></p>
+</div>
+<p>This element exists also in its reduced form, where the normal derivatives are
+assumed to be polynomial of degree one on each edge (see figure
+<a class="reference internal" href="#ud-fig-reduced-hct-tr"><em>Reduced Hsieh-Clough-Tocher (reduced HCT) element, , 9 d.o.f., </em></a>)</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Reduced HCT element on a triangle <tt class="docutils literal"><span class="pre">&quot;FEM_REDUCED_HCT_TRIANGLE&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/bf2c9074b396e3af0dea52d792660eea1c77f10f.png" alt="9" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="a-composite-element-on-quadrilaterals">
+<h3>A composite <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/> element on quadrilaterals<a class="headerlink" href="#a-composite-element-on-quadrilaterals" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-qc1-tr">
+<a class="reference internal image-reference" href="../_images/getfemlistquadc1composite.png"><img alt="../_images/getfemlistquadc1composite.png" src="../_images/getfemlistquadc1composite.png" style="width: 446.4px; height: 439.8px;" /></a>
+<p class="caption">Composite element on quadrilaterals, piecewise <img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/>, 16 d.o.f., <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></p>
+</div>
+<p>This element is not <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent. This is a composite element.
+Polynomial of degree 3 on each of the four sub-triangles (see figure
+<a class="reference internal" href="#ud-fig-qc1-tr"><em>Composite element on quadrilaterals, piecewise , 16 d.o.f., </em></a>). At least on the reference element it corresponds to the
+Fraeijs de Veubeke-Sander element (see  <a class="reference internal" href="../biblio.html#ciarlet1978" id="id3">[ciarlet1978]</a>). It is strongly advised
+to use a <tt class="docutils literal"><span class="pre">&quot;IM_QUADC1_COMPOSITE&quot;</span></tt> integration method with this finite element.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>. <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/> composite element on a quadrilateral (FVS) <tt class="docutils literal"><span class="pre">&quot;FEM_QUADC1_COMPOSITE&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/9a5b4928c8fe50ce3c2428da3bee3505e891b788.png" alt="16" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center" id="ud-fig-reduced-qc1-tr">
+<a class="reference internal image-reference" href="../_images/getfemlistreducedquadc1composite.png"><img alt="../_images/getfemlistreducedquadc1composite.png" src="../_images/getfemlistreducedquadc1composite.png" style="width: 439.8px; height: 433.2px;" /></a>
+<p class="caption">Reduced composite element on quadrilaterals, piecewise <img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/>, 12 d.o.f., <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></p>
+</div>
+<p>This element exists also in its reduced form, where the normal derivatives are
+assumed to be polynomial of degree one on each edge (see figure
+<a class="reference internal" href="#ud-fig-reduced-qc1-tr"><em>Reduced composite element on quadrilaterals, piecewise , 12 d.o.f., </em></a>)</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Reduced <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/> composite element on a quadrilateral (reduced FVS) <tt class="docutils literal"><span class="pre">&quot;FEM_REDUCED_QUADC1_COMPOSITE&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/edf074831eb5bc9e61d6d6e09f525a86e3068f6a.png" alt="12" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>piecewise</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="specific-elements-in-dimension-3">
+<h2>Specific elements in dimension 3<a class="headerlink" href="#specific-elements-in-dimension-3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="lagrange-elements-on-3d-pyramid">
+<h3>Lagrange elements on 3D pyramid<a class="headerlink" href="#lagrange-elements-on-3d-pyramid" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p><em>GetFEM++</em> proposes some Lagrange pyramidal elements of degree 0, 1 and two based on <a class="reference internal" href="../biblio.html#gr-gh1999" id="id4">[GR-GH1999]</a> and <a class="reference internal" href="../biblio.html#be-co-du2010" id="id5">[BE-CO-DU2010]</a>. See these references for more details. The proposed element can be raccorded to standard <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> or <img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> Lagrange fem on the triangular faces and to a standard <img class="math" src="../_images/math/c16e423c8f499e0bef8c20078b04126aeb9417bc.png" alt="Q_1" style="vertical-align: -4px"/> or <img class="math" src="../_images/math/f83bf0891a57ba8a1ee68d8c72f141ccbc14186d.png" alt="Q_2" style="vertical-align: -4px"/> Lagrange fem on the quatrilateral face.</p>
+<table border="1" class="figure docutils" id="ud-fig-pyramid-lagrange">
+<caption>Lagrange element on a pyramidal element of order 0, 1 and 2</caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlistpyramidP0.png"><img alt="../_images/getfemlistpyramidP0.png" class="align-center" src="../_images/getfemlistpyramidP0.png" style="width: 408.5px; height: 322.0px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistpyramidP1.png"><img alt="../_images/getfemlistpyramidP1.png" class="align-center" src="../_images/getfemlistpyramidP1.png" style="width: 433.5px; height: 365.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlistpyramidP2.png"><img alt="../_images/getfemlistpyramidP2.png" class="align-center" src="../_images/getfemlistpyramidP2.png" style="width: 433.5px; height: 365.5px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td>Degree 0 pyramidal element with 1 dof</td>
+<td>Degree 1 pyramidal element with 5 dof</td>
+<td>Degree 2 pyramidal element with 14 dof</td>
+</tr>
+</tbody>
+</table>
+<p>The associated geometric transformations are <tt class="docutils literal"><span class="pre">&quot;GT_PYRAMID(K)&quot;</span></tt> for K = 1 or 2. The associated integration methods <tt class="docutils literal"><span class="pre">&quot;IM_PYRAMID(im)&quot;</span></tt> where <tt class="docutils literal"><span class="pre">im</span></tt> is an integration method on a hexahedron (or alternatively <tt class="docutils literal"><span class="pre">&quot;IM_PYRAMID_COMPOSITE(im)&quot;</span></tt> where <tt class="docutils literal"><span class="pre">im</span></tt> is an integration method on a tetrahedron, but it is theoretically less accurate)
+The shape functions are not polynomial ones but rational fractions. For the first degree the shape functions read:</p>
+<div class="math">
+<p><img src="../_images/math/4fb295fd09759ee34f307beb88335d1b7fa5c45e.png" alt="\begin{array}{l}
+\widehat{\varphi}_{0}(x,y,z) =  \frac{1}{4}\left(1-x-y-z+\Frac{xy}{1-z}\right), \\
+\widehat{\varphi}_{1}(x,y,z) =  \frac{1}{4}\left(1+x-y-z-\Frac{xy}{1-z}\right), \\
+\widehat{\varphi}_{2}(x,y,z) =  \frac{1}{4}\left(1-x+y-z-\Frac{xy}{1-z}\right), \\
+\widehat{\varphi}_{3}(x,y,z) =  \frac{1}{4}\left(1+x+y-z+\Frac{xy}{1-z}\right), \\
+\widehat{\varphi}_{4}(x,y,z) =  z.\\
+\end{array}"/></p>
+</div><p>For the second degree, setting</p>
+<div class="math">
+<p><img src="../_images/math/5e55c929c57829a1f20169011e5cf65e1a469567.png" alt="\xi_0 = \Frac{1-z-x}{2}, ~~~\xi_1 = \Frac{1-z-y}{2}, ~~~\xi_2 = \Frac{1-z+x}{2}, ~~~\xi_3 = \Frac{1-z+y}{2}, ~~~\xi_4 = z,"/></p>
+</div><p>the shape functions read:</p>
+<div class="math">
+<p><img src="../_images/math/8c0edc34593ee89398112ce70a378c1a493487f4.png" alt="\begin{array}{l}
+\widehat{\varphi}_{0}(x,y,z) = \Frac{\xi_0 \xi_1}{(1-\xi_4)^2}((1-\xi_4-2\xi_0)(1-\xi_4-2\xi_1) -\xi_4(1-\xi_4)), \\
+\widehat{\varphi}_{1}(x,y,z) = 4\Frac{\xi_0\xi_1\xi_2}{(1-\xi_4)^2}(2\xi_1-(1-\xi_4)), \\
+\widehat{\varphi}_{2}(x,y,\xi_4) = \Frac{\xi_1 \xi_2}{(1-\xi_4)^2}((1-\xi_4-2\xi_1)(1-\xi_4-2\xi_2) -\xi_4(1-\xi_4)), \\
+\widehat{\varphi}_{3}(x,y,z) = 4\Frac{\xi_3\xi_0\xi_1}{(1-\xi_4)^2}(2\xi_0-(1-\xi_4)), \\
+\widehat{\varphi}_{4}(x,y,z) = 16\Frac{\xi_0\xi_1\xi_2\xi_3}{(1-\xi_4)^2}, \\
+\widehat{\varphi}_{5}(x,y,z) = 4\Frac{\xi_1\xi_2\xi_3}{(1-\xi_4)^2}(2\xi_2-(1-\xi_4)), \\
+\widehat{\varphi}_{6}(x,y,z) = \Frac{\xi_3 \xi_0}{(1-\xi_4)^2}((1-\xi_4-2\xi_3)(1-\xi_4-2\xi_0) -\xi_4(1-\xi_4)), \\
+\widehat{\varphi}_{7}(x,y,z) = 4\Frac{\xi_2\xi_3\xi_0}{(1-\xi_4)^2}(2\xi_3-(1-\xi_4)), \\
+\widehat{\varphi}_{8}(x,y,z) = \Frac{\xi_2 \xi_3}{(1-\xi_4)^2}((1-\xi_4-2\xi_2)(1-\xi_4-2\xi_3) -\xi_4(1-\xi_4)), \\
+\widehat{\varphi}_{9}(x,y,z) = 4\Frac{\xi_4}{1-\xi_4}\xi_0\xi_1, \\
+\widehat{\varphi}_{10}(x,y,z) = 4\Frac{\xi_4}{1-\xi_4}\xi_1\xi_2,  \\
+\widehat{\varphi}_{11}(x,y,z) = 4\Frac{\xi_4}{1-\xi_4}\xi_3\xi_0,  \\
+\widehat{\varphi}_{12}(x,y,z) = 4\Frac{\xi_4}{1-\xi_4}\xi_2\xi_3,  \\
+\widehat{\varphi}_{13}(x,y,z) = \xi_4(2\xi_4-1). \\
+\end{array}"/></p>
+</div><table border="1" class="docutils">
+<caption>Continuous Lagrange element of order 0, 1 or 2 <tt class="docutils literal"><span class="pre">&quot;FEM_PYRAMID_LAGRANGE(K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td>discontinuous</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/79069377f91364c2f87a64e5f9f562a091c8a6c1.png" alt="5" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/820a20de2847dfdc1bc5cffc8d904933150032bd.png" alt="14" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<caption>Discontinuous Lagrange element of order 0, 1 or 2 <tt class="docutils literal"><span class="pre">&quot;FEM_PYRAMID_DISCONTINUOUS_LAGRANGE(K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td>discontinuous</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td><img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/79069377f91364c2f87a64e5f9f562a091c8a6c1.png" alt="5" style="vertical-align: 0px"/></td>
+<td>discontinuous</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/41c544263a265ff15498ee45f7392c5f86c6d151.png" alt="2" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/820a20de2847dfdc1bc5cffc8d904933150032bd.png" alt="14" style="vertical-align: -1px"/></td>
+<td>discontinuous</td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id6">
+<h3>Elements with additional bubble functions<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><table border="1" class="figure docutils" id="ud-fig-tetrahedron-p1-bubble">
+<caption>Lagrange element on a tetrahedron with additional internal bubble function</caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="first last reference internal image-reference" href="../_images/getfemlisttetrahedronP1bubble.png"><img alt="../_images/getfemlisttetrahedronP1bubble.png" class="align-center" src="../_images/getfemlisttetrahedronP1bubble.png" style="width: 261.0px; height: 298.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlisttetrahedronP2bubble.png"><img alt="../_images/getfemlisttetrahedronP2bubble.png" class="align-center" src="../_images/getfemlisttetrahedronP2bubble.png" style="width: 261.0px; height: 298.5px;" /></a>
+</td>
+<td><a class="first last reference internal image-reference" href="../_images/getfemlisttetrahedronP3bubble.png"><img alt="../_images/getfemlisttetrahedronP3bubble.png" class="align-center" src="../_images/getfemlisttetrahedronP3bubble.png" style="width: 271.0px; height: 294.5px;" /></a>
+</td>
+</tr>
+<tr class="row-even"><td><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> with additional bubble function, 5 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/107c7c8e5a64d81ed24331e510b777b7d08345b7.png" alt="P_2" style="vertical-align: -3px"/> with additional bubble function, 11 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/> with additional bubble function, 21 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption><img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange element with an additional internal bubble function <tt class="docutils literal"><span class="pre">&quot;FEM_PK_WITH_CUBIC_BUBBLE(3,</span> <span class="pre">K)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/c7cab1a05e1e0c1d51a6a219d96577a16b7abf9d.png" alt="4" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/79069377f91364c2f87a64e5f9f562a091c8a6c1.png" alt="5" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/c6878713578626763c38433b3f4c8c2205ad0c15.png" alt="11" style="vertical-align: -1px"/> or <img class="math" src="../_images/math/f25d31faf472ddb4c698a14522fe8125c06f8dd8.png" alt="21" style="vertical-align: -1px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<div class="figure align-center" id="ud-fig-tetrahedron-p1-bubble-face">
+<a class="reference internal image-reference" href="../_images/getfemlisttetrahedronP1bubbleface.png"><img alt="../_images/getfemlisttetrahedronP1bubbleface.png" src="../_images/getfemlisttetrahedronP1bubbleface.png" style="width: 313.2px; height: 358.2px;" /></a>
+<p class="caption"><img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> Lagrange element on a tetrahedron with additional bubble function on face 0, 5 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p><img class="math" src="../_images/math/b930c3b8e0b88a064cc13bc215a2cf14cdbf60f2.png" alt=".\\" style="vertical-align: 22px"/></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Lagrange <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> element with an additional bubble function on face 0 <tt class="docutils literal"><span class="pre">&quot;FEM_P1_BUBBLE_FACE(3)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/79069377f91364c2f87a64e5f9f562a091c8a6c1.png" alt="5" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="id7">
+<h3>Hermite element<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="figure align-center" id="ud-fig-tetrahedron-hermite">
+<a class="reference internal image-reference" href="../_images/getfemlisttetrahedronhermite.png"><img alt="../_images/getfemlisttetrahedronhermite.png" src="../_images/getfemlisttetrahedronhermite.png" style="width: 348.6px; height: 348.6px;" /></a>
+<p class="caption">Hermite element on a tetrahedron, <img class="math" src="../_images/math/9090f2e6bd5da465fea10a8c755d64e9185f61f1.png" alt="P_3" style="vertical-align: -3px"/>, 20 d.o.f., <img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></p>
+</div>
+<p>Base functions on the reference element:</p>
+<div class="math">
+<p><img src="../_images/math/60dda1305dee3e380eba47a9729bf9ad919a772e.png" alt="\begin{array}{ll}
+\widehat{\varphi}_{0}(x,y) = 1 - 3x^2 - 13xy - 13xz - 3y^2 - 13yz - 3z^2 + 2x^3 + 13x^2y + 13x^2z &amp; \\
+~~~~~~~~~~~~~~~ + 13xy^2 + 33xyz + 13xz^2 + 2y^3 + 13y^2z + 13yz^2 + 2z^3, &amp; (\widehat{\varphi}_0(0,0,0) = 1),\\
+\widehat{\varphi}_{1}(x,y) = x - 2x^2 - 3xy - 3xz + x^3 + 3x^2y + 3x^2z + 2xy^2 + 4xyz + 2xz^2, &amp; (\partial_x\widehat{\varphi}_1(0,0,0) = 1),\\
+\widehat{\varphi}_{2}(x,y) = y - 3xy - 2y^2 - 3yz + 2x^2y + 3xy^2 + 4xyz + y^3 + 3y^2z + 2yz^2, &amp; (\partial_y\widehat{\varphi}_2(0,0,0) = 1),\\
+\widehat{\varphi}_{3}(x,y) = z - 3xz - 3yz - 2z^2 + 2x^2z + 4xyz + 3xz^2 + 2y^2z + 3yz^2 + z^3, &amp; (\partial_z\widehat{\varphi}_3(0,0,0) = 1),\\
+\widehat{\varphi}_{4}(x,y) = 3x^2 - 7xy - 7xz - 2x^3 + 7x^2y + 7x^2z + 7xy^2 + 7xyz + 7xz^2, &amp; (\widehat{\varphi}_4(1,0,0) = 1),\\
+\widehat{\varphi}_{5}(x,y) = -x^2 + 2xy + 2xz + x^3 - 2x^2y - 2x^2z - 2xy^2 - 2xyz - 2xz^2, &amp; (\partial_x\widehat{\varphi}_5(1,0,0) = 1),\\
+\widehat{\varphi}_{6}(x,y) = -xy + 2x^2y + xy^2, &amp; (\partial_y\widehat{\varphi}_6(1,0,0) = 1),\\
+\widehat{\varphi}_{7}(x,y) = -xz + 2x^2z + xz^2, &amp; (\partial_z\widehat{\varphi}_7(1,0,0) = 1),\\
+\widehat{\varphi}_{8}(x,y) = -7xy + 3y^2 - 7yz + 7x^2y + 7xy^2 + 7xyz - 2y^3 + 7y^2z + 7yz^2, &amp; (\widehat{\varphi}_8(0,1,0) = 1),\\
+\widehat{\varphi}_{9}(x,y) = -xy + x^2y + 2xy^2, &amp; (\partial_x\widehat{\varphi}_9(0,1,0) = 1),\\
+\widehat{\varphi}_{10}(x,y) = 2xy - y^2 + 2yz - 2x^2y - 2xy^2 - 2xyz + y^3 - 2y^2z - 2yz^2, &amp; (\partial_y\widehat{\varphi}_{10}(0,1,0) = 1),\\
+\widehat{\varphi}_{11}(x,y) = -yz + 2y^2z + yz^2, &amp; (\partial_z\widehat{\varphi}_{11}(0,1,0) = 1),\\
+\widehat{\varphi}_{12}(x,y) = -7xz - 7yz + 3z^2 + 7x^2z + 7xyz + 7xz^2 + 7y^2z + 7yz^2 - 2z^3, &amp; (\widehat{\varphi}_{12}(0,0,1) = 1),\\
+\widehat{\varphi}_{13}(x,y) = -xz + x^2z + 2xz^2, &amp; (\partial_x\widehat{\varphi}_{13}(0,0,1) = 1),\\
+\widehat{\varphi}_{14}(x,y) = -yz + y^2z + 2yz^2, &amp; (\partial_y\widehat{\varphi}_{14}(0,0,1) = 1),\\
+\widehat{\varphi}_{15}(x,y) = 2xz + 2yz - z^2 - 2x^2z - 2xyz - 2xz^2 - 2y^2z - 2yz^2 + z^3, &amp; (\partial_z\widehat{\varphi}_{15}(0,0,1) = 1),\\
+\widehat{\varphi}_{16}(x,y) = 27xyz, &amp; (\widehat{\varphi}_{16}(1/3,1/3,1/3) = 1),\\
+\widehat{\varphi}_{17}(x,y) = 27yz - 27xyz - 27y^2z - 27yz^2, &amp; (\widehat{\varphi}_{17}(0,1/3,1/3) = 1),\\
+\widehat{\varphi}_{18}(x,y) = 27xz - 27x^2z - 27xyz - 27xz^2, &amp; (\widehat{\varphi}_{18}(1/3,0,1/3) = 1),\\
+\widehat{\varphi}_{19}(x,y) = 27xy - 27x^2y - 27xy^2 - 27xyz, &amp; (\widehat{\varphi}_{19}(1/3,1/3,0) = 1),\\
+\end{array}"/></p>
+</div><p>This element is not <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent (The matrix <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is not equal to
+identity). On the real element linear combinations of <img class="math" src="../_images/math/048b001ec1c9c519ea96ca6e3c0b04ced1193acb.png" alt="\widehat{\varphi}_8" style="vertical-align: -4px"/>,
+<img class="math" src="../_images/math/3af7e3d40ae713bc56138c63d857bfa71847f65c.png" alt="\widehat{\varphi}_{12}" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/e693fee745c4a6d29bb6486cbb157220d17e7f23.png" alt="\widehat{\varphi}_{16}" style="vertical-align: -4px"/> are used to match the gradient on
+the corresponding vertex. Idem on the other vertices.</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<caption>Hermite element on a tetrahedron <tt class="docutils literal"><span class="pre">&quot;FEM_HERMITE(3)&quot;</span></tt></caption>
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">dimension</th>
+<th class="head">d.o.f. number</th>
+<th class="head">class</th>
+<th class="head">vector</th>
+<th class="head"><img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent</th>
+<th class="head">Polynomial</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/f8366cd6196dd8a9da6d38a3e9eafb109e99d53e.png" alt="20" style="vertical-align: 0px"/></td>
+<td><img class="math" src="../_images/math/ab76ee72b7a9a048ef4be97b58de75a52a1a8b3f.png" alt="C^0" style="vertical-align: 0px"/></td>
+<td>No <img class="math" src="../_images/math/68b161d94ce9d0ea151eed97e9630bf52d2a3979.png" alt="(Q = 1)" style="vertical-align: -4px"/></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Appendix A. Finite element method list</a><ul>
+<li><a class="reference internal" href="#classical-lagrange-elements-on-simplices">Classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange elements on simplices</a></li>
+<li><a class="reference internal" href="#classical-lagrange-elements-on-other-geometries">Classical Lagrange elements on other geometries</a></li>
+<li><a class="reference internal" href="#elements-with-hierarchical-basis">Elements with hierarchical basis</a><ul>
+<li><a class="reference internal" href="#hierarchical-elements-with-respect-to-the-degree">Hierarchical elements with respect to the degree</a></li>
+<li><a class="reference internal" href="#composite-elements">Composite elements</a></li>
+<li><a class="reference internal" href="#hierarchical-composite-elements">Hierarchical composite elements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#classical-vector-elements">Classical vector elements</a><ul>
+<li><a class="reference internal" href="#raviart-thomas-of-lowest-order-elements">Raviart-Thomas of lowest order elements</a></li>
+<li><a class="reference internal" href="#nedelec-or-whitney-edge-elements">Nedelec (or Whitney) edge elements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specific-elements-in-dimension-1">Specific elements in dimension 1</a><ul>
+<li><a class="reference internal" href="#gausslobatto-element">GaussLobatto element</a></li>
+<li><a class="reference internal" href="#hermite-element">Hermite element</a></li>
+<li><a class="reference internal" href="#lagrange-element-with-an-additional-bubble-function">Lagrange element with an additional bubble function</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specific-elements-in-dimension-2">Specific elements in dimension 2</a><ul>
+<li><a class="reference internal" href="#elements-with-additional-bubble-functions">Elements with additional bubble functions</a></li>
+<li><a class="reference internal" href="#non-conforming-element">Non-conforming <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> element</a></li>
+<li><a class="reference internal" href="#id1">Hermite element</a></li>
+<li><a class="reference internal" href="#morley-element">Morley element</a></li>
+<li><a class="reference internal" href="#argyris-element">Argyris element</a></li>
+<li><a class="reference internal" href="#hsieh-clough-tocher-element">Hsieh-Clough-Tocher element</a></li>
+<li><a class="reference internal" href="#a-composite-element-on-quadrilaterals">A composite <img class="math" src="../_images/math/ff595c8c8836036624dec51f27480f9316d0e9c0.png" alt="C^1" style="vertical-align: 0px"/> element on quadrilaterals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specific-elements-in-dimension-3">Specific elements in dimension 3</a><ul>
+<li><a class="reference internal" href="#lagrange-elements-on-3d-pyramid">Lagrange elements on 3D pyramid</a></li>
+<li><a class="reference internal" href="#id6">Elements with additional bubble functions</a></li>
+<li><a class="reference internal" href="#id7">Hermite element</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_ALE_rotating.html"
+                        title="前の章へ">ALE Support for object having a large rigid body motion</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="appendixB.html"
+                        title="次の章へ">Appendix B. Cubature method list</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="appendixB.html" title="Appendix B. Cubature method list"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_ALE_rotating.html" title="ALE Support for object having a large rigid body motion"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

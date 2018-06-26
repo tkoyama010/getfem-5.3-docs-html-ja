@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Source term bricks (and Neumann condition) &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Predefined solvers" href="model_solvers.html" />
+    <link rel="prev" title="Dirichlet condition brick" href="model_dirichlet.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_solvers.html" title="Predefined solvers"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_dirichlet.html" title="Dirichlet condition brick"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="source-term-bricks-and-neumann-condition">
+<span id="ud-model-source-term"></span><span id="index-0"></span><h1>Source term bricks (and Neumann condition)<a class="headerlink" href="#source-term-bricks-and-neumann-condition" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This brick adds a source term, i.e. a term which occurs only in the right hand side
+of the linear (tangent) system build by the model. If <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" style="vertical-align: -4px"/> denotes the value
+of the source term, the weak form of such a term is</p>
+<div class="math">
+<p><img src="../_images/math/5030a099b6b39b056d520c057235da02cab7c0fd.png" alt="\int_{\Omega} f v\ dx"/></p>
+</div><p>where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> is the test function. The value <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" style="vertical-align: -4px"/> can be constant or
+described on a finite element method.</p>
+<p>It can also represent a Neumann condition if it is applied on a boundary of the
+domain.</p>
+<p>The function to add a source term to a model is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span>
+                      <span class="n">varname</span><span class="p">,</span> <span class="n">dataexpr</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                      <span class="n">directdataname</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md``is</span> <span class="pre">the</span> <span class="pre">model</span> <span class="pre">object,</span> <span class="pre">``mim</span></tt> is the integration method, <tt class="docutils literal"><span class="pre">varname</span></tt> is
+the variable of the model for which the source term is added, <tt class="docutils literal"><span class="pre">dataexpr</span></tt> has to be  a regular expression of the weak form language (except for the complex version where it has to be a declared data of the model). It has to be
+scalar or vector valued depending on the fact that the variable is scalar or
+vector valued itself. <tt class="docutils literal"><span class="pre">region</span></tt> is a mesh region on which the term is added. If
+the region corresponds to a boundary, the source term will represent a Neumann
+condition. <tt class="docutils literal"><span class="pre">directdataname</span></tt> is an optional additional data which will directly
+be added to the right hand side without assembly.</p>
+<p>The brick has a working complex version.</p>
+<p>A slightly different brick, especially dedicated to deal with a Neumann condition,
+is added by the following function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_normal_source_term_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span>
+                             <span class="n">varname</span><span class="p">,</span> <span class="n">dataexpr</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The difference compared to the basic source term brick is that the data should be
+a vector field (a matrix field if the variable <tt class="docutils literal"><span class="pre">varname</span></tt> is itself vector
+valued) and a scalar product with the outward unit normal is performed on it.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_dirichlet.html"
+                        title="前の章へ">Dirichlet condition brick</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_solvers.html"
+                        title="次の章へ">Predefined solvers</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_solvers.html" title="Predefined solvers"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_dirichlet.html" title="Dirichlet condition brick"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The FEM description in GetFEM++ &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the Project" href="index.html" />
+    <link rel="next" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="prev" title="How to contribute / Git repository on Savannah" href="contribute.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc.html" title="Description of the different parts of the library"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="contribute.html" title="How to contribute / Git repository on Savannah"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-fem-description-in-gf">
+<span id="dp-femdesc"></span><h1>The FEM description in <em>GetFEM++</em><a class="headerlink" href="#the-fem-description-in-gf" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The aim of this section is to briefly introduce the FEM description in <em>GetFEM++</em>
+mainly in order to fix the notation used in the rest of the document (definition
+of element, reference element, geometric transformation, gradient of the
+geometric transformation ...).</p>
+<div class="section" id="convex-structures">
+<h2>Convex structures<a class="headerlink" href="#convex-structures" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Finite element methods are defined on small convex domains called elements. The
+simplest element on which a finite element method can be defined is a segment
+(simplex of dimension 1), other possibilities are triangles, tetrahedrons
+(simplices of dimension 2 and 3), prisms, parallelepiped, etc. In <em>GetFEM++</em>, a type of
+element (for us, a convex) is described by the object <tt class="docutils literal"><span class="pre">bgeot::convex_structure</span></tt> defined in the file
+<tt class="file docutils literal"><span class="pre">bgeot_convex_structure.h</span></tt>.</p>
+<p>It describes only the structure of the convex not the coordinates of the
+vertices. This structure is not to be manipulated by itself, because it is not
+necessary that more than one structure of this type describe the same type of
+convex. What will be manipulated is a pointer on such a descriptor which has to
+be declared with the type <tt class="docutils literal"><span class="pre">bgeot::pconvex_structure</span></tt></p>
+<p>The following functions give a pointer onto the descriptor of the usual type of
+elements:</p>
+<dl class="function">
+<dt id="bgeot::simplex_structure">
+<tt class="descclassname">bgeot::</tt><tt class="descname">simplex_structure</tt><big>(</big>dim_type<em>&nbsp;d</em><big>)</big><a class="headerlink" href="#bgeot::simplex_structure" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>description of a simplex of dimension <tt class="docutils literal"><span class="pre">d</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bgeot::parallelepiped_structure">
+<tt class="descclassname">bgeot::</tt><tt class="descname">parallelepiped_structure</tt><big>(</big>dim_type<em>&nbsp;d</em><big>)</big><a class="headerlink" href="#bgeot::parallelepiped_structure" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>description of a parallelepiped of dimension <tt class="docutils literal"><span class="pre">d</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">bgeot::convex_product_structure(bgeot::pconvex_structure p1, bgeot::pconv$</tt></dt>
+<dd><p>description of the direct product of <tt class="docutils literal"><span class="pre">p1</span></tt> and <tt class="docutils literal"><span class="pre">p2</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bgeot::prism_P1_structure">
+<tt class="descclassname">bgeot::</tt><tt class="descname">prism_P1_structure</tt><big>(</big>dim_type<em>&nbsp;d</em><big>)</big><a class="headerlink" href="#bgeot::prism_P1_structure" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>description of a prism of dimension <tt class="docutils literal"><span class="pre">d</span></tt></p>
+</dd></dl>
+
+<p>For instance if one needs the description of a square, one can call
+equivalently:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">p</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">parallelepiped_structure</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">p</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">convex_product_structure</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">simplex_structure</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                                    <span class="n">bgeot</span><span class="o">::</span><span class="n">simplex_structure</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The descriptor contains in particular the number of faces (<tt class="docutils literal"><span class="pre">p-&gt;nb_faces()</span></tt>),
+the dimension of the convex (<tt class="docutils literal"><span class="pre">p-&gt;dim()</span></tt>), for the number of vertices
+(<tt class="docutils literal"><span class="pre">p-&gt;nb_points()</span></tt>). Other information is the number of vertices of each face,
+the description of a face and the eventual reference to a more basic description
+(used for the description of geometric transformations).</p>
+<div class="figure align-center" id="dp-fig-elem">
+<a class="reference internal image-reference" href="../_images/getfemelemelem.png"><img alt="../_images/getfemelemelem.png" src="../_images/getfemelemelem.png" style="width: 1003.2px; height: 853.2px;" /></a>
+<p class="caption">usual elements</p>
+</div>
+</div>
+<div class="section" id="convexes-of-reference">
+<h2>Convexes of reference<a class="headerlink" href="#convexes-of-reference" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A convex of reference is a particular real element, i.e. a structure of convex
+with a list of vertices. It describes the particular element from which a finite
+element method is defined. In the file <tt class="file docutils literal"><span class="pre">bgeot_convex_ref.h</span></tt> the object
+<tt class="docutils literal"><span class="pre">bgeot::convex_of_reference</span></tt> makes this description. The library keeps only one description for each
+type of convex. So what will be manipulated is a pointer of type <tt class="docutils literal"><span class="pre">bgeot::pconvex_ref</span></tt> on the
+descriptor.</p>
+<p>The following functions build the descriptions:</p>
+<dl class="function">
+<dt id="bgeot::simplex_of_reference">
+<tt class="descclassname">bgeot::</tt><tt class="descname">simplex_of_reference</tt><big>(</big>dim_type<em>&nbsp;d</em><big>)</big><a class="headerlink" href="#bgeot::simplex_of_reference" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>description of the simplex of reference of dimension <tt class="docutils literal"><span class="pre">d</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">bgeot::</tt><tt class="descname">simplex_of_reference</tt><big>(</big>dim_type<em>&nbsp;d</em>, short_type<em>&nbsp;k</em><big>)</big></dt>
+<dd><p>description of the simplex of reference of dimension <tt class="docutils literal"><span class="pre">d</span></tt> with degree <tt class="docutils literal"><span class="pre">k</span></tt>
+Lagrange grid.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bgeot::convex_ref_product">
+<tt class="descclassname">bgeot::</tt><tt class="descname">convex_ref_product</tt><big>(</big>pconvex_ref<em>&nbsp;a</em>, pconvex_ref<em>&nbsp;b</em><big>)</big><a class="headerlink" href="#bgeot::convex_ref_product" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>description of the direct product of two convexes of reference.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bgeot::parallelepiped_of_reference">
+<tt class="descclassname">bgeot::</tt><tt class="descname">parallelepiped_of_reference</tt><big>(</big>dim_type<em>&nbsp;d</em><big>)</big><a class="headerlink" href="#bgeot::parallelepiped_of_reference" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>description of the parallelepiped of reference of dimension <tt class="docutils literal"><span class="pre">d</span></tt>.</p>
+</dd></dl>
+
+<p>The vertices correspond to the classical vertices for such reference element. For
+instance the vertices for the triangle are <img class="math" src="../_images/math/c4b86f54134d69cad8793688a431aa907aaf2698.png" alt="(0, 0)" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/754e946d1a160f767f0f61cbd9460401c2d1c17f.png" alt="(1, 0)" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/6457ca2dcd40dc21d9aa0db18c66bbac9af4d899.png" alt="(0, 1)" style="vertical-align: -4px"/>. It corresponds to the configuration shown in Figure
+<a class="reference internal" href="#dp-fig-elem"><em>usual elements</em></a></p>
+<p>If <tt class="docutils literal"><span class="pre">p</span></tt> is of type <tt class="docutils literal"><span class="pre">bgeot::pconvex_ref</span></tt> then <tt class="docutils literal"><span class="pre">p-&gt;structure()</span></tt> is the corresponding convex
+structure. Thus for instance <tt class="docutils literal"><span class="pre">p-&gt;structure()-&gt;nb_points()</span></tt> gives the number of
+vertices. The function <tt class="docutils literal"><span class="pre">p-&gt;points()</span></tt> give the array of vertices and
+<tt class="docutils literal"><span class="pre">p-&gt;points()[0]</span></tt> is the first vertex. The function <tt class="docutils literal"><span class="pre">p-&gt;is_in(const</span> <span class="pre">base_node</span>
+<span class="pre">&amp;pt)</span></tt> return a real which is negative or null if the point <tt class="docutils literal"><span class="pre">pt</span></tt> is in the
+element. The function <tt class="docutils literal"><span class="pre">p-&gt;is_in_face(short_type</span> <span class="pre">f,</span> <span class="pre">const</span> <span class="pre">base_node</span> <span class="pre">&amp;pt)</span></tt> return
+a real which is null if the point <tt class="docutils literal"><span class="pre">pt</span></tt> is in the face <tt class="docutils literal"><span class="pre">f</span></tt> of the element.
+Other functions can be found in <tt class="file docutils literal"><span class="pre">bgeot_convex_ref.h</span></tt> and
+<tt class="file docutils literal"><span class="pre">bgeot_convex.h</span></tt>.</p>
+</div>
+<div class="section" id="shape-function-type">
+<h2>Shape function type<a class="headerlink" href="#shape-function-type" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Most of the time the shape functions of finite element methods are polynomials,
+at least on the convex of reference. But, the possibility is given to have other
+types of elements. It is possible to define other kind of base functions such as
+piecewise polynomials, interpolant wavelets, etc.</p>
+<p>To be used by the finite element description, a shape function type must be able
+to be evaluated on a point (<tt class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">F.eval(pt)</span></tt>, where <tt class="docutils literal"><span class="pre">pt</span></tt> is a <tt class="docutils literal"><span class="pre">base_node</span></tt>)
+and must have a method to compute the derivtive with respect to the ith variable
+(<tt class="docutils literal"><span class="pre">F.derivative(i)</span></tt>).</p>
+<p>For the moment, only polynomials and piecewise polynomials are defined in the
+files <tt class="file docutils literal"><span class="pre">bgeot_poly.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_poly_composite.h</span></tt>.</p>
+</div>
+<div class="section" id="geometric-transformations">
+<span id="dp-transgeo"></span><h2>Geometric transformations<a class="headerlink" href="#geometric-transformations" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="figure align-center" id="dp-fig-transgeo">
+<a class="reference internal image-reference" href="../_images/getfemtransgeo.png"><img alt="../_images/getfemtransgeo.png" src="../_images/getfemtransgeo.png" style="width: 896.4px; height: 431.4px;" /></a>
+<p class="caption">geometric transformation</p>
+</div>
+<p>A geometric transformation is a polynomial application:</p>
+<div class="math">
+<p><img src="../_images/math/6da7a5ef1d4faacfeec17e7c5d6280cc1984c023.png" alt="\tau : \widehat{T} \subset \Reel^P \longrightarrow T \subset \Reel^N,"/></p>
+</div><p>which maps the reference element <img class="math" src="../_images/math/ab3da9205a52f44a4d132b33deb60f99456bf730.png" alt="\widehat{T}" style="vertical-align: 0px"/> to the real element <img class="math" src="../_images/math/2554b6496c3b678897e9b060ef00aa9f0a7d7ece.png" alt="T" style="vertical-align: 0px"/>. The
+geometric nodes are denoted:</p>
+<div class="math">
+<p><img src="../_images/math/962a21010e155a5142e812a3380bd07d806214f6.png" alt="g^i, i = 0, \ldots, n_g - 1."/></p>
+</div><p>The geometric transformation is described thanks to a <img class="math" src="../_images/math/76d1c2d79ef0f681a6ec4d928761c7d894519e1d.png" alt="n_g" style="vertical-align: -6px"/> components
+polynomial vector (In fact, as an extention, non polynomial geometric
+transformation can also be supported by <em>GetFEM++</em>, but this is very rarely used)</p>
+<div class="math">
+<p><img src="../_images/math/0547643e6c9872843dce00cf21d8024c3688ec92.png" alt="{\cal N}(\widehat{x}),"/></p>
+</div><p>such that</p>
+<div class="math">
+<p><img src="../_images/math/8e7714993b9bbf388a2ba796157bdb488a1c6fa3.png" alt="\tau(\widehat{x}) = \sum_{i = 0}^{n_g - 1}{\cal N}_i(\widehat{x}) g^i."/></p>
+</div><p>Denoting</p>
+<div class="math">
+<p><img src="../_images/math/a7e7fb0dcc86a320f074f89baa72cf01a99d90de.png" alt="G = (g^0; g^1; ...; g^{n_g - 1}),"/></p>
+</div><p>the <img class="math" src="../_images/math/ed207dcc3ba0b0575e21b489803da0326a2383e6.png" alt="N\times n_g" style="vertical-align: -6px"/> matrix containing of all the geometric nodes, one has</p>
+<div class="math">
+<p><img src="../_images/math/eb1b33e1c230d224671f26eb5da84ec6e8226ef9.png" alt="\fbox{$\tau(\widehat{x}) = G\cdot{\cal N}(\widehat{x})$.}"/></p>
+</div><p>The derivative of <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/> is then</p>
+<div class="math">
+<p><img src="../_images/math/0eb9a71e84149f36e1043e312985c63f5e2672a6.png" alt="\fbox{$K(\widehat{x}) := \nabla\tau(\widehat{x}) = G\cdot\nabla {\cal N}(\widehat{x})$,}"/></p>
+</div><p>where <img class="math" src="../_images/math/7b2f69f32ae2570401c8d699ddfc1fbe4945694e.png" alt="K(\widehat{x}) = \nabla\tau(\widehat{x})" style="vertical-align: -4px"/> is a <img class="math" src="../_images/math/8751eb20bb25e6c15261e94d48ad4bdcaf2942ff.png" alt="N\times P" style="vertical-align: 0px"/> matrix and
+<img class="math" src="../_images/math/24c2d0eb20838c936036f5720d0d74a123a741a8.png" alt="\nabla {\cal N}(\widehat{x})" style="vertical-align: -4px"/> a <img class="math" src="../_images/math/358f30fe59a4c42466c8e7f6b4f3d28a272f0f9a.png" alt="n_g\times P" style="vertical-align: -6px"/> matrix. The (transposed)
+pseudo-inverse of <img class="math" src="../_images/math/3fe66acc0b4361b4c37f856223c8d6448cf346dc.png" alt="\nabla\tau(\widehat{x})" style="vertical-align: -4px"/> is a <img class="math" src="../_images/math/8751eb20bb25e6c15261e94d48ad4bdcaf2942ff.png" alt="N\times P" style="vertical-align: 0px"/> matrix denoted
+<img class="math" src="../_images/math/ed95f4f62239f9aa2580eff710f7ed6de10756d9.png" alt="B(\widehat{x})" style="vertical-align: -4px"/>:</p>
+<div class="math">
+<p><img src="../_images/math/5855d3b641397cd540972930e7fcab8ae0181d83.png" alt="\fbox{$B(\widehat{x}) := K(\widehat{x})(K(\widehat{x})^T K(\widehat{x}))^{-1}$,}"/></p>
+</div><p>Of course, when <img class="math" src="../_images/math/78e70bfd3dbf21ca233e317f93de89829726f28a.png" alt="P=N" style="vertical-align: 0px"/>, one has <img class="math" src="../_images/math/8ecdc6050bedc6555fac9c95af9b9eaf6a6c0b64.png" alt="B(\widehat{x})=K(\widehat{x})^{-T}" style="vertical-align: -4px"/>.</p>
+<p>Pointers on a descriptor of a geometric transformation can be obtained by the
+following function defined in the file <tt class="file docutils literal"><span class="pre">bgeot_geometric_trans.h</span></tt>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">bgeot</span><span class="o">::</span><span class="n">pgeometric_trans</span> <span class="n">pgt</span> <span class="o">=</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">geometric_trans_descriptor</span><span class="p">(</span><span class="s">&quot;name of trans&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">&quot;name</span> <span class="pre">of</span> <span class="pre">trans&quot;</span></tt> can be chosen among the following list.</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&quot;GT_PK(n,k)&quot;</span></tt></p>
+<p>Description of the simplex transformation of dimension <tt class="docutils literal"><span class="pre">n</span></tt> and degree <tt class="docutils literal"><span class="pre">k</span></tt>
+(Most of the time, the degree 1 is used).</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&quot;GT_QK(n,k)&quot;</span></tt></p>
+<p>Description of the parallelepiped transformation of dimension <tt class="docutils literal"><span class="pre">n</span></tt> and degree
+<tt class="docutils literal"><span class="pre">k</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&quot;GT_PRISM(n,k)&quot;</span></tt></p>
+<p>Description of the prism transformation of dimension <tt class="docutils literal"><span class="pre">n</span></tt> and degree <tt class="docutils literal"><span class="pre">k</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&quot;GT_PRODUCT(a,b)&quot;</span></tt></p>
+<p>Description of the direct product of the two transformations <tt class="docutils literal"><span class="pre">a</span></tt> and <tt class="docutils literal"><span class="pre">b</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&quot;GT_LINEAR_PRODUCT(a,b)&quot;</span></tt></p>
+<p>Description of the direct product of the two transformations <tt class="docutils literal"><span class="pre">a</span></tt> and <tt class="docutils literal"><span class="pre">b</span></tt>
+keeping a linear transformation (this is a restriction of he previous
+function). This allows, for instance, to use exact integrations on regular
+meshes with parallelograms.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="finite-element-methods-description">
+<h2>Finite element methods description<a class="headerlink" href="#finite-element-methods-description" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A finite element method is defined on a reference element
+<img class="math" src="../_images/math/490a15b156acbdecf8468727082d599e5894f16b.png" alt="\widehat{T}\subset\Reel^P" style="vertical-align: -1px"/> by a set of <img class="math" src="../_images/math/caeb5d2509f928e766cde7df78f6d0d4769392e6.png" alt="n_d" style="vertical-align: -3px"/> nodes <img class="math" src="../_images/math/606264c4db7d91ea583bdde39d2b6ca07d6b8f54.png" alt="a^i" style="vertical-align: 0px"/> and
+corresponding base functions</p>
+<div class="math">
+<p><img src="../_images/math/3e41ea818131cce5267066868358ebfbe694b9fd.png" alt="(\widehat{\varphi})^i : \widehat{T}\subset\Reel^P \longrightarrow \Reel^Q"/></p>
+</div><p>Denoting</p>
+<div class="math">
+<p><img src="../_images/math/8df930d62407f9b5e47e82d39f6f3355fbb5863d.png" alt="\psi^i(x) = (\widehat{\varphi})^i(\widehat{x}) = (\widehat{\varphi})^i(\tau^{-1}(x)),"/></p>
+</div><p>a supplementary linear transformation is allowed for the real base function</p>
+<div class="math">
+<p><img src="../_images/math/6c548f37b34f5cafe76d6ee4c81b68f07a542e0b.png" alt="\varphi^i(x) = \sum_{j = 0}^{n_d - 1} M_{ij} \psi^j(x),"/></p>
+</div><p>where <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is a <img class="math" src="../_images/math/9604d8fac882dcb7a91527f78ef65b36ef7d6cce.png" alt="n_d \times n_d" style="vertical-align: -3px"/> matrix possibly depending on the
+geometric transformation (i.e. on the real element). For basic elements as
+Lagrange elements this matrix is the identity matrix (it is simply ignored). In
+this case, we will say that the element is <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent.</p>
+<p>This approach allows to define hermite elements (Argyris for instance) in a
+generic way, even with non linear transformations (i.e. mainly for curved
+boundaries). We denote <img class="math" src="../_images/math/6edcce0428afc0e565a8fc6dd596a310f141e0c3.png" alt="[\widehat{\varphi}(\widehat{x})]" style="vertical-align: -5px"/> the <img class="math" src="../_images/math/6816da20503916e6789565a06b93264b1651941f.png" alt="n_d \times Q" style="vertical-align: -4px"/> matrix
+whose ith line is <img class="math" src="../_images/math/3535e17235ffaa14e8f8722a8da85be9753c4e0c.png" alt="(\widehat{\varphi})^i(\widehat{x})" style="vertical-align: -4px"/>. Whis this notation, for a function is
+defined by</p>
+<div class="math">
+<p><img src="../_images/math/bca41f66ba8f602efc6b316b980fd0d286a29092.png" alt="f(x) = \sum_{i = 0}^{n_d - 1} \alpha_i \varphi^i(x),"/></p>
+</div><p>one has</p>
+<div class="math">
+<p><img src="../_images/math/e6a403771cca9a9438d81a0d561519961c5c0a63.png" alt="\fbox{$f(\tau(\widehat{x})) = \alpha^T M [\widehat{\varphi}(\widehat{x})]$,}"/></p>
+</div><p>where <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha" style="vertical-align: 0px"/> is the vector whose ith component is <img class="math" src="../_images/math/7e46fc708bb0d019ec0b54d24b166024d6c146ff.png" alt="\alpha_i" style="vertical-align: -3px"/>.</p>
+<p>A certain number of description of classical finite element method are defined in
+the file <tt class="file docutils literal"><span class="pre">getfem_fem.h</span></tt>. See <a class="reference internal" href="../userdoc/appendixA.html#ud-appendixa"><em>Appendix A. Finite element method list</em></a> for an exhaustive list of
+available finite element methods.</p>
+<p>A pointer to the finite element descriptor of a method is obtained using the
+function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">pfem</span> <span class="n">pfe</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">fem_descriptor</span><span class="p">(</span><span class="s">&quot;name of method&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We refer to the file <tt class="file docutils literal"><span class="pre">getfem_fem.cc</span></tt> for how to define a new finite element
+method.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The FEM description in <em>GetFEM++</em></a><ul>
+<li><a class="reference internal" href="#convex-structures">Convex structures</a></li>
+<li><a class="reference internal" href="#convexes-of-reference">Convexes of reference</a></li>
+<li><a class="reference internal" href="#shape-function-type">Shape function type</a></li>
+<li><a class="reference internal" href="#geometric-transformations">Geometric transformations</a></li>
+<li><a class="reference internal" href="#finite-element-methods-description">Finite element methods description</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="contribute.html"
+                        title="前の章へ">How to contribute / Git repository on Savannah</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc.html"
+                        title="次の章へ">Description of the different parts of the library</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc.html" title="Description of the different parts of the library"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="contribute.html" title="How to contribute / Git repository on Savannah"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

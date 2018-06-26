@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>First steps with Gmm++ &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Deeper inside Gmm++" href="inside.html" />
+    <link rel="prev" title="How to use Gmm++ with QD type (double-double and quad-double)" href="qd.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="inside.html" title="Deeper inside Gmm++"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="qd.html" title="How to use Gmm++ with QD type (double-double and quad-double)"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="first-steps-with-gmm">
+<span id="gmm-first-step"></span><h1>First steps with <em>Gmm++</em><a class="headerlink" href="#first-steps-with-gmm" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="how-can-i-invert-a-matrix">
+<h2>How can I invert a matrix ?<a class="headerlink" href="#how-can-i-invert-a-matrix" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is not possible in <em>Gmm++</em> to invert all kind of matrices. For the moment, the only mean to invert a matrix is to use the dense LU decomposition (thus, only for dense matrices). An example:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">M2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">M3</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">gmm</span><span class="o">::</span><span class="n">identity_matrix</span><span class="p">(),</span> <span class="n">M</span><span class="p">);</span>  <span class="c1">// M = Id.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">scale</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">);</span>                    <span class="c1">// M = 2 * Id.</span>
+<span class="n">M</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">M2</span><span class="p">);</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_inverse</span><span class="p">(</span><span class="n">M</span><span class="p">);</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">mult</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">M2</span><span class="p">,</span> <span class="n">M3</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">M</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; times &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">M2</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; is equal to &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">M3</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>see the section corresponding to dense LU decomposition for more details. The type <tt class="docutils literal"><span class="pre">gmm::dense_matrix&lt;double&gt;</span></tt> can be replaced by <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;</span> <span class="pre">std::vector&lt;double&gt;</span> <span class="pre">&gt;</span></tt> or <tt class="docutils literal"><span class="pre">gmm::col_matrix&lt;</span> <span class="pre">std::vector&lt;double&gt;</span> <span class="pre">&gt;</span></tt>.</p>
+</div>
+<div class="section" id="how-can-i-solve-a-linear-system">
+<h2>How can I solve a linear system ?<a class="headerlink" href="#how-can-i-solve-a-linear-system" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>You have more than one possibility to solve a linear system. If you have a dense matrix, the best may be to use the LU decomposition. An example:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">clear</span><span class="p">(</span><span class="n">M</span><span class="p">);</span>                  <span class="c1">// M = 0.</span>
+<span class="n">M</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">;</span> <span class="c1">// M = 2 * Id.</span>
+<span class="n">M</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">X</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">B</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">Bagain</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span> <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">;</span> <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">;</span>  <span class="c1">// B = [1 2 3]</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_solve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">);</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">mult</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Bagain</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">M</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; times &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">vref</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; is equal to &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">vref</span><span class="p">(</span><span class="n">Bagain</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If, now, you have a sparse system coming for example from a pde discretization, you have various iterative solvers, with or without preconditioners. This is an example with a precontionned GMRES:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">int</span> <span class="n">nbdof</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span> <span class="c1">// number of degrees of freedom.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">row_matrix</span><span class="o">&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">rsvector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">M</span><span class="p">(</span><span class="n">nbdof</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">);</span> <span class="c1">// a sparse matrix</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">X</span><span class="p">(</span><span class="n">nbdof</span><span class="p">),</span> <span class="n">B</span><span class="p">(</span><span class="n">nbdof</span><span class="p">);</span> <span class="c1">// Unknown and left hand side.</span>
+
+<span class="p">...</span> <span class="n">here</span> <span class="n">the</span> <span class="n">assembly</span> <span class="n">of</span> <span class="n">the</span> <span class="n">pde</span> <span class="n">discretization</span> <span class="n">stiffness</span> <span class="n">matrix</span> <span class="p">...</span>
+<span class="p">...</span> <span class="n">and</span> <span class="n">left</span> <span class="n">hand</span> <span class="n">side</span> <span class="p">...</span>
+
+
+<span class="c1">// computation of a preconditioner (ILUT)</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">ilut_precond</span><span class="o">&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">row_matrix</span><span class="o">&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">rsvector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">);</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="mf">1E-8</span><span class="p">);</span>  <span class="c1">// defines an iteration object, with a max residu of 1E-8</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">gmres</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>  <span class="c1">// execute the GMRES algorithm</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;The result &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">vref</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-can-i-transform-a-vector-into-a-matrix-and-reshape-it">
+<h2>How can I transform a vector into a matrix and reshape it ?<a class="headerlink" href="#how-can-i-transform-a-vector-into-a-matrix-and-reshape-it" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>In <em>Gmm++</em>, a vector is not considered as a matrix. If you need to use a vector as a (1 by n) row matrix or (n by 1) column matrix in a computation, you have to use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">row_vector</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="c1">// gives a reference on V considered as</span>
+                   <span class="c1">// a (1 by n) row matrix</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">col_vector</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="c1">// gives a reference on V considered as</span>
+                   <span class="c1">// a (n by 1) col matrix</span>
+</pre></div>
+</div>
+<p>for instance, you can transform a vector into a dense matrix with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">V</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
+
+<span class="c1">// ... computation of V</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">vect_size</span><span class="p">(</span><span class="n">V</span><span class="p">));</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">gmm</span><span class="o">::</span><span class="n">row_vector</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">M</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Then you can also reshape matrix <tt class="docutils literal"><span class="pre">M</span></tt> with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">reshape</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="what-is-the-better-way-to-resize-a-matrix">
+<h2>What is the better way to resize a matrix ?<a class="headerlink" href="#what-is-the-better-way-to-resize-a-matrix" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>You can change the dimensions of a matrix, if it is not a reference, using:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">resize</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function respects the intersection between the original matrix and the resized matrix, and new components are set to zero. An important thing is that it is based on the resize method of <tt class="docutils literal"><span class="pre">std::vector</span></tt>, thus no memory free is done when the size of the new matrix is smaller than the original one.</p>
+<p>If you do not need to keep old values of the components, or if you want to really free the surplus of memory, you can resize a matrix using <tt class="docutils literal"><span class="pre">std::swap</span></tt> as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">MATRIX_TYPE</span> <span class="nf">M</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">n1</span><span class="p">);</span>
+
+<span class="p">...</span> <span class="n">your</span> <span class="n">code</span>
+
+<span class="p">{</span> <span class="n">MATRIX_TYPE</span><span class="p">(</span><span class="n">m2</span><span class="p">,</span> <span class="n">n2</span><span class="p">)</span> <span class="n">M2</span><span class="p">;</span> <span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">M2</span><span class="p">);</span> <span class="p">}</span> <span class="c1">// resize matrix M.</span>
+</pre></div>
+</div>
+<p>Of course, this works also for a vector.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">First steps with <em>Gmm++</em></a><ul>
+<li><a class="reference internal" href="#how-can-i-invert-a-matrix">How can I invert a matrix ?</a></li>
+<li><a class="reference internal" href="#how-can-i-solve-a-linear-system">How can I solve a linear system ?</a></li>
+<li><a class="reference internal" href="#how-can-i-transform-a-vector-into-a-matrix-and-reshape-it">How can I transform a vector into a matrix and reshape it ?</a></li>
+<li><a class="reference internal" href="#what-is-the-better-way-to-resize-a-matrix">What is the better way to resize a matrix ?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="qd.html"
+                        title="前の章へ">How to use <em>Gmm++</em> with QD type (double-double and quad-double)</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="inside.html"
+                        title="次の章へ">Deeper inside <em>Gmm++</em></a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="inside.html" title="Deeper inside Gmm++"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="qd.html" title="How to use Gmm++ with QD type (double-double and quad-double)"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

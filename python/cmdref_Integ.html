@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Integ &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="LevelSet" href="cmdref_LevelSet.html" />
+    <link rel="prev" title="GlobalFunction" href="cmdref_GlobalFunction.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_LevelSet.html" title="LevelSet"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_GlobalFunction.html" title="GlobalFunction"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="integ">
+<h1>Integ<a class="headerlink" href="#integ" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.Integ">
+<em class="property">class </em><tt class="descname">Integ</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.Integ" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM Integ object</p>
+<p>General object for obtaining handles to various integrations methods on
+convexes (used when the elementary matrices are built).</p>
+<p>General constructor for Integ objects</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">I</span> <span class="pre">=</span> <span class="pre">Integ(string</span> <span class="pre">method)</span></tt>
+Here is a list of some integration methods defined in getfem++ (see the
+description of finite element and integration methods for a complete
+reference):</p>
+<blockquote>
+<div><ul class="simple">
+<li>IM_EXACT_SIMPLEX(n) :
+Exact integration on simplices (works only with linear geometric
+transformations and PK Fem&#8217;s).</li>
+<li>IM_PRODUCT(A,B) :
+Product of two integration methods.</li>
+<li>IM_EXACT_PARALLELEPIPED(n) :
+Exact integration on parallelepipeds.</li>
+<li>IM_EXACT_PRISM(n) :
+Exact integration on prisms.</li>
+<li>IM_GAUSS1D(k) :
+Gauss method on the segment, order <cite>k=1,3,...,99</cite>.</li>
+<li>IM_NC(n,k) :
+Newton-Cotes approximative integration on simplexes, order <cite>k</cite>.</li>
+<li>IM_NC_PARALLELEPIPED(n,k) :
+Product of Newton-Cotes integration on parallelepipeds.</li>
+<li>IM_NC_PRISM(n,k) :
+Product of Newton-Cotes integration on prisms.</li>
+<li>IM_GAUSS_PARALLELEPIPED(n,k) :
+Product of Gauss1D integration on parallelepipeds.</li>
+<li>IM_TRIANGLE(k) :
+Gauss methods on triangles <cite>k=1,3,5,6,7,8,9,10,13,17,19</cite>.</li>
+<li>IM_QUAD(k) :
+Gauss methods on quadrilaterons <cite>k=2,3,5, ...,17</cite>. Note that
+IM_GAUSS_PARALLELEPIPED should be prefered for QK Fem&#8217;s.</li>
+<li>IM_TETRAHEDRON(k) :
+Gauss methods on tetrahedrons <cite>k=1,2,3,5,6 or 8</cite>.</li>
+<li>IM_SIMPLEX4D(3) :
+Gauss method on a 4-dimensional simplex.</li>
+<li>IM_STRUCTURED_COMPOSITE(im,k) :
+Composite method on a grid with <cite>k</cite> divisions.</li>
+<li>IM_HCT_COMPOSITE(im) :
+Composite integration suited to the HCT composite finite element.</li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<blockquote>
+<div><ul class="simple">
+<li>I = Integ(&#8216;IM_PRODUCT(IM_GAUSS1D(5),IM_GAUSS1D(5))&#8217;)</li>
+</ul>
+</div></blockquote>
+<p>is the same as:</p>
+<blockquote>
+<div><ul class="simple">
+<li>I = Integ(&#8216;IM_GAUSS_PARALLELEPIPED(2,5)&#8217;)</li>
+</ul>
+</div></blockquote>
+<p>Note that &#8216;exact integration&#8217; should be avoided in general, since they
+only apply to linear geometric transformations, are quite slow, and
+subject to numerical stability problems for high degree Fem&#8217;s.</p>
+</li>
+</ul>
+<dl class="method">
+<dt id="getfem.Integ.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Integ.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Ouput a (unique) string representation of the integration method.</p>
+<p>This can be used to  comparisons between two different Integ
+objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.coeffs">
+<tt class="descname">coeffs</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Integ.coeffs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Returns the coefficients associated to each integration point.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.dim">
+<tt class="descname">dim</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Integ.dim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the dimension of the reference convex of
+the method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Integ.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a Integ object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.face_coeffs">
+<tt class="descname">face_coeffs</tt><big>(</big><em>F</em><big>)</big><a class="headerlink" href="#getfem.Integ.face_coeffs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Returns the coefficients associated to each integration of a face.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.face_pts">
+<tt class="descname">face_pts</tt><big>(</big><em>F</em><big>)</big><a class="headerlink" href="#getfem.Integ.face_pts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of integration points for a face.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.is_exact">
+<tt class="descname">is_exact</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Integ.is_exact" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 0 if the integration is an approximate one.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.nbpts">
+<tt class="descname">nbpts</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Integ.nbpts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the total number of integration points.</p>
+<p>Count the points for the volume integration, and points for
+surface integration on each face of the reference convex.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Integ.pts">
+<tt class="descname">pts</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Integ.pts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of integration points</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_GlobalFunction.html"
+                        title="前の章へ">GlobalFunction</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_LevelSet.html"
+                        title="次の章へ">LevelSet</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_LevelSet.html" title="LevelSet"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_GlobalFunction.html" title="GlobalFunction"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

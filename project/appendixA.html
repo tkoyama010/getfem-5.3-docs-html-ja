@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Appendix A. Some basic computations between reference and real elements &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the Project" href="index.html" />
+    <link rel="next" title="References" href="../biblio.html" />
+    <link rel="prev" title="Interface with scripts languages (Python, Scilab and Matlab)" href="libdesc_interface.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../biblio.html" title="References"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_interface.html" title="Interface with scripts languages (Python, Scilab and Matlab)"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="appendix-a-some-basic-computations-between-reference-and-real-elements">
+<span id="dp-appendixa"></span><h1>Appendix A. Some basic computations between reference and real elements<a class="headerlink" href="#appendix-a-some-basic-computations-between-reference-and-real-elements" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="volume-integral">
+<h2>Volume integral<a class="headerlink" href="#volume-integral" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>One has</p>
+<div class="math">
+<p><img src="../_images/math/f0df30ce2e74507fd30ef9fbb1ab194afed49406.png" alt="\int_T f(x)\ dx = \int_{\widehat{T}} \widehat{f}(\widehat{x})
+|\mbox{vol}\left(
+\frac{\partial\tau(\widehat{x})}{\partial \widehat{x}_0};
+\frac{\partial\tau(\widehat{x})}{\partial \widehat{x}_1};
+\ldots;
+\frac{\partial\tau(\widehat{x})}{\partial \widehat{x}_{P-1}}
+\right)|\ d\widehat{x}."/></p>
+</div><p>Denoting <img class="math" src="../_images/math/497312467d939cef41fa5860e6ae69e2075ad677.png" alt="J_{\tau}(\widehat{x})" style="vertical-align: -4px"/> the jacobian</p>
+<div class="math">
+<p><img src="../_images/math/c207c5cd1e785543ca4d9cb9a41eac798ff13525.png" alt="\fbox{$ J_{\tau}(\widehat{x}) :=
+|\mbox{vol}\left(
+\frac{\partial\tau(\widehat{x})}{\partial \widehat{x}_0};
+\frac{\partial\tau(\widehat{x})}{\partial \widehat{x}_1};
+\ldots;
+\frac{\partial\tau(\widehat{x})}{\partial \widehat{x}_{P-1}}
+\right)| =
+(\mbox{det}(K(\widehat{x})^T K(\widehat{x})))^{1/2}$,}"/></p>
+</div><p>one finally has</p>
+<div class="math">
+<p><img src="../_images/math/783c89b33a9d91f4aedb61da4e23525bcb33e572.png" alt="\fbox{$\int_T f(x)\ dx = \int_{\widehat{T}} \widehat{f}(\widehat{x}) J_{\tau}(\widehat{x})\ d\widehat{x}$.}"/></p>
+</div><p>When <img class="math" src="../_images/math/d2833ace395dfb2162abbdd4f7f75e65e36d83d9.png" alt="P = N" style="vertical-align: 0px"/>, the expression of the jacobian reduces to <img class="math" src="../_images/math/c7e871a4e6e6c90d89dc5f52aeba480fa2fc1dd6.png" alt="J_{\tau}(\widehat{x})
+= |\mbox{det}(K(\widehat{x}))|" style="vertical-align: -5px"/>.</p>
+</div>
+<div class="section" id="surface-integral">
+<h2>Surface integral<a class="headerlink" href="#surface-integral" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>With <img class="math" src="../_images/math/913e49ea63c6c130bb8d9d1c3556b052ecc404f8.png" alt="\Gamma" style="vertical-align: -1px"/> a part of the boundary of <img class="math" src="../_images/math/2554b6496c3b678897e9b060ef00aa9f0a7d7ece.png" alt="T" style="vertical-align: 0px"/> a real element and
+<img class="math" src="../_images/math/a5c0cee200b3f38c0f6164b04275406a67856429.png" alt="\widehat{\Gamma}" style="vertical-align: -1px"/> the corresponding boundary on the reference element <img class="math" src="../_images/math/ab3da9205a52f44a4d132b33deb60f99456bf730.png" alt="\widehat{T}" style="vertical-align: 0px"/>,
+one has</p>
+<div class="math">
+<p><img src="../_images/math/668aef2a67cb112873362ff519ae78842f1a5f2a.png" alt="\fbox{$\int_{\Gamma} f(x)\ d\sigma =
+\int_{\widehat{\Gamma}}\widehat{f}(\widehat{x}) \|B(\widehat{x})\widehat{n}\| J_{\tau}(\widehat{x})\ d\widehat{\sigma}$,}"/></p>
+</div><p>where <img class="math" src="../_images/math/8a125dc6129c2e8ed2a29d51ec279f90e66ef43e.png" alt="\widehat{n}" style="vertical-align: 0px"/> is the unit normal to <img class="math" src="../_images/math/ab3da9205a52f44a4d132b33deb60f99456bf730.png" alt="\widehat{T}" style="vertical-align: 0px"/> on <img class="math" src="../_images/math/a5c0cee200b3f38c0f6164b04275406a67856429.png" alt="\widehat{\Gamma}" style="vertical-align: -1px"/>. In a same
+way</p>
+<div class="math">
+<p><img src="../_images/math/3d56876d4fd2b0d2818776051862bb4f4c0ed294.png" alt="\fbox{$\int_{\Gamma} F(x)\cdot n\ d\sigma =
+\int_{\widehat{\Gamma}} \widehat{F}(\widehat{x})\cdot(B(\widehat{x})\cdot\widehat{n}) J_{\tau}(\widehat{x})\ d\widehat{\sigma}$,}"/></p>
+</div><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> the unit normal to <img class="math" src="../_images/math/2554b6496c3b678897e9b060ef00aa9f0a7d7ece.png" alt="T" style="vertical-align: 0px"/> on <img class="math" src="../_images/math/913e49ea63c6c130bb8d9d1c3556b052ecc404f8.png" alt="\Gamma" style="vertical-align: -1px"/>.</p>
+</div>
+<div class="section" id="derivative-computation">
+<h2>Derivative computation<a class="headerlink" href="#derivative-computation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>One has</p>
+<div class="math">
+<p><img src="../_images/math/ddba475a8524c94fc8be913f17a858e527610a0c.png" alt="\nabla f(x) = B(\widehat{x})\widehat{\nabla} \widehat{f}(\widehat{x})."/></p>
+</div></div>
+<div class="section" id="second-derivative-computation">
+<h2>Second derivative computation<a class="headerlink" href="#second-derivative-computation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Denoting</p>
+<div class="math">
+<p><img src="../_images/math/922650db95a714a428af3c384a4e359d258de17e.png" alt="\nabla^2 f =
+\left[\frac{\partial^2 f}{\partial x_i \partial x_j}\right]_{ij},"/></p>
+</div><p>the <img class="math" src="../_images/math/cb21db0177b65427c9c7fb7bd9183d242bdbcb1f.png" alt="N \times N" style="vertical-align: 0px"/> matrix and</p>
+<div class="math">
+<p><img src="../_images/math/2c28c1bd5becb309c409b3d9fd51e34b2526a10c.png" alt="\widehat{X}(\widehat{x}) =
+\sum_{k = 0}^{N-1}\widehat{\nabla}^2\tau_k(\widehat{x})\frac{\partial f}{\partial x_k}(x) =
+\sum_{k = 0}^{N-1}\sum_{i = 0}^{P-1}
+\widehat{\nabla}^2\tau_k(\widehat{x})B_{ki}\frac{\partial \widehat{f}}{\partial \widehat{x}_i}(\widehat{x}),"/></p>
+</div><p>the <img class="math" src="../_images/math/7a7000afbea2fce4dbd290fc88eff7da06cd842a.png" alt="P \times P" style="vertical-align: 0px"/> matrix, then</p>
+<div class="math">
+<p><img src="../_images/math/50a43f77f4b134a46f6e8cc92eda1ca9c2adcb25.png" alt="\widehat{\nabla}^2 \widehat{f}(\widehat{x}) = \widehat{X}(\widehat{x}) + K(\widehat{x})^T \nabla^2 f(x) K(\widehat{x}),"/></p>
+</div><p>and thus</p>
+<div class="math">
+<p><img src="../_images/math/56d19ce1f48409407456c782b7c1f810f9b10df1.png" alt="\nabla^2 f(x) = B(\widehat{x})(\widehat{\nabla}^2 \widehat{f}(\widehat{x}) - \widehat{X}(\widehat{x})) B(\widehat{x})^T."/></p>
+</div><p>In order to have uniform methods for the computation of elementary matrices, the
+Hessian is computed as a column vector <img class="math" src="../_images/math/1b11c03f79f2b15ed4f938c9a3df0e3121689339.png" alt="H f" style="vertical-align: -4px"/> whose components are
+<img class="math" src="../_images/math/16a3012e1fd44d48159b198b137791af96afcab1.png" alt="\frac{\partial^2 f}{\partial x^2_0}, \frac{\partial^2 f}{\partial
+x_1\partial x_0},\ldots, \frac{\partial^2 f}{\partial x^2_{N-1}}" style="vertical-align: -12px"/>. Then, with
+<img class="math" src="../_images/math/368b6f971b418d731c62ff2cb59f51c527d22849.png" alt="B_2" style="vertical-align: -3px"/> the <img class="math" src="../_images/math/b798084a45e691542355bd7f6ead3384f13e8d7a.png" alt="P^2 \times P" style="vertical-align: 0px"/> matrix defined as</p>
+<div class="math">
+<p><img src="../_images/math/af0dc2d4ddff4d7e7c23ea66da969f7cd3547afb.png" alt="\left[B_2(\widehat{x})\right]_{ij} =
+\sum_{k = 0}^{N-1}
+\frac{\partial^2 \tau_k(\widehat{x})}{\partial \widehat{x}_{i / P} \partial \widehat{x}_{i\mbox{ mod }P}}
+B_{kj}(\widehat{x}),"/></p>
+</div><p>and <img class="math" src="../_images/math/c48424701a2c36b4d4d6956d8c41e2798d8b32a8.png" alt="B_3" style="vertical-align: -3px"/> the <img class="math" src="../_images/math/a21d6cd50779232c105861d9e93cc23b4114aad4.png" alt="N^2 \times P^2" style="vertical-align: 0px"/> matrix defined as</p>
+<div class="math">
+<p><img src="../_images/math/a154bfb20b9d7666d4d1ac1dc4f0ea257870ff0d.png" alt="\left[B_3(\widehat{x})\right]_{ij} =
+B_{i / N, j / P}(\widehat{x}) B_{i\mbox{ mod }N, j\mbox{ mod }P}(\widehat{x}),"/></p>
+</div><p>one has</p>
+<div class="math">
+<p><img src="../_images/math/4701305b13062292cfac92726f1d7ab0e9275394.png" alt="\fbox{$H f(x) = B_3(\widehat{x})
+\left(\widehat{H}\ \widehat{f}(\widehat{x}) - B_2(\widehat{x})\widehat{\nabla} \widehat{f}(\widehat{x})\right)$.}"/></p>
+</div></div>
+<div class="section" id="example-of-elementary-matrix">
+<h2>Example of elementary matrix<a class="headerlink" href="#example-of-elementary-matrix" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Assume one needs to compute the elementary &#8220;matrix&#8221;:</p>
+<div class="math">
+<p><img src="../_images/math/9b5be3e33c64925095b323580d30685e1d27eebf.png" alt="t(i_0, i_1, \ldots, i_7) =
+\int_{T}\varphi_{i_1}^{i_0}
+\partial_{i_4}\varphi_{i_3}^{i_2}
+\partial^2_{i_7/ P, i_7\mbox{ mod } P}\varphi_{i_6}^{i_5}\ dx,"/></p>
+</div><p>The computations to be made on the reference elements are</p>
+<div class="math">
+<p><img src="../_images/math/ecd9c2d8e581a5615c0b5e6f329b9900a7e4a332.png" alt="\widehat{t}_0(i_0, i_1, \ldots,i_7) =
+\int_{\widehat{T}}(\widehat{\varphi})_{i_1}^{i_0}
+\partial_{i_4}(\widehat{\varphi})_{i_3}^{i_2}
+\partial^2_{i_7 / P, i_7\mbox{ mod } P}(\widehat{\varphi})_{i_6}^{i_5} J(\widehat{x})\ d\widehat{x},"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="../_images/math/66103a6281ce1003f94aea7d7c01fa51cfa28d6c.png" alt="\widehat{t}_1(i_0, i_1, \ldots, i_7) =
+\int_{\widehat{T}}(\widehat{\varphi})_{i_1}^{i_0}
+\partial_{i_4}(\widehat{\varphi})_{i_3}^{i_2}
+\partial_{i_7}(\widehat{\varphi})_{i_6}^{i_5} J(\widehat{x})\ d\widehat{x},"/></p>
+</div><p>Those two tensor can be computed once on the whole reference element if the
+geometric transformation is linear (because <img class="math" src="../_images/math/e966a5a32b5d416a5be4ab0e2e01d12d24447736.png" alt="J(\widehat{x})" style="vertical-align: -4px"/> is constant). If the
+geometric transformation is non-linear, what has to be stored is the value on
+each integration point. To compute the integral on the real element a certain
+number of reductions have to be made:</p>
+<ul class="simple">
+<li>Concerning the first term (<img class="math" src="../_images/math/0916a9d933c9f1c8c6ab13ec2ba3480464ad3444.png" alt="\varphi_{i_1}^{i_0}" style="vertical-align: -7px"/>) nothing.</li>
+<li>Concerning the second term (<img class="math" src="../_images/math/3cbfd02d0736d7eb018e0b706e0371aefc0593be.png" alt="\partial_{i_4}\varphi_{i_3}^{i_2}" style="vertical-align: -6px"/>) a
+reduction with respect to <img class="math" src="../_images/math/d6d044c602a9194bc1c6f69d2de89ce213b1e4fe.png" alt="i_4" style="vertical-align: -3px"/> with the matrix <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/>.</li>
+<li>Concerning the third term (<img class="math" src="../_images/math/2733bf5bde00f71d77606b3b820c3f613b923ca0.png" alt="\partial^2_{i_7 / P, i_7\mbox{ mod }P}
+\varphi_{i_6}^{i_5}" style="vertical-align: -12px"/>)` a reduction of <img class="math" src="../_images/math/1bda44ca188269d50dd966c5b3a186c03cd3abfd.png" alt="\widehat{t}_0" style="vertical-align: -3px"/> with respect to <img class="math" src="../_images/math/99e0c873b9c5f69b2c29f44e766c6ad10eb1e886.png" alt="i_7" style="vertical-align: -3px"/>
+with the matrix <img class="math" src="../_images/math/c48424701a2c36b4d4d6956d8c41e2798d8b32a8.png" alt="B_3" style="vertical-align: -3px"/> and a reduction of <img class="math" src="../_images/math/571e00e0bfae3253a4eb9fdc702df5a4c088b881.png" alt="\widehat{t}_1" style="vertical-align: -4px"/> with respect also
+to <img class="math" src="../_images/math/99e0c873b9c5f69b2c29f44e766c6ad10eb1e886.png" alt="i_7" style="vertical-align: -3px"/> with the matrix <img class="math" src="../_images/math/cc4f913cd6e3e8ed3b3952be2663cab76ae1aac9.png" alt="B_3 B_2" style="vertical-align: -3px"/></li>
+</ul>
+<p>The reductions are to be made on each integration point if the geometric
+transformation is non-linear. Once those reductions are done, an addition of all
+the tensor resulting of those reductions is made (with a factor equal to the load
+of each integration point if the geometric transformation is non-linear).</p>
+<p>If the finite element is non-<img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>-equivalent, a supplementary reduction of the
+resulting tensor with the matrix <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> has to be made.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Appendix A. Some basic computations between reference and real elements</a><ul>
+<li><a class="reference internal" href="#volume-integral">Volume integral</a></li>
+<li><a class="reference internal" href="#surface-integral">Surface integral</a></li>
+<li><a class="reference internal" href="#derivative-computation">Derivative computation</a></li>
+<li><a class="reference internal" href="#second-derivative-computation">Second derivative computation</a></li>
+<li><a class="reference internal" href="#example-of-elementary-matrix">Example of elementary matrix</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="libdesc_interface.html"
+                        title="前の章へ">Interface with scripts languages (Python, Scilab and Matlab)</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="../biblio.html"
+                        title="次の章へ">References</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../biblio.html" title="References"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_interface.html" title="Interface with scripts languages (Python, Scilab and Matlab)"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

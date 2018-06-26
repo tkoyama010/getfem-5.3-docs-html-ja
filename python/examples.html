@@ -1,0 +1,823 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Python Interface" href="index.html" />
+    <link rel="next" title="How-tos" href="howtos.html" />
+    <link rel="prev" title="Python GetFEM++ interface" href="pygf.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="howtos.html" title="How-tos"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="pygf.html" title="Python GetFEM++ interface"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>Python</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="examples">
+<span id="py-examples"></span><h1>Examples<a class="headerlink" href="#examples" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="a-step-by-step-basic-example">
+<span id="py-laplacianexample"></span><h2>A step-by-step basic example<a class="headerlink" href="#a-step-by-step-basic-example" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This example shows the basic usage of getfem, on the über-canonical problem above
+all others: solving the <span class="target" id="index-0"></span><tt class="xref std std-envvar docutils literal"><span class="pre">Laplacian</span></tt>, <img class="math" src="../_images/math/9d8850362727d1a8a9e76c4d0cc31f56efe39292.png" alt="-\Delta u = f" style="vertical-align: -4px"/> on a square,
+with the Dirichlet condition <img class="math" src="../_images/math/204955570f9d78fc69195a1d6bec6aa58aa45f2e.png" alt="u = g(x)" style="vertical-align: -4px"/> on the domain boundary. You can find
+the <strong>py-file</strong> of this example under the name <strong>demo_step_by_step.py</strong> in the
+directory <tt class="docutils literal"><span class="pre">interface/tests/python/</span></tt> of the <em>GetFEM++</em> distribution.</p>
+<p>The first step is to <strong>create a Mesh object</strong>. It is possible to create simple structured meshes or unstructured meshes for simple geometries (see <tt class="docutils literal"><span class="pre">getfem.Mesh('generate',</span> <span class="pre">mesher_object</span> <span class="pre">mo,</span> <span class="pre">scalar</span> <span class="pre">h))</span></tt>) or to rely on an external mesher (see <tt class="docutils literal"><span class="pre">getfem.Mesh('import',</span>
+<span class="pre">string</span> <span class="pre">FORMAT,</span> <span class="pre">string</span> <span class="pre">FILENAME)</span></tt>), or use very simple meshes. For this example,
+we just consider a regular meshindex{cartesian mesh} whose nodes are
+<img class="math" src="../_images/math/1d8e8e3b20248b84a1b1f24425f487099d4224ce.png" alt="\{x_{i=0\ldots10,j=0..10}=(i/10,j/10)\}" style="vertical-align: -6px"/></p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># import basic modules</span>
+<span class="kn">import</span> <span class="nn">getfem</span> <span class="kn">as</span> <span class="nn">gf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># creation of a simple cartesian mesh</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
+<p>The next step is to <strong>create a MeshFem object</strong>. This one links a mesh with a set
+of FEM</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># create a MeshFem of for a field of dimension 1 (i.e. a scalar field)</span>
+<span class="n">mf</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="c"># assign the Q2 fem to all convexes of the MeshFem</span>
+<span class="n">mf</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_QK(2,2)&#39;</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
+<p>The first instruction builds a new MeshFem object, the second argument specifies
+that this object will be used to interpolate scalar fields (since the unknown
+<img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is a scalar field). The second instruction assigns the <img class="math" src="../_images/math/4c52e98ff6e755fe0a4161e44dbbc9e40af1a54b.png" alt="Q^2" style="vertical-align: -4px"/> FEM
+to every convex (each basis function is a polynomial of degree 4, remember that
+<img class="math" src="../_images/math/71a51cfdab1b554669a9b87471779e3f41b49b0c.png" alt="P^k\Rightarrow" style="vertical-align: -1px"/> polynomials of degree <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/>, while
+<img class="math" src="../_images/math/40c3965a7783a37bc20ea0ff3df05605ed1ee20e.png" alt="Q^k\Rightarrow" style="vertical-align: -4px"/> polynomials of degree <img class="math" src="../_images/math/b8ea7ee8a282949fd853a01537ec7a2b55e56f75.png" alt="2k" style="vertical-align: 0px"/>). As <img class="math" src="../_images/math/4c52e98ff6e755fe0a4161e44dbbc9e40af1a54b.png" alt="Q^2" style="vertical-align: -4px"/> is a
+polynomial FEM, you can view the expression of its basis functions on the
+reference convex:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># view the expression of its basis functions on the reference convex</span>
+<span class="k">print</span> <span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_QK(2,2)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">poly_str</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now, in order to perform numerical integrations on <tt class="docutils literal"><span class="pre">mf</span></tt>, we need to <strong>build a
+MeshIm object</strong></p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># an exact integration will be used</span>
+<span class="n">mim</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshIm</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">gf</span><span class="o">.</span><span class="n">Integ</span><span class="p">(</span><span class="s">&#39;IM_EXACT_PARALLELEPIPED(2)&#39;</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
+<p>The integration method will be used to compute the various integrals on each
+element: here we choose to perform exact computations (no <span class="target" id="index-1"></span><tt class="xref std std-envvar docutils literal"><span class="pre">quadrature</span>
+<span class="pre">formula</span></tt>), which is possible since the geometric transformation of these convexes
+from the reference convex is linear (this is true for all simplices, and this is
+also true for the parallelepipeds of our regular mesh, but it is not true for
+general quadrangles), and the chosen FEM is polynomial. Hence it is possible to
+analytically integrate every basis function/product of basis
+functions/gradients/etc. There are many alternative FEM methods and integration
+methods (see <a class="reference internal" href="../userdoc/index.html#ud"><em>User Documentation</em></a>).</p>
+<p>Note however that in the general case, approximate integration methods are a
+better choice than exact integration methods.</p>
+<p>Now we have to <strong>find the</strong> &lt;<span class="target" id="index-2"></span><tt class="xref std std-envvar docutils literal"><span class="pre">boundary</span></tt>&gt; <strong>of the domain</strong>, in order to
+set a Dirichlet condition. A mesh object has the ability to store some sets of
+convexes and convex faces. These sets (called &lt;regions&gt;) are accessed via an
+integer <em>#id</em></p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># detect the border of the mesh</span>
+<span class="n">border</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">outer_faces</span><span class="p">()</span>
+<span class="c"># mark it as boundary #42</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">border</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Here we find the faces of the convexes which are on the boundary of the mesh (i.e.
+the faces which are not shared by two convexes).</p>
+<p>The array <tt class="docutils literal"><span class="pre">border</span></tt> has two rows, on the first row is a convex number, on the
+second row is a face number (which is local to the convex, there is no global
+numbering of faces). Then this set of faces is assigned to the region number 42.</p>
+<p>At this point, we just have to describe the model and run the solver to get the
+solution! The &#8220;<span class="target" id="index-3"></span><tt class="xref std std-envvar docutils literal"><span class="pre">model</span></tt>&#8221; is created with the Model constructor. A model
+is basically an object which build a global linear system (tangent matrix for
+non-linear problems) and its associated right hand side. Typical modifications are
+insertion of the stiffness matrix for the problem considered (linear elasticity,
+laplacian, etc), handling of a set of constraints, Dirichlet condition, addition of
+a source term to the right hand side etc. The global tangent matrix and its right
+hand side are stored in the &#8220;<span class="target" id="index-4"></span><tt class="xref std std-envvar docutils literal"><span class="pre">model</span></tt>&#8221; structure.</p>
+<p>Let us build a problem with an easy solution: <img class="math" src="../_images/math/8a2f037b52e9fe7f21f80788a03486251a6a1ded.png" alt="u = x(x-1)-y(y-1)" style="vertical-align: -4px"/>, then
+we have <img class="math" src="../_images/math/43196f8480dd10d44a135ea5948c92eeca549e85.png" alt="-\Delta u = 0" style="vertical-align: 0px"/> (the FEM won&#8217;t be able to catch the exact
+solution since we use a <img class="math" src="../_images/math/4c52e98ff6e755fe0a4161e44dbbc9e40af1a54b.png" alt="Q^2" style="vertical-align: -4px"/> method).</p>
+<p>We start with an empty real model</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># empty real model</span>
+<span class="n">md</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>(a model is either <tt class="docutils literal"><span class="pre">'real'</span></tt> or <tt class="docutils literal"><span class="pre">'complex'</span></tt>). And we declare that <tt class="docutils literal"><span class="pre">u</span></tt> is an
+unknown of the system on the finite element method <cite>mf</cite> by</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># declare that &quot;u&quot; is an unknown of the system</span>
+<span class="c"># on the finite element method `mf`</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now, we add a <cite>generic elliptic</cite> brick, which handles <img class="math" src="../_images/math/421698cfd92ae92ecf46ef69aa4c2c5132c2ee25.png" alt="-\nabla\cdot(A:\nabla
+u) = \ldots" style="vertical-align: -4px"/> problems, where <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" style="vertical-align: 0px"/> can be a scalar field, a matrix field, or
+an order 4 tensor field. By default, <img class="math" src="../_images/math/f18428217dcd07944b2adbebcafd0978587a770a.png" alt="A=1" style="vertical-align: -1px"/>. We add it on our main variable
+<tt class="docutils literal"><span class="pre">u</span></tt> with</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># add generic elliptic brick on &quot;u&quot;</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_Laplacian_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Next we add a Dirichlet condition on the domain boundary</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># add Dirichlet condition</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;x*(x-1) - y*(y-1)&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&#39;DirichletData&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s">&#39;DirichletData&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>The two first lines defines a data of the model which represents the value of the
+Dirichlet condition. The third one add a Dirichlet condition to the variable <tt class="docutils literal"><span class="pre">u</span></tt>
+on the boundary number <tt class="docutils literal"><span class="pre">42</span></tt>. The dirichlet condition is imposed with lagrange
+multipliers. Another possibility is to use a penalization. A MeshFem argument is
+also required, as the Dirichlet condition <img class="math" src="../_images/math/042c6e5c286ed5f65fe3269bb42836f8080fb818.png" alt="u=g" style="vertical-align: -4px"/> is imposed in a weak form
+<img class="math" src="../_images/math/05987d85aec718ef4aa6f341c35c0e7d0334a276.png" alt="\int_\Gamma u(x)v(x) = \int_\Gamma g(x)v(x)\ \forall v" style="vertical-align: -6px"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> is
+taken in the space of multipliers given by here by <tt class="docutils literal"><span class="pre">mf</span></tt>.</p>
+<div class="topic">
+<p class="topic-title first">Remark:</p>
+<p>the polynomial expression was interpolated on <tt class="docutils literal"><span class="pre">mf</span></tt>. It is possible only if
+<tt class="docutils literal"><span class="pre">mf</span></tt> is of Lagrange type. In this first example we use the same MeshFem for
+the unknown and for the data such as <tt class="docutils literal"><span class="pre">g</span></tt>, but in the general case, <tt class="docutils literal"><span class="pre">mf</span></tt>
+won&#8217;t be Lagrangian and another (Lagrangian) MeshFem will be used for the
+description of Dirichlet conditions, source terms etc.</p>
+</div>
+<p>A source term can be added with (uncommented) the following lines</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># add source term</span>
+<span class="c">#f = mf.eval(&#39;0&#39;)</span>
+<span class="c">#md.add_initialized_fem_data(&#39;VolumicData&#39;, mf, f)</span>
+<span class="c">#md.add_source_term_brick(mim, &#39;u&#39;, &#39;VolumicData&#39;)</span>
+</pre></div>
+</td></tr></table></div>
+<p>It only remains now to launch the solver. The linear system is assembled and solve
+with the instruction</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># solve the linear system</span>
+<span class="n">md</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+<p>The model now contains the solution (as well as other things, such as the linear
+system which was solved). It is extracted</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># extracted solution</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Then export solution</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># export computed solution</span>
+<span class="n">mf</span><span class="o">.</span><span class="n">export_to_pos</span><span class="p">(</span><span class="s">&#39;u.pos&#39;</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="s">&#39;Computed solution&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>and view with <tt class="docutils literal"><span class="pre">gmsh</span> <span class="pre">u.pos</span></tt>, see figure <a class="reference internal" href="#py-fig-sbs"><em>Computed solution</em></a>.</p>
+<div class="figure align-center" id="py-fig-sbs">
+<a class="reference internal image-reference" href="../_images/step_by_step.png"><img alt="../_images/step_by_step.png" src="../_images/step_by_step.png" style="width: 338.5px; height: 387.5px;" /></a>
+<p class="caption">Computed solution</p>
+</div>
+</div>
+<div class="section" id="another-laplacian-with-exact-solution-source-term">
+<h2>Another Laplacian with exact solution (source term)<a class="headerlink" href="#another-laplacian-with-exact-solution-source-term" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This example shows the basic usage of getfem, on the canonical problem: solving
+the Laplacian, <img class="math" src="../_images/math/9d8850362727d1a8a9e76c4d0cc31f56efe39292.png" alt="-\Delta u = f" style="vertical-align: -4px"/> on a square, with the Dirichlet condition
+<img class="math" src="../_images/math/204955570f9d78fc69195a1d6bec6aa58aa45f2e.png" alt="u = g(x)" style="vertical-align: -4px"/> on the domain boundary <img class="math" src="../_images/math/932d4407c87b1cb432a44ee87997e834b985003b.png" alt="\Gamma_D" style="vertical-align: -3px"/> and the Neumann condition
+<img class="math" src="../_images/math/44d7a516b9736c324460a5525fabdd3598a71d03.png" alt="\frac{\partial u}{\partial\eta} = h(x)" style="vertical-align: -9px"/> on the domain boundary
+<img class="math" src="../_images/math/0b983602095bda2a85dd1b0c177f154eaffbecbd.png" alt="\Gamma_N" style="vertical-align: -3px"/>. You can find the <strong>py-file</strong> of this example under the name
+<strong>demo_laplacian.py</strong> in the directory <tt class="docutils literal"><span class="pre">interface/tests/python/</span></tt> of the <em>GetFEM++</em>
+distribution.</p>
+<p>We create Mesh, MeshFem, MeshIm object and find the boundary of the domain in
+the same way as the previous example</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># import basic modules</span>
+<span class="kn">import</span> <span class="nn">getfem</span> <span class="kn">as</span> <span class="nn">gf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># boundary names</span>
+<span class="n">top</span>   <span class="o">=</span> <span class="mi">101</span> <span class="c"># Dirichlet boundary</span>
+<span class="n">down</span>  <span class="o">=</span> <span class="mi">102</span> <span class="c"># Neumann boundary</span>
+<span class="n">left</span>  <span class="o">=</span> <span class="mi">103</span> <span class="c"># Dirichlet boundary</span>
+<span class="n">right</span> <span class="o">=</span> <span class="mi">104</span> <span class="c"># Neumann boundary</span>
+
+<span class="c"># parameters</span>
+<span class="n">NX</span> <span class="o">=</span> <span class="mi">40</span>                             <span class="c"># Mesh parameter</span>
+<span class="n">Dirichlet_with_multipliers</span> <span class="o">=</span> <span class="bp">True</span><span class="p">;</span>  <span class="c"># Dirichlet condition with multipliers or penalization</span>
+<span class="n">dirichlet_coefficient</span> <span class="o">=</span> <span class="mf">1e10</span><span class="p">;</span>       <span class="c"># Penalization coefficient</span>
+
+<span class="c"># mesh creation</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;regular_simplices&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">+</span><span class="mf">1.</span><span class="o">/</span><span class="n">NX</span><span class="p">,</span><span class="mf">1.</span><span class="o">/</span><span class="n">NX</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">+</span><span class="mf">1.</span><span class="o">/</span><span class="n">NX</span><span class="p">,</span><span class="mf">1.</span><span class="o">/</span><span class="n">NX</span><span class="p">))</span>
+
+<span class="c"># create a MeshFem for u and rhs fields of dimension 1 (i.e. a scalar field)</span>
+<span class="n">mfu</span>   <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mfrhs</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="c"># assign the P2 fem to all convexes of the both MeshFem</span>
+<span class="n">mfu</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(2,2)&#39;</span><span class="p">))</span>
+<span class="n">mfrhs</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(2,2)&#39;</span><span class="p">))</span>
+
+<span class="c"># an exact integration will be used</span>
+<span class="n">mim</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshIm</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">gf</span><span class="o">.</span><span class="n">Integ</span><span class="p">(</span><span class="s">&#39;IM_TRIANGLE(4)&#39;</span><span class="p">))</span>
+
+<span class="c"># boundary selection</span>
+<span class="n">flst</span>   <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">outer_faces</span><span class="p">()</span>
+<span class="n">fnor</span>   <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">normal_of_faces</span><span class="p">(</span><span class="n">flst</span><span class="p">)</span>
+<span class="n">ttop</span>   <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fnor</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-14</span>
+<span class="n">tdown</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fnor</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-14</span>
+<span class="n">tleft</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fnor</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-14</span>
+<span class="n">tright</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fnor</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-14</span>
+<span class="n">ftop</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">ttop</span><span class="p">,</span> <span class="n">flst</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fdown</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">tdown</span><span class="p">,</span> <span class="n">flst</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fleft</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">tleft</span><span class="p">,</span> <span class="n">flst</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fright</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">tright</span><span class="p">,</span> <span class="n">flst</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c"># mark it as boundary</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">ftop</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">down</span><span class="p">,</span> <span class="n">fdown</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">fleft</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">fright</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>then, we interpolate the exact solution and source terms</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># interpolate the exact solution (assuming mfu is a Lagrange fem)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">mfu</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;y*(y-1)*x*(x-1)+x*x*x*x*x&#39;</span><span class="p">)</span>
+
+<span class="c"># interpolate the source terms (assuming mfrhs is a Lagrange fem)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">mfrhs</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;-(2*(x*x+y*y)-2*x-2*y+20*x*x*x)&#39;</span><span class="p">)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">mfrhs</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;[y*(y-1)*(2*x-1) + 5*x*x*x*x, x*(x-1)*(2*y-1)]&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>and we bricked the problem as in the previous example</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># model</span>
+<span class="n">md</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">)</span>
+
+<span class="c"># add variable and data to model</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">)</span>              <span class="c"># main unknown</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&#39;f&#39;</span><span class="p">,</span> <span class="n">mfrhs</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="c"># volumic source term</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">,</span> <span class="n">mfrhs</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="c"># Dirichlet condition</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&#39;h&#39;</span><span class="p">,</span> <span class="n">mfrhs</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="c"># Neumann condition</span>
+
+<span class="c"># bricked the problem</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_Laplacian_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">)</span>                             <span class="c"># laplacian term on u</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">)</span>                      <span class="c"># volumic source term</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_normal_source_term_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;h&#39;</span><span class="p">,</span> <span class="n">down</span><span class="p">)</span>         <span class="c"># Neumann condition</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_normal_source_term_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;h&#39;</span><span class="p">,</span> <span class="n">left</span><span class="p">)</span>         <span class="c"># Neumann condition</span>
+
+<span class="c"># Dirichlet condition on the top</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">Dirichlet_with_multipliers</span><span class="p">):</span>
+  <span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_penalization</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">dirichlet_coefficient</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+
+<span class="c"># Dirichlet condition on the right</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">Dirichlet_with_multipliers</span><span class="p">):</span>
+  <span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_penalization</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">dirichlet_coefficient</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>the only change is the add of <cite>source term</cite> bricks. Finally the solution of the
+problem is extracted and exported</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># assembly of the linear system and solve.</span>
+<span class="n">md</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c"># main unknown</span>
+<span class="n">u</span>  <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="n">L2error</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="n">u</span><span class="o">-</span><span class="n">g</span><span class="p">,</span> <span class="s">&#39;L2 norm&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">)</span>
+<span class="n">H1error</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="n">u</span><span class="o">-</span><span class="n">g</span><span class="p">,</span> <span class="s">&#39;H1 norm&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">H1error</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;Error in L2 norm : &#39;</span><span class="p">,</span> <span class="n">L2error</span>
+    <span class="k">print</span> <span class="s">&#39;Error in H1 norm : &#39;</span><span class="p">,</span> <span class="n">H1error</span>
+    <span class="k">print</span> <span class="s">&#39;Error too large !&#39;</span>
+
+<span class="c"># export data</span>
+<span class="n">mfu</span><span class="o">.</span><span class="n">export_to_pos</span><span class="p">(</span><span class="s">&#39;sol.pos&#39;</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span><span class="s">&#39;Exact solution&#39;</span><span class="p">,</span>
+                             <span class="n">u</span><span class="p">,</span><span class="s">&#39;Computed solution&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>view with <tt class="docutils literal"><span class="pre">gmsh</span> <span class="pre">sol.pos</span></tt>:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/laplacian.png"><img alt="../_images/laplacian.png" src="../_images/laplacian.png" style="width: 250pt;" /></a>
+<p class="caption">Differences</p>
+</div>
+</div>
+<div class="section" id="linear-and-non-linear-elasticity">
+<h2>Linear and non-linear elasticity<a class="headerlink" href="#linear-and-non-linear-elasticity" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This example uses a mesh that was generated with <a class="reference external" href="http://gid.cimne.upc.es">GiD</a>. The object is meshed
+with quadratic tetrahedrons. You can find the <strong>py-file</strong> of this example under
+the name <tt class="file docutils literal"><span class="pre">demo_tripod.py</span></tt> in the directory <tt class="file docutils literal"><span class="pre">interface/tests/python/</span></tt>
+of the <em>GetFEM++</em> distribution.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">getfem</span> <span class="kn">as</span> <span class="nn">gf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># parameters</span>
+<span class="n">file_msh</span> <span class="o">=</span> <span class="s">&#39;tripod.GiD.msh&#39;</span>
+<span class="n">degree</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">linear</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">incompressible</span> <span class="o">=</span> <span class="bp">False</span> <span class="c"># ensure that degree &gt; 1 when incompressible is on..</span>
+<span class="n">E</span> <span class="o">=</span> <span class="mf">1e3</span>
+<span class="n">Nu</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">Lambda</span> <span class="o">=</span> <span class="n">E</span><span class="o">*</span><span class="n">Nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">Nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">Nu</span><span class="p">))</span>
+<span class="n">Mu</span> <span class="o">=</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Nu</span><span class="p">))</span>
+
+<span class="c"># create a Mesh object (importing)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;import&#39;</span><span class="p">,</span><span class="s">&#39;gid&#39;</span><span class="p">,</span><span class="n">file_msh</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;optimize_structure&#39;</span><span class="p">)</span>
+
+<span class="c"># create a MeshFem object</span>
+<span class="n">mfu</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c"># displacement</span>
+<span class="n">mfp</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c"># pressure</span>
+<span class="n">mfe</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c"># for plot displacement</span>
+<span class="n">mff</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c"># for plot von-mises</span>
+<span class="c"># assign the FEM</span>
+<span class="n">mfu</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(3,</span><span class="si">%d</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">degree</span><span class="p">,)))</span>
+<span class="n">mfp</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_PK_DISCONTINUOUS(3,0)&#39;</span><span class="p">))</span>
+<span class="n">mfe</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_PK_DISCONTINUOUS(3,1,0.01)&#39;</span><span class="p">))</span>
+<span class="n">mff</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_PK_DISCONTINUOUS(3,1,0.01)&#39;</span><span class="p">))</span>
+
+<span class="c"># build a MeshIm object</span>
+<span class="n">mim</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshIm</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">gf</span><span class="o">.</span><span class="n">Integ</span><span class="p">(</span><span class="s">&#39;IM_TETRAHEDRON(5)&#39;</span><span class="p">))</span>
+
+<span class="k">print</span> <span class="s">&#39;nbcvs=</span><span class="si">%d</span><span class="s">, nbpts=</span><span class="si">%d</span><span class="s">, qdim=</span><span class="si">%d</span><span class="s">, fem = </span><span class="si">%s</span><span class="s">, nbdof=</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> \
+      <span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">nbcvs</span><span class="p">(),</span><span class="n">m</span><span class="o">.</span><span class="n">nbpts</span><span class="p">(),</span><span class="n">mfu</span><span class="o">.</span><span class="n">qdim</span><span class="p">(),</span><span class="n">mfu</span><span class="o">.</span><span class="n">fem</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">char</span><span class="p">(),</span><span class="n">mfu</span><span class="o">.</span><span class="n">nbdof</span><span class="p">())</span>
+
+<span class="c"># detect some boundary of the mesh</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">pts</span><span class="p">()</span>
+<span class="n">ctop</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">-</span> <span class="mi">13</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">)</span>
+<span class="n">cbot</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">)</span>
+<span class="n">pidtop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">ctop</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="o">.</span><span class="n">nbpts</span><span class="p">()))</span>
+<span class="n">pidbot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">cbot</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="o">.</span><span class="n">nbpts</span><span class="p">()))</span>
+<span class="n">ftop</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">faces_from_pid</span><span class="p">(</span><span class="n">pidtop</span><span class="p">)</span>
+<span class="n">fbot</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">faces_from_pid</span><span class="p">(</span><span class="n">pidbot</span><span class="p">)</span>
+<span class="c"># create boundary region</span>
+<span class="n">NEUMANN_BOUNDARY</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">DIRICHLET_BOUNDARY</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">NEUMANN_BOUNDARY</span><span class="p">,</span><span class="n">ftop</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">DIRICHLET_BOUNDARY</span><span class="p">,</span><span class="n">fbot</span><span class="p">)</span>
+
+<span class="c"># the model bricks</span>
+<span class="k">if</span> <span class="n">linear</span><span class="p">:</span>
+  <span class="n">b0</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdBrick</span><span class="p">(</span><span class="s">&#39;isotropic_linearized_elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span><span class="n">mfu</span><span class="p">)</span>
+  <span class="n">b0</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">&#39;lambda&#39;</span><span class="p">,</span><span class="n">Lambda</span><span class="p">)</span>
+  <span class="n">b0</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">&#39;mu&#39;</span><span class="p">,</span><span class="n">Mu</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">incompressible</span><span class="p">):</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdBrick</span><span class="p">(</span><span class="s">&#39;linear_incompressibility term&#39;</span><span class="p">,</span><span class="n">b0</span><span class="p">,</span><span class="n">mfp</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">b0</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="c"># large deformation with a linearized material law.. not a very good choice!</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">incompressible</span><span class="p">):</span>
+    <span class="n">b0</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear_elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;Mooney_Rivlin&#39;</span><span class="p">)</span>
+    <span class="n">b0</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">&#39;params&#39;</span><span class="p">,[</span><span class="n">Lambda</span><span class="p">,</span><span class="n">Mu</span><span class="p">])</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear_elasticity_incompressibility_term&#39;</span><span class="p">,</span><span class="n">b0</span><span class="p">,</span><span class="n">mfp</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">b0</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdBrick</span><span class="p">(</span><span class="s">&#39;nonlinear_elasticity&#39;</span><span class="p">,</span><span class="n">mim</span><span class="p">,</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;SaintVenant_Kirchhoff&#39;</span><span class="p">)</span>
+    <span class="c">#b0 = gf.MdBrick(&#39;nonlinear_elasticity&#39;,mim,mfu,&#39;Ciarlet_Geymonat&#39;)</span>
+    <span class="n">b0</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">&#39;params&#39;</span><span class="p">,[</span><span class="n">Lambda</span><span class="p">,</span><span class="n">Mu</span><span class="p">])</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">b0</span>
+
+<span class="n">b2</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdBrick</span><span class="p">(</span><span class="s">&#39;source_term&#39;</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">NEUMANN_BOUNDARY</span><span class="p">)</span>
+<span class="n">b2</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">&#39;source_term&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdBrick</span><span class="p">(</span><span class="s">&#39;dirichlet&#39;</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">DIRICHLET_BOUNDARY</span><span class="p">,</span><span class="n">mfu</span><span class="p">,</span><span class="s">&#39;penalized&#39;</span><span class="p">)</span>
+
+<span class="c"># create model state</span>
+<span class="n">mds</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MdState</span><span class="p">(</span><span class="n">b3</span><span class="p">)</span>
+<span class="c"># running solve...</span>
+<span class="n">b3</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span><span class="s">&#39;noisy&#39;</span><span class="p">,</span><span class="s">&#39;lsolver&#39;</span><span class="p">,</span><span class="s">&#39;superlu&#39;</span><span class="p">)</span>
+
+<span class="c"># extracted solution</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">mds</span><span class="o">.</span><span class="n">state</span><span class="p">()</span>
+
+<span class="c"># post-processing</span>
+<span class="n">VM</span> <span class="o">=</span> <span class="n">b0</span><span class="o">.</span><span class="n">von_mises</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span><span class="n">mff</span><span class="p">)</span>
+
+<span class="c"># export U and VM in a pos file</span>
+<span class="n">sl</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Slice</span><span class="p">((</span><span class="s">&#39;boundary&#39;</span><span class="p">,),</span><span class="n">mfu</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sl</span><span class="o">.</span><span class="n">export_to_pos</span><span class="p">(</span><span class="s">&#39;sol.pos&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;Displacement&#39;</span><span class="p">,</span> <span class="n">mff</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="s">&#39;Von Mises Stress&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Here is the final figure, displaying the <span class="target" id="index-5"></span><tt class="xref std std-envvar docutils literal"><span class="pre">Von</span> <span class="pre">Mises</span></tt> stress and
+displacements norms:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/tripod.png"><img alt="../_images/tripod.png" src="../_images/tripod.png" style="width: 400pt;" /></a>
+<p class="caption">(a) Tripod Von Mises, (b) Tripod displacements norms.</p>
+</div>
+</div>
+<div class="section" id="avoiding-the-model-framework">
+<h2>Avoiding the model framework<a class="headerlink" href="#avoiding-the-model-framework" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The model bricks are very convenient, as they hide most of the details of the
+assembly of the final linear systems. However it is also possible to stay at a
+lower level, and handle the assembly of linear systems, and their resolution,
+directly in <em>Python</em>. For example, the demonstration <tt class="file docutils literal"><span class="pre">demo_tripod_alt.py</span></tt> is
+very similar to the <tt class="file docutils literal"><span class="pre">demo_tripod.py</span></tt> except that the assembly is explicit</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># create a MeshFem object</span>
+<span class="n">mfd</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c"># data</span>
+<span class="c"># assign the FEM</span>
+<span class="n">mfd</span><span class="o">.</span><span class="n">set_fem</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Fem</span><span class="p">(</span><span class="s">&#39;FEM_PK(3,0)&#39;</span><span class="p">))</span>
+
+<span class="c"># assembly</span>
+<span class="n">nbd</span> <span class="o">=</span> <span class="n">mfd</span><span class="o">.</span><span class="n">nbdof</span><span class="p">()</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">asm_boundary_source</span><span class="p">(</span><span class="n">NEUMANN_BOUNDARY</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="o">-</span><span class="mi">100</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span><span class="n">nbd</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">asm_linear_elasticity</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">Lambda</span><span class="p">],</span> <span class="n">nbd</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">Mu</span><span class="p">],</span> <span class="n">nbd</span><span class="p">))</span>
+
+<span class="c"># handle Dirichlet condition</span>
+<span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">R</span><span class="p">)</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">asm_dirichlet</span><span class="p">(</span><span class="n">DIRICHLET_BOUNDARY</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">mfd</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;numpy.identity(3)&#39;</span><span class="p">),</span> <span class="n">mfd</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;[0,0,0]&#39;</span><span class="p">))</span>
+<span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">U0</span><span class="p">)</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">dirichlet_nullspace</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+
+<span class="n">Nt</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Spmat</span><span class="p">(</span><span class="s">&#39;copy&#39;</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+<span class="n">Nt</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">KK</span> <span class="o">=</span> <span class="n">Nt</span><span class="o">*</span><span class="n">K</span><span class="o">*</span><span class="n">N</span>
+<span class="n">FF</span> <span class="o">=</span> <span class="n">Nt</span><span class="o">*</span><span class="n">F</span> <span class="c"># FF = Nt*(F-K*U0)</span>
+
+<span class="c"># solve ...</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Precond</span><span class="p">(</span><span class="s">&#39;ildlt&#39;</span><span class="p">,</span><span class="n">KK</span><span class="p">)</span>
+<span class="n">UU</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">linsolve_cg</span><span class="p">(</span><span class="n">KK</span><span class="p">,</span><span class="n">FF</span><span class="p">,</span><span class="n">P</span><span class="p">)</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">N</span><span class="o">*</span><span class="n">UU</span><span class="o">+</span><span class="n">U0</span>
+
+<span class="c"># post-processing</span>
+<span class="n">sl</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Slice</span><span class="p">((</span><span class="s">&#39;boundary&#39;</span><span class="p">,),</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
+
+<span class="c"># compute the Von Mises Stress</span>
+<span class="n">DU</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">compute_gradient</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="n">mfe</span><span class="p">)</span>
+<span class="n">VM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">DU</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],),</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="n">Sigma</span> <span class="o">=</span> <span class="n">DU</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">DU</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+  <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">DU</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">])</span>
+  <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="o">+</span><span class="n">d</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span>
+  <span class="n">Sigma</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">E</span>
+  <span class="n">VM</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">E</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">E</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">SigmaSL</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">compute_interpolate_on</span><span class="p">(</span><span class="n">mfe</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">sl</span><span class="p">)</span>
+
+<span class="c"># export to Gmsh</span>
+<span class="n">sl</span><span class="o">.</span><span class="n">export_to_pos</span><span class="p">(</span><span class="s">&#39;tripod.pos&#39;</span><span class="p">,</span> <span class="n">mfe</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span><span class="s">&#39;Von Mises Stress&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;Displacement&#39;</span><span class="p">)</span>
+<span class="n">sl</span><span class="o">.</span><span class="n">export_to_pos</span><span class="p">(</span><span class="s">&#39;tripod_ev.pos&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;Displacement&#39;</span><span class="p">,</span> <span class="n">SigmaSL</span><span class="p">,</span> <span class="s">&#39;stress&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In <em>getfem-interface</em>, the assembly of vectors, and matrices is done via the <tt class="docutils literal"><span class="pre">gf.asm_*</span></tt>
+functions. The Dirichlet condition <img class="math" src="../_images/math/a1cd47f2b7ebceb2c9684d3df121e7aa0de7e074.png" alt="h(x)u(x) = r(x)" style="vertical-align: -4px"/> is handled in the
+weak form <img class="math" src="../_images/math/6e2bb2cdf7797a89eeb0b475869cf0e38c4c04be.png" alt="\int (h(x)u(x)).v(x) = \int r(x).v(x)\quad\forall v" style="vertical-align: -6px"/> (where
+<img class="math" src="../_images/math/1f745cf4286f88b236750e1e9a8abe3dacd9dc39.png" alt="h(x)" style="vertical-align: -4px"/> is a <img class="math" src="../_images/math/7b5343f2d9e22816e8de24262565ff2937695b2c.png" alt="3\times 3" style="vertical-align: 0px"/> matrix field &#8211; here it is constant and
+equal to the identity). The reduced system <tt class="docutils literal"><span class="pre">KK</span> <span class="pre">UU</span> <span class="pre">=</span> <span class="pre">FF</span></tt> is then built via the
+elimination of Dirichlet constraints from the original system. Note that it
+might be more efficient (and simpler) to deal with Dirichlet condition via a
+penalization technique.</p>
+</div>
+<div class="section" id="other-examples">
+<h2>Other examples<a class="headerlink" href="#other-examples" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li>the <tt class="file docutils literal"><span class="pre">demo_refine.py</span></tt> script shows a simple 2D or 3D bar whose extremity
+is clamped. An adaptative refinement is used to obtain a better approximation
+in the area where the stress is singular (the transition between the clamped
+area and the neumann boundary).</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_nonlinear_elasticity.py</span></tt> script shows a 3D bar which is is
+bended and twisted. This is a quasi-static problem as the deformation is
+applied in many steps. At each step, a non-linear (large deformations)
+elasticity problem is solved.</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_stokes_3D_tank.py</span></tt> script shows a Stokes (viscous fluid)
+problem in a tank. The <tt class="file docutils literal"><span class="pre">demo_stokes_3D_tank_draw.py</span></tt> shows how to draw
+a nice plot of the solution, with mesh slices and stream lines. Note that the
+<tt class="file docutils literal"><span class="pre">demo_stokes_3D_tank_alt.py</span></tt> is the old example, which uses the
+deprecated <tt class="docutils literal"><span class="pre">gf_solve</span></tt> function.</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_bilaplacian.py</span></tt> script is just an adaption of the <em>GetFEM++</em>
+example <tt class="file docutils literal"><span class="pre">tests/bilaplacian.cc</span></tt>. Solve the bilaplacian (or a
+Kirchhoff-Love plate model) on a square.</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_plasticity.py</span></tt> script is an adaptation of the <em>GetFEM++</em> example
+<tt class="file docutils literal"><span class="pre">tests/plasticity.cc</span></tt>: a 2D or 3D bar is bended in many steps, and the
+plasticity of the material is taken into account (plastification occurs when
+the material&#8217;s Von Mises exceeds a given threshold).</li>
+<li>the <tt class="file docutils literal"><span class="pre">demo_wave2D.py</span></tt> is a 2D scalar wave equation example (diffraction
+of a plane wave by a cylinder), with high order geometric transformations and
+high order FEMs.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#a-step-by-step-basic-example">A step-by-step basic example</a></li>
+<li><a class="reference internal" href="#another-laplacian-with-exact-solution-source-term">Another Laplacian with exact solution (source term)</a></li>
+<li><a class="reference internal" href="#linear-and-non-linear-elasticity">Linear and non-linear elasticity</a></li>
+<li><a class="reference internal" href="#avoiding-the-model-framework">Avoiding the model framework</a></li>
+<li><a class="reference internal" href="#other-examples">Other examples</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="pygf.html"
+                        title="前の章へ"><em>Python</em> <em>GetFEM++</em> interface</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="howtos.html"
+                        title="次の章へ">How-tos</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="howtos.html" title="How-tos"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="pygf.html" title="Python GetFEM++ interface"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CvStruct &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="Eltm" href="cmdref_Eltm.html" />
+    <link rel="prev" title="ContStruct" href="cmdref_ContStruct.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Eltm.html" title="Eltm"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_ContStruct.html" title="ContStruct"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cvstruct">
+<h1>CvStruct<a class="headerlink" href="#cvstruct" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.CvStruct">
+<em class="property">class </em><tt class="descname">CvStruct</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.CvStruct" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM CvStruct object</p>
+<p>General constructor for CvStruct objects</p>
+<dl class="method">
+<dt id="getfem.CvStruct.basic_structure">
+<tt class="descname">basic_structure</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.CvStruct.basic_structure" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get the simplest convex structure.</p>
+<p>For example, the &#8216;basic structure&#8217; of the 6-node triangle, is the
+canonical 3-noded triangle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.CvStruct.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.CvStruct.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a string description of the CvStruct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.CvStruct.dim">
+<tt class="descname">dim</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.CvStruct.dim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get the dimension of the convex structure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.CvStruct.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.CvStruct.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a CvStruct object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.CvStruct.face">
+<tt class="descname">face</tt><big>(</big><em>F</em><big>)</big><a class="headerlink" href="#getfem.CvStruct.face" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the convex structure of the face <cite>F</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.CvStruct.facepts">
+<tt class="descname">facepts</tt><big>(</big><em>F</em><big>)</big><a class="headerlink" href="#getfem.CvStruct.facepts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of point indices for the face <cite>F</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.CvStruct.nbpts">
+<tt class="descname">nbpts</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.CvStruct.nbpts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get the number of points of the convex structure.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_ContStruct.html"
+                        title="前の章へ">ContStruct</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Eltm.html"
+                        title="次の章へ">Eltm</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Eltm.html" title="Eltm"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_ContStruct.html" title="ContStruct"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

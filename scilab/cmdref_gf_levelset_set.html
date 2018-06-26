@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_levelset_set &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_linsolve" href="cmdref_gf_linsolve.html" />
+    <link rel="prev" title="gf_levelset_get" href="cmdref_gf_levelset_get.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_linsolve.html" title="gf_linsolve"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_levelset_get.html" title="gf_levelset_get"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-levelset-set">
+<h1>gf_levelset_set<a class="headerlink" href="#gf-levelset-set" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>gf_levelset_set(levelset LS, &#x27;values&#x27;, {mat v1|string func_1}[, mat v2|string func_2])
+gf_levelset_set(levelset LS, &#x27;simplify&#x27;[, scalar eps=0.01])</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function for modification of LEVELSET objects.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">gf_levelset_set(levelset</span> <span class="pre">LS,</span> <span class="pre">'values',</span> <span class="pre">{mat</span> <span class="pre">v1|string</span> <span class="pre">func_1}[,</span> <span class="pre">mat</span> <span class="pre">v2|string</span> <span class="pre">func_2])</span></tt></p>
+<blockquote>
+<div><p>Set values of the vector of dof for the level-set functions.</p>
+<p>Set the primary function with the vector of dof &lt;literal&gt;v1&lt;/literal&gt; (or the expression
+&lt;literal&gt;func_1&lt;/literal&gt;) and the secondary function (if any) with  the vector of dof
+&lt;literal&gt;v2&lt;/literal&gt; (or the expression &lt;literal&gt;func_2&lt;/literal&gt;)</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_levelset_set(levelset</span> <span class="pre">LS,</span> <span class="pre">'simplify'[,</span> <span class="pre">scalar</span> <span class="pre">eps=0.01])</span></tt></p>
+<blockquote>
+<div>Simplify dof of level-set optionally with the parameter &lt;literal&gt;eps&lt;/literal&gt;.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_levelset_get.html"
+                        title="前の章へ">gf_levelset_get</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_linsolve.html"
+                        title="次の章へ">gf_linsolve</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_linsolve.html" title="gf_linsolve"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_levelset_get.html" title="gf_levelset_get"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

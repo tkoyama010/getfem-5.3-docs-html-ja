@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_util &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_workspace" href="cmdref_gf_workspace.html" />
+    <link rel="prev" title="gf_spmat_set" href="cmdref_gf_spmat_set.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_workspace.html" title="gf_workspace"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_spmat_set.html" title="gf_spmat_set"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-util">
+<h1>gf_util<a class="headerlink" href="#gf-util" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>gf_util(&#x27;save matrix&#x27;, string FMT, string FILENAME, mat A)
+A = gf_util(&#x27;load matrix&#x27;, string FMT, string FILENAME)
+tl = gf_util(&#x27;trace level&#x27; [, int level])
+tl = gf_util(&#x27;warning level&#x27;, int level)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>Performs various operations which do not fit elsewhere.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">gf_util('save</span> <span class="pre">matrix',</span> <span class="pre">string</span> <span class="pre">FMT,</span> <span class="pre">string</span> <span class="pre">FILENAME,</span> <span class="pre">mat</span> <span class="pre">A)</span></tt></p>
+<blockquote>
+<div>Exports a sparse matrix into the file named FILENAME, using
+Harwell-Boeing (FMT=&#8217;hb&#8217;) or Matrix-Market (FMT=&#8217;mm&#8217;) formatting.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">gf_util('load</span> <span class="pre">matrix',</span> <span class="pre">string</span> <span class="pre">FMT,</span> <span class="pre">string</span> <span class="pre">FILENAME)</span></tt></p>
+<blockquote>
+<div>Imports a sparse matrix from a file.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">tl</span> <span class="pre">=</span> <span class="pre">gf_util('trace</span> <span class="pre">level'</span> <span class="pre">[,</span> <span class="pre">int</span> <span class="pre">level])</span></tt></p>
+<blockquote>
+<div><p>Set the verbosity of some getfem++ routines.</p>
+<p>Typically the messages printed by the model bricks, 0 means no
+trace message (default is 3). if no level is given,
+the current trace level is returned.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">tl</span> <span class="pre">=</span> <span class="pre">gf_util('warning</span> <span class="pre">level',</span> <span class="pre">int</span> <span class="pre">level)</span></tt></p>
+<blockquote>
+<div><p>Filter the less important warnings displayed by getfem.</p>
+<p>0 means no warnings, default level is 3. if no level is given,
+the current warning level is returned.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_spmat_set.html"
+                        title="前の章へ">gf_spmat_set</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_workspace.html"
+                        title="次の章へ">gf_workspace</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_workspace.html" title="gf_workspace"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_spmat_set.html" title="gf_spmat_set"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

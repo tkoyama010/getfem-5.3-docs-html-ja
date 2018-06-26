@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Deeper inside Gmm++ &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="How to disable verifications" href="noverif.html" />
+    <link rel="prev" title="First steps with Gmm++" href="first-step.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="noverif.html" title="How to disable verifications"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="first-step.html" title="First steps with Gmm++"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="deeper-inside-gmm">
+<span id="gmm-inside"></span><h1>Deeper inside <em>Gmm++</em><a class="headerlink" href="#deeper-inside-gmm" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="the-linalg-traits-structure">
+<h2>The linalg_traits structure<a class="headerlink" href="#the-linalg-traits-structure" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The major principle of <em>Gmm++</em> is that each vector and matrix type has a corresponding structure (which is never instantiated) named <tt class="docutils literal"><span class="pre">linalg_traits</span></tt> containing all informations on it. For instance, the component <tt class="docutils literal"><span class="pre">linalg_type</span></tt> of this structure is set to <tt class="docutils literal"><span class="pre">abstract_vector</span></tt> or <tt class="docutils literal"><span class="pre">abstract_matrix</span></tt> if the corresponding type represent a vector or a matrix. If <tt class="docutils literal"><span class="pre">V</span></tt> is an interfaced type of vector and <tt class="docutils literal"><span class="pre">M</span></tt> an interface type of matrix, it is possible to access to this component with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;::</span><span class="n">linalg_type</span> <span class="p">...</span>  <span class="c1">// should be abstract_vector</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">linalg_type</span> <span class="p">...</span>  <span class="c1">// should be abstract_matrix</span>
+</pre></div>
+</div>
+<p>The types <tt class="docutils literal"><span class="pre">abstract_vector</span></tt> and <tt class="docutils literal"><span class="pre">abstract_matrix</span></tt> are defined in <tt class="docutils literal"><span class="pre">gmm/gmm_def.h</span></tt>. They are void type allowing to specialize generic algorithms.</p>
+<p>For a vector type, the following informations are available:</p>
+<div class="highlight-c++"><pre>typename gmm::linalg_traits&lt;V&gt;::value_type     --&gt; type of the components of the
+                                                   vector
+typename gmm::linalg_traits&lt;V&gt;::reference      --&gt; type of reference on a component
+typename gmm::linalg_traits&lt;V&gt;::is_reference   --&gt; if the vector is a simple
+                                                   reference or an instantiated vector
+typename gmm::linalg_traits&lt;V&gt;::linalg_type    --&gt; should be abstract_vector
+typename gmm::linalg_traits&lt;V&gt;::index_sorted    --&gt; linalg_true or linalg_false
+typename gmm::linalg_traits&lt;V&gt;::const_iterator --&gt; const iterator to iterate on the
+                                                   components of the vector in
+                                                   order to read them.
+typename gmm::linalg_traits&lt;V&gt;::iterator       --&gt; iterator to iterate on the
+                                                   components of the vector in
+                                                   order to read or write them.
+typename gmm::linalg_traits&lt;V&gt;::storage_type   --&gt; should be abstract_sparse,
+                                                   abstract_skyline or
+                                                   abstract_dense
+
+typename gmm::linalg_traits&lt;V&gt;::origin_type    --&gt; the type of vector itself
+                                                   or the type of referenced
+                                                   vector for a reference.
+
+gmm::linalg_traits&lt;V&gt;::size(v)     --&gt; a method which gives the size of the vector.
+gmm::linalg_traits&lt;V&gt;::begin(v)    --&gt; a method which gives an iterator on the
+                                       beginning of the vector
+gmm::linalg_traits&lt;V&gt;::end(v)      --&gt; iterator on the end of the vector
+gmm::linalg_traits&lt;V&gt;::origin(v)   --&gt; gives a void pointer allowing to identify
+                                       the vector
+gmm::linalg_traits&lt;V&gt;::do_clear(v) --&gt; make a clear on the vector
+
+gmm::linalg_traits&lt;V&gt;::access(o, it, ite, i) --&gt; return the ith component or a
+                                        reference on the ith component. o is a
+                                        pointer o type ``origin_type *&#x27;&#x27; or
+                                        ``const origin_type *&#x27;&#x27;.
+
+gmm::linalg_traits&lt;V&gt;::clear(o, it, ite) --&gt; clear the vector. o is a
+                                        pointer o type ``origin_type *&#x27;&#x27; or
+                                        ``const origin_type *&#x27;&#x27;.</pre>
+</div>
+<p>and for a matrix type:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">value_type</span>     <span class="o">--&gt;</span> <span class="n">type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">components</span> <span class="n">of</span> <span class="n">the</span>
+                                                   <span class="n">matrix</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">reference</span>      <span class="o">--&gt;</span> <span class="n">type</span> <span class="n">of</span> <span class="n">reference</span> <span class="n">on</span> <span class="n">a</span> <span class="n">component</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">is_reference</span>   <span class="o">--&gt;</span> <span class="k">if</span> <span class="n">the</span> <span class="n">matrix</span> <span class="n">is</span> <span class="n">a</span> <span class="n">simple</span>
+                                                   <span class="n">reference</span> <span class="n">or</span> <span class="n">an</span> <span class="n">instantiated</span> <span class="n">matrix</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">linalg_type</span>    <span class="o">--&gt;</span> <span class="n">should</span> <span class="n">be</span> <span class="n">abstract_matrix</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">storage_type</span>   <span class="o">--&gt;</span> <span class="n">should</span> <span class="n">be</span> <span class="n">abstract_sparse</span><span class="p">,</span>
+                                                   <span class="n">abstract_skyline</span> <span class="n">or</span>
+                                                   <span class="n">abstract_dense</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">index_sorted</span>    <span class="o">--&gt;</span> <span class="n">linalg_true</span> <span class="n">or</span> <span class="n">linalg_false</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">sub_orientation</span> <span class="o">--&gt;</span> <span class="n">should</span> <span class="n">be</span> <span class="n">row_major</span><span class="p">,</span> <span class="n">col_major</span>
+                                                    <span class="n">row_and_col</span> <span class="n">or</span> <span class="n">col_and_row</span><span class="p">.</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">sub_col_type</span>      <span class="o">--&gt;</span> <span class="n">type</span> <span class="n">of</span> <span class="n">reference</span> <span class="n">on</span> <span class="n">a</span> <span class="n">column</span>
+                                                    <span class="p">(</span><span class="k">if</span> <span class="n">the</span> <span class="n">matrix</span> <span class="n">is</span> <span class="n">not</span> <span class="n">row_major</span><span class="p">)</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">const_sub_col_type</span> <span class="o">--&gt;</span> <span class="n">type</span> <span class="n">of</span> <span class="k">const</span> <span class="n">reference</span> <span class="n">on</span> <span class="n">a</span>
+                                                     <span class="n">column</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">col_iterator</span>      <span class="o">--&gt;</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">columns</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">const_col_iterator</span> <span class="o">--&gt;</span> <span class="k">const</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">columns</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">sub_row_type</span>      <span class="o">--&gt;</span> <span class="n">type</span> <span class="n">of</span> <span class="n">reference</span> <span class="n">on</span> <span class="n">a</span> <span class="n">row</span>
+                                                    <span class="p">(</span><span class="k">if</span> <span class="n">the</span> <span class="n">matrix</span> <span class="n">is</span> <span class="n">not</span> <span class="n">col_major</span><span class="p">)</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">const_sub_row_type</span> <span class="o">--&gt;</span> <span class="n">type</span> <span class="n">of</span> <span class="k">const</span> <span class="n">reference</span> <span class="n">on</span> <span class="n">a</span>
+                                                     <span class="n">row</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">const_row_iterator</span> <span class="o">--&gt;</span> <span class="k">const</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">rows</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">row_iterator</span>       <span class="o">--&gt;</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">rows</span>
+
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">origin_type</span>    <span class="o">--&gt;</span> <span class="n">the</span> <span class="n">type</span> <span class="n">of</span> <span class="n">vector</span> <span class="n">itself</span>
+                                                   <span class="n">or</span> <span class="n">the</span> <span class="n">type</span> <span class="n">of</span> <span class="n">referenced</span>
+                                                   <span class="n">vector</span> <span class="k">for</span> <span class="n">a</span> <span class="n">reference</span><span class="p">.</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">nrows</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>     <span class="o">--&gt;</span> <span class="n">methods</span> <span class="n">which</span> <span class="n">gives</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">rows</span> <span class="n">of</span>
+                                        <span class="n">the</span> <span class="n">matrix</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">ncols</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>     <span class="o">--&gt;</span> <span class="n">number</span> <span class="n">of</span> <span class="n">columns</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">row_begin</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">first</span> <span class="n">row</span> <span class="p">(</span><span class="k">if</span> <span class="n">not</span> <span class="n">col_major</span><span class="p">)</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">row_end</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>   <span class="o">--&gt;</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">end</span> <span class="n">of</span> <span class="n">the</span> <span class="n">rows</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">col_begin</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">first</span> <span class="n">column</span>
+                                        <span class="p">(</span><span class="k">if</span> <span class="n">not</span> <span class="n">row_major</span><span class="p">)</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">col_end</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>   <span class="o">--&gt;</span> <span class="n">iterator</span> <span class="n">on</span> <span class="n">the</span> <span class="n">end</span> <span class="n">of</span> <span class="n">the</span> <span class="n">columns</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">row</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>      <span class="o">--&gt;</span> <span class="n">gives</span> <span class="n">the</span> <span class="n">reference</span> <span class="n">on</span> <span class="n">a</span> <span class="n">row</span> <span class="n">with</span> <span class="n">an</span> <span class="n">iterator</span>
+                                        <span class="p">(</span><span class="k">if</span> <span class="n">not</span> <span class="n">col_major</span><span class="p">)</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">col</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>      <span class="o">--&gt;</span> <span class="n">gives</span> <span class="n">the</span> <span class="n">reference</span> <span class="n">on</span> <span class="n">a</span> <span class="n">column</span> <span class="n">with</span> <span class="n">an</span>
+                                        <span class="n">iterator</span>  <span class="p">(</span><span class="k">if</span> <span class="n">not</span> <span class="n">row_major</span><span class="p">)</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">origin</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>    <span class="o">--&gt;</span> <span class="n">gives</span> <span class="n">a</span> <span class="kt">void</span> <span class="n">pointer</span> <span class="n">allowing</span> <span class="n">to</span> <span class="n">identify</span>
+                                        <span class="n">the</span> <span class="n">matrix</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">access</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="k">return</span> <span class="n">the</span> <span class="n">ith</span> <span class="n">component</span> <span class="n">or</span> <span class="n">a</span> <span class="n">reference</span>
+                                        <span class="n">on</span> <span class="n">the</span> <span class="n">ith</span> <span class="n">component</span> <span class="n">of</span> <span class="n">the</span> <span class="n">row</span> <span class="n">or</span>
+                                        <span class="n">column</span> <span class="n">pointed</span> <span class="n">by</span> <span class="n">it</span><span class="p">.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;::</span><span class="n">do_clear</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>  <span class="o">--&gt;</span> <span class="n">make</span> <span class="n">a</span> <span class="n">clear</span> <span class="n">on</span> <span class="n">the</span> <span class="n">matrix</span>
+</pre></div>
+</div>
+<p>This is this structure you have to fill in to interface a new vector or matrix type. You can see some examples in <tt class="docutils literal"><span class="pre">gmm/gmm_interface.h</span></tt> . Most of the generic algorithms are in <tt class="docutils literal"><span class="pre">gmm/gmm_blas.h</span></tt> .</p>
+</div>
+<div class="section" id="how-to-iterate-on-the-components-of-a-vector">
+<h2>How to iterate on the components of a vector<a class="headerlink" href="#how-to-iterate-on-the-components-of-a-vector" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Here is an example which accumulate the components of a vector. It is assumed that <tt class="docutils literal"><span class="pre">V</span></tt> is a vector type and <tt class="docutils literal"><span class="pre">v</span></tt> an instantiated vector:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;::</span><span class="n">value_type</span> <span class="n">r</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// scalar in which we accumulate</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;::</span><span class="n">const_iterator</span> <span class="n">it</span> <span class="o">=</span> <span class="n">vect_const_begin</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="c1">// beginning</span>
+                                                                         <span class="c1">// of v</span>
+<span class="k">typename</span> <span class="n">gmm</span><span class="o">::</span><span class="n">linalg_traits</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;::</span><span class="n">const_iterator</span> <span class="n">ite</span> <span class="o">=</span> <span class="n">vect_const_end</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="c1">// end of v</span>
+
+<span class="k">for</span> <span class="p">(;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">ite</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>  <span class="c1">// loop on the components</span>
+  <span class="n">r</span> <span class="o">+=</span> <span class="o">*</span><span class="n">it</span><span class="p">;</span>              <span class="c1">// accumulate the components</span>
+</pre></div>
+</div>
+<p>This piece of code will work with every kind of interfaced vector.</p>
+<p>For sparse or skyline vectors, it is possible to obtain the index of the components pointed by the iterator with <tt class="docutils literal"><span class="pre">it.index()</span></tt>. Here is the example of the scalar product of two sparse or skyline vectors, assuming <tt class="docutils literal"><span class="pre">V1</span></tt> and <tt class="docutils literal"><span class="pre">V2</span></tt> are two vector types and <tt class="docutils literal"><span class="pre">v1</span></tt>, <tt class="docutils literal"><span class="pre">v2</span></tt> two corresponding instantiated vectors:</p>
+<div class="highlight-c++"><pre>typename gmm::linalg_traits&lt;V1&gt;::const_iterator it1 = vect_const_begin(v1),
+typename gmm::linalg_traits&lt;V1&gt;::const_iterator ite1 = vect_const_end(v1);
+typename gmm::linalg_traits&lt;V2&gt;::const_iterator it2 = vect_const_begin(v2),
+typename gmm::linalg_traits&lt;V2&gt;::const_iterator ite2 = vect_const_end(v2);
+typename gmm::linalg_traits&lt;V1&gt;::value_type r(0); // it is assumed that V2 have a
+                                             // compatible value_type
+
+while (it1 != ite1 &amp;&amp; it2 != ite2) \{  // loops on the components
+  if (it1.index() == it2.index()) \{
+    res += (*it1) * (*it2));          // if the indices are equals accumulate
+    ++it1;
+    ++it2;
+  \}
+  else if (it1.index() &lt; it2.index())
+    ++it1;
+  else
+    ++it2;
+\}</pre>
+</div>
+<p>This algorithm use the fact that indices are increasing in a sparse vector. This code will not work for dense vectors because dense vector iterators do not have the method <tt class="docutils literal"><span class="pre">it.index()</span></tt>.</p>
+</div>
+<div class="section" id="how-to-iterate-on-a-matrix">
+<h2>How to iterate on a matrix<a class="headerlink" href="#how-to-iterate-on-a-matrix" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>You can iterate on the rows of a matrix if it is not a column major matrix and on the columns of a matrix if it is not a row major matrix (the type <tt class="docutils literal"><span class="pre">gmm::dense_matrix&lt;T&gt;</span></tt> has is sub orientation type as col_and_rox, so you can iterate on both rows and columns).</p>
+<p>If you need not to be optimal, you can use a basic loop like that:</p>
+<div class="highlight-c++"><pre>for (size_t i = 0; i &lt; gmm::mat_nrows(m); ++i) \{
+  typename gmm::linalg_traits&lt;M&gt;::const_sub_row_type row = mat_const_row(M, i);
+
+  ...
+
+  std::cout &lt;&lt; &quot;norm of row &quot; &lt;&lt; i &lt;&lt; &quot; : &quot; &lt;&lt; vect_norm2(row) &lt;&lt; std::endl;
+\}</pre>
+</div>
+<p>But you can also use iterators, like that:</p>
+<div class="highlight-c++"><pre>typename gmm::linalg_traits&lt;M&gt;::const_row_iterator it = mat_row_const_begin(m);
+typename gmm::linalg_traits&lt;M&gt;::const_row_iterator ite = mat_row_const_end(m);
+
+for (; it != ite; ++it) \{
+  typename gmm::linalg_traits&lt;M&gt;::const_sub_row_type
+    row = gmm::linalg_traits&lt;M&gt;::row(it);
+
+  ...
+
+  std::cout &lt;&lt; &quot;norm of row &quot; &lt;&lt; i &lt;&lt; &quot; : &quot; &lt;&lt; vect_norm2(row) &lt;&lt; std::endl;
+\}</pre>
+</div>
+</div>
+<div class="section" id="how-to-make-your-algorithm-working-on-all-type-of-matrices">
+<h2>How to make your algorithm working on all type of matrices<a class="headerlink" href="#how-to-make-your-algorithm-working-on-all-type-of-matrices" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For this, you will generally have to specialize it. For instance, let us take a look at the code for <tt class="docutils literal"><span class="pre">gmm::nnz</span></tt> which count the number of stored components (in fact, the real <tt class="docutils literal"><span class="pre">gmm::nnz</span></tt> algorithm is specialized in most of the cases so that it does not count the components one by one):</p>
+<div class="highlight-c++"><pre>template &lt;class L&gt; inline size_type nnz(const L&amp; l) \{
+  return nnz(l, typename linalg_traits&lt;L&gt;::linalg_type());
+\}
+
+template &lt;class L&gt; inline size_type nnz(const L&amp; l, abstract_vector) \{
+  typename linalg_traits&lt;L&gt;::const_iterator it = vect_const_begin(l);
+  typename linalg_traits&lt;L&gt;::const_iterator ite = vect_const_end(l);
+  size_type res(0);
+  for (; it != ite; ++it) ++res;
+  return res;
+\}
+
+template &lt;class L&gt; inline size_type nnz(const L&amp; l, abstract_matrix) \{
+  return nnz(l,  typename principal_orientation_type&lt;typename
+                 linalg_traits&lt;L&gt;::sub_orientation&gt;::potype());
+\}
+
+template &lt;class L&gt; inline size_type nnz(const L&amp; l, row_major) \{
+  size_type res(0);
+  for (size_type i = 0; i &lt; mat_nrows(l); ++i)
+    res += nnz(mat_const_row(l, i));
+  return res;
+\}
+
+template &lt;class L&gt; inline size_type nnz(const L&amp; l, col_major) \{
+  size_type res(0);
+  for (size_type i = 0; i &lt; mat_ncols(l); ++i)
+    res += nnz(mat_const_col(l, i));
+  return res;
+\}</pre>
+</div>
+<p>The first function dispatch on the second or the third function respectively if the parameter is a vector or a matrix. The third function dispatch again on the fourth and the fifth function respectively if the matrix is row_major or column major. Of course, as the function are declared <tt class="docutils literal"><span class="pre">inline</span></tt>, at least the two dispatcher functions will not be implemented. Which means that this construction is not costly.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Deeper inside <em>Gmm++</em></a><ul>
+<li><a class="reference internal" href="#the-linalg-traits-structure">The linalg_traits structure</a></li>
+<li><a class="reference internal" href="#how-to-iterate-on-the-components-of-a-vector">How to iterate on the components of a vector</a></li>
+<li><a class="reference internal" href="#how-to-iterate-on-a-matrix">How to iterate on a matrix</a></li>
+<li><a class="reference internal" href="#how-to-make-your-algorithm-working-on-all-type-of-matrices">How to make your algorithm working on all type of matrices</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="first-step.html"
+                        title="前の章へ">First steps with <em>Gmm++</em></a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="noverif.html"
+                        title="次の章へ">How to disable verifications</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="noverif.html" title="How to disable verifications"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="first-step.html" title="First steps with Gmm++"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

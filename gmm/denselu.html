@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dense LU decomposition &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Dense QR factorisation, eigenvalues and eigenvectors" href="denseqr.html" />
+    <link rel="prev" title="Solving triangular systems" href="triangular.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="denseqr.html" title="Dense QR factorisation, eigenvalues and eigenvectors"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="triangular.html" title="Solving triangular systems"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dense-lu-decomposition">
+<span id="gmm-denselu"></span><h1>Dense LU decomposition<a class="headerlink" href="#dense-lu-decomposition" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The following procedures are available in the file <tt class="docutils literal"><span class="pre">gmm/gmm\_dense\_lu.h</span></tt> for dense real and complex matrices (<tt class="docutils literal"><span class="pre">gmm::dense_matrix&lt;T&gt;</span></tt>, <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;</span> <span class="pre">std::vector&lt;T&gt;</span> <span class="pre">&gt;</span></tt> and <tt class="docutils literal"><span class="pre">gmm::col_matrix&lt;</span> <span class="pre">std::vector&lt;T&gt;</span> <span class="pre">&gt;</span></tt>):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">lu_factor</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">ipvt</span><span class="p">)</span> <span class="o">:</span> <span class="n">compute</span> <span class="n">the</span> <span class="n">LU</span> <span class="n">factorization</span> <span class="n">of</span> <span class="n">M</span> <span class="n">in</span> <span class="n">M</span><span class="p">.</span> <span class="n">ipvt</span> <span class="n">should</span> <span class="n">be</span>
+                     <span class="n">an</span> <span class="n">gmm</span><span class="o">::</span><span class="n">lapack_ipvt</span> <span class="p">(</span><span class="n">of</span> <span class="n">size</span> <span class="n">gmm</span><span class="o">::</span><span class="n">mat_nrows</span><span class="p">(</span><span class="n">M</span><span class="p">))</span>
+                     <span class="n">which</span> <span class="n">will</span> <span class="n">contain</span> <span class="n">the</span> <span class="n">indices</span> <span class="n">of</span> <span class="n">the</span> <span class="n">pivots</span><span class="p">.</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_solve</span><span class="p">(</span><span class="n">LU</span><span class="p">,</span> <span class="n">ipvt</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="n">solve</span> <span class="n">the</span> <span class="n">system</span> <span class="n">LUx</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span> <span class="n">LU</span> <span class="n">is</span> <span class="n">the</span> <span class="n">LU</span>
+                           <span class="n">factorization</span> <span class="n">which</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">computed</span> <span class="n">first</span><span class="p">.</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_solve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="n">solve</span> <span class="n">the</span> <span class="n">system</span> <span class="n">Mx</span><span class="o">=</span><span class="n">b</span> <span class="n">calling</span> <span class="n">the</span> <span class="n">lu</span> <span class="n">factorization</span> <span class="n">on</span>
+                    <span class="n">a</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">M</span><span class="p">.</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_solve_transposed</span><span class="p">(</span><span class="n">LU</span><span class="p">,</span> <span class="n">ipvt</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="n">solve</span> <span class="n">the</span> <span class="n">system</span> <span class="n">transposed</span><span class="p">(</span><span class="n">LU</span><span class="p">)</span><span class="n">x</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span>
+                                      <span class="n">LU</span> <span class="n">is</span> <span class="n">the</span> <span class="n">LU</span> <span class="n">factorization</span> <span class="n">which</span>
+                                      <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">computed</span> <span class="n">first</span><span class="p">.</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_inverse</span><span class="p">(</span><span class="n">LU</span><span class="p">,</span> <span class="n">ipvt</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="o">:</span> <span class="n">compute</span> <span class="n">the</span> <span class="n">inverse</span> <span class="n">of</span> <span class="n">LU</span> <span class="n">in</span> <span class="n">A</span><span class="p">.</span> <span class="n">LU</span> <span class="n">is</span> <span class="n">the</span> <span class="n">LU</span>
+                          <span class="n">factorization</span> <span class="n">which</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">computed</span> <span class="n">first</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_inverse</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">:</span> <span class="n">invert</span> <span class="n">A</span> <span class="n">calling</span> <span class="n">the</span> <span class="n">LU</span> <span class="n">factorization</span> <span class="n">and</span> <span class="n">the</span> <span class="n">latter</span>
+                <span class="n">procedure</span><span class="p">.</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_det</span><span class="p">(</span><span class="n">LU</span><span class="p">,</span> <span class="n">ipvt</span><span class="p">)</span> <span class="o">:</span> <span class="n">compute</span> <span class="n">the</span> <span class="n">determinant</span> <span class="n">of</span> <span class="n">LU</span><span class="p">.</span> <span class="n">LU</span> <span class="n">is</span> <span class="n">the</span> <span class="n">LU</span>
+                   <span class="n">factorization</span> <span class="n">which</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">computed</span> <span class="n">first</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">lu_det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">:</span> <span class="n">compute</span> <span class="n">the</span> <span class="n">determinant</span> <span class="n">of</span> <span class="n">A</span> <span class="n">calling</span> <span class="n">the</span> <span class="n">LU</span> <span class="n">factorization</span>
+            <span class="n">and</span> <span class="n">the</span> <span class="n">latter</span> <span class="n">function</span><span class="p">.</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="triangular.html"
+                        title="前の章へ">Solving triangular systems</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="denseqr.html"
+                        title="次の章へ">Dense QR factorisation, eigenvalues and eigenvectors</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="denseqr.html" title="Dense QR factorisation, eigenvalues and eigenvectors"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="triangular.html" title="Solving triangular systems"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

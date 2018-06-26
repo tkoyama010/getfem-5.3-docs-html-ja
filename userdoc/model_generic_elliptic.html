@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Generic elliptic brick &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Dirichlet condition brick" href="model_dirichlet.html" />
+    <link rel="prev" title="Generic assembly bricks" href="model_generic_assembly.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_dirichlet.html" title="Dirichlet condition brick"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_generic_assembly.html" title="Generic assembly bricks"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="generic-elliptic-brick">
+<span id="ud-model-generic-elliptic"></span><span id="index-0"></span><h1>Generic elliptic brick<a class="headerlink" href="#generic-elliptic-brick" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This brick adds an elliptic term on a variable of a model.  The shape of the
+elliptic term depends both on the variable and a given coefficient. This
+corresponds to a term:</p>
+<div class="math">
+<p><img src="../_images/math/494aaf177f610442cfa3676f66ce926798586e0f.png" alt="-\text{div}(a\nabla u),"/></p>
+</div><p>where <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" style="vertical-align: 0px"/> is the coefficient and <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> the variable. The coefficient can
+be a scalar, a matrix or an order four tensor. The variable can be vector valued
+or not. This means that the brick treats several different situations. If the
+coefficient is a scalar or a matrix and the variable is vector valued then the
+term is added componentwise. An order four tensor coefficient is allowed for
+vector valued variable only.  The coefficient can be constant or described on a
+FEM. Of course, when the coefficient is a tensor described on a finite element
+method (a tensor field) the corresponding data can be a huge vector. The
+components of the matrix/tensor have to be stored with the fortran order
+(columnwise) in the data vector corresponding to the coefficient (compatibility
+with BLAS). The symmetry and coercivity of the given matrix/tensor is not verified
+(but assumed).</p>
+<p>This brick can be added to a model <tt class="docutils literal"><span class="pre">md</span></tt> thanks to two functions. The first one
+is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">size_type</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_Laplacian_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>that adds an elliptic term relatively to the variable <tt class="docutils literal"><span class="pre">varname</span></tt> of the model
+with a constant coefficient equal to <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/> (a Laplacian term). This
+corresponds to the Laplace operator. <tt class="docutils literal"><span class="pre">mim</span></tt> is the integration method which will
+be used to compute the term. <tt class="docutils literal"><span class="pre">region</span></tt> is an optional region number. If it is
+omitted, it is assumed that the term will be computed on the whole mesh. The
+result of the function is the brick index in the model.</p>
+<p>The second function is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">size_type</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_generic_elliptic_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">dataexpr</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>It adds a term with an arbitrary coefficient given by the expression <tt class="docutils literal"><span class="pre">dataexpr</span></tt> which has to be a regular expression of the weak form language (like &#8220;1&#8221;, &#8220;sin(X[0])&#8221; or &#8220;Norm(u)&#8221; for instance) even depending on model variables (except for the complex version where it has to be a declared data of the model)</p>
+<p>Note that very general equations can be obtained with this brick. For instance,
+linear anisotropic elasticity can be obtained with a tensor data. When an order
+four tensor is used, the corresponding weak term is the following</p>
+<div class="math">
+<p><img src="../_images/math/c70c39c8c42f5321b7e50c9c139f7dd11b652f53.png" alt="\int_{\Omega} \sum_{i,j,k,l} a_{i,j,k,l}\partial_i u_j \partial_k v_l dx"/></p>
+</div><p>where <img class="math" src="../_images/math/34a5ba912141171ad416444385a83fc912b4b6e1.png" alt="a_{i,j,k,l}" style="vertical-align: -6px"/> is the order four tensor and <img class="math" src="../_images/math/25ee658fc5ee9b34ede580b498f134be039ed723.png" alt="\partial_i u_j" style="vertical-align: -6px"/> is
+the partial derivative with respect to the <img class="math" src="../_images/math/ffbd55597272a9914166c5dd1e71a5d23d842ddd.png" alt="i^{th}" style="vertical-align: 0px"/> variable of the
+component <img class="math" src="../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j" style="vertical-align: -4px"/> of the unknown <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/>. <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> is the test function.
+However, for linear isotropic elasticity, a more adapted brick is available (see
+below).</p>
+<p>The brick has a working complex version.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_generic_assembly.html"
+                        title="前の章へ">Generic assembly bricks</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_dirichlet.html"
+                        title="次の章へ">Dirichlet condition brick</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_dirichlet.html" title="Dirichlet condition brick"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_generic_assembly.html" title="Generic assembly bricks"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

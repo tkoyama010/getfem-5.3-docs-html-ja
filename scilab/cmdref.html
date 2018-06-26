@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Command reference &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="SciLab Interface" href="index.html" />
+    <link rel="next" title="gf_asm" href="cmdref_gf_asm.html" />
+    <link rel="prev" title="Draw Command reference" href="plotcmdref.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_asm.html" title="gf_asm"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="plotcmdref.html" title="Draw Command reference"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">SciLab Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="command-reference">
+<span id="scilab-cmdref"></span><h1>Command reference<a class="headerlink" href="#command-reference" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Please remember that this documentation is not self contained.
+You should in particular refer to the <a class="reference external" href="http://getfem.org/userdoc/index.html">user documentation</a>
+to have a more extensive description of the structures algorithms
+and concepts used.</p>
+<p>The expected type of each function argument is indicated in this
+reference. Here is a list of these types:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>int</cite></td>
+<td>integer value</td>
+</tr>
+<tr class="row-even"><td><cite>hobj</cite></td>
+<td>a handle for any GetFEM++ object</td>
+</tr>
+<tr class="row-odd"><td><cite>scalar</cite></td>
+<td>scalar value</td>
+</tr>
+<tr class="row-even"><td><cite>string</cite></td>
+<td>string</td>
+</tr>
+<tr class="row-odd"><td><cite>ivec</cite></td>
+<td>vector of integer values</td>
+</tr>
+<tr class="row-even"><td><cite>vec</cite></td>
+<td>vector</td>
+</tr>
+<tr class="row-odd"><td><cite>imat</cite></td>
+<td>matrix of integer values</td>
+</tr>
+<tr class="row-even"><td><cite>mat</cite></td>
+<td>matrix</td>
+</tr>
+<tr class="row-odd"><td><cite>spmat</cite></td>
+<td>sparse matrix (both matlab native sparse
+matrices, and GetFEM sparse matrices)</td>
+</tr>
+<tr class="row-even"><td><cite>precond</cite></td>
+<td>GetFEM preconditioner object</td>
+</tr>
+<tr class="row-odd"><td><cite>mesh mesh</cite></td>
+<td>object descriptor (or gfMesh object)</td>
+</tr>
+<tr class="row-even"><td><cite>mesh_fem</cite></td>
+<td>mesh fem object descriptor (or gfMeshFem object)</td>
+</tr>
+<tr class="row-odd"><td><cite>mesh_im</cite></td>
+<td>mesh im object descriptor (or gfMeshIm object)</td>
+</tr>
+<tr class="row-even"><td><cite>mesh_im_data</cite></td>
+<td>mesh im data object descriptor (or gfMeshImData object)</td>
+</tr>
+<tr class="row-odd"><td><cite>mesh_slice</cite></td>
+<td>mesh slice object descriptor (or gfSlice object)</td>
+</tr>
+<tr class="row-even"><td><cite>cvstruct</cite></td>
+<td>convex structure descriptor (or gfCvStruct object)</td>
+</tr>
+<tr class="row-odd"><td><cite>geotrans</cite></td>
+<td>geometric transformation descriptor (or
+gfGeoTrans object)</td>
+</tr>
+<tr class="row-even"><td><cite>fem</cite></td>
+<td>fem descriptor (or gfFem object)</td>
+</tr>
+<tr class="row-odd"><td><cite>eltm</cite></td>
+<td>elementary matrix descriptor (or gfEltm object)</td>
+</tr>
+<tr class="row-even"><td><cite>integ</cite></td>
+<td>integration method descriptor (or gfInteg object)</td>
+</tr>
+<tr class="row-odd"><td><cite>model</cite></td>
+<td>model descriptor (or gfModel object)</td>
+</tr>
+<tr class="row-even"><td><cite>global_function</cite></td>
+<td>global function descriptor</td>
+</tr>
+<tr class="row-odd"><td><cite>mesher_object</cite></td>
+<td>mesher object descriptor</td>
+</tr>
+<tr class="row-even"><td><cite>cont_struct</cite></td>
+<td>continuation-structure descriptor</td>
+</tr>
+</tbody>
+</table>
+<p>Arguments listed between square brackets are optional. Lists between braces indicate that the argument must match one of the elements of the list. For example:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">]=</span><span class="n">dummy</span><span class="p">(</span><span class="n">int</span> <span class="nb">i</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span> <span class="o">|</span> <span class="s">&#39;bar&#39;</span> <span class="p">[,</span><span class="n">vec</span> <span class="n">v</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>means that the dummy function takes two or three arguments, its first being an integer value, the second a string which is either &#8216;foo&#8217; or &#8216;bar&#8217;, and a third optional argument. It returns two values (with the usual matlab meaning, i.e. the caller can always choose to ignore them).</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_asm.html">gf_asm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_compute.html">gf_compute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_cont_struct.html">gf_cont_struct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_cont_struct_get.html">gf_cont_struct_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_cvstruct_get.html">gf_cvstruct_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_delete.html">gf_delete</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_eltm.html">gf_eltm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_fem.html">gf_fem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_fem_get.html">gf_fem_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_geotrans.html">gf_geotrans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_geotrans_get.html">gf_geotrans_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_global_function.html">gf_global_function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_global_function_get.html">gf_global_function_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_integ.html">gf_integ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_integ_get.html">gf_integ_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_levelset.html">gf_levelset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_levelset_get.html">gf_levelset_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_levelset_set.html">gf_levelset_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_linsolve.html">gf_linsolve</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh.html">gf_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_get.html">gf_mesh_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_set.html">gf_mesh_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_fem.html">gf_mesh_fem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_fem_get.html">gf_mesh_fem_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_fem_set.html">gf_mesh_fem_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_im.html">gf_mesh_im</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_im_get.html">gf_mesh_im_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_im_set.html">gf_mesh_im_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_im_data.html">gf_mesh_im_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_im_data_get.html">gf_mesh_im_data_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_im_data_set.html">gf_mesh_im_data_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_levelset.html">gf_mesh_levelset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_levelset_get.html">gf_mesh_levelset_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesh_levelset_set.html">gf_mesh_levelset_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesher_object.html">gf_mesher_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_mesher_object_get.html">gf_mesher_object_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_model.html">gf_model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_model_get.html">gf_model_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_model_set.html">gf_model_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_poly.html">gf_poly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_precond.html">gf_precond</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_precond_get.html">gf_precond_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_slice.html">gf_slice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_slice_get.html">gf_slice_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_slice_set.html">gf_slice_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_spmat.html">gf_spmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_spmat_get.html">gf_spmat_get</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_spmat_set.html">gf_spmat_set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_util.html">gf_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref_gf_workspace.html">gf_workspace</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="plotcmdref.html"
+                        title="前の章へ">Draw Command reference</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_asm.html"
+                        title="次の章へ">gf_asm</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_asm.html" title="gf_asm"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="plotcmdref.html" title="Draw Command reference"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

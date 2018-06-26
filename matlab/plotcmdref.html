@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Draw Command reference &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="MatLab Interface" href="index.html" />
+    <link rel="next" title="Command reference" href="cmdref.html" />
+    <link rel="prev" title="Examples" href="examples.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref.html" title="Command reference"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="draw-command-reference">
+<span id="mlab-plotcmdref"></span><h1>Draw Command reference<a class="headerlink" href="#draw-command-reference" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="gf-colormap">
+<h2>gf_colormap<a class="headerlink" href="#gf-colormap" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="n">c</span><span class="p">=</span><span class="n">gf_colormap</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>return a colormap, or change the current colormap.
+name can be: &#8216;tripod&#8217;, &#8216;chouette&#8217;, &#8216;froid&#8217;, &#8216;tank&#8217;
+or &#8216;earth&#8217;.</div></blockquote>
+</div>
+<div class="section" id="gf-plot">
+<h2>gf_plot<a class="headerlink" href="#gf-plot" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="p">[</span><span class="n">hsurf</span><span class="p">,</span> <span class="n">hcontour</span><span class="p">,</span> <span class="n">hquiver</span><span class="p">,</span> <span class="n">hmesh</span><span class="p">,</span> <span class="n">hdefmesh</span><span class="p">]=</span><span class="n">gf_plot</span><span class="p">(</span><span class="n">mesh_fem</span> <span class="n">mf</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="c">...)</span>
+
+<span class="n">The</span> <span class="n">options</span> <span class="n">are</span> <span class="n">specified</span> <span class="n">as</span> <span class="n">pairs</span> <span class="n">of</span> &quot;<span class="n">option</span> <span class="n">name</span>&quot;<span class="o">/</span>&quot;<span class="n">option</span> <span class="n">value</span>&quot;
+
+<span class="s">&#39;zplot&#39;</span><span class="p">,{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>       <span class="p">:</span> <span class="n">values</span> <span class="n">of</span> ``<span class="n">U</span>`` <span class="n">are</span> <span class="n">mapped</span> <span class="n">on</span> <span class="n">the</span> $<span class="n">z</span>$<span class="o">-</span><span class="n">axis</span> <span class="p">(</span><span class="n">only</span> <span class="n">possible</span> <span class="n">when</span> <span class="n">qdim</span><span class="p">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mdim</span><span class="p">=</span><span class="mi">2</span><span class="p">).</span>
+<span class="s">&#39;norm&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>       <span class="p">:</span> <span class="k">if</span> <span class="n">qdim</span> <span class="o">&gt;</span><span class="p">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">-</span><span class="n">plot</span> <span class="n">the</span> <span class="n">norm</span> <span class="n">of</span> <span class="n">the</span> <span class="n">field</span>
+<span class="s">&#39;dir&#39;</span><span class="p">,[]</span>                    <span class="p">:</span> <span class="n">or</span> <span class="n">the</span> <span class="n">scalar</span> <span class="n">product</span> <span class="n">of</span> <span class="n">the</span> <span class="n">field</span> <span class="n">with</span> <span class="s">&#39;dir&#39;</span> <span class="p">(</span><span class="n">can</span> <span class="n">be</span> <span class="n">a</span> <span class="n">vector</span><span class="p">,</span> <span class="n">or</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span> <span class="n">etc</span><span class="p">..)</span>
+<span class="s">&#39;refine&#39;</span><span class="p">,</span><span class="mi">8</span>                  <span class="p">:</span> <span class="n">nb</span> <span class="n">of</span> <span class="n">refinments</span> <span class="k">for</span> <span class="n">curved</span> <span class="n">edges</span> <span class="n">and</span> <span class="n">surface</span> <span class="n">plots</span>
+<span class="s">&#39;interpolated&#39;</span><span class="p">,{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}:</span> <span class="k">if</span> <span class="n">triangular</span> <span class="n">patch</span> <span class="n">are</span> <span class="n">interpolated</span>
+<span class="s">&#39;pcolor&#39;</span><span class="p">,{</span><span class="s">&#39;on&#39;</span><span class="o">|</span><span class="s">&#39;off&#39;</span><span class="p">}</span>      <span class="p">:</span> <span class="k">if</span> <span class="n">the</span> <span class="n">field</span> <span class="n">is</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">a</span> <span class="n">color</span> <span class="n">plot</span> <span class="n">of</span> <span class="n">its</span> <span class="n">values</span> <span class="n">is</span> <span class="n">plotted</span>
+<span class="s">&#39;quiver&#39;</span><span class="p">,{</span><span class="s">&#39;on&#39;</span><span class="o">|</span><span class="s">&#39;off&#39;</span><span class="p">}</span>      <span class="p">:</span> <span class="k">if</span> <span class="n">the</span> <span class="n">field</span> <span class="n">is</span> <span class="n">vector</span><span class="p">,</span> <span class="n">represent</span> <span class="n">arrows</span>
+<span class="s">&#39;quiver_density&#39;</span><span class="p">,</span><span class="mi">50</span>        <span class="p">:</span> <span class="n">density</span> <span class="n">of</span> <span class="n">arrows</span> <span class="n">in</span> <span class="n">quiver</span> <span class="n">plot</span>
+<span class="s">&#39;quiver_scale&#39;</span><span class="p">,</span><span class="mi">1</span>           <span class="p">:</span> <span class="n">scaling</span> <span class="n">of</span> <span class="n">arrows</span> <span class="p">(</span><span class="mi">0</span><span class="p">=</span><span class="o">&gt;</span><span class="n">no</span> <span class="n">scaling</span><span class="p">)</span>
+<span class="s">&#39;mesh&#39;</span><span class="p">,{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>         <span class="p">:</span> <span class="n">show</span> <span class="n">the</span> <span class="n">mesh</span> ?
+<span class="s">&#39;meshopts&#39;</span><span class="p">,{</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">)}</span>           <span class="p">:</span> <span class="n">cell</span> <span class="n">array</span> <span class="n">of</span> <span class="n">options</span> <span class="n">passed</span> <span class="n">to</span> <span class="n">gf_plot_slice</span> <span class="k">for</span> <span class="n">the</span> <span class="n">mesh</span>
+<span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span> <span class="p">:</span> <span class="n">shows</span> <span class="n">the</span> <span class="n">deformed</span> <span class="n">mesh</span> <span class="p">(</span><span class="n">only</span> <span class="n">when</span> <span class="n">qdim</span> <span class="o">==</span> <span class="n">mdim</span><span class="p">)</span>
+<span class="s">&#39;deformed_meshopts&#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">)}:</span> <span class="n">cell</span> <span class="n">array</span> <span class="n">of</span> <span class="n">options</span> <span class="n">passed</span> <span class="n">to</span> <span class="n">gf_plot_slice</span> <span class="k">for</span> <span class="n">the</span> <span class="n">deformed</span> <span class="n">mesh</span>
+<span class="s">&#39;deformation&#39;</span><span class="p">,[]</span>            <span class="p">:</span> <span class="n">plots</span> <span class="n">on</span> <span class="n">the</span> <span class="n">deformed</span> <span class="n">object</span> <span class="p">(</span><span class="n">only</span> <span class="n">when</span> <span class="n">qdim</span> <span class="o">==</span> <span class="n">mdim</span><span class="p">)</span>
+<span class="s">&#39;deformation_mf&#39;</span><span class="p">,[]</span>        <span class="p">:</span> <span class="n">plots</span> <span class="n">on</span> <span class="n">the</span> <span class="n">deformed</span> <span class="n">object</span> <span class="p">(</span><span class="n">only</span> <span class="n">when</span> <span class="n">qdim</span> <span class="o">==</span> <span class="n">mdim</span><span class="p">)</span>
+<span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span><span class="s">&#39;10%&#39;</span>  <span class="p">:</span> <span class="n">indicate</span> <span class="n">the</span> <span class="n">amplitude</span> <span class="n">of</span> <span class="n">the</span> <span class="n">deformation</span><span class="p">.</span> <span class="n">Can</span> <span class="n">be</span> <span class="n">a</span> <span class="n">percentage</span> <span class="n">of</span> <span class="n">the</span> <span class="n">mesh</span> <span class="n">width</span> <span class="k">if</span> <span class="n">given</span> <span class="n">as</span> <span class="n">a</span> <span class="n">string</span><span class="p">,</span> <span class="n">or</span> <span class="n">an</span> <span class="n">absolute</span> <span class="n">value</span> <span class="k">if</span> <span class="n">given</span> <span class="n">as</span> <span class="n">a</span> <span class="n">number</span>
+<span class="s">&#39;cvlst&#39;</span><span class="p">,[]</span>                  <span class="p">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">convexes</span> <span class="n">to</span> <span class="n">plot</span> <span class="p">(</span><span class="n">empty</span><span class="p">=</span><span class="o">&gt;</span><span class="n">all</span> <span class="n">convexes</span><span class="p">)</span>
+<span class="s">&#39;title&#39;</span><span class="p">,[]</span>                 <span class="p">:</span> <span class="n">set</span> <span class="n">the</span> <span class="n">title</span>
+<span class="s">&#39;contour&#39;</span><span class="p">,[]</span>               <span class="p">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">contour</span> <span class="n">values</span>
+<span class="s">&#39;disp_options&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span> <span class="p">:</span> <span class="n">shows</span> <span class="n">the</span> <span class="n">option</span> <span class="n">or</span> <span class="n">not</span><span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div><p>The function expects <tt class="docutils literal"><span class="pre">U</span></tt> to be a row vector. If <tt class="docutils literal"><span class="pre">U</span></tt> is a scalar
+field, then <tt class="docutils literal"><span class="pre">gf\_plot(mf,U)</span></tt> will fill the mesh with colors
+representing the values of <tt class="docutils literal"><span class="pre">U</span></tt>. If <tt class="docutils literal"><span class="pre">U</span></tt> is a vector field, then
+the default behavior of <tt class="docutils literal"><span class="pre">gf_plot</span></tt> is to draw vectors representing
+the values of <tt class="docutils literal"><span class="pre">U</span></tt>.</p>
+<p>On output, this function returns the handles to the various
+graphical objects created: <tt class="docutils literal"><span class="pre">hmesh</span></tt> is the handles to the mesh
+lines, <tt class="docutils literal"><span class="pre">hbound</span></tt> is the handles to the edges of the boundaries, <tt class="docutils literal"><span class="pre">hfill</span></tt>
+is the handle of the patch objects of faces, <tt class="docutils literal"><span class="pre">hvert</span></tt> (resp
+<tt class="docutils literal"><span class="pre">hconv</span></tt>, <tt class="docutils literal"><span class="pre">hdof</span></tt>) is the handles of the vertices (resp. convexes,
+dof) labels.</p>
+<p>For example, plotting a scalar field on the border of a 3D mesh can be done with</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="c">% load the &#39;strange.mesh_fem&#39; (found in the getfem_matlab/tests directory)</span>
+<span class="n">mf</span><span class="p">=</span><span class="n">gf_mesh_fem</span><span class="p">(</span><span class="s">&#39;load&#39;</span><span class="p">,</span> <span class="s">&#39;strange.mesh_fem&#39;</span><span class="p">)</span>
+<span class="n">U</span><span class="p">=</span><span class="nb">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="s">&#39;nbdof&#39;</span><span class="p">));</span> # <span class="n">random</span> <span class="n">field</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">drawn</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="s">&#39;cvlst&#39;</span><span class="p">,</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="s">&#39;outer faces&#39;</span><span class="p">),</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="gf-plot-1d">
+<h2>gf_plot_1D<a class="headerlink" href="#gf-plot-1d" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="n">gf_plot_1D</span><span class="p">(</span><span class="n">mesh_fem</span> <span class="n">mf</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="c">...)</span>
+
+<span class="n">The</span> <span class="n">options</span> <span class="n">are</span> <span class="n">specified</span> <span class="n">as</span> <span class="n">pairs</span> <span class="n">of</span> &quot;<span class="n">option</span> <span class="n">name</span>&quot;<span class="o">/</span>&quot;<span class="n">option</span> <span class="n">value</span>&quot;
+
+
+<span class="s">&#39;style&#39;</span><span class="p">,</span> <span class="s">&#39;bo-&#39;</span>       <span class="p">:</span> <span class="n">the</span> <span class="n">line</span> <span class="n">style</span> <span class="n">and</span> <span class="n">dof</span> <span class="n">marker</span> <span class="n">style</span> <span class="p">(</span><span class="n">same</span> <span class="n">syntax</span> <span class="n">as</span> <span class="n">in</span> <span class="n">the</span> <span class="n">matlab</span> <span class="n">command</span> <span class="s">&#39;plot&#39;</span><span class="p">).</span>
+<span class="s">&#39;color&#39;</span><span class="p">,</span> <span class="p">[]</span>          <span class="p">:</span> <span class="n">override</span> <span class="n">the</span> <span class="n">line</span> <span class="n">color</span><span class="p">.</span>
+<span class="s">&#39;dof_color&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">color</span> <span class="n">of</span> <span class="n">the</span> <span class="n">markers</span> <span class="k">for</span> <span class="n">the</span> <span class="n">degrees</span> <span class="n">of</span> <span class="n">freedom</span><span class="p">.</span>
+<span class="s">&#39;width&#39;</span><span class="p">,</span> <span class="mi">2</span>           <span class="p">:</span> <span class="n">line</span> <span class="n">width</span><span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>This function plots a 1D finite elements field.</div></blockquote>
+</div>
+<div class="section" id="gf-plot-mesh">
+<h2>gf_plot_mesh<a class="headerlink" href="#gf-plot-mesh" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="n">gf_plot_mesh</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="c">...)</span>
+
+<span class="s">&#39;vertices&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>    <span class="p">:</span> <span class="n">displays</span> <span class="n">also</span> <span class="n">vertices</span> <span class="n">numbers</span><span class="p">.</span>
+<span class="s">&#39;convexes&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>    <span class="p">:</span> <span class="n">displays</span> <span class="n">also</span> <span class="n">convexes</span> <span class="n">numbers</span><span class="p">.</span>
+<span class="s">&#39;dof&#39;</span><span class="p">,{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>          <span class="p">:</span> <span class="n">displays</span> <span class="n">also</span> <span class="n">finite</span> <span class="n">element</span> <span class="n">nodes</span><span class="p">.</span> <span class="n">In</span> <span class="n">that</span> <span class="k">case</span><span class="p">,</span> ``<span class="n">m</span>`` <span class="n">should</span> <span class="n">be</span> <span class="n">a</span> ``<span class="n">mesh_fem</span>`` <span class="n">identifier</span><span class="p">.</span>
+<span class="s">&#39;regions&#39;</span><span class="p">,</span><span class="n">BLST</span>              <span class="p">:</span> <span class="n">displays</span> <span class="n">the</span> <span class="n">boundaries</span> <span class="n">listed</span> <span class="n">in</span> <span class="n">BLST</span><span class="p">.</span>
+<span class="s">&#39;cvlst&#39;</span><span class="p">,</span><span class="n">CVLST</span>               <span class="p">:</span> <span class="n">display</span> <span class="n">only</span> <span class="n">the</span> <span class="n">listed</span> <span class="n">convexes</span><span class="p">.</span> <span class="n">If</span> <span class="n">CVLST</span> <span class="n">has</span> <span class="n">two</span> <span class="n">rows</span><span class="p">,</span> <span class="n">display</span> <span class="n">only</span> <span class="n">the</span> <span class="n">faces</span> <span class="n">listed</span> <span class="n">in</span> <span class="n">the</span> <span class="n">second</span> <span class="n">row</span><span class="p">.</span>
+<span class="s">&#39;edges&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;on&#39;</span> <span class="o">|</span> <span class="s">&#39;off&#39;</span><span class="p">}</span>     <span class="p">:</span> <span class="n">display</span> <span class="n">edges</span> ?
+<span class="s">&#39;faces&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>       <span class="p">:</span> <span class="n">fills</span> <span class="n">each</span> <span class="mi">2</span><span class="n">D</span><span class="o">-</span><span class="n">face</span> <span class="n">of</span> <span class="n">the</span> <span class="n">mesh</span>
+<span class="s">&#39;curved&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;off&#39;</span><span class="o">|</span><span class="s">&#39;on&#39;</span><span class="p">}</span>      <span class="p">:</span> <span class="n">displays</span> <span class="n">curved</span> <span class="n">edges</span>
+<span class="s">&#39;refine&#39;</span><span class="p">,</span><span class="n">N</span>                  <span class="p">:</span> <span class="n">refine</span> <span class="n">curved</span> <span class="n">edges</span> <span class="n">and</span> <span class="n">filled</span> <span class="n">faces</span> <span class="n">N</span> <span class="n">times</span>
+<span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">Udef</span>         <span class="p">:</span> <span class="n">optionnal</span> <span class="n">deformation</span> <span class="n">applied</span> <span class="n">to</span> <span class="n">the</span> <span class="n">mesh</span> <span class="p">(</span><span class="n">M</span> <span class="n">must</span> <span class="n">be</span> <span class="n">a</span> <span class="n">mesh_fem</span> <span class="n">object</span><span class="p">)</span>
+<span class="s">&#39;edges_color&#39;</span><span class="p">,[.</span><span class="mi">6</span> <span class="p">.</span><span class="mi">6</span> <span class="mi">1</span><span class="p">]</span>     <span class="p">:</span> <span class="n">RGB</span> <span class="n">values</span> <span class="k">for</span> <span class="n">the</span> <span class="n">color</span> <span class="n">of</span> <span class="n">edges</span>
+<span class="s">&#39;edges_width&#39;</span><span class="p">,</span><span class="mi">1</span>             <span class="p">:</span> <span class="n">width</span> <span class="n">of</span> <span class="n">edges</span>
+<span class="s">&#39;faces_color&#39;</span><span class="p">,[.</span><span class="mi">75</span> <span class="p">.</span><span class="mi">75</span> <span class="p">.</span><span class="mi">75</span><span class="p">]):</span> <span class="n">RGB</span> <span class="n">values</span> <span class="k">for</span> <span class="n">the</span> <span class="n">color</span> <span class="n">of</span> <span class="n">faces</span>
+<span class="s">&#39;quality&#39;</span><span class="p">,{</span> <span class="s">&#39;off&#39;</span> <span class="o">|</span> <span class="s">&#39;on&#39;</span> <span class="p">}</span>  <span class="p">:</span> <span class="n">Display</span> <span class="n">the</span> <span class="n">quality</span> <span class="n">of</span> <span class="n">the</span> <span class="n">mesh</span><span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div><p>This function is used to display a mesh.</p>
+<p>Example</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="c">% the mesh is in the tests directory of the distribution</span>
+<span class="n">m</span><span class="p">=</span><span class="n">gf_mesh</span><span class="p">(</span><span class="s">&#39;import&#39;</span><span class="p">,</span><span class="s">&#39;gid&#39;</span><span class="p">,</span><span class="s">&#39;donut_with_quadratic_tetra_314_elements.msh&#39;</span><span class="p">);</span>
+<span class="n">gf_plot_mesh</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;refine&#39;</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="s">&#39;cvlst&#39;</span><span class="p">,</span><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;outer faces&#39;</span><span class="p">),</span><span class="s">&#39;faces&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="o">\</span><span class="n">ldots</span><span class="p">,</span> <span class="s">&#39;faces_color&#39;</span><span class="p">,[</span><span class="mf">1.</span> <span class="p">.</span><span class="mi">9</span> <span class="p">.</span><span class="mi">2</span><span class="p">],</span><span class="s">&#39;curved&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;edges_width&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">camlight</span> <span class="c">% turn on the light!</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="gf-plot-slice">
+<h2>gf_plot_slice<a class="headerlink" href="#gf-plot-slice" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="n">gf_plot_slice</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="c">...)</span>
+
+<span class="n">The</span> <span class="n">options</span> <span class="n">are</span> <span class="n">specified</span> <span class="n">as</span> <span class="n">pairs</span> <span class="n">of</span> &quot;<span class="n">option</span> <span class="n">name</span>&quot;<span class="o">/</span>&quot;<span class="n">option</span> <span class="n">value</span>&quot;
+
+
+<span class="n">data</span>    <span class="p">[]</span>          <span class="p">:</span> <span class="n">data</span> <span class="n">to</span> <span class="n">be</span> <span class="n">plotted</span> <span class="p">(</span><span class="n">one</span> <span class="n">value</span> <span class="n">per</span> <span class="n">slice</span> <span class="n">node</span><span class="p">)</span>
+<span class="n">convex_data</span>    <span class="p">[]</span>   <span class="p">:</span> <span class="n">data</span> <span class="n">to</span> <span class="n">be</span> <span class="n">plotted</span> <span class="p">(</span><span class="n">one</span> <span class="n">value</span> <span class="n">per</span> <span class="n">mesh</span> <span class="n">convex</span><span class="p">)</span>
+<span class="n">mesh</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;auto&#39;</span><span class="p">]</span>      <span class="p">:</span> <span class="s">&#39;on&#39;</span> <span class="o">-&gt;</span> <span class="n">show</span> <span class="n">the</span> <span class="n">mesh</span> <span class="p">(</span><span class="n">faces</span> <span class="n">of</span> <span class="n">edges</span><span class="p">),</span> <span class="s">&#39;off&#39;</span> <span class="o">-&gt;</span> <span class="n">ignore</span> <span class="n">mesh</span>
+<span class="n">mesh_edges</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;on&#39;</span><span class="p">]</span>  <span class="p">:</span> <span class="n">show</span> <span class="n">mesh</span> <span class="n">edges</span> ?
+<span class="n">mesh_edges_color</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.60</span> <span class="mf">0.60</span> <span class="mi">1</span><span class="p">]</span> <span class="p">:</span> <span class="n">color</span> <span class="n">of</span> <span class="n">mesh</span> <span class="n">edges</span>
+<span class="n">mesh_edges_width</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.70</span><span class="p">]</span> <span class="p">:</span> <span class="n">width</span> <span class="n">of</span> <span class="n">mesh</span> <span class="n">edges</span>
+<span class="n">mesh_slice_edges</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;on&#39;</span><span class="p">]</span> <span class="p">:</span> <span class="n">show</span> <span class="n">edges</span> <span class="n">of</span> <span class="n">the</span> <span class="n">slice</span> ?
+<span class="n">mesh_slice_edges_color</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.70</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">color</span> <span class="n">of</span> <span class="n">slice</span> <span class="n">edges</span>
+<span class="n">mesh_slice_edges_width</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.50</span><span class="p">]</span> <span class="p">:</span> <span class="n">width</span> <span class="n">of</span> <span class="n">slice</span> <span class="n">edges</span>
+<span class="n">mesh_faces</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;off&#39;</span><span class="p">]</span> <span class="p">:</span> <span class="s">&#39;on&#39;</span> <span class="o">-&gt;</span> <span class="n">fill</span> <span class="n">mesh</span> <span class="n">faces</span> <span class="p">(</span><span class="k">otherwise</span> <span class="n">they</span> <span class="n">are</span> <span class="n">transparent</span><span class="p">)</span>
+<span class="n">mesh_faces_color</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.75</span> <span class="mf">0.75</span> <span class="mf">0.75</span><span class="p">]</span>
+<span class="n">pcolor</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;on&#39;</span><span class="p">]</span>      <span class="p">:</span> <span class="k">if</span> <span class="n">the</span> <span class="n">field</span> <span class="n">is</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">a</span> <span class="n">color</span> <span class="n">plot</span> <span class="n">of</span> <span class="n">its</span> <span class="n">values</span> <span class="n">is</span> <span class="n">plotted</span>
+<span class="n">quiver</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;on&#39;</span><span class="p">]</span>      <span class="p">:</span> <span class="k">if</span> <span class="n">the</span> <span class="n">field</span> <span class="n">is</span> <span class="n">vector</span><span class="p">,</span> <span class="n">represent</span> <span class="n">arrows</span>
+<span class="n">quiver_density</span><span class="p">,</span> <span class="mi">50</span>  <span class="p">:</span> <span class="n">density</span> <span class="n">of</span> <span class="n">arrows</span> <span class="n">in</span> <span class="n">quiver</span> <span class="n">plot</span>
+<span class="n">quiver_scale</span><span class="p">,</span> <span class="mi">1</span>     <span class="p">:</span> <span class="n">density</span> <span class="n">of</span> <span class="n">arrows</span> <span class="n">in</span> <span class="n">quiver</span> <span class="n">plot</span>
+<span class="n">tube</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;on&#39;</span><span class="p">]</span>        <span class="p">:</span> <span class="n">use</span> <span class="n">tube</span> <span class="n">plot</span> <span class="k">for</span> <span class="s">&#39;filar&#39;</span> <span class="p">(</span><span class="mi">1</span><span class="n">D</span><span class="p">)</span> <span class="n">parts</span> <span class="n">of</span> <span class="n">the</span> <span class="n">slice</span>
+<span class="n">tube_color</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;red&#39;</span><span class="p">]</span> <span class="p">:</span> <span class="n">color</span> <span class="n">of</span> <span class="n">tubes</span> <span class="p">(</span><span class="n">ignored</span> <span class="k">if</span> <span class="s">&#39;data&#39;</span> <span class="n">is</span> <span class="n">not</span> <span class="n">empty</span> <span class="n">and</span> <span class="s">&#39;pcolor&#39;</span> <span class="n">is</span> <span class="n">on</span><span class="p">)</span>
+<span class="n">tube_radius</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;0.5%&#39;</span><span class="p">]</span> <span class="p">:</span> <span class="n">tube</span> <span class="n">radius</span><span class="p">;</span> <span class="n">you</span> <span class="n">can</span> <span class="n">use</span> <span class="n">a</span> <span class="n">constant</span><span class="p">,</span> <span class="n">or</span> <span class="n">a</span> <span class="n">percentage</span> <span class="p">(</span><span class="n">of</span> <span class="n">the</span> <span class="n">mesh</span> <span class="nb">size</span><span class="p">)</span> <span class="n">or</span> <span class="n">a</span> <span class="n">vector</span> <span class="n">of</span> <span class="n">nodal</span> <span class="n">values</span>
+<span class="n">showoptions</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;on&#39;</span><span class="p">]</span> <span class="p">:</span> <span class="n">display</span> <span class="n">the</span> <span class="n">list</span> <span class="n">of</span> <span class="n">options</span>
+
+<span class="n">the</span> <span class="s">&#39;data&#39;</span> <span class="n">and</span> <span class="s">&#39;convex_data&#39;</span> <span class="n">are</span> <span class="n">mutually</span> <span class="n">exclusive</span><span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div><p>This function can be used to plot mesh slices. It is also used by the <tt class="docutils literal"><span class="pre">gf_plot_mesh</span></tt> and <tt class="docutils literal"><span class="pre">gf_plot</span></tt> functions.</p>
+<p>Example : consider that you have a 3D mesh_fem <tt class="docutils literal"><span class="pre">mf</span></tt> and a vector field <tt class="docutils literal"><span class="pre">U</span></tt> defined on this mesh_fem, solution of the Stokes problem in a tank (see the demo <tt class="docutils literal"><span class="pre">demo_stokes_3D_tank_draw.m</span></tt> in the tests directory).</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="n">figure</span><span class="p">;</span>
+<span class="c">% slice the mesh with two half spaces, and take the boundary of the resulting quarter-cylinder</span>
+<span class="n">sl</span><span class="p">=</span><span class="n">gf_slice</span><span class="p">(</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;boundary&#39;</span><span class="p">,</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;intersection&#39;</span><span class="p">,</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;planar&#39;</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">,[</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span><span class="p">;</span><span class="mi">0</span><span class="p">]</span><span class="o">\</span><span class="p">},</span><span class="o">\</span><span class="n">ldots</span>
+                                          <span class="o">\</span><span class="p">{</span><span class="s">&#39;planar&#39;</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">,[</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">]</span><span class="o">\</span><span class="p">}</span><span class="o">\</span><span class="p">}</span><span class="o">\</span><span class="p">},</span><span class="n">m</span><span class="p">,</span><span class="mi">6</span><span class="p">);</span>
+<span class="n">Usl</span><span class="p">=</span><span class="n">gf_compute</span><span class="p">(</span><span class="n">pde</span><span class="p">.</span><span class="n">mf_u</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;interpolate on&#39;</span><span class="p">,</span> <span class="n">sl</span><span class="p">);</span>  <span class="c">% interpolate the solution on the slice</span>
+<span class="c">% show the norm of the displacement on this slice</span>
+<span class="n">gf_plot_slice</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;data&#39;</span><span class="p">,</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">Usl</span><span class="o">.^</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span><span class="s">&#39;mesh_slice_edges&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+<span class="c">% another slice: now we take the lower part of the mesh</span>
+<span class="n">sl</span><span class="p">=</span><span class="n">gf_slice</span><span class="p">(</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;boundary&#39;</span><span class="p">,</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;intersection&#39;</span><span class="p">,</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;planar&#39;</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">,[</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">6</span><span class="p">],[</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">\</span><span class="p">},</span><span class="o">\</span><span class="n">ldots</span>
+                                        <span class="o">\</span><span class="p">{</span><span class="s">&#39;planar&#39;</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">,[</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span><span class="p">;</span><span class="mi">0</span><span class="p">]</span><span class="o">\</span><span class="p">}</span><span class="o">\</span><span class="p">}</span><span class="o">\</span><span class="p">},</span><span class="n">m</span><span class="p">,</span><span class="mi">6</span><span class="p">);</span>
+<span class="n">Usl</span><span class="p">=</span><span class="n">gf_compute</span><span class="p">(</span><span class="n">pde</span><span class="p">.</span><span class="n">mf_u</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;interpolate on&#39;</span><span class="p">,</span> <span class="n">sl</span><span class="p">);</span>
+<span class="n">hold</span> <span class="n">on</span><span class="p">;</span>
+<span class="n">gf_plot_slice</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;data&#39;</span><span class="p">,</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">Usl</span><span class="o">.^</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span><span class="s">&#39;mesh_slice_edges&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+<span class="c">% this slice contains the transparent mesh faces displayed on the picture</span>
+<span class="n">sl2</span><span class="p">=</span><span class="n">gf_slice</span><span class="p">(</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;boundary&#39;</span><span class="p">,</span><span class="o">\</span><span class="p">{</span><span class="s">&#39;planar&#39;</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">,[</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span><span class="p">;</span><span class="mi">0</span><span class="p">]</span><span class="o">\</span><span class="p">}</span><span class="o">\</span><span class="p">},</span><span class="o">\</span><span class="n">ldots</span>
+            <span class="n">m</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="n">setdiff</span><span class="p">(</span><span class="n">all_faces</span><span class="o">&#39;</span><span class="p">,</span><span class="n">TOPfaces</span><span class="o">&#39;</span><span class="p">,</span><span class="s">&#39;rows&#39;</span><span class="p">)</span><span class="o">&#39;</span><span class="p">);</span>
+<span class="n">gf_plot_slice</span><span class="p">(</span><span class="n">sl2</span><span class="p">,</span><span class="s">&#39;mesh_faces&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;pcolor&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+<span class="c">% last step is to plot the streamlines</span>
+<span class="n">hh</span><span class="p">=[</span><span class="mi">1</span> <span class="mi">5</span> <span class="mi">9</span> <span class="mf">12.5</span> <span class="mi">16</span> <span class="mf">19.5</span><span class="p">];</span> <span class="c">% vertical position of the different starting points of the streamlines</span>
+<span class="n">H</span><span class="p">=[</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="nb">numel</span><span class="p">(</span><span class="n">hh</span><span class="p">));</span><span class="n">hh</span><span class="p">];</span>
+
+<span class="c">% compute the streamlines</span>
+<span class="n">tsl</span><span class="p">=</span><span class="n">gf_slice</span><span class="p">(</span><span class="s">&#39;streamlines&#39;</span><span class="p">,</span><span class="n">pde</span><span class="p">.</span><span class="n">mf_u</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="n">H</span><span class="p">);</span>
+<span class="n">Utsl</span><span class="p">=</span><span class="n">gf_compute</span><span class="p">(</span><span class="n">pde</span><span class="p">.</span><span class="n">mf_u</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;interpolate on&#39;</span><span class="p">,</span> <span class="n">tsl</span><span class="p">);</span>
+
+<span class="c">% render them with &quot;tube plot&quot;</span>
+<span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="n">h</span><span class="p">]=</span><span class="n">gf_plot_slice</span><span class="p">(</span><span class="n">tsl</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;tube_radius&#39;</span><span class="p">,.</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;tube_color&#39;</span><span class="p">,</span><span class="s">&#39;white&#39;</span><span class="p">);</span>
+<span class="n">hold</span> <span class="n">off</span><span class="p">;</span>
+<span class="c">% use a nice colormap</span>
+<span class="n">caxis</span><span class="p">([</span><span class="mi">0</span> <span class="p">.</span><span class="mi">7</span><span class="p">]);</span>
+<span class="n">c</span><span class="p">=[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">0</span> <span class="p">.</span><span class="mi">5</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">0</span> <span class="mi">1</span> <span class="p">.</span><span class="mi">5</span><span class="p">;</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">;</span> <span class="p">.</span><span class="mi">5</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="p">.</span><span class="mi">5</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="p">.</span><span class="mi">4</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="p">.</span><span class="mi">2</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="p">.</span><span class="mi">4</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="p">.</span><span class="mi">6</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="p">.</span><span class="mi">8</span> <span class="mi">0</span><span class="p">];</span>
+<span class="n">colormap</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Draw Command reference</a><ul>
+<li><a class="reference internal" href="#gf-colormap">gf_colormap</a></li>
+<li><a class="reference internal" href="#gf-plot">gf_plot</a></li>
+<li><a class="reference internal" href="#gf-plot-1d">gf_plot_1D</a></li>
+<li><a class="reference internal" href="#gf-plot-mesh">gf_plot_mesh</a></li>
+<li><a class="reference internal" href="#gf-plot-slice">gf_plot_slice</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="examples.html"
+                        title="前の章へ">Examples</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref.html"
+                        title="次の章へ">Command reference</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref.html" title="Command reference"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

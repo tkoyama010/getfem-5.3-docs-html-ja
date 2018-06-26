@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Module compute &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="Module delete" href="cmdref_Module delete.html" />
+    <link rel="prev" title="Module asm" href="cmdref_Module asm.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Module delete.html" title="Module delete"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Module asm.html" title="Module asm"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-compute">
+<h1>Module compute<a class="headerlink" href="#module-compute" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="function">
+<dt id="getfem.compute_L2_norm">
+<tt class="descname">compute_L2_norm</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.compute_L2_norm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the L2 norm of the (real or complex) field <cite>U</cite>.</p>
+<p>If <cite>CVids</cite> is given, the norm will be computed only on the listed
+elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_L2_dist">
+<tt class="descname">compute_L2_dist</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>mf2</em>, <em>U2</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.compute_L2_dist" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the L2 distance between <cite>U</cite> and <cite>U2</cite>.</p>
+<p>If <cite>CVids</cite> is given, the norm will be computed only on the listed
+elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_H1_semi_norm">
+<tt class="descname">compute_H1_semi_norm</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.compute_H1_semi_norm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the L2 norm of grad(<cite>U</cite>).</p>
+<p>If <cite>CVids</cite> is given, the norm will be computed only on the listed
+elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_H1_semi_dist">
+<tt class="descname">compute_H1_semi_dist</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>mf2</em>, <em>U2</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.compute_H1_semi_dist" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the semi H1 distance between <cite>U</cite> and <cite>U2</cite>.</p>
+<p>If <cite>CVids</cite> is given, the norm will be computed only on the listed
+elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_H1_norm">
+<tt class="descname">compute_H1_norm</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.compute_H1_norm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the H1 norm of <cite>U</cite>.</p>
+<p>If <cite>CVids</cite> is given, the norm will be computed only on the listed
+elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_H2_semi_norm">
+<tt class="descname">compute_H2_semi_norm</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.compute_H2_semi_norm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the L2 norm of D^2(<cite>U</cite>).</p>
+<p>If <cite>CVids</cite> is given, the norm will be computed only on the listed
+elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_H2_norm">
+<tt class="descname">compute_H2_norm</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.compute_H2_norm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the H2 norm of <cite>U</cite>.</p>
+<p>If <cite>CVids</cite> is given, the norm will be computed only on the listed
+elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_gradient">
+<tt class="descname">compute_gradient</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mf_du</em><big>)</big><a class="headerlink" href="#getfem.compute_gradient" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the gradient of the field <cite>U</cite> defined on MeshFem <cite>mf_du</cite>.</p>
+<p>The gradient is interpolated on the MeshFem <cite>mf_du</cite>, and returned in
+<cite>DU</cite>. For example, if <cite>U</cite> is defined on a P2 MeshFem, <cite>DU</cite> should be
+evaluated on a P1-discontinuous MeshFem. <cite>mf</cite> and <cite>mf_du</cite> should
+share the same mesh.</p>
+<p><cite>U</cite> may have any number of dimensions (i.e. this function is not
+restricted to the gradient of scalar fields, but may also be used
+for tensor fields). However the last dimension of <cite>U</cite> has to be
+equal to the number of dof of <cite>mf</cite>. For example, if <cite>U</cite> is a
+[3x3xNmf] array (where Nmf is the number of dof of <cite>mf</cite>), <cite>DU</cite> will
+be a [Nx3x3[xQ]xNmf_du] array, where N is the dimension of the mesh,
+Nmf_du is the number of dof of <cite>mf_du</cite>, and the optional Q dimension
+is inserted if <cite>Qdim_mf != Qdim_mf_du</cite>, where Qdim_mf is the Qdim of
+<cite>mf</cite> and Qdim_mf_du is the Qdim of <cite>mf_du</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_hessian">
+<tt class="descname">compute_hessian</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mf_h</em><big>)</big><a class="headerlink" href="#getfem.compute_hessian" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the hessian of the field <cite>U</cite> defined on MeshFem <cite>mf_h</cite>.</p>
+<p>See also gf_compute(&#8216;gradient&#8217;, MeshFem mf_du).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_eval_on_triangulated_surface">
+<tt class="descname">compute_eval_on_triangulated_surface</tt><big>(</big><em>MF</em>, <em>U</em>, <em>Nrefine</em>, <em>CVLIST=None</em><big>)</big><a class="headerlink" href="#getfem.compute_eval_on_triangulated_surface" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>[OBSOLETE FUNCTION! will be removed in a future release]
+Utility function designed for 2D triangular meshes : returns a list
+of triangles coordinates with interpolated U values. This can be
+used for the accurate visualization of data defined on a
+discontinous high order element. On output, the six first rows of UP
+contains the triangle coordinates, and the others rows contain the
+interpolated values of U (one for each triangle vertex) CVLIST may
+indicate the list of convex number that should be consider, if not
+used then all the mesh convexes will be used. U should be a row
+vector.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_interpolate_on">
+<tt class="descname">compute_interpolate_on</tt><big>(</big><em>MF</em>, <em>U</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.compute_interpolate_on" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Ui = compute_interpolate_on(MeshFem MF, vec U, {MeshFem mfi | Slice sli | vec pts})</p>
+<p>Interpolate a field on another MeshFem or a Slice or a list of points.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Interpolation on another MeshFem <cite>mfi</cite>:</dt>
+<dd><p class="first last"><cite>mfi</cite> has to be Lagrangian. If <cite>mf</cite> and <cite>mfi</cite> share the same
+mesh object, the interpolation will be much faster.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Interpolation on a Slice <cite>sli</cite>:</dt>
+<dd><p class="first last">this is similar to interpolation on a refined P1-discontinuous
+mesh, but it is much faster. This can also be used with
+Slice(&#8216;points&#8217;) to obtain field values at a given set of
+points.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Interpolation on a set of points <cite>pts</cite></p>
+</li>
+</ul>
+<p>See also gf_asm(&#8216;interpolation matrix&#8217;)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_extrapolate_on">
+<tt class="descname">compute_extrapolate_on</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mfe</em><big>)</big><a class="headerlink" href="#getfem.compute_extrapolate_on" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Extrapolate a field on another MeshFem.</p>
+<p>If the mesh of <cite>mfe</cite> is stricly included in the mesh of <cite>mf</cite>, this
+function does stricly the same job as gf_compute(&#8216;interpolate_on&#8217;).
+However, if the mesh of <cite>mfe</cite> is not exactly included in <cite>mf</cite>
+(imagine interpolation between a curved refined mesh and a coarse
+mesh), then values which are outside <cite>mf</cite> will be
+extrapolated.</p>
+<p>See also gf_asm(&#8216;extrapolation matrix&#8217;)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_error_estimate">
+<tt class="descname">compute_error_estimate</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em><big>)</big><a class="headerlink" href="#getfem.compute_error_estimate" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute an a posteriori error estimate.</p>
+<p>Currently there is only one which is available: for each convex,
+the jump of the normal derivative is integrated on its faces.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_error_estimate_nitsche">
+<tt class="descname">compute_error_estimate_nitsche</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mim</em>, <em>GAMMAC</em>, <em>GAMMAN</em>, <em>lambda_</em>, <em>mu_</em>, <em>gamma0</em>, <em>f_coeff</em>, <em>vertical_force</em><big>)</big><a class="headerlink" href="#getfem.compute_error_estimate_nitsche" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute an a posteriori error estimate in the case of Nitsche method.</p>
+<p>Currently there is only one which is available: for each convex,
+the jump of the normal derivative is integrated on its faces.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.compute_convect">
+<tt class="descname">compute_convect</tt><big>(</big><em>MF</em>, <em>U</em>, <em>mf_v</em>, <em>V</em>, <em>dt</em>, <em>nt</em>, <em>option=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.compute_convect" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: compute_convect(MeshFem MF, vec U, MeshFem mf_v, vec V, scalar dt, int nt[, string option[, vec per_min, vec per_max]])</p>
+<p>Compute a convection of <cite>U</cite> with regards to a steady state velocity
+field <cite>V</cite> with a Characteristic-Galerkin method. The result is returned
+in-place in <cite>U</cite>.
+This method is restricted to pure Lagrange fems for U. <cite>mf_v</cite> should
+represent a continuous finite element method. <cite>dt</cite> is the integration time
+and <cite>nt</cite> is the number of integration step on the caracteristics. <cite>option</cite>
+is an option for the part of the boundary where there is a re-entrant
+convection.
+<cite>option = &#8216;extrapolation&#8217;</cite> for an extrapolation on the nearest element,
+<cite>option = &#8216;unchanged&#8217;</cite> for a constant value on that boundary or
+<cite>option = &#8216;periodicity&#8217;</cite> for a peridiodic boundary. For this latter option
+the two vectors per_min, per_max has to be given and represent the limits
+of the periodic domain (on components where per_max[k] &lt; per_min[k]
+no operation is done).
+This method is rather dissipative, but stable.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Module asm.html"
+                        title="前の章へ">Module asm</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Module delete.html"
+                        title="次の章へ">Module delete</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Module delete.html" title="Module delete"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Module asm.html" title="Module asm"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

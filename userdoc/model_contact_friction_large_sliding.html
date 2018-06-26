@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Large sliding/large deformation contact with friction bricks &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Numerical continuation and bifurcation" href="model_continuation.html" />
+    <link rel="prev" title="Small sliding contact with friction bricks" href="model_contact_friction.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_continuation.html" title="Numerical continuation and bifurcation"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_contact_friction.html" title="Small sliding contact with friction bricks"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="large-sliding-large-deformation-contact-with-friction-bricks">
+<span id="ud-model-contact-friction-large"></span><span id="index-0"></span><h1>Large sliding/large deformation contact with friction bricks<a class="headerlink" href="#large-sliding-large-deformation-contact-with-friction-bricks" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The basic tools to deal with large sliding/large deformation contact of deformable structures are accessible in the weak form language. Some interpolate transformations (see <a class="reference internal" href="gasm_high.html#ud-gasm-high-transf"><em>Interpolate transformations</em></a>) are defined to perform the contact detection and allow to integrate from a contacct bondary to the opposite contact boundary. Some other useful tools such as the unit normal vector in the real configuration and projections to take into account contact with Coulomb friction are also defined as operators in the weak form language.</p>
+<p>Of course, the computational cost of large sliding/large deformation contact algorithms is greatly higher than small sliding-small deformation ones.</p>
+<div class="section" id="raytracing-interpolate-transformation">
+<span id="ud-model-contact-friction-raytrace-inter-trans"></span><h2>Raytracing interpolate transformation<a class="headerlink" href="#raytracing-interpolate-transformation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>In order to incorporate the contact detection in the high-level generic assembly, a specific interpolate transformation has been defined (see <a class="reference internal" href="gasm_high.html#ud-gasm-high-transf"><em>Interpolate transformations</em></a> for more explanations on interpolate tranformations). It is based on a raytracing contact detection has described in <a class="reference internal" href="../biblio.html#ko-re2014" id="id1">[KO-RE2014]</a> and uses the criteria described below. The interpolate transformation stores the different potential contact surfaces. On most of methods, potential contact surface are classified into two categories: master and slave surface (see  <a class="reference internal" href="#ud-fig-masterslave"><em>figure</em></a>).</p>
+<div class="figure align-center" id="ud-fig-masterslave">
+<a class="reference internal image-reference" href="../_images/getfemusermodelmasterslave.png"><img alt="../_images/getfemusermodelmasterslave.png" src="../_images/getfemusermodelmasterslave.png" style="width: 1092.6px; height: 720.0px;" /></a>
+</div>
+<p>The slave surface is the &#8220;contactor&#8221; and the master one the &#8220;target&#8221;. Rigid obstacle are also considered. They are always master surfaces.  The basic rule is that the contact is considered between a slave surface and a master one. However, the multi-contact frame object and the <em>GetFEM++</em> bricks allow multi-contact situations, including contact between two master surfaces, self-contact of a master surface and an arbitrary number of slave and master surfaces.</p>
+<p>Basically, in order to detect the contact pairs, Gauss points or f.e.m. nodes of slave surfaces are projected on master surfaces (see  <a class="reference internal" href="#ud-fig-masterslave"><em>figure</em></a>). If self-contact is considered, Gauss points or f.e.m. nodes of master surface are also projected on master surfaces.</p>
+<p>The addition of a raytracing transformation to a model:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">add_raytracing_transformation</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">transname</span><span class="p">,</span>
+                                    <span class="n">scalar_type</span> <span class="n">d</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">transname</span></tt> is a name given to the transformation which allows to refer to it in the weak form language and <tt class="docutils literal"><span class="pre">d</span></tt> is the release distance (see above).</p>
+<p>The raytracing transformation is added without any slave or master contact boundary. The following functions allows to add some boundaries to the transformation:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_master_contact_boundary_to_raytracing_transformation</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span>
+           <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">transname</span><span class="p">,</span> <span class="k">const</span> <span class="n">mesh</span> <span class="o">&amp;</span><span class="n">m</span><span class="p">,</span>
+           <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">dispname</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">region</span><span class="p">)</span>
+
+<span class="n">add_slave_contact_boundary_to_raytracing_transformation</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span>
+           <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">transname</span><span class="p">,</span> <span class="k">const</span> <span class="n">mesh</span> <span class="o">&amp;</span><span class="n">m</span><span class="p">,</span>
+           <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">dispname</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">region</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">dispname</span></tt> is the variable name which represent the displacement on that contact
+boundary. The difference between master and slave contact boundary is that the contact detection is to be performed starting from a slave or master boundary toward a master boundary. The contact detection is not performed toward a slave boundary. Consequently, only the influence boxes of the elements of the master surfaces are computed and stored.</p>
+<p>It is also possible to add a rigid obstacle (considered as a master surface) thanks to the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_rigid_obstacle_to_raytracing_transformation</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span>
+           <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">transname</span><span class="p">,</span>
+           <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">expr</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">expr</span></tt> is the expression of a signed distance to the obstacle using the syntax of the weak form language (<tt class="docutils literal"><span class="pre">X</span></tt> being the current position, <tt class="docutils literal"><span class="pre">X(0)</span></tt>, <tt class="docutils literal"><span class="pre">X(1)</span></tt> ... the corresponding components). For instance an expression <tt class="docutils literal"><span class="pre">X(0)</span> <span class="pre">+</span> <span class="pre">5</span></tt> will correspond to a flat obstacle lying on the right of the position <tt class="docutils literal"><span class="pre">-5</span></tt> of the first coordinate. Be aware that the expression have to be close to a signed distance, which in particular means that the gradient norm have to be close to 1.</p>
+<p>In order to distinguish between non-contact situations and the occurence of a contact with another deformable body or with a rigid obstacle, the transformation returns an integer identifiant which can be used by the <cite>Interpolate_filter</cite> command of the weak form language (see <a class="reference internal" href="gasm_high.html#ud-gasm-high-transf"><em>Interpolate transformations</em></a>). The different values:</p>
+<ul class="simple">
+<li>0 : no contact found on this Gauss point</li>
+<li>1 : contact occurs on this Gauss point with a deformable body</li>
+<li>2 : contact occurs on this Gauss point with a rigid obstacle.</li>
+</ul>
+<p>such that it is possible to differentiate the treatment of these three cases using:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Interpolate_filter</span><span class="p">(</span><span class="n">transname</span><span class="p">,</span> <span class="n">expr1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">Interpolate_filter</span><span class="p">(</span><span class="n">transname</span><span class="p">,</span> <span class="n">expr2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">Interpolate_filter</span><span class="p">(</span><span class="n">transname</span><span class="p">,</span> <span class="n">expr3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>in the weak form language, where <tt class="docutils literal"><span class="pre">expr1</span></tt>, <tt class="docutils literal"><span class="pre">expr2</span></tt> and <tt class="docutils literal"><span class="pre">expr3</span></tt> correspond to the different terms to be computed. The matlab interface demo program <tt class="file docutils literal"><span class="pre">/interface/tests/matlab/demo_large_sliding_contact.m</span></tt> presents an example of use.</p>
+<p>Note that the transformation could also be directly used with a <cite>ga_workspace</cite> object if model object are not used. See <tt class="file docutils literal"><span class="pre">getfem/getfem_contact_and_friction_common.h</span></tt> for more details. Note also that in the framework of the model object, a interfaced use of this transformation is allowed by the model bricks described below.</p>
+</div>
+<div class="section" id="the-contact-pair-detection-algorithm">
+<h2>The contact pair detection algorithm<a class="headerlink" href="#the-contact-pair-detection-algorithm" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A contact pair is formed by a point of a slave (or master in case of self-contact) surface and a projected point on the nearest master surface (or rigid obstacle). The Algorithm used is summerized in <a class="reference internal" href="#ud-fig-algodetect"><em>figure</em></a></p>
+<div class="figure align-center" id="ud-fig-algodetect">
+<a class="reference internal image-reference" href="../_images/getfemusermodeldetectcontact.png"><img alt="../_images/getfemusermodeldetectcontact.png" src="../_images/getfemusermodeldetectcontact.png" style="width: 779.0px; height: 733.5px;" /></a>
+</div>
+<p>It is impossible to distinguish without fail between valid and invalid contact situations without a global topological criterion (such as in <a class="reference internal" href="../biblio.html#pantz2008" id="id2">[Pantz2008]</a>), a fortiori for self-contact detection. However, this kind of criterion can be very costly to implement. Thus, one generally implements some simple heuristic criteria which cannot cover all the possible cases. We present such a set of criteria here. They are of course perfectible and subject to change. First, in <a class="reference internal" href="#ud-fig-invalidcontact"><em>figure</em></a> one can see a certain number of situations of valid or invalid contact that criteria have to distinguish.</p>
+<div class="figure align-center" id="ud-fig-invalidcontact">
+<a class="reference internal image-reference" href="../_images/getfemusermodelfalsecontact1.png"><img alt="../_images/getfemusermodelfalsecontact1.png" src="../_images/getfemusermodelfalsecontact1.png" style="width: 1079.0px; height: 1036.0px;" /></a>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/getfemusermodelfalsecontact2.png"><img alt="../_images/getfemusermodelfalsecontact2.png" src="../_images/getfemusermodelfalsecontact2.png" style="width: 1079.0px; height: 1036.0px;" /></a>
+</div>
+<p>Some details on the algorithm:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Computation of influence boxes.</strong> The influence box of an element is just
+an offset to its bounding box at a distance equal to the release distance.
+If this strategy is used, the release distance should not be too large
+compared to the element size. Otherwise, a point would correspond to a
+a large number of influence box which can considerably slow down the search
+of contact pairs. The influence boxes are stored in a region tree object
+in order to find the boxes containing a point with an algorithm having
+a mean complexity in <img class="math" src="../_images/math/8b696f05ccc93a94a0587a0ae37ec57a8be285bc.png" alt="O(log(N))" style="vertical-align: -4px"/>.</li>
+<li><strong>What is a potential contact pair.</strong> A potential contact pair is a pair
+slave point - master element face which will be investigated.
+The projection of the slave point on the master surface will be done
+and criteria will be applied.</li>
+<li><strong>Projection algorithm.</strong> The projection of the slave point onto a
+master element face is done by a parametrization of the surface on the
+reference element via the geometric transformation and the displacement
+field. During the projection, no constraint is applied to remain inside
+the element face, which means that the element face is prolongated
+analytically. The projection is performed by minimizing the distance
+between the slave point and the projected one using the parametrization
+and Newton&#8217;s and/or BFGS algorithms. If <tt class="docutils literal"><span class="pre">raytrace</span></tt> is set to true, then
+no projection is computed. Instead a ray tracing from the point x in
+the direction of the unit normal vector at x to find y. This means
+the reverse of the usual situation (x will be the projection of y).</li>
+</ul>
+</div></blockquote>
+<p>The list of criteria:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Criterion 1: the unit normal cone/vector should be compatible, and the
+two points do not share the same element.</strong>
+Two unit normal vector are compatible if their scalar product are
+non-positive. In case of f.e.m. node contact, since a fem node is shared
+generally by several elements, a normal cone constituted of the unit normal
+vectors of each element is considered. Two normal cones are compatible if
+at least one pair of unit normal vector have their scalar product
+non-positive. In order to simplify the computation, a normal cone is
+reduced to a mean normal vector if the solid angle of the normal cone is
+less than <tt class="docutils literal"><span class="pre">cut_angle</span></tt> a parameter of the multi-contact frame object.
+This criterion allows to treat cases (B) and (K1).</li>
+<li><strong>Criterion 2: the contact pair is eliminated when the search of the
+projection/raytrace point do not converge.</strong>
+When Newton&#8217;s algorithms (and BFGS one for projection) used to compute the
+projection/raytrace of the slave point on the master element surface
+fails to converge, the pair is not considered. A warning is generated.</li>
+<li><strong>Criterion 3 : the projected point should be inside the element.</strong>
+The slave point is projected on the surface of the master element
+without the constraint to remain inside the face
+(which means that the face is prolongated). If the orthogonal
+projection is outside the face, the pair is not considered. This
+is the present state, however, to treat case (J3) an aditional
+treatment will have to be considered (projection on the face with
+the constraint to remain inside it and test of the normal cone at
+this point)
+This criterion allows to treat cases (F2), (K2), (M1) and (M2).</li>
+<li><strong>Criterion 4 : the release distance is applied.</strong>
+If the distance between the slave point and its projection on the master
+surface is greater than the release distance, the contact pair is not
+considered. This can treat cases (C), (E), (F1), (G), (H) if the release
+distance is adapted and the deformation not too important.</li>
+<li><strong>Criterion 5 : comparison with rigid obstacles.</strong>
+If the signed distance between the slave point and its projection on
+the master surface is greater than the one with a rigid obstacle
+(considering that the release distance is also first applied to rigid
+obstacle) then the contact pair is not considered.</li>
+<li><strong>Criterion 6 : for self-contact only : apply a test on
+unit normals in reference configuration.</strong>
+In case of self contact, a contact pair is eliminated when the slave point
+and the master element belong to the same mesh and if the slave point is
+behind the master surface (with respect to its unit outward normal vector)
+and not four times farther than the release distance.
+This can treat cases (A), (C), (D), (H).</li>
+<li><strong>Criterion 7 : smallest signed distance on contact pairs.</strong>
+Between the retained contact pairs (or rigid obstacle) the one
+corresponding to the smallest signed distance is retained.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="nodal-contact-brick-with-projection">
+<h3>Nodal contact brick with projection<a class="headerlink" href="#nodal-contact-brick-with-projection" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Notations: <img class="math" src="../_images/math/0e537c75b385fa5867da4843126d4c5e7431338b.png" alt="\Omega \subset \Reel^d" style="vertical-align: -1px"/> denotes the reference configuration of a deformable body, possibly constituted by several unconnected parts (see  <a class="reference internal" href="#ud-fig-masterslave"><em>figure</em></a>). <img class="math" src="../_images/math/f71d06d762a6c84475cc4a89a032b5f41fef60b1.png" alt="\Omega_t" style="vertical-align: -3px"/> is the deformed configuration and <img class="math" src="../_images/math/332be2388ee6a2d8dfabbf9dffb43aa85608f0f7.png" alt="\varphi^h: \Omega \rightarrow \Omega_t" style="vertical-align: -4px"/> is the approximated deformation on a finite element space <img class="math" src="../_images/math/f66eeb03c997a4a17f10178433d3dbc3db338cd3.png" alt="V^h" style="vertical-align: 0px"/>. The displacement  <img class="math" src="../_images/math/9498ead9fc4e72ef865d581afefded8e881331c1.png" alt="u^h: \Omega \rightarrow \Reel^d" style="vertical-align: -1px"/> is defined by <img class="math" src="../_images/math/1a16cc2c495e7a0cdd5ab2170096078be9c84c42.png" alt="\varphi^h(X) = X + u^h(X)" style="vertical-align: -4px"/>. A generic point of the reference configuration <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> is denoted by <img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X" style="vertical-align: 0px"/> while the corresponding point of the deformed configuration is denoted by <img class="math" src="../_images/math/7a5bf35bf89b628a72c8b07e4013667b18185bf7.png" alt="x = \varphi^h(X)" style="vertical-align: -4px"/>. <img class="math" src="../_images/math/53231896183911eac3222c61e5dff2a723de109a.png" alt="\Gamma^S" style="vertical-align: -1px"/> denotes a slave boundary of <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/bfbe28edd94120631f88a9ec5f2a0334dd003f09.png" alt="\Gamma^M" style="vertical-align: -1px"/> a master one. The corresponding boundaries on the deformed configuration are <img class="math" src="../_images/math/a5e772bbc923b0df19832ddf684f0d72f96e2b84.png" alt="\Gamma_t^S" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/36ad2ae5aff30bdc94e9d121f47daf70b534cc55.png" alt="\Gamma_t^M" style="vertical-align: -5px"/>, respectively. The outward unit normal vector to the boundary (in the deformed configuration) at a point <img class="math" src="../_images/math/7a5bf35bf89b628a72c8b07e4013667b18185bf7.png" alt="x = \varphi^h(X)" style="vertical-align: -4px"/> of that boundary is denoted by <img class="math" src="../_images/math/681e8a9cd61d71bbf227b51f031e542b1eeffda6.png" alt="n_x" style="vertical-align: -3px"/>. Finally, the notation <img class="math" src="../_images/math/0bb8b0ca66f437172b0e175bd0ac166be8ee2c71.png" alt="\delta A[B]" style="vertical-align: -5px"/> denotes the directional derivative of the quantity <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" style="vertical-align: 0px"/> with respect to the deformation and in the direction <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/>. Similarly, The notation <img class="math" src="../_images/math/cff4275f3333c0cd12df0e38a1329d2d522b1941.png" alt="\delta^2 A[B,C]" style="vertical-align: -5px"/> is the second derivative in the directions  <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C" style="vertical-align: 0px"/>.</p>
+<p>Let <img class="math" src="../_images/math/69ca49693cf9a79b6a5727d5d24092874fb184bd.png" alt="J(\varphi^h)" style="vertical-align: -4px"/> be the potential energy of the system, without taking into account contact and friction contributions. Typically, it includes elastic and external load potential energy. Let <img class="math" src="../_images/math/5f8e5cbb6204882df1cf17cfe4b308d485af8056.png" alt="X_i" style="vertical-align: -3px"/> for  <img class="math" src="../_images/math/ac086963e4f6c6b416b82b5c2eb5e01545ac4925.png" alt="i \in I_{\text{nodes}}" style="vertical-align: -3px"/> the set of finite element nodes on the slave boundary in the reference configuration. Let <img class="math" src="../_images/math/5f8e5cbb6204882df1cf17cfe4b308d485af8056.png" alt="X_i" style="vertical-align: -3px"/> for  <img class="math" src="../_images/math/16f81dd7a70c059bdeef121ce8b7ed4a0533b9c2.png" alt="i \in I_{\text{def}}" style="vertical-align: -4px"/> be the contact nodes in potential contact with the master surface of a deformable body. Let  <img class="math" src="../_images/math/5f8e5cbb6204882df1cf17cfe4b308d485af8056.png" alt="X_i" style="vertical-align: -3px"/> for  <img class="math" src="../_images/math/0b5d54a58d6777c7919b3fb8e72e7bce95131cbe.png" alt="i \in I_{\text{rig}}" style="vertical-align: -6px"/> be the contact nodes in potential contact with a rigid obstacle.</p>
+<p>We denote by <img class="math" src="../_images/math/cbfad1fd57412c607f0bed5b7ba43902bb6371fa.png" alt="x_i = \varphi^h(X_i)" style="vertical-align: -4px"/> the corresponding node on the deformed configuration and <img class="math" src="../_images/math/6e6ceb79ebc4bf613298e0144eae25dd73de9be3.png" alt="y_i" style="vertical-align: -4px"/> the projection on the master surface (or rigid obstacle) on the deformed configuration. Let <img class="math" src="../_images/math/d1e635eb590829b488cf300af12cf0bdda6dae03.png" alt="Y_i" style="vertical-align: -3px"/> the point on the master surface verifying <img class="math" src="../_images/math/8ea8899a28f00cf10a17b6edfd6cfb33ca10a80a.png" alt="y_i = \varphi^h(Y_i)" style="vertical-align: -4px"/>. This allows to define the normal gap as</p>
+<div class="math">
+<p><img src="../_images/math/88d9861954feffcdf88c59d30b39f9c6c071edbd.png" alt="g_i = n_y . (\varphi^h(X_i) - \varphi^h(Y_i)) = \|\varphi^h(X_i) - \varphi^h(Y_i)\| \text{Sign}(n_y . (\varphi^h(X_i) - \varphi^h(Y_i))),"/></p>
+</div><p>where <img class="math" src="../_images/math/4590906156b55c69e609aad35ae185b88bdfa59b.png" alt="n_y" style="vertical-align: -6px"/> is the outward unit normal vector of the master surface at <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" style="vertical-align: -4px"/>.</p>
+<p>Considering only stationnary rigid obstacles and applying the principle of Alart-Curnier augmented Lagrangian <a class="reference internal" href="../biblio.html#al-cu1991" id="id3">[AL-CU1991]</a>, the problem with nodal contact with friction condition can be expressed as follows in an unsymmetric version (see <a class="reference internal" href="../biblio.html#renard2013" id="id4">[renard2013]</a> for the linear elasticity case)</p>
+<div class="math">
+<p><img src="../_images/math/339dd534c2790d2c0c2648702925a078525fc604.png" alt="\left\{\begin{array}{l}
+\mbox{Find } \varphi^h \in V^h \mbox{ such that } \\
+\displaystyle \delta J(\varphi^h)[\delta u^h] - \sum_{i \in I_{\text{def}}} \lambda_i \cdot (\delta u^h(X_i) - \delta u^h(Y_i)) - \sum_{i \in I_{\text{rig}}} \lambda_i \delta u^h(X_i) = 0 ~~~ \forall \delta u^h \in V^h, \\
+\displaystyle \Frac{1}{r} \left[\lambda_i + P_{n_y, {\mathscr F}}(\lambda_i + r\left(g_i n_y - \alpha(\varphi^h(X_i) - \varphi^h(Y_i) - W_T(X_i)+W_T(Y_i)))\right)\right]= 0  ~~\forall i \in I_{\text{def}}, \\[1em]
+\displaystyle \Frac{1}{r} \left[\lambda_i + P_{n_y, {\mathscr F}}(\lambda_i + r\left(g_i n_y - \alpha(\varphi^h(X_i) - W_T(X_i)))\right)\right]= 0  ~~\forall i \in I_{\text{rig}},
+\end{array}\right."/></p>
+</div><p>where <img class="math" src="../_images/math/7ebe2e02c0f1e8fd5e8a5dfd7436a872c4404d9c.png" alt="W_T, \alpha, P_{n_y, {\mathscr F}}" style="vertical-align: -6px"/> ... + tangent system</p>
+<p>Sorry, for the moment the brick is not working.</p>
+</div>
+</div>
+<div class="section" id="tools-of-the-high-level-generic-assembly-for-contact-with-friction">
+<h2>Tools of the high-level generic assembly for contact with friction<a class="headerlink" href="#tools-of-the-high-level-generic-assembly-for-contact-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The following nonlinear operators are defined in the weak form language (see <a class="reference internal" href="gasm_high.html#ud-gasm-high"><em>Compute arbitrary terms - high-level generic assembly procedures</em></a>):</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Transformed_unit_vector(Grad_u,</span> <span class="pre">n)</span></tt> where <tt class="docutils literal"><span class="pre">Grad_u</span></tt> is the gradient of a
+displacement field and <tt class="docutils literal"><span class="pre">n</span></tt> a unit vector in the reference configuration.
+This nonlinear operator corresponds to</p>
+<div class="math">
+<p><img src="../_images/math/64c3fa3a9ee37204a696c0b8e9ee93b7c0092408.png" alt="n_{trans} = \Frac{(I+ \nabla u)^{-T} n}{\|(I+\nabla u)^{-T} n\|}"/></p>
+</div><p>with the following partial derivatives</p>
+<div class="math">
+<p><img src="../_images/math/fce20c29dcd2678ec59d8ddfca042e93a4675ecc.png" alt="\partial_{u} n_{trans}[\delta u] = -(I - n_{trans}\otimes n_{trans})(I+ \nabla u)^{-T}(\nabla \delta u)^T n_{trans}
+
+\partial_{n} n_{trans}[\delta n] = \Frac{(I+ \nabla u)^{-T}\delta n - n_{trans}(n_{trans}\cdot \delta n)}{\|(I+\nabla u)^{-T} n\|}"/></p>
+</div></li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Coulomb_friction_coupled_projection(lambda,</span> <span class="pre">n,</span> <span class="pre">Vs,</span> <span class="pre">g,</span> <span class="pre">f,</span> <span class="pre">r)</span></tt>
+where <tt class="docutils literal"><span class="pre">lambda</span></tt> is the contact force, <tt class="docutils literal"><span class="pre">n</span></tt> is a unit normal vector, <tt class="docutils literal"><span class="pre">Vs</span></tt>
+is the sliding velocity, <tt class="docutils literal"><span class="pre">g</span></tt> is the gap, <tt class="docutils literal"><span class="pre">f</span></tt> the friction coefficient
+and <tt class="docutils literal"><span class="pre">r</span></tt> a positive augmentation parameter. The expression of the operator is</p>
+<div class="math">
+<p><img src="../_images/math/ab1cccd3f4b74db8cec569ddc4fcdf7e9f89112f.png" alt="P(\lambda, n, V_s, g, f, r) = -(\lambda\cdot n + rg)_- n + P_{B(n,\tau)}(\lambda - rV_s)
+
+\mbox{with } \tau = \mbox{min}(f_3 + f_1(\lambda\cdot n + rg)_-, f_2)"/></p>
+</div><p>where <img class="math" src="../_images/math/57fb98d86400bf0e0957ab1014de4ab7ae1c2074.png" alt="(\cdot)_-" style="vertical-align: -4px"/> is the negative part (<img class="math" src="../_images/math/5e7ebea19f4e34189331db26b4e00a344bcee445.png" alt="(x)_- = (-x)_+" style="vertical-align: -5px"/>) and <img class="math" src="../_images/math/f1439241708fe31a5a06ae1fd186d8edf8f95f9a.png" alt="f_1, f_2, f_3" style="vertical-align: -4px"/> are the three components of the friction coefficient. Note that the components <img class="math" src="../_images/math/78cbfcd454793fccb7ee0d6d9fa85f0deb2f52b7.png" alt="f_2, f_3" style="vertical-align: -4px"/> are optional. If a scalar fiction coefficient is given (only <img class="math" src="../_images/math/37a9e7fca70e2dce829d902af2088735306bc1a3.png" alt="f_1" style="vertical-align: -4px"/>) then this corresponds to the classical Coulomb friction law. If a vector of two components is given  (only <img class="math" src="../_images/math/121ea8613f760042fc6049458012684a01846da0.png" alt="f_1, f_2" style="vertical-align: -4px"/>) then this corresponds to a Coulomb friction with a given threshold. Finally, if a vector of three components is given, the friction law correspongs to the expression of <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/> given above.</p>
+<p>The expression <img class="math" src="../_images/math/7eb6e891b4058dcb1662907e766357f29330907c.png" alt="P_{B(n,\tau)}(q)" style="vertical-align: -6px"/> refers to the orthogonal projection (this is link to the return mapping algorithm) on the tangential ball (with respect to <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> of radius <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/>.</p>
+<p>The derivatives can be expressed as follows with <img class="math" src="../_images/math/69d5aa2c952834be9501bf251cffdb164d29ceb8.png" alt="T_n = (I - n \otimes n)" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/235bf7fc2cb38a4e8b8f74390516b54d0d21d42f.png" alt="q_{_T} = T_n q" style="vertical-align: -5px"/>:</p>
+<div class="math">
+<p><img src="../_images/math/6762aa7e32e10100487b327d5ba97aba0f48c6f6.png" alt="\partial_q P_{B(n,\tau)}(q) =
+\left\{\begin{array}{cl}
+0 &amp; \mbox{for } \tau \le 0 \\
+\mathbf{T}_n &amp; \mbox{for } \|q_{_T}\| \le \tau \\
+\Frac{\tau}{\|q_{_T}\|}
+\left(\mathbf{T}_n - \Frac{q_{_T}}{\|q_{_T}\|}\otimes \Frac{q_{_T}}{\|q_{_T}\|}
+\right) &amp; \mbox{otherwise }
+\end{array} \right.
+
+\partial_{\tau} P_{B(n,\tau)}(q) =
+\left\{\begin{array}{cl}
+0 &amp; \mbox{for } \tau \le 0 \mbox{ or } \|q_{_T}\| \le \tau \\
+\Frac{q_{_T}}{\|q_{_T}\|} &amp; \mbox{otherwise}
+\end{array} \right.
+
+\partial_n P_{B(n,\tau)}(q) =
+\left\{
+\begin{array}{cl}
+0 &amp; \mbox{for } \tau \le 0 \\
+-q \cdot n~\mathbf{T}_n - n \otimes q_{_T}
+&amp; \mbox{for } \|q_{_T}\| \le \tau \\
+-\Frac{\tau}{\|q_{_T}\|}
+\left( q \cdot n
+\left(\mathbf{T}_n - \Frac{q_{_T}}{\|q_{_T}\|}\otimes \Frac{q_{_T}}{\|q_{_T}\|}
+\right)
++ n \otimes q_{_T}
+\right) &amp; \mbox{otherwise.}
+\end{array} \right.
+
+\partial_{\lambda} P(\lambda, n, V_s, g, f, r) = \partial_q P_{B(n,\tau)}
++\partial_{\tau}P_{B(n,\tau)} \otimes  \partial_{\lambda} \tau
++H(-\lambda\cdot n - r\,g)~n \otimes n,
+
+\partial_{n} P(\lambda, n, V_s, g, f, r) =
+\left|\begin{array}{l} \partial_n P_{B(n,\tau)}
++\partial_{\tau} P_{B(n,\tau)} \otimes \partial_n \tau \\
+\hspace*{3em}+H(-\lambda\cdot n - r\,g) ~
+\left(n \otimes \lambda -
+(2~\lambda\cdot n + r\,g)~n \otimes n +
+(\lambda\cdot n + r\,g)~\mathbf{I}\right),
+\end{array}\right.
+
+\partial_{g} P(\lambda, n, V_s, g, f, r) =
+\partial_{\tau} P_{B(n,\tau)} ~ \partial_g \tau
++H(-\lambda\cdot n - r\,g)~r~n
+
+\partial_{f} P(\lambda, n, V_s, g, f, r) =
+\partial_{\tau} P_{B(n,\tau)} \partial_{f} \tau
+
+\partial_{r} P(\lambda, n, V_s, g, f, r) =
+ H(-\lambda\cdot n - r\,g)gn + \partial_q P_{B(n,\tau)}V_s
+ +\partial_{\tau} P_{B(n,\tau)} \partial_r \tau"/></p>
+</div></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="integral-contact-brick-with-raytrace">
+<span id="ud-model-contact-friction-large-hlgav"></span><h2>Integral contact brick with raytrace<a class="headerlink" href="#integral-contact-brick-with-raytrace" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Add of the brick:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">indbrick</span> <span class="o">=</span> <span class="n">add_integral_large_sliding_contact_brick_raytracing</span>
+  <span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">dataname_r</span><span class="p">,</span>
+   <span class="n">scalar_type</span> <span class="n">release_distance</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">dataname_friction_coeff</span> <span class="o">=</span> <span class="s">&quot;0&quot;</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">dataname_alpha</span> <span class="o">=</span> <span class="s">&quot;1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This brick allows to deal with a multi-contact situation. It adds to the model a raytracing interpolate transformation as described in a previous section whose name can be obtained by the command:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">transformation_name_of_large_sliding_contact_brick</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span>
+                       <span class="n">size_type</span> <span class="n">indbrick</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once the brick is added to the model, the master and slave contact boundaries have to be added with the following function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_contact_boundary_to_large_sliding_contact_brick</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span>
+    <span class="n">size_type</span> <span class="n">indbrick</span><span class="p">,</span> <span class="k">const</span> <span class="n">mesh_im</span> <span class="o">&amp;</span><span class="n">mim</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">region</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">is_master</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">is_slave</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">u</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">lambda</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">w</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">frame_indifferent</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">region</span></tt> should be a valid mesh region number representing a boundary, <tt class="docutils literal"><span class="pre">is_master</span></tt> should be set to <tt class="docutils literal"><span class="pre">true</span></tt> if the contact detection is to be done on that contact boundary, <tt class="docutils literal"><span class="pre">is_slave</span></tt> should be set to <tt class="docutils literal"><span class="pre">true</span></tt> if the integration of contact terms is to be done on that boundary. Note that a contact boundary is allowed to be both master and slave, in particular to allow self-contact detection. <tt class="docutils literal"><span class="pre">u</span></tt> is the displacement variable. If <tt class="docutils literal"><span class="pre">is_slave</span></tt> is set to true, <tt class="docutils literal"><span class="pre">lambda</span></tt> should describe a multiplier variable with degrees of freedom on the contact boundary (typically added to the model with the <tt class="docutils literal"><span class="pre">md.add_filtered_fem_variable(...)</span> <span class="pre">method).</span> <span class="pre">Pure</span> <span class="pre">master</span> <span class="pre">contact</span> <span class="pre">boundary</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">need</span> <span class="pre">the</span> <span class="pre">definition</span> <span class="pre">of</span> <span class="pre">a</span> <span class="pre">multiplier.</span> <span class="pre">Additionally,</span> <span class="pre">``w</span></tt> is for the evolutionnary case and represents the displacement at the previous time step.</p>
+<p>A rigid obstacle can be added to the brick with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_rigid_obstacle_to_large_sliding_contact_brick</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span>
+    <span class="n">size_type</span> <span class="n">indbrick</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">expr</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <cite>expr</cite> is an expression using the weak form language (with <cite>X</cite> is the current position) which should be a signed distance to the obstacle. <cite>N</cite> is the mesh dimension.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Large sliding/large deformation contact with friction bricks</a><ul>
+<li><a class="reference internal" href="#raytracing-interpolate-transformation">Raytracing interpolate transformation</a></li>
+<li><a class="reference internal" href="#the-contact-pair-detection-algorithm">The contact pair detection algorithm</a><ul>
+<li><a class="reference internal" href="#nodal-contact-brick-with-projection">Nodal contact brick with projection</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tools-of-the-high-level-generic-assembly-for-contact-with-friction">Tools of the high-level generic assembly for contact with friction</a></li>
+<li><a class="reference internal" href="#integral-contact-brick-with-raytrace">Integral contact brick with raytrace</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_contact_friction.html"
+                        title="前の章へ">Small sliding contact with friction bricks</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_continuation.html"
+                        title="次の章へ">Numerical continuation and bifurcation</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_continuation.html" title="Numerical continuation and bifurcation"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_contact_friction.html" title="Small sliding contact with friction bricks"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

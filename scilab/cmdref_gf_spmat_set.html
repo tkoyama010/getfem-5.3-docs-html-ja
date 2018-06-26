@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_spmat_set &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_util" href="cmdref_gf_util.html" />
+    <link rel="prev" title="gf_spmat_get" href="cmdref_gf_spmat_get.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_util.html" title="gf_util"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_spmat_get.html" title="gf_spmat_get"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-spmat-set">
+<h1>gf_spmat_set<a class="headerlink" href="#gf-spmat-set" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>gf_spmat_set(spmat S, &#x27;clear&#x27;[, list I[, list J]])
+gf_spmat_set(spmat S, &#x27;scale&#x27;, scalar v)
+gf_spmat_set(spmat S, &#x27;transpose&#x27;)
+gf_spmat_set(spmat S, &#x27;conjugate&#x27;)
+gf_spmat_set(spmat S, &#x27;transconj&#x27;)
+gf_spmat_set(spmat S, &#x27;to_csc&#x27;)
+gf_spmat_set(spmat S, &#x27;to_wsc&#x27;)
+gf_spmat_set(spmat S, &#x27;to_complex&#x27;)
+gf_spmat_set(spmat S, &#x27;diag&#x27;, mat D [, ivec E])
+gf_spmat_set(spmat S, &#x27;assign&#x27;, ivec I, ivec J, mat V)
+gf_spmat_set(spmat S, &#x27;add&#x27;, ivec I, ivec J, mat V)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>Modification of the content of a getfem sparse matrix.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'clear'[,</span> <span class="pre">list</span> <span class="pre">I[,</span> <span class="pre">list</span> <span class="pre">J]])</span></tt></p>
+<blockquote>
+<div><p>Erase the non-zero entries of the matrix.</p>
+<p>The optional arguments &lt;literal&gt;I&lt;/literal&gt; and &lt;literal&gt;J&lt;/literal&gt; may be specified to clear a
+sub-matrix instead of the entire matrix.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'scale',</span> <span class="pre">scalar</span> <span class="pre">v)</span></tt></p>
+<blockquote>
+<div>Multiplies the matrix by a scalar value &lt;literal&gt;v&lt;/literal&gt;.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'transpose')</span></tt></p>
+<blockquote>
+<div>Transpose the matrix.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'conjugate')</span></tt></p>
+<blockquote>
+<div>Conjugate each element of the matrix.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'transconj')</span></tt></p>
+<blockquote>
+<div>Transpose and conjugate the matrix.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'to_csc')</span></tt></p>
+<blockquote>
+<div><p>Convert the matrix to CSC storage.</p>
+<p>CSC storage is recommended for matrix-vector multiplications.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'to_wsc')</span></tt></p>
+<blockquote>
+<div><p>Convert the matrix to WSC storage.</p>
+<p>Read and write operation are quite fast with WSC storage.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'to_complex')</span></tt></p>
+<blockquote>
+<div>Store complex numbers.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'diag',</span> <span class="pre">mat</span> <span class="pre">D</span> <span class="pre">[,</span> <span class="pre">ivec</span> <span class="pre">E])</span></tt></p>
+<blockquote>
+<div><p>Change the diagonal (or sub-diagonals) of the matrix.</p>
+<p>If &lt;literal&gt;E&lt;/literal&gt; is given, &lt;literal&gt;D&lt;/literal&gt; might be a matrix and each column of &lt;literal&gt;E&lt;/literal&gt; will
+contain the sub-diagonal number that will be filled with the
+corresponding column of &lt;literal&gt;D&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'assign',</span> <span class="pre">ivec</span> <span class="pre">I,</span> <span class="pre">ivec</span> <span class="pre">J,</span> <span class="pre">mat</span> <span class="pre">V)</span></tt></p>
+<blockquote>
+<div><p>Copy V into the sub-matrix &#8216;M(I,J)&#8217;.</p>
+<p>&lt;literal&gt;V&lt;/literal&gt; might be a sparse matrix or a full matrix.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_spmat_set(spmat</span> <span class="pre">S,</span> <span class="pre">'add',</span> <span class="pre">ivec</span> <span class="pre">I,</span> <span class="pre">ivec</span> <span class="pre">J,</span> <span class="pre">mat</span> <span class="pre">V)</span></tt></p>
+<blockquote>
+<div><p>Add &lt;literal&gt;V&lt;/literal&gt; to the sub-matrix &#8216;M(I,J)&#8217;.</p>
+<p>&lt;literal&gt;V&lt;/literal&gt; might be a sparse matrix or a full matrix.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_spmat_get.html"
+                        title="前の章へ">gf_spmat_get</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_util.html"
+                        title="次の章へ">gf_util</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_util.html" title="gf_util"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_spmat_get.html" title="gf_spmat_get"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

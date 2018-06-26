@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Predefined solvers &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Example of a complete Poisson problem" href="model_poisson.html" />
+    <link rel="prev" title="Source term bricks (and Neumann condition)" href="model_source_term.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_poisson.html" title="Example of a complete Poisson problem"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_source_term.html" title="Source term bricks (and Neumann condition)"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="predefined-solvers">
+<span id="ud-model-solvers"></span><span id="index-0"></span><h1>Predefined solvers<a class="headerlink" href="#predefined-solvers" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Although it will be more convenient to build a specific
+solver for some problems, a generic solver is available to test your models quickly. It
+can also be taken as an example to build your own solver. It is defined in
+<tt class="file docutils literal"><span class="pre">src/getfem/getfem_model_solvers.h</span></tt> and <tt class="file docutils literal"><span class="pre">src/getfem_model_solvers.cc</span></tt> and the call is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">standard_solve</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md</span></tt> is the model object and <tt class="docutils literal"><span class="pre">iter</span></tt> is an iteration object from <em>Gmm++</em>.
+See also the next section for an example of use.</p>
+<p>Note that <em>SuperLU</em> is used as a default linear solver on &#8220;small&#8221; problems. You can also link <em>MUMPS</em> with <em>GetFEM++</em> (see section <a class="reference internal" href="linalg.html#ud-linalg"><em>Linear algebra procedures</em></a>) and use the parallel version. For nonlinear problems, A Newton method (also called Newton-Raphson method) is used.</p>
+<p>Note also that it is possible to disable some variables
+(with the method md.disable_variable(varname) of the model object) in order to
+solve the problem only with respect to a subset of variables (the
+disabled variables are the considered as data) for instance to
+replace the global Newton strategy with a fixed point one.</p>
+<p>Let us recall that a standard initialization for the iter object is the folowwing (see Gmm++ documentation on <a class="reference internal" href="../gmm/iter.html#gmm-iter"><em>Iterative solvers</em></a>):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="mf">1E-7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">1E-7</span></tt> is the relative tolerance for the stopping criterion, <cite>1</cite> is the noisy option and <cite>200</cite> is the maximum number of iterations. The stopping criterion of Newton&#8217;s method is build as follows. For a relative tolerance <img class="math" src="../_images/math/e2a63918a6fa75b62ad87ad17aaf65f782d71546.png" alt="\varepsilon" style="vertical-align: 0px"/>, the algorithm stops when:</p>
+<div class="math">
+<p><img src="../_images/math/d92847c627f1992ec43f907f1ef7352d400804d2.png" alt="\min\left( \|F(u)\|_1 / \max(L, 10^{-25}) ~, ~~ \|h\|_1 / \max(\|u\|_1, 10^{-25})\right) &lt; \varepsilon"/></p>
+</div><p>where <img class="math" src="../_images/math/9cb83f831c9b56316a378b15c856704c5e1e72b5.png" alt="F(u)" style="vertical-align: -4px"/> is the residual vector, <img class="math" src="../_images/math/490fb5cca4567c947c42b1e3656e9cf0906cc593.png" alt="\|\cdot\|_1" style="vertical-align: -5px"/> is the classical 1-norm in <img class="math" src="../_images/math/5f1a7b76db27e141b76722911bbb568cb785751d.png" alt="\R^n" style="vertical-align: -1px"/>, <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/> is the search direction given by Newton&#8217;s algorithm, <img class="math" src="../_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L" style="vertical-align: 0px"/> is the norm of an estimated external loads (coming from source term and Dirichlet bricks) and <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is the current state of the searched variable. The maximum taken with <img class="math" src="../_images/math/e73ee7accaee3634f8dacb219bde4d3d7438932d.png" alt="10^{-25}" style="vertical-align: -1px"/> is to avoid pathological cases when <img class="math" src="../_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L" style="vertical-align: 0px"/> and/or <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> are vanishing.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_source_term.html"
+                        title="前の章へ">Source term bricks (and Neumann condition)</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_poisson.html"
+                        title="次の章へ">Example of a complete Poisson problem</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_poisson.html" title="Example of a complete Poisson problem"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_source_term.html" title="Source term bricks (and Neumann condition)"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

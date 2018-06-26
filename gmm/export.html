@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Input and output with Harwell-Boeing and Matrix Market formats &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="sub-vectors and sub-matrices" href="sub-matrix.html" />
+    <link rel="prev" title="Matrix and Vector type provided by Gmm++" href="matrix.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="sub-matrix.html" title="sub-vectors and sub-matrices"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="matrix.html" title="Matrix and Vector type provided by Gmm++"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="input-and-output-with-harwell-boeing-and-matrix-market-formats">
+<span id="gmm-export"></span><h1>Input and output with Harwell-Boeing and Matrix Market formats<a class="headerlink" href="#input-and-output-with-harwell-boeing-and-matrix-market-formats" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Including the file <tt class="docutils literal"><span class="pre">gmm/gmm_inoutput.h</span></tt> you will be able to load and save matrices with Harwell-Boeing and Matrix Market formats. Concerning the Harwell-Boeing format, only the type <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;double&gt;</span></tt> and <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;std::complex&lt;double&gt;</span> <span class="pre">&gt;</span></tt> has been interfaced, so you can execute:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Harwell_Boeing_save</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="c1">// save the matrix A .</span>
+<span class="n">Harwell_Boeing_load</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="c1">// load the matrix A.</span>
+</pre></div>
+</div>
+<p>If <tt class="docutils literal"><span class="pre">A</span></tt> is not a  <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;double&gt;</span></tt> or a <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;std::complex&lt;double&gt;</span> <span class="pre">&gt;</span></tt> a copy is made.</p>
+<p>Concerning the Matrix Market format, it is possible to save a <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;double&gt;</span></tt> or a  <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;std::complex&lt;double&gt;</span> <span class="pre">&gt;</span></tt> and to load a <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;VECT&gt;</span></tt> or a <tt class="docutils literal"><span class="pre">gmm::col_matrix&lt;VECT&gt;</span></tt>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">MatrixMarket_save</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="c1">// save a csc_matrix.</span>
+<span class="n">MatrixMarket_load</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="c1">// load a row_matrix or a col_matrix</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="matrix.html"
+                        title="前の章へ">Matrix and Vector type provided by <em>Gmm++</em></a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="sub-matrix.html"
+                        title="次の章へ">sub-vectors and sub-matrices</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="sub-matrix.html" title="sub-vectors and sub-matrices"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="matrix.html" title="Matrix and Vector type provided by Gmm++"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

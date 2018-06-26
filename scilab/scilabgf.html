@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GetFEM++ organization &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="SciLab Interface" href="index.html" />
+    <link rel="next" title="Draw Command reference" href="plotcmdref.html" />
+    <link rel="prev" title="Installation" href="install.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="plotcmdref.html" title="Draw Command reference"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">SciLab Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gfm-organization">
+<span id="scilab-gf"></span><h1><em>GetFEM++</em> organization<a class="headerlink" href="#gfm-organization" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This part of the <em>SciLab</em> <em>GetFEM++</em> documentation is to be adapted (comes frome the |
+<em>MatLab</em> <em>GetFEM++</em> one).</p>
+<p>The <em>GetFEM++</em> toolbox is just a convenient interface to the <em>GetFEM++</em> library: you must
+have a working <em>GetFEM++</em> installed on your computer. All the functions of <em>GetFEM++</em>
+are prefixed by <tt class="docutils literal"><span class="pre">gf_</span></tt> (hence typing <tt class="docutils literal"><span class="pre">gf_</span></tt> at the <em>SciLab</em> prompt and then
+pressing the <tt class="docutils literal"><span class="pre">&lt;tab&gt;</span></tt> key is a quick way to obtain the list of getfem
+functions).</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">gf_workspace</span></tt> : workspace management.</li>
+<li><tt class="docutils literal"><span class="pre">gf_util</span></tt> : miscellanous utility functions.</li>
+<li><tt class="docutils literal"><span class="pre">gf_delete</span></tt> : destroy a <em>GetFEM++</em> object (gfMesh , gfMeshFem , gfMeshIm etc.).</li>
+<li><tt class="docutils literal"><span class="pre">gf_cvstruct_get</span></tt> : retrieve informations from a gfCvStruct object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_geotrans</span></tt> : define a geometric transformation.</li>
+<li><tt class="docutils literal"><span class="pre">gf_geotrans_get</span></tt> : retrieve informations from a gfGeoTrans object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh</span></tt> : creates a new gfMesh object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_get</span></tt> : retrieve informations from a gfMesh object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_set</span></tt> : modify a gfMesh object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_eltm</span></tt> : define an elementary matrix.</li>
+<li><tt class="docutils literal"><span class="pre">gf_fem</span></tt> : define a gfFem.</li>
+<li><tt class="docutils literal"><span class="pre">gf_fem_get</span></tt> : retrieve informations from a gfFem object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_integ</span></tt> : define a integration method.</li>
+<li><tt class="docutils literal"><span class="pre">gf_integ_get</span></tt> : retrieve informations from an gfInteg object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_fem</span></tt> : creates a new gfMeshFem object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_fem_get</span></tt> : retrieve informations from a gfMeshFem object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_fem_set</span></tt> : modify a gfMeshFem object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_im</span></tt> : creates a new gfMeshIm object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_im_get</span></tt> : retrieve informations from a gfMeshIm object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mesh_im_set</span></tt> : modify a gfMeshIm object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_slice</span></tt> : create a new gfSlice object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_slice_get</span></tt> : retrieve informations from a gfSlice object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_slice_set</span></tt> : modify a gfSlice object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_spmat</span></tt> : create a gfSpMat object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_spmat_get</span></tt> : perform computations with the gfSpMat.</li>
+<li><tt class="docutils literal"><span class="pre">gf_spmat_set</span></tt> : modify the gfSpMat.</li>
+<li><tt class="docutils literal"><span class="pre">gf_precond</span></tt> : create a gfPrecond object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_precond_get</span></tt> : perform computations with the gfPrecond.</li>
+<li><tt class="docutils literal"><span class="pre">gf_linsolve</span></tt> : interface to various linear solvers provided by getfem
+(<em>SuperLU</em>, conjugated gradient, etc.).</li>
+<li><tt class="docutils literal"><span class="pre">gf_asm</span></tt> : assembly routines.</li>
+<li><tt class="docutils literal"><span class="pre">gf_solve</span></tt> : various solvers for usual PDEs (obsoleted by the gfMdBrick
+objects).</li>
+<li><tt class="docutils literal"><span class="pre">gf_compute</span></tt> : computations involving the solution of a PDE (norm,
+derivative, etc.).</li>
+<li><tt class="docutils literal"><span class="pre">gf_mdbrick</span></tt> : create a (&#8220;model brick&#8221;) gfMdBrick object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mdbrick_get</span></tt> : retrieve information from a gfMdBrick object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mdbrick_set</span></tt> : modify a gfMdBrick object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mdstate</span></tt> : create a (&#8220;model state&#8221;) gfMdState object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mdstate_get</span></tt> : retrieve information from a gfMdState object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_mdstate_set</span></tt> : modify a gfMdState object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_model</span></tt> : create a gfModel object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_model_get</span></tt> : retrieve information from a gfModel object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_model_set</span></tt> : modify a gfModel object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_global_function</span></tt> : create a gfGlobalFunction object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_model_get</span></tt> : retrieve information from a gfGlobalFunction object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_model_set</span></tt> : modify a GlobalFunction object.</li>
+<li><tt class="docutils literal"><span class="pre">gf_plot_mesh</span></tt> : plotting of mesh.</li>
+<li><tt class="docutils literal"><span class="pre">gf_plot</span></tt> : plotting of 2D and 3D fields.</li>
+<li><tt class="docutils literal"><span class="pre">gf_plot_1D</span></tt> : plotting of 1D fields.</li>
+<li><tt class="docutils literal"><span class="pre">gf_plot_slice</span></tt> : plotting of a mesh slice.</li>
+</ul>
+</div>
+<div class="section" id="objects">
+<h2>Objects<a class="headerlink" href="#objects" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Various &#8220;objects&#8221; can be manipulated by the <em>GetFEM++</em> toolbox, see fig.
+<a class="reference internal" href="#scilab-fig-hierarchy"><em>GetFEM++ objects hierarchy.</em></a>. The MESH and MESHFEM objects are the two most
+important objects.</p>
+<div class="figure align-center" id="scilab-fig-hierarchy">
+<img alt="../_images/hierarchy2.png" src="../_images/hierarchy2.png" />
+<p class="caption"><em>GetFEM++</em> objects hierarchy.</p>
+</div>
+<ul class="simple">
+<li><span class="target" id="index-0"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfGeoTrans</span></tt>: geometric transformations (defines the shape/position of
+the convexes), created with <tt class="docutils literal"><span class="pre">gf_geotrans</span></tt></li>
+<li><span class="target" id="index-1"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfGlobalFunction</span></tt>: represent a global function for the enrichment of finite element methods.</li>
+<li><span class="target" id="index-2"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMesh</span></tt> : mesh structure (nodes, convexes, geometric transformations for
+each convex), created with <tt class="docutils literal"><span class="pre">gf_mesh</span></tt></li>
+<li><span class="target" id="index-3"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfInteg</span></tt> : integration method (exact, quadrature formula...).  Although
+not linked directly to GEOTRANS, an integration method is usually specific to a
+given convex structure. Created with <tt class="docutils literal"><span class="pre">gf_integ</span></tt></li>
+<li><span class="target" id="index-4"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfFem</span></tt> : the finite element method (one per convex, can be PK, QK,
+HERMITE, etc.). Created with <tt class="docutils literal"><span class="pre">gf_fem</span></tt></li>
+<li><span class="target" id="index-5"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfCvStruct</span></tt> : stores formal information convex structures (nb. of points,
+nb. of faces which are themselves convex structures).</li>
+<li><span class="target" id="index-6"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMeshFem</span></tt> : object linked to a mesh, where each convex has been assigned
+a FEM. Created with <tt class="docutils literal"><span class="pre">gf_mesh_fem</span></tt>.</li>
+<li><span class="target" id="index-7"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMeshImM</span></tt> : object linked to a mesh, where each convex has been assigned
+an integration method. Created with <tt class="docutils literal"><span class="pre">gf_mesh_im</span></tt>.</li>
+<li><span class="target" id="index-8"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMeshSlice</span></tt> : object linked to a mesh, very similar to a
+P1-discontinuous gfMeshFem. Used for fast interpolation and plotting.</li>
+<li><span class="target" id="index-9"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMdBrick</span></tt> : gfMdBrick , an abstraction of a part of solver (for
+example, the part which build the tangent matrix, the part which handles the
+dirichlet conditions, etc.). These objects are stacked to build a complete
+solver for a wide variety of problems. They typically use a number of
+gfMeshFem, gfMeshIm etc. Deprecated object, replaced now by gfModel.</li>
+<li><span class="target" id="index-10"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMdState</span></tt> : &#8220;model state&#8221;, holds the global data for a stack of mdbricks
+(global tangent matrix, right hand side etc.). Deprecated object, replaced now by gfModel.</li>
+<li><span class="target" id="index-11"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfModel</span></tt> : &#8220;model&#8221;, holds the global data, variables and description of a
+model. Evolution of &#8220;model state&#8221; object for 4.0 version of <em>GetFEM++</em>.</li>
+</ul>
+<p>The <em>GetFEM++</em> toolbox uses its own <span class="target" id="index-12"></span><tt class="xref std std-envvar docutils literal"><span class="pre">memory</span> <span class="pre">management</span></tt>. Hence <em>GetFEM++</em> objects
+are not cleared when a:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">clear</span> <span class="n">all</span>
+</pre></div>
+</div>
+<p>is issued at the <em>SciLab</em> prompt, but instead the function:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">gf_workspace</span><span class="p">(</span><span class="s">&#39;clear all&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>should be used. The various <em>GetFEM++</em> object can be accessed via <em>handles</em> (or
+<em>descriptors</em>), which are just <em>SciLab</em> structures containing 32-bits integer
+identifiers to the real objects. Hence the <em>SciLab</em> command:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">whos</span>
+</pre></div>
+</div>
+<p>does not report the memory consumption of <em>GetFEM++</em> objects (except the marginal space
+used by the handle). Instead, you should use:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">gf_workspace</span><span class="p">(</span><span class="s">&#39;stats&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There are two kinds of <em>GetFEM++</em> objects:</p>
+<ul class="simple">
+<li>static ones, which can not be deleted: ELTM, FEM, INTEG, GEOTRANS and CVSTRUCT.
+Hopefully their memory consumption is very low.</li>
+<li>dynamic ones, which can be destroyed, and are handled by the <tt class="docutils literal"><span class="pre">gf_workspace</span></tt>
+function: MESH, MESHFEM, MESHIM, SLICE, SPMAT, PRECOND.</li>
+</ul>
+<p>The objects MESH and MESHFEM are not independent: a MESHFEM object is always
+linked to a MESH object, and a MESH object can be used by several MESHFEM
+objects. Hence when you request the destruction of a MESH object, its destruction
+might be delayed until it is not used anymore by any MESHFEM (these objects
+waiting for deletion are listed in the <em>anonymous workspace</em> section of
+<tt class="docutils literal"><span class="pre">gf_workspace('stats')</span></tt>).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><em>GetFEM++</em> organization</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#objects">Objects</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="install.html"
+                        title="前の章へ">Installation</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="plotcmdref.html"
+                        title="次の章へ">Draw Command reference</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="plotcmdref.html" title="Draw Command reference"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

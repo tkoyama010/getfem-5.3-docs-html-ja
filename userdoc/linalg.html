@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linear algebra procedures &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="MPI Parallelization of GetFEM++" href="parallel.html" />
+    <link rel="prev" title="How to install" href="install.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="parallel.html" title="MPI Parallelization of GetFEM++"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="How to install"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linear-algebra-procedures">
+<span id="ud-linalg"></span><h1>Linear algebra procedures<a class="headerlink" href="#linear-algebra-procedures" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The linear algebra library used by <em>GetFEM++</em> is <em>Gmm++</em> which is now a separate library.
+Please see the <a class="reference external" href="http://getfem.org/gmm.html">GMM++ user documentation</a>.</p>
+<p>Note that <em>GetFEM++</em> includes (since release 1.7) its own version of <em>SuperLU</em> 3.0 (see
+<a class="reference external" href="http://crd.lbl.gov/~xiaoye/SuperLU">SuperLU web site</a>) hence a direct sparse
+solver is available out of the box. Note that an option of the <tt class="docutils literal"><span class="pre">./configure</span></tt>
+file allows to disable the included version of <em>SuperLU</em> in order to use a
+pre-installed version.</p>
+<p>A small interface to <em>MUMPS</em> is also provided (see <a class="reference external" href="http://graal.ens-lyon.fr/MUMPS">MUMPS web1</a> or <a class="reference external" href="http://www.enseeiht.fr/apo/MUMPS">MUMPS web2</a>). See the file
+<tt class="file docutils literal"><span class="pre">gmm/gmm_MUMPS_interface.h</span></tt>. In order to use <em>MUMPS</em>, you have to indicates
+some options to the configure shell:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">mumps</span><span class="o">-</span><span class="n">include</span><span class="o">-</span><span class="n">dir</span><span class="o">=</span><span class="s">&quot; -I /path/to/MUMPS/include &quot;</span>
+<span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">mumps</span><span class="o">=</span><span class="s">&quot; F90 libraries and libs of MUMPS to be linked &quot;</span>
+</pre></div>
+</div>
+<p>alternatively, the option <tt class="docutils literal"><span class="pre">--enable-mumps</span></tt> will search for an installed MUMPS library. Note that if both the sequential and the parallel version is installed on your system (especially on Debian and Ubuntu), the default version will be the parallel one. To select the sequential one it is necessary to add the option <tt class="docutils literal"><span class="pre">--with-mumps=&quot;-lsmumps_seq</span> <span class="pre">-ldmumps_seq</span> <span class="pre">-lcmumps_seq</span> <span class="pre">-lzmumps_seq&quot;</span></tt>.</p>
+<p>For instance if you want to use the sequential version of <em>MUMPS</em> with double and
+complex double:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">mumps</span><span class="o">-</span><span class="n">include</span><span class="o">-</span><span class="n">dir</span><span class="o">=</span><span class="s">&quot; -I /path/to/MUMPS/include &quot;</span>
+<span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">mumps</span><span class="o">=</span><span class="s">&quot; ...F90libs...  -L /path/to/MUMPS/lib -ldmumps -lzmumps -lpord</span>
+            <span class="o">-</span><span class="n">L</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">MUMPS</span><span class="o">/</span><span class="n">libseq</span> <span class="o">-</span><span class="n">lmpiseq</span> <span class="s">&quot;</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">...F90libs...</span></tt> are the libraries of the fortran compiler used to compile
+<em>MUMPS</em> (these are highly dependant on the fortran 90 compiler used, the
+<tt class="docutils literal"><span class="pre">./configure</span></tt> script should detect the options relative to the default fortran
+90 compiler on your machine and display it &#8211; for example, with the intel
+<tt class="docutils literal"><span class="pre">ifort</span></tt> compiler, it is <tt class="docutils literal"><span class="pre">-L/opt/icc8.0/lib</span> <span class="pre">-lifport</span> <span class="pre">-lifcoremt</span> <span class="pre">-limf</span> <span class="pre">-lm</span>
+<span class="pre">-lcxa</span> <span class="pre">-lunwind</span> <span class="pre">-lpthread</span></tt>)</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="install.html"
+                        title="前の章へ">How to install</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="parallel.html"
+                        title="次の章へ">MPI Parallelization of <em>GetFEM++</em></a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="parallel.html" title="MPI Parallelization of GetFEM++"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="How to install"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

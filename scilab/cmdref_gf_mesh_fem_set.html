@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_mesh_fem_set &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_mesh_im" href="cmdref_gf_mesh_im.html" />
+    <link rel="prev" title="gf_mesh_fem_get" href="cmdref_gf_mesh_fem_get.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_im.html" title="gf_mesh_im"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_fem_get.html" title="gf_mesh_fem_get"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-mesh-fem-set">
+<h1>gf_mesh_fem_set<a class="headerlink" href="#gf-mesh-fem-set" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>gf_mesh_fem_set(mesh_fem MF, &#x27;fem&#x27;, fem f[, ivec CVids])
+gf_mesh_fem_set(mesh_fem MF, &#x27;classical fem&#x27;, int k[[, &#x27;complete&#x27;], ivec CVids])
+gf_mesh_fem_set(mesh_fem MF, &#x27;classical discontinuous fem&#x27;, int k[[, &#x27;complete&#x27;], @tscalar alpha[, ivec CVIDX]])
+gf_mesh_fem_set(mesh_fem MF, &#x27;qdim&#x27;, int Q)
+gf_mesh_fem_set(mesh_fem MF, &#x27;reduction matrices&#x27;, mat R, mat E)
+gf_mesh_fem_set(mesh_fem MF, &#x27;reduction&#x27;, int s)
+gf_mesh_fem_set(mesh_fem MF, &#x27;reduce meshfem&#x27;, mat RM)
+gf_mesh_fem_set(mesh_fem MF, &#x27;dof partition&#x27;, ivec DOFP)
+gf_mesh_fem_set(mesh_fem MF, &#x27;set partial&#x27;, ivec DOFs[, ivec RCVs])
+gf_mesh_fem_set(mesh_fem MF, &#x27;adapt&#x27;)
+gf_mesh_fem_set(mesh_fem MF, &#x27;set enriched dofs&#x27;, ivec DOFs)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function for modifying mesh_fem objects.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'fem',</span> <span class="pre">fem</span> <span class="pre">f[,</span> <span class="pre">ivec</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Set the Finite Element Method.</p>
+<p>Assign a FEM &lt;literal&gt;f&lt;/literal&gt; to all convexes whose #ids are listed in &lt;literal&gt;CVids&lt;/literal&gt;.
+If &lt;literal&gt;CVids&lt;/literal&gt; is not given, the integration is assigned to all convexes.</p>
+<p>See the help of gf_fem to obtain a list of available FEM methods.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'classical</span> <span class="pre">fem',</span> <span class="pre">int</span> <span class="pre">k[[,</span> <span class="pre">'complete'],</span> <span class="pre">ivec</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Assign a classical (Lagrange polynomial) fem of order &lt;literal&gt;k&lt;/literal&gt; to the mesh_fem.
+The option &#8216;complete&#8217; requests complete Langrange polynomial elements,
+even if the element geometric transformation is an incomplete one
+(e.g. 8-node quadrilateral or 20-node hexahedral).</p>
+<p>Uses FEM_PK for simplexes, FEM_QK for parallelepipeds etc.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'classical</span> <span class="pre">discontinuous</span> <span class="pre">fem',</span> <span class="pre">int</span> <span class="pre">k[[,</span> <span class="pre">'complete'],</span> <span class="pre">&#64;tscalar</span> <span class="pre">alpha[,</span> <span class="pre">ivec</span> <span class="pre">CVIDX]])</span></tt></p>
+<blockquote>
+<div><p>Assigns a classical (Lagrange polynomial) discontinuous fem of order k.</p>
+<p>Similar to gf_mesh_fem_set(mesh_fem MF, &#8216;set classical fem&#8217;) except that
+FEM_PK_DISCONTINUOUS is used. Param &lt;literal&gt;alpha&lt;/literal&gt; the node inset,
+&lt;latex style=&#8221;text&#8221;&gt;&lt;![CDATA[0 leq alpha &lt; 1]]&gt;&lt;/latex&gt;, where 0 implies usual dof nodes, greater values
+move the nodes toward the center of gravity, and 1 means that all
+degrees of freedom collapse on the center of gravity.
+The option &#8216;complete&#8217; requests complete Langrange polynomial elements,
+even if the element geometric transformation is an incomplete one
+(e.g. 8-node quadrilateral or 20-node hexahedral).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'qdim',</span> <span class="pre">int</span> <span class="pre">Q)</span></tt></p>
+<blockquote>
+<div><p>Change the &lt;literal&gt;Q&lt;/literal&gt; dimension of the field that is interpolated by the mesh_fem.</p>
+<p>&lt;literal&gt;Q = 1&lt;/literal&gt; means that the mesh_fem describes a scalar field, &lt;literal&gt;Q = N&lt;/literal&gt; means
+that the mesh_fem describes a vector field of dimension N.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'reduction</span> <span class="pre">matrices',</span> <span class="pre">mat</span> <span class="pre">R,</span> <span class="pre">mat</span> <span class="pre">E)</span></tt></p>
+<blockquote>
+<div>Set the reduction and extension matrices and valid their use.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'reduction',</span> <span class="pre">int</span> <span class="pre">s)</span></tt></p>
+<blockquote>
+<div>Set or unset the use of the reduction/extension matrices.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'reduce</span> <span class="pre">meshfem',</span> <span class="pre">mat</span> <span class="pre">RM)</span></tt></p>
+<blockquote>
+<div>Set reduction mesh fem
+This function selects the degrees of freedom of the finite element
+method by selecting a set of independent vectors of the matrix RM.
+The numer of columns of RM should corresponds to the number of degrees
+of fredoom of the finite element method.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'dof</span> <span class="pre">partition',</span> <span class="pre">ivec</span> <span class="pre">DOFP)</span></tt></p>
+<blockquote>
+<div><p>Change the &#8216;dof_partition&#8217; array.</p>
+<p>&lt;literal&gt;DOFP&lt;/literal&gt; is a vector holding a integer value for each convex of the mesh_fem.
+See gf_mesh_fem_get(mesh_fem MF, &#8216;dof partition&#8217;) for a description of &#8220;dof partition&#8221;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'set</span> <span class="pre">partial',</span> <span class="pre">ivec</span> <span class="pre">DOFs[,</span> <span class="pre">ivec</span> <span class="pre">RCVs])</span></tt></p>
+<blockquote>
+<div><p>Can only be applied to a partial mesh_fem. Change the subset of the
+degrees of freedom of &lt;literal&gt;mf&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;RCVs&lt;/literal&gt; is given, no FEM will be put on the convexes listed
+in &lt;literal&gt;RCVs&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'adapt')</span></tt></p>
+<blockquote>
+<div>For a mesh_fem levelset object only. Adapt the mesh_fem object to a
+change of the levelset function.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_fem_set(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">'set</span> <span class="pre">enriched</span> <span class="pre">dofs',</span> <span class="pre">ivec</span> <span class="pre">DOFs)</span></tt></p>
+<blockquote>
+<div>For a mesh_fem product object only. Set te enriched dofs and adapt the mesh_fem product.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_fem_get.html"
+                        title="前の章へ">gf_mesh_fem_get</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_im.html"
+                        title="次の章へ">gf_mesh_im</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_im.html" title="gf_mesh_im"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_fem_get.html" title="gf_mesh_fem_get"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

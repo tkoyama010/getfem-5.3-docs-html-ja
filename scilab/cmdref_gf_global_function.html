@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_global_function &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_global_function_get" href="cmdref_gf_global_function_get.html" />
+    <link rel="prev" title="gf_geotrans_get" href="cmdref_gf_geotrans_get.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_global_function_get.html" title="gf_global_function_get"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_geotrans_get.html" title="gf_geotrans_get"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-global-function">
+<h1>gf_global_function<a class="headerlink" href="#gf-global-function" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>GF = gf_global_function(&#x27;cutoff&#x27;, int fn, scalar r, scalar r1, scalar r0)
+GF = gf_global_function(&#x27;crack&#x27;, int fn)
+GF = gf_global_function(&#x27;parser&#x27;, string val[, string grad[, string hess]])
+GF = gf_global_function(&#x27;product&#x27;, global_function F, global_function G)
+GF = gf_global_function(&#x27;add&#x27;, global_function gf1, global_function gf2)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<p>General constructor for global_function objects.</p>
+<blockquote>
+<div><p>Global function object is represented by three functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The function &lt;literal&gt;val&lt;/literal&gt;.</li>
+<li>The function gradient &lt;literal&gt;grad&lt;/literal&gt;.</li>
+<li>The function Hessian &lt;literal&gt;hess&lt;/literal&gt;.</li>
+</ul>
+</div></blockquote>
+<p>this type of function is used as local and global enrichment function. The
+global function Hessian is an optional parameter (only for fourth order
+derivative problems).</p>
+</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">gf_global_function('cutoff',</span> <span class="pre">int</span> <span class="pre">fn,</span> <span class="pre">scalar</span> <span class="pre">r,</span> <span class="pre">scalar</span> <span class="pre">r1,</span> <span class="pre">scalar</span> <span class="pre">r0)</span></tt></p>
+<blockquote>
+<div>Create a cutoff global function.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">gf_global_function('crack',</span> <span class="pre">int</span> <span class="pre">fn)</span></tt></p>
+<blockquote>
+<div>Create a near-tip asymptotic global function for modelling cracks.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">gf_global_function('parser',</span> <span class="pre">string</span> <span class="pre">val[,</span> <span class="pre">string</span> <span class="pre">grad[,</span> <span class="pre">string</span> <span class="pre">hess]])</span></tt></p>
+<blockquote>
+<div>Create a global function from strings &lt;literal&gt;val&lt;/literal&gt;, &lt;literal&gt;grad&lt;/literal&gt; and &lt;literal&gt;hess&lt;/literal&gt;.
+This function could be improved by using the derivation of the generic
+assembly language ... to be done.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">gf_global_function('product',</span> <span class="pre">global_function</span> <span class="pre">F,</span> <span class="pre">global_function</span> <span class="pre">G)</span></tt></p>
+<blockquote>
+<div>Create a product of two global functions.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">gf_global_function('add',</span> <span class="pre">global_function</span> <span class="pre">gf1,</span> <span class="pre">global_function</span> <span class="pre">gf2)</span></tt></p>
+<blockquote>
+<div>Create a add of two global functions.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_geotrans_get.html"
+                        title="前の章へ">gf_geotrans_get</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_global_function_get.html"
+                        title="次の章へ">gf_global_function_get</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_global_function_get.html" title="gf_global_function_get"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_geotrans_get.html" title="gf_geotrans_get"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

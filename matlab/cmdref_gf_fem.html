@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_fem &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_fem_get" href="cmdref_gf_fem_get.html" />
+    <link rel="prev" title="gf_eltm" href="cmdref_gf_eltm.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_fem_get.html" title="gf_fem_get"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_eltm.html" title="gf_eltm"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-fem">
+<h1>gf_fem<a class="headerlink" href="#gf-fem" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>F = gf_fem(&#x27;interpolated_fem&#x27;, mesh_fem mf, mesh_im mim, [ivec blocked_dof])
+F = gf_fem(string fem_name)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<p>General constructor for fem objects.</p>
+<blockquote>
+<div>This object represents a finite element method on a reference element.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">F</span> <span class="pre">=</span> <span class="pre">gf_fem('interpolated_fem',</span> <span class="pre">mesh_fem</span> <span class="pre">mf,</span> <span class="pre">mesh_im</span> <span class="pre">mim,</span> <span class="pre">[ivec</span> <span class="pre">blocked_dof])</span></tt></p>
+<blockquote>
+<div><p>Build a special fem which is interpolated from another mesh_fem.</p>
+<p>Using this special finite element, it is possible to interpolate a given
+mesh_fem <cite>mf</cite> on another mesh, given the integration method <cite>mim</cite> that will
+be used on this mesh.</p>
+<p>Note that this finite element may be quite slow, and eats much
+memory.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">F</span> <span class="pre">=</span> <span class="pre">gf_fem(string</span> <span class="pre">fem_name)</span></tt></p>
+<blockquote>
+<div><p>The <cite>fem_name</cite> should contain a description of the finite element
+method. Please refer to the getfem++ manual (especially the
+description of finite element and integration methods) for a complete
+reference. Here is a list of some of them:</p>
+<ul class="simple">
+<li>FEM_PK(n,k) :
+classical Lagrange element Pk on a simplex of dimension <cite>n</cite>.</li>
+<li>FEM_PK_DISCONTINUOUS(n,k[,alpha]) :
+discontinuous Lagrange element Pk on a simplex of dimension <cite>n</cite>.</li>
+<li>FEM_QK(n,k) :
+classical Lagrange element Qk on quadrangles, hexahedrons etc.</li>
+<li>FEM_QK_DISCONTINUOUS(n,k[,alpha]) :
+discontinuous Lagrange element Qk on quadrangles, hexahedrons etc.</li>
+<li>FEM_Q2_INCOMPLETE(n) :
+incomplete Q2 elements with 8 and 20 dof (serendipity Quad 8 and
+Hexa 20 elements).</li>
+<li>FEM_PK_PRISM(n,k) :
+classical Lagrange element Pk on a prism of dimension <cite>n</cite>.</li>
+<li>FEM_PK_PRISM_DISCONTINUOUS(n,k[,alpha]) :
+classical discontinuous Lagrange element Pk on a prism.</li>
+<li>FEM_PK_WITH_CUBIC_BUBBLE(n,k) :
+classical Lagrange element Pk on a simplex with an additional
+volumic bubble function.</li>
+<li>FEM_P1_NONCONFORMING :
+non-conforming P1 method on a triangle.</li>
+<li>FEM_P1_BUBBLE_FACE(n) :
+P1 method on a simplex with an additional bubble function on face 0.</li>
+<li>FEM_P1_BUBBLE_FACE_LAG :
+P1 method on a simplex with an additional lagrange dof on face 0.</li>
+<li>FEM_PK_HIERARCHICAL(n,k) :
+PK element with a hierarchical basis.</li>
+<li>FEM_QK_HIERARCHICAL(n,k) :
+QK element with a hierarchical basis</li>
+<li>FEM_PK_PRISM_HIERARCHICAL(n,k) :
+PK element on a prism with a hierarchical basis.</li>
+<li>FEM_STRUCTURED_COMPOSITE(fem f,k) :
+Composite fem <cite>f</cite> on a grid with <cite>k</cite> divisions.</li>
+<li>FEM_PK_HIERARCHICAL_COMPOSITE(n,k,s) :
+Pk composite element on a grid with <cite>s</cite> subdivisions and with a
+hierarchical basis.</li>
+<li>FEM_PK_FULL_HIERARCHICAL_COMPOSITE(n,k,s) :
+Pk composite element with <cite>s</cite> subdivisions and a hierarchical basis
+on both degree and subdivision.</li>
+<li>FEM_PRODUCT(A,B) :
+tensorial product of two polynomial elements.</li>
+<li>FEM_HERMITE(n) :
+Hermite element P3 on a simplex of dimension <cite>n = 1, 2, 3</cite>.</li>
+<li>FEM_ARGYRIS :
+Argyris element P5 on the triangle.</li>
+<li>FEM_HCT_TRIANGLE :
+Hsieh-Clough-Tocher element on the triangle (composite P3 element
+which is C1), should be used with IM_HCT_COMPOSITE() integration
+method.</li>
+<li>FEM_QUADC1_COMPOSITE :
+Quadrilateral element, composite P3 element and C1 (16 dof).</li>
+<li>FEM_REDUCED_QUADC1_COMPOSITE :
+Quadrilateral element, composite P3 element and C1 (12 dof).</li>
+<li>FEM_RT0(n) :
+Raviart-Thomas element of order 0 on a simplex of dimension <cite>n</cite>.</li>
+<li>FEM_NEDELEC(n) :
+Nedelec edge element of order 0 on a simplex of dimension <cite>n</cite>.</li>
+</ul>
+<p>Of course, you have to ensure that the selected fem is compatible with
+the geometric transformation: a Pk fem has no meaning on a quadrangle.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_eltm.html"
+                        title="前の章へ">gf_eltm</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_fem_get.html"
+                        title="次の章へ">gf_fem_get</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_fem_get.html" title="gf_fem_get"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_eltm.html" title="gf_eltm"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

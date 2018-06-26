@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python Interface &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="next" title="Introduction" href="intro.html" />
+    <link rel="prev" title="GetFEM++ OO-commands" href="../matlab/oocmd.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="../matlab/oocmd.html" title="GetFEM++ OO-commands"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="py-interface">
+<span id="py"></span><h1><em>Python</em> Interface<a class="headerlink" href="#py-interface" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Preliminary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pygf.html"><em>Python</em> <em>GetFEM++</em> interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pygf.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pygf.html#parallel-version">Parallel version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pygf.html#memory-management">Memory Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pygf.html#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pygf.html#py-gf-organization"><em>Python</em> <em>GetFEM++</em> organization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#a-step-by-step-basic-example">A step-by-step basic example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#another-laplacian-with-exact-solution-source-term">Another Laplacian with exact solution (source term)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#linear-and-non-linear-elasticity">Linear and non-linear elasticity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#avoiding-the-model-framework">Avoiding the model framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#other-examples">Other examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-tos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howtos.html#import-gmsh-mesh">Import gmsh mesh</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmdref.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_ContStruct.html">ContStruct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_CvStruct.html">CvStruct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Eltm.html">Eltm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Fem.html">Fem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_GeoTrans.html">GeoTrans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_GlobalFunction.html">GlobalFunction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Integ.html">Integ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_LevelSet.html">LevelSet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Mesh.html">Mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_MeshFem.html">MeshFem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_MeshIm.html">MeshIm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_MeshImData.html">MeshImData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_MeshLevelSet.html">MeshLevelSet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_MesherObject.html">MesherObject</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Model.html">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Precond.html">Precond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Slice.html">Slice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Spmat.html">Spmat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Module asm.html">Module asm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Module compute.html">Module compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Module delete.html">Module delete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Module linsolve.html">Module linsolve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Module poly.html">Module poly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdref_Module util.html">Module util</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="../matlab/oocmd.html"
+                        title="前の章へ"><em>GetFEM++</em> OO-commands</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="intro.html"
+                        title="次の章へ">Introduction</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="#">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="../matlab/oocmd.html" title="GetFEM++ OO-commands"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

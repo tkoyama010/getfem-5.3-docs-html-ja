@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dirichlet condition brick &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Source term bricks (and Neumann condition)" href="model_source_term.html" />
+    <link rel="prev" title="Generic elliptic brick" href="model_generic_elliptic.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_source_term.html" title="Source term bricks (and Neumann condition)"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_generic_elliptic.html" title="Generic elliptic brick"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dirichlet-condition-brick">
+<span id="ud-model-dirichlet"></span><span id="index-0"></span><h1>Dirichlet condition brick<a class="headerlink" href="#dirichlet-condition-brick" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The aim of the Dirichlet condition brick is to prescribe a Dirichlet condition on
+a part of the boundary of the domain for a variable of the model. This means that
+the value of this variable is prescribed on the boundary. There is three versions of
+this brick (see also the section <a class="reference internal" href="model_Nitsche.html#ud-model-nitsche"><em>Nitsche&#8217;s method for dirichlet and contact boundary conditions</em></a>). The first version prescribe the Dirichlet thank to a multiplier. The
+associated weak form of the term is the following:</p>
+<div class="math">
+<p><img src="../_images/math/a682345cc0b58573c0f9b92f2bc2a819c3405c2c.png" alt="\int_{\Gamma} u \mu d\Gamma = \int_{\Gamma} u_D \mu d\Gamma, \forall \mu \in M."/></p>
+</div><p>where <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is the variable, <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is the space of multipliers, <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>
+is the variable and <img class="math" src="../_images/math/913e49ea63c6c130bb8d9d1c3556b052ecc404f8.png" alt="\Gamma" style="vertical-align: -1px"/> the Dirichlet boundary. For this version, an
+additional variable have to be added to represent the multiplier. It can be done
+directly to the model or thanks to the functions below. There are three functions
+allowing to add a Dirichlet condition prescribed with a multiplier. The first one
+is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                         <span class="n">multname</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                         <span class="n">dataname</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>adding a Dirichlet condition on <tt class="docutils literal"><span class="pre">varname</span></tt> thanks to a multiplier variable
+<tt class="docutils literal"><span class="pre">multname</span></tt> on the mesh region <tt class="docutils literal"><span class="pre">region</span></tt> (which should be a boundary). The value
+of the variable on that boundary is described by the data <tt class="docutils literal"><span class="pre">dataname</span></tt> which
+should be previously defined in the model. If the data is omitted, the Dirichlet
+condition is assumed to be an homogeneous one (vanishing variable on the
+boundary). The data can be constant or described on a FEM. It can also be scalar
+or vector valued, depending on the variable. The variable <tt class="docutils literal"><span class="pre">multname</span></tt> should be
+added to the model by the method <tt class="docutils literal"><span class="pre">add_multiplier</span></tt>. The function returns the
+brick index in the model. The second function is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                         <span class="n">mf_mult</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                         <span class="n">dataname</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>The only difference is that <tt class="docutils literal"><span class="pre">multname</span></tt> is replaced by <tt class="docutils literal"><span class="pre">mf_mult</span></tt> which means
+that only the finite element on which the multiplier will be built is given. The
+function adds itself the multiplier variable to the model. The third function is
+very similar:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                         <span class="n">degree</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                         <span class="n">dataname</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>The parameter <tt class="docutils literal"><span class="pre">mf_mult</span></tt> is replaced by an integer <tt class="docutils literal"><span class="pre">degree</span></tt> indicating that the
+multiplier will be built on a classical finite element method of that degree.</p>
+<p>Note, that in all the cases, when a variable is added by the method
+<tt class="docutils literal"><span class="pre">add_multiplier</span></tt> of the model object, the <cite>mesh_fem</cite> will be filtered (thank to a
+<tt class="docutils literal"><span class="pre">partial_mesh_fem_object</span></tt> in order to retain only the degrees of freedom having
+a non vanishing contribution on the considered boundary.</p>
+<p>Finally, the variable name of the multiplier can be obtained thank to the
+function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mult_varname_Dirichlet</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">ind_brick</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">ind_brick</span></tt> is the brick index in the model. This function has an
+undefined behavior if it applied to another kind of brick.</p>
+<p>The second version of the Dirichlet condition brick is the one with penalization.
+The function allowing to add this brick is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_Dirichlet_condition_with_penalization</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                          <span class="n">penalization_coeff</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                          <span class="n">dataname</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(),</span>
+                                          <span class="o">*</span><span class="n">mf_mult</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The penalization consists in computing the mass matrix of the variable and add it
+multiplied by the penalization coefficient to the stiffness matrix.
+The parameter <cite>mf_mult</cite> (a pointer to a <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object) is optional. It allows to weaken the Dirichlet condition for locking situations. In that case, the penalization matrix is of the form <img class="math" src="../_images/math/f12318131384e419e4faa0e96884f46f560d223f.png" alt="B^TB" style="vertical-align: 0px"/> where <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/> is the &#8220;mass matrix&#8221; on the boundary between the shape functions of the variable <cite>varname</cite> and the shape function of the multiplier space.
+The penalization coefficient is added as a data of the model and can be
+changed thanks to the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">change_penalization_coeff</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">ind_brick</span><span class="p">,</span> <span class="n">penalisation_coeff</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The third version of the Dirichlet condition brick use a simplification of the linear system (tangent linear system for nonlinear problems). Basically, it enforces a 1 on the diagonal components of the lines corresponding to prescribed degrees of freedom, it completes the lines with some zeros (for symmetric problems, it also complete the columns with some zeros) and it adapts the right-hand side accordingly. This is a rather simple and economic way to prescribe a Dirichlet condition. However, it can only be applied when one can identify the degrees of freedom prescribed by the the Dirichlet condition. So, it has to be use with care with reduced finite element methods, Hermite element methods and cannot be applied for a normal (or generalized) Dirichlet condition on vectorial problems. The function allowing to add this brick is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_Dirichlet_condition_with_simplification</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                          <span class="n">dataname</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>If <cite>dataname</cite> is ommited, an homogeneous Dirichlet condition is applied. If <cite>dataname</cite> is given, the constraint is that it has to be constant or described on the same finite element method as the variable <cite>varname</cite> on which the Dirichlet condition is applied. Additionnaly, If <cite>dataname</cite> is constant, it can only be applied to Lagrange finite element methods.</p>
+</div>
+<div class="section" id="generalized-dirichlet-condition-brick">
+<h1>Generalized Dirichlet condition brick<a class="headerlink" href="#generalized-dirichlet-condition-brick" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The generalized Dirichlet condition is a boundary condition of a vector field u of
+the type</p>
+<div class="math">
+<p><img src="../_images/math/52fc3a3d0694bdf8543b25692039776640241732.png" alt="H u  = r"/></p>
+</div><p>where <img class="math" src="../_images/math/b1902d279ba37d60bdce4e0e987b7cd19d48974e.png" alt="H" style="vertical-align: 0px"/> is a matrix field. The functions adding the corresponding bricks
+are similar to the ones of the standard Dirichlet condition except that they need
+the supplementary parameter <cite>Hname</cite> which gives the name of the data corresponding
+to <img class="math" src="../_images/math/b1902d279ba37d60bdce4e0e987b7cd19d48974e.png" alt="H" style="vertical-align: 0px"/>. This data can be a matrix field described on a scalar fem or a
+constant matrix.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_generalized_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                         <span class="n">multname</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                         <span class="n">dataname</span><span class="p">,</span> <span class="n">Hname</span><span class="p">);</span>
+
+
+<span class="n">add_generalized_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                         <span class="n">mf_mult</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                         <span class="n">dataname</span><span class="p">,</span> <span class="n">Hname</span><span class="p">);</span>
+
+<span class="n">add_generalized_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                         <span class="n">degree</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                         <span class="n">dataname</span><span class="p">,</span> <span class="n">Hname</span><span class="p">);</span>
+
+
+<span class="n">add_generalized_Dirichlet_condition_with_penalization</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span>
+                                          <span class="n">penalization_coeff</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+                                          <span class="n">dataname</span><span class="p">,</span> <span class="n">Hname</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pointwise-constraints-brick">
+<h1>Pointwise constraints brick<a class="headerlink" href="#pointwise-constraints-brick" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The pointwise constraints brick is a Dirichlet condition like brick which allows to prescribe the value of an unknown on given points of the domain. These points are not necessarily some vertex of the mesh or some points corresponding to degrees of freedom of the finite element method on which the unknown is described.</p>
+<p>For scalar field variables, given a set of <img class="math" src="../_images/math/16fcf7439937e47fa713af1a39074565ad5ca41a.png" alt="N_p" style="vertical-align: -6px"/> points <img class="math" src="../_images/math/b4bfb18aa5d3c10ab21b8af967b73db0072a1035.png" alt="x_i, i = 1\cdots N_p" style="vertical-align: -6px"/>, the brick allows to prescribe the value of the variable on these points, i.e. to enforce the condition</p>
+<div class="math">
+<p><img src="../_images/math/303d5e3444f4395156921283bff8ec371b20d261.png" alt="u(x_i) = l_i, ~~~ i = 1\cdots N_p,"/></p>
+</div><p>where <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is the scalar field and <img class="math" src="../_images/math/74949574eb3bb72bd595192b9685db088e6a44bd.png" alt="l_i" style="vertical-align: -3px"/> the value to be prescribed on the point <img class="math" src="../_images/math/67bc6daa9d6b964201d6cef60cbeb1ac5fd26ead.png" alt="x_i" style="vertical-align: -3px"/>.</p>
+<p>For vector field variables, given a set of <img class="math" src="../_images/math/16fcf7439937e47fa713af1a39074565ad5ca41a.png" alt="N_p" style="vertical-align: -6px"/> points <img class="math" src="../_images/math/b4bfb18aa5d3c10ab21b8af967b73db0072a1035.png" alt="x_i, i = 1\cdots N_p" style="vertical-align: -6px"/>, the brick allows to prescribe the value of one component of the variable on these points, i.e. to enforce the condition</p>
+<div class="math">
+<p><img src="../_images/math/584d5c2ad6bc3ca6d614597d285ad5b5b7871ea1.png" alt="u(x_i)\cdot n_i = l_i, ~~~ i = 1\cdots N_p,"/></p>
+</div><p>where <img class="math" src="../_images/math/7eb75ccf06e046206cb4c636a54d7be11d049fbf.png" alt="n_i" style="vertical-align: -3px"/> is the vector such that <img class="math" src="../_images/math/bc4c151f6cc152fa191ba93834871785ac7e5f1a.png" alt="u(x_i)\cdot n_i" style="vertical-align: -4px"/> represent the component to be prescribed.</p>
+<p>The brick has two versions: a penalized version and a version with multipliers. The call is the following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_pointwise_constraints_with_penalization</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">penalisation_coeff</span><span class="p">,</span>
+              <span class="n">dataname_pt</span><span class="p">,</span> <span class="n">dataname_unitv</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(),</span>
+              <span class="n">dataname_val</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+
+<span class="n">add_pointwise_constraints_with_given_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">multname</span><span class="p">,</span>
+              <span class="n">dataname_pt</span><span class="p">,</span> <span class="n">dataname_unitv</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(),</span>
+              <span class="n">dataname_val</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+
+<span class="n">add_pointwise_constraints_with_multipliers</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">dataname_pt</span><span class="p">,</span>
+              <span class="n">dataname_unitv</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(),</span> <span class="n">dataname_val</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>respectively for the penalized version, the one with a given multiplier fixed size variable and the one which automatically adds a multiplier variable of the right size to the model. The data <cite>dataname_pt</cite>, <cite>dataname_unitv</cite> and <cite>dataname_val</cite> should be added first to the moel. <cite>dataname_pt</cite> should be a vector containing the coordinates of the points where to prescribed the value of the variable <cite>varname</cite>. It is thus of size <img class="math" src="../_images/math/fd4ab8e19d42532d8c1a9b63793562866ffc3f35.png" alt="N N_p" style="vertical-align: -6px"/> where <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> is the dimension of the mesh. <cite>dataname_unitv</cite> is ignored for a scalar field variable. For a vector field variable, it should contain the vector <img class="math" src="../_images/math/7eb75ccf06e046206cb4c636a54d7be11d049fbf.png" alt="n_i" style="vertical-align: -3px"/>. In that case, it size should be <img class="math" src="../_images/math/2ae997804992dee689ce6e1b35f0f88db3fb7459.png" alt="Q N_p" style="vertical-align: -6px"/> where <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q" style="vertical-align: -4px"/> is the dimension of the vector field. <cite>dataname_val</cite> is optional and represent the right hand side, it should contain the components <img class="math" src="../_images/math/74949574eb3bb72bd595192b9685db088e6a44bd.png" alt="l_i" style="vertical-align: -3px"/>. The default value for <img class="math" src="../_images/math/74949574eb3bb72bd595192b9685db088e6a44bd.png" alt="l_i" style="vertical-align: -3px"/> is 0.</p>
+<p>This brick is mainly designed to prescribe the rigid displacements for pure Neumann problems.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Dirichlet condition brick</a></li>
+<li><a class="reference internal" href="#generalized-dirichlet-condition-brick">Generalized Dirichlet condition brick</a></li>
+<li><a class="reference internal" href="#pointwise-constraints-brick">Pointwise constraints brick</a></li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_generic_elliptic.html"
+                        title="前の章へ">Generic elliptic brick</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_source_term.html"
+                        title="次の章へ">Source term bricks (and Neumann condition)</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_source_term.html" title="Source term bricks (and Neumann condition)"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_generic_elliptic.html" title="Generic elliptic brick"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

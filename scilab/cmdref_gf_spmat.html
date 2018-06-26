@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_spmat &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_spmat_get" href="cmdref_gf_spmat_get.html" />
+    <link rel="prev" title="gf_slice_set" href="cmdref_gf_slice_set.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_spmat_get.html" title="gf_spmat_get"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_slice_set.html" title="gf_slice_set"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-spmat">
+<h1>gf_spmat<a class="headerlink" href="#gf-spmat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>SM = gf_spmat(&#x27;empty&#x27;, int m [, int n])
+SM = gf_spmat(&#x27;copy&#x27;, mat K [,  I [,  J]])
+SM = gf_spmat(&#x27;identity&#x27;, int n)
+SM = gf_spmat(&#x27;mult&#x27;, spmat A, spmat B)
+SM = gf_spmat(&#x27;add&#x27;, spmat A, spmat B)
+SM = gf_spmat(&#x27;diag&#x27;, mat D [, ivec E [, int n [,int m]]])
+SM = gf_spmat(&#x27;load&#x27;,&#x27;hb&#x27;|&#x27;harwell-boeing&#x27;|&#x27;mm&#x27;|&#x27;matrix-market&#x27;, string filename)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<p>General constructor for spmat objects.</p>
+<blockquote>
+<div><p>Create a new sparse matrix in getfem++ format. These sparse matrix can be stored as CSC (compressed column
+sparse), which is the format used by Matlab, or they can be stored as WSC
+(internal format to getfem). The CSC matrices are not writable (it would
+be very inefficient), but they are optimized for multiplication with
+vectors, and memory usage. The WSC are writable, they are very fast with
+respect to random read/write operation. However their memory overhead is
+higher than CSC matrices, and they are a little bit slower for
+matrix-vector multiplications.</p>
+<p>By default, all newly created matrices are build as WSC matrices. This can
+be changed later with &lt;literal&gt;&lt;/literal&gt;gf_spmat_set(spmat S, &#8216;to_csc&#8217;,...)&lt;literal&gt;&lt;/literal&gt;, or may be changed
+automatically by getfem (for example &lt;literal&gt;&lt;/literal&gt;gf_linsolve()&lt;literal&gt;&lt;/literal&gt; converts the
+matrices to CSC).</p>
+<p>The matrices may store REAL or COMPLEX values.</p>
+</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">gf_spmat('empty',</span> <span class="pre">int</span> <span class="pre">m</span> <span class="pre">[,</span> <span class="pre">int</span> <span class="pre">n])</span></tt></p>
+<blockquote>
+<div>Create a new empty (i.e. full of zeros) sparse matrix, of dimensions
+&lt;literal&gt;m x n&lt;/literal&gt;. If &lt;literal&gt;n&lt;/literal&gt; is omitted, the matrix dimension is &lt;literal&gt;m x m&lt;/literal&gt;.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">gf_spmat('copy',</span> <span class="pre">mat</span> <span class="pre">K</span> <span class="pre">[,</span>&nbsp; <span class="pre">I</span> <span class="pre">[,</span>&nbsp; <span class="pre">J]])</span></tt></p>
+<blockquote>
+<div><p>Duplicate a matrix &lt;literal&gt;K&lt;/literal&gt; (which might be a spmat). If index &lt;literal&gt;I&lt;/literal&gt; and/or &lt;literal&gt;J&lt;/literal&gt; are given, the matrix will
+be a submatrix of &lt;literal&gt;K&lt;/literal&gt;. For example:</p>
+<div class="highlight-python"><pre>m = gf_spmat(&#x27;copy&#x27;, sprand(50,50,.1), 1:40, [6 7 8 3 10])</pre>
+</div>
+<p>will return a 40x5 matrix.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">gf_spmat('identity',</span> <span class="pre">int</span> <span class="pre">n)</span></tt></p>
+<blockquote>
+<div>Create a &lt;literal&gt;n x n&lt;/literal&gt; identity matrix.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">gf_spmat('mult',</span> <span class="pre">spmat</span> <span class="pre">A,</span> <span class="pre">spmat</span> <span class="pre">B)</span></tt></p>
+<blockquote>
+<div>Create a sparse matrix as the product of the sparse matrices &lt;literal&gt;A&lt;/literal&gt; and
+&lt;literal&gt;B&lt;/literal&gt;. It requires that &lt;literal&gt;A&lt;/literal&gt; and &lt;literal&gt;B&lt;/literal&gt; be both real or both complex, you
+may have to use &lt;literal&gt;&lt;/literal&gt;gf_spmat_set(spmat S, &#8216;to_complex&#8217;)&lt;literal&gt;&lt;/literal&gt;</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">gf_spmat('add',</span> <span class="pre">spmat</span> <span class="pre">A,</span> <span class="pre">spmat</span> <span class="pre">B)</span></tt></p>
+<blockquote>
+<div>Create a sparse matrix as the sum of the sparse matrices &lt;literal&gt;A&lt;/literal&gt; and &lt;literal&gt;B&lt;/literal&gt;.
+Adding a real matrix with a complex matrix is possible.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">gf_spmat('diag',</span> <span class="pre">mat</span> <span class="pre">D</span> <span class="pre">[,</span> <span class="pre">ivec</span> <span class="pre">E</span> <span class="pre">[,</span> <span class="pre">int</span> <span class="pre">n</span> <span class="pre">[,int</span> <span class="pre">m]]])</span></tt></p>
+<blockquote>
+<div>Create a diagonal matrix. If &lt;literal&gt;E&lt;/literal&gt; is given, &lt;literal&gt;D&lt;/literal&gt; might be a matrix and
+each column of &lt;literal&gt;E&lt;/literal&gt; will contain the sub-diagonal number that will be
+filled with the corresponding column of &lt;literal&gt;D&lt;/literal&gt;.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">SM</span> <span class="pre">=</span> <span class="pre">gf_spmat('load','hb'|'harwell-boeing'|'mm'|'matrix-market',</span> <span class="pre">string</span> <span class="pre">filename)</span></tt></p>
+<blockquote>
+<div>Read a sparse matrix from an Harwell-Boeing or a Matrix-Market file
+.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_slice_set.html"
+                        title="前の章へ">gf_slice_set</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_spmat_get.html"
+                        title="次の章へ">gf_spmat_get</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_spmat_get.html" title="gf_spmat_get"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_slice_set.html" title="gf_slice_set"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

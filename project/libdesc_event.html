@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Events management &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="next" title="Mesh module" href="libdesc_mesh.html" />
+    <link rel="prev" title="Miscellaneous algorithms" href="libdesc_misc.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc_mesh.html" title="Mesh module"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_misc.html" title="Miscellaneous algorithms"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" accesskey="U">Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="events-management">
+<span id="dp-libdesc-event"></span><h1>Events management<a class="headerlink" href="#events-management" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">mesh</span></tt>, <cite>mesh_fem</cite>, <cite>mesh_im</cite> and <cite>model</cite> description are linkedtogether in the sense
+that there is some dependencies between them. For instance, when an element is
+suppressed to a mesh, the <cite>mesh_fem</cite> object has to react.</p>
+</div>
+<div class="section" id="files">
+<h2>Files<a class="headerlink" href="#files" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File(s)</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_context.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_context.cc</span></tt></td>
+<td>Define a class <cite>context_dependencies</cite> from which all object has to derive in order to manage events.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="state">
+<h2>State<a class="headerlink" href="#state" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The main tool to deal with simple dependence of object is in
+<tt class="file docutils literal"><span class="pre">getfem_context.h</span></tt>. An object <tt class="docutils literal"><span class="pre">context_dependencies</span></tt> is defined there. In
+order to deal with the dependencies of an object, the object
+<tt class="docutils literal"><span class="pre">context_dependencies</span></tt> needs to be a parent class of this object. It adds the
+following methods to the object:</p>
+<dl class="function">
+<dt id="add_dependency">
+<tt class="descname">add_dependency</tt><big>(</big>ct<big>)</big><a class="headerlink" href="#add_dependency" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add an object (which has to have <tt class="docutils literal"><span class="pre">context_dependencies</span></tt> as a parent class)
+to the list of objects from which the current object depend.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="touch">
+<tt class="descname">touch</tt><big>(</big><big>)</big><a class="headerlink" href="#touch" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Indicates to the dependent objects that something has change in the object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="context_check">
+<tt class="descname">context_check</tt><big>(</big><big>)</big><a class="headerlink" href="#context_check" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Check if the object has to be updated. if it is the case it makes first a
+check to the dependency list and call the update function of the object. (the
+update function of the dependencies are called before the update function of
+the current object).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="context_valid">
+<tt class="descname">context_valid</tt><big>(</big><big>)</big><a class="headerlink" href="#context_valid" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Says if the object has still a valid context, i.e. if the object in the
+dependency list still exist.</p>
+</dd></dl>
+
+<p>Moreover, the object has to define a method:</p>
+<div class="highlight-c++"><pre>``void update_from_context(void) const``</pre>
+</div>
+<p>which is called after a <tt class="docutils literal"><span class="pre">context_check()</span></tt> if the context has changed.</p>
+<p>An additional system is present in the object <cite>mesh</cite>. Each individual element has a
+version number in order for the objects <cite>mesh_fem</cite> and <cite>mesh_im</cite> to detect which element
+has changed between two calls.</p>
+</div>
+<div class="section" id="perspectives">
+<h2>Perspectives<a class="headerlink" href="#perspectives" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The event management of some objects should be analysed with care  This is the case for instance of|mls|, <cite>mesh_fem_level_set</cite>, <cite>partial_mesh_fem</cite>, etc.</p>
+<p>The event management still have to be improved to be a fully reactive system.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Events management</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#files">Files</a></li>
+<li><a class="reference internal" href="#state">State</a></li>
+<li><a class="reference internal" href="#perspectives">Perspectives</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="libdesc_misc.html"
+                        title="前の章へ">Miscellaneous algorithms</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc_mesh.html"
+                        title="次の章へ">Mesh module</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc_mesh.html" title="Mesh module"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_misc.html" title="Miscellaneous algorithms"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" >Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

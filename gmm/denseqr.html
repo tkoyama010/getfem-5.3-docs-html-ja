@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dense QR factorisation, eigenvalues and eigenvectors &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Iterative solvers" href="iter.html" />
+    <link rel="prev" title="Dense LU decomposition" href="denselu.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="iter.html" title="Iterative solvers"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="denselu.html" title="Dense LU decomposition"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dense-qr-factorisation-eigenvalues-and-eigenvectors">
+<span id="gmm-denseqr"></span><h1>Dense QR factorisation, eigenvalues and eigenvectors<a class="headerlink" href="#dense-qr-factorisation-eigenvalues-and-eigenvectors" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The following procedures are available in the file <tt class="docutils literal"><span class="pre">gmm/gmm\_dense\_qr.h</span></tt> for dense real and complex matrices:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">qr_factor</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span> <span class="c1">// compute the QR factorization of M in Q and R</span>
+                        <span class="c1">// (Householder version)</span>
+
+<span class="n">implicit_qr_algorithm</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">eigval</span><span class="p">,</span> <span class="kt">double</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1E-16</span><span class="p">)</span> <span class="c1">// compute the</span>
+   <span class="c1">// eigenvalues of M using the implicit QR factorisation (Householder and</span>
+   <span class="c1">// Francis QR step version). eigval should be a vector of appropriate size</span>
+   <span class="c1">// in which the eigenvalues will be computed. If the matrix have</span>
+   <span class="c1">// complex eigenvalues, please use a complex vector.</span>
+
+<span class="n">implicit_qr_algorithm</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">eigval</span><span class="p">,</span> <span class="n">shvect</span><span class="p">,</span> <span class="kt">double</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1E-16</span><span class="p">)</span> <span class="c1">// idem,</span>
+   <span class="c1">// compute additionally the schur vectors in the matrix shvect.</span>
+
+<span class="n">symmetric_qr_algorithm</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">eigval</span><span class="p">,</span> <span class="kt">double</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1E-16</span><span class="p">)</span> <span class="c1">// idem for symmetric</span>
+   <span class="c1">// real and hermitian complex matrices (based on Wilkinson QR step)</span>
+
+<span class="n">symmetric_qr_algorithm</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">eigval</span><span class="p">,</span> <span class="n">eigvect</span><span class="p">,</span> <span class="kt">double</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1E-16</span><span class="p">)</span> <span class="c1">// idem,</span>
+   <span class="c1">// compute additionally the eigenvectors in the matrix eigvect.</span>
+</pre></div>
+</div>
+<p><cite>Remark</cite>: The computation of eigenvectors for non hermitian matrices is not yet implemented. You can use for the moment the functions <tt class="docutils literal"><span class="pre">geev_interface_left</span></tt> and <tt class="docutils literal"><span class="pre">geev_interface_right</span></tt> from the LAPACK interface (see <tt class="docutils literal"><span class="pre">gmm/gmm_lapack_interface.h</span></tt>. These LAPACK functions compute right and left eigen vectors.</p>
+<p>The following function defined in the file <tt class="docutils literal"><span class="pre">gmm/gmm\_condition\_number.h</span></tt>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">condition_number</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>compute the condition number of a matrix <tt class="docutils literal"><span class="pre">M</span></tt>. This function uses a dense QR algorithm and thus is only usable for dense matrices.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="denselu.html"
+                        title="前の章へ">Dense LU decomposition</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="iter.html"
+                        title="次の章へ">Iterative solvers</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="iter.html" title="Iterative solvers"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="denselu.html" title="Dense LU decomposition"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

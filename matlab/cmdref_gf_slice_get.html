@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_slice_get &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_slice_set" href="cmdref_gf_slice_set.html" />
+    <link rel="prev" title="gf_slice" href="cmdref_gf_slice.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_slice_set.html" title="gf_slice_set"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_slice.html" title="gf_slice"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-slice-get">
+<h1>gf_slice_get<a class="headerlink" href="#gf-slice-get" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>d = gf_slice_get(slice S, &#x27;dim&#x27;)
+a = gf_slice_get(slice S, &#x27;area&#x27;)
+CVids = gf_slice_get(slice S, &#x27;cvs&#x27;)
+n = gf_slice_get(slice S, &#x27;nbpts&#x27;)
+ns = gf_slice_get(slice S, &#x27;nbsplxs&#x27;[, int dim])
+P = gf_slice_get(slice S, &#x27;pts&#x27;)
+{S, CV2S} = gf_slice_get(slice S, &#x27;splxs&#x27;,int dim)
+{P, E1, E2} = gf_slice_get(slice S, &#x27;edges&#x27;)
+Usl = gf_slice_get(slice S, &#x27;interpolate_convex_data&#x27;, mat Ucv)
+m = gf_slice_get(slice S, &#x27;linked mesh&#x27;)
+m = gf_slice_get(slice S, &#x27;mesh&#x27;)
+z = gf_slice_get(slice S, &#x27;memsize&#x27;)
+gf_slice_get(slice S, &#x27;export to vtk&#x27;, string filename, ...)
+gf_slice_get(slice S, &#x27;export to pov&#x27;, string filename)
+gf_slice_get(slice S, &#x27;export to dx&#x27;, string filename, ...)
+gf_slice_get(slice S, &#x27;export to pos&#x27;, string filename[, string name][[,mesh_fem mf1], mat U1, string nameU1[[,mesh_fem mf1], mat U2, string nameU2,...])
+s = gf_slice_get(slice S, &#x27;char&#x27;)
+gf_slice_get(slice S, &#x27;display&#x27;)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function for querying information about slice objects.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'dim')</span></tt></p>
+<blockquote>
+<div>Return the dimension of the slice (2 for a 2D mesh, etc..).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'area')</span></tt></p>
+<blockquote>
+<div>Return the area of the slice.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVids</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'cvs')</span></tt></p>
+<blockquote>
+<div>Return the list of convexes of the original mesh contained in the slice.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'nbpts')</span></tt></p>
+<blockquote>
+<div>Return the number of points in the slice.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">ns</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'nbsplxs'[,</span> <span class="pre">int</span> <span class="pre">dim])</span></tt></p>
+<blockquote>
+<div><p>Return the number of simplexes in the slice.</p>
+<p>Since the slice may contain points (simplexes of dim 0), segments
+(simplexes of dimension 1), triangles etc., the result is a vector
+of size gf_slice_get(slice S, &#8216;dim&#8217;)+1, except if the optional argument <cite>dim</cite>
+is used.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">P</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'pts')</span></tt></p>
+<blockquote>
+<div>Return the list of point coordinates.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">{S,</span> <span class="pre">CV2S}</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'splxs',int</span> <span class="pre">dim)</span></tt></p>
+<blockquote>
+<div><p>Return the list of simplexes of dimension <cite>dim</cite>.</p>
+<p>On output, S has &#8216;dim+1&#8217; rows, each column contains the point
+numbers of a simplex.  The vector <cite>CV2S</cite> can be used to find the
+list of simplexes for any convex stored in the slice. For example
+&#8216;S(:,CV2S(4):CV2S(5)-1)&#8217;
+gives the list of simplexes for the fourth convex.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">{P,</span> <span class="pre">E1,</span> <span class="pre">E2}</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'edges')</span></tt></p>
+<blockquote>
+<div><p>Return the edges of the linked mesh contained in the slice.</p>
+<p><cite>P</cite> contains the list of all edge vertices, <cite>E1</cite> contains
+the indices of each mesh edge in <cite>P</cite>, and <cite>E2</cite> contains the
+indices of each &#8220;edges&#8221; which is on the border of the slice.
+This function is useless except for post-processing purposes.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Usl</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'interpolate_convex_data',</span> <span class="pre">mat</span> <span class="pre">Ucv)</span></tt></p>
+<blockquote>
+<div><p>Interpolate data given on each convex of the mesh to the slice nodes.</p>
+<p>The input array <cite>Ucv</cite> may have any number of dimensions, but its
+last dimension should be equal to gf_mesh_get(mesh M, &#8216;max cvid&#8217;).</p>
+<p>Example of use: gf_slice_get(slice S, &#8216;interpolate_convex_data&#8217;, gf_mesh_get(mesh M, &#8216;quality&#8217;)).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'linked</span> <span class="pre">mesh')</span></tt></p>
+<blockquote>
+<div>Return the mesh on which the slice was taken.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'mesh')</span></tt></p>
+<blockquote>
+<div>Return the mesh on which the slice was taken
+(identical to &#8216;linked mesh&#8217;)</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'memsize')</span></tt></p>
+<blockquote>
+<div>Return the amount of memory (in bytes) used by the slice object.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'export</span> <span class="pre">to</span> <span class="pre">vtk',</span> <span class="pre">string</span> <span class="pre">filename,</span> <span class="pre">...)</span></tt></p>
+<blockquote>
+<div><p>Export a slice to VTK.</p>
+<p>Following the <cite>filename</cite>, you may use any of the following options:</p>
+<ul class="simple">
+<li>if &#8216;ascii&#8217; is not used, the file will contain binary data
+(non portable, but fast).</li>
+<li>if &#8216;edges&#8217; is used, the edges of the original mesh will be
+written instead of the slice content.</li>
+</ul>
+<p>More than one dataset may be written, just list them. Each dataset
+consists of either:</p>
+<ul class="simple">
+<li>a field interpolated on the slice (scalar, vector or tensor),
+followed by an optional name.</li>
+<li>a mesh_fem and a field, followed by an optional name.</li>
+</ul>
+<p>Examples:</p>
+<ul class="simple">
+<li>gf_slice_get(slice S, &#8216;export to vtk&#8217;, &#8216;test.vtk&#8217;, Usl, &#8216;first_dataset&#8217;, mf,
+U2, &#8216;second_dataset&#8217;)</li>
+<li>gf_slice_get(slice S, &#8216;export to vtk&#8217;, &#8216;test.vtk&#8217;, &#8216;ascii&#8217;, mf,U2)</li>
+<li>gf_slice_get(slice S, &#8216;export to vtk&#8217;, &#8216;test.vtk&#8217;, &#8216;edges&#8217;, &#8216;ascii&#8217;, Uslice)</li>
+</ul>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'export</span> <span class="pre">to</span> <span class="pre">pov',</span> <span class="pre">string</span> <span class="pre">filename)</span></tt></p>
+<blockquote>
+<div>Export a the triangles of the slice to POV-RAY.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'export</span> <span class="pre">to</span> <span class="pre">dx',</span> <span class="pre">string</span> <span class="pre">filename,</span> <span class="pre">...)</span></tt></p>
+<blockquote>
+<div><p>Export a slice to OpenDX.</p>
+<p>Following the <cite>filename</cite>, you may use any of the following
+options:</p>
+<ul class="simple">
+<li>if &#8216;ascii&#8217; is not used, the file will contain binary data
+(non portable, but fast).</li>
+<li>if &#8216;edges&#8217; is used, the edges of the original mesh will be
+written instead of the slice content.</li>
+<li>if &#8216;append&#8217; is used, the opendx file will not be overwritten,
+and the new data will be added at the end of the file.</li>
+</ul>
+<p>More than one dataset may be written, just list them. Each dataset
+consists of either:</p>
+<ul class="simple">
+<li>a field interpolated on the slice (scalar, vector or tensor),
+followed by an optional name.</li>
+<li>a mesh_fem and a field, followed by an optional name.</li>
+</ul>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'export</span> <span class="pre">to</span> <span class="pre">pos',</span> <span class="pre">string</span> <span class="pre">filename[,</span> <span class="pre">string</span> <span class="pre">name][[,mesh_fem</span> <span class="pre">mf1],</span> <span class="pre">mat</span> <span class="pre">U1,</span> <span class="pre">string</span> <span class="pre">nameU1[[,mesh_fem</span> <span class="pre">mf1],</span> <span class="pre">mat</span> <span class="pre">U2,</span> <span class="pre">string</span> <span class="pre">nameU2,...])</span></tt></p>
+<blockquote>
+<div><p>Export a slice to Gmsh.</p>
+<p>More than one dataset may be written, just list them.
+Each dataset consists of either:</p>
+<ul class="simple">
+<li>a field interpolated on the slice (scalar, vector or tensor).</li>
+<li>a mesh_fem and a field.</li>
+</ul>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'char')</span></tt></p>
+<blockquote>
+<div><p>Output a (unique) string representation of the slice.</p>
+<p>This can be used to perform comparisons between two
+different slice objects.
+This function is to be completed.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_slice_get(slice</span> <span class="pre">S,</span> <span class="pre">'display')</span></tt></p>
+<blockquote>
+<div>displays a short summary for a slice object.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_slice.html"
+                        title="前の章へ">gf_slice</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_slice_set.html"
+                        title="次の章へ">gf_slice_set</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_slice_set.html" title="gf_slice_set"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_slice.html" title="gf_slice"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

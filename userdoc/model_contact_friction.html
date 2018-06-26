@@ -1,0 +1,793 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Small sliding contact with friction bricks &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Large sliding/large deformation contact with friction bricks" href="model_contact_friction_large_sliding.html" />
+    <link rel="prev" title="The model tools for the integration of transient problems" href="model_time_integration.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_contact_friction_large_sliding.html" title="Large sliding/large deformation contact with friction bricks"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_time_integration.html" title="The model tools for the integration of transient problems"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="small-sliding-contact-with-friction-bricks">
+<span id="ud-model-contact-friction"></span><span id="index-0"></span><h1>Small sliding contact with friction bricks<a class="headerlink" href="#small-sliding-contact-with-friction-bricks" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The aim of these bricks is to take into account a contact condition with or without friction of an elastic structure on a rigid foundation or between two elastic structures. These bricks are restricted to small deformation approximation of contact (this may include large deformations on a flat obstacle).</p>
+<div class="section" id="approximation-of-contact">
+<h2>Approximation of contact<a class="headerlink" href="#approximation-of-contact" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For small deformation problems submitted
+a simple (compared to large deformation !) expression of the contact with friction condition is usually used where the tangential displacement do not influence the normal one. This is an approximation in the sense that if an obstacle is not perfectly flat, the tangential displacement of course influence the point where the contact holds. This will not be the case in small deformation where the contact condition can be considered to be described on the reference configuration.</p>
+<p>There are mainly two largely used discretizations of the contact with friction condition in this framework: a direct nodal contact condition (usually prescribed on the displacement finite element nodes) or a weak nodal contact condition (usually prescribed on the multiplier finite element nodes). The two discretization leads to similar system. However, the interpretation of quantities is not the same. A third approach is developed on Getfem contact bricks: a weak integral contact condition. It needs the computation of a non-linear integral on the contact boundary at each iteration but the numerical resolution is potentially more scalable because it derives directly from continuous principles.</p>
+<p>More details can be found for instance in <a class="reference internal" href="../biblio.html#ki-od1988" id="id1">[KI-OD1988]</a>, <a class="reference internal" href="../biblio.html#kh-po-re2006" id="id2">[KH-PO-RE2006]</a> and <a class="reference internal" href="../biblio.html#la-re2006" id="id3">[LA-RE2006]</a>.</p>
+</div>
+<div class="section" id="direct-nodal-contact-condition">
+<h2>Direct nodal contact condition<a class="headerlink" href="#direct-nodal-contact-condition" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A nodal contact condition consists in a certain number of contact nodes <img class="math" src="../_images/math/412787c048e28774dc63fc27db42dc52ca858de7.png" alt="a_i" style="vertical-align: -3px"/>, <img class="math" src="../_images/math/29f0fd630eb93a7f86d99a5cf33abe0907867c6d.png" alt="i=1..N_c" style="vertical-align: -3px"/> on which a contact with (or without) friction condition is applied. The contact condition reads</p>
+<div class="math">
+<p><img src="../_images/math/5cd74c1a5658f8fd8be15f053cc2900a23e5bf0c.png" alt="u_N(a_i)-\text{gap}_i \le 0, ~~ \lambda_N^i \le 0,  ~~ (u_N(a_i)-\text{gap}_i) \lambda_N^i = 0,"/></p>
+</div><p>where <img class="math" src="../_images/math/de5d763e30c0c58cb7ee7b3218111923fc6081a8.png" alt="\lambda_N^i" style="vertical-align: -5px"/> is the equivalent nodal contact force on <img class="math" src="../_images/math/412787c048e28774dc63fc27db42dc52ca858de7.png" alt="a_i" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/7a8e12722f8bf0d62fc145f59f790ce06647d5e7.png" alt="u_N(a_i)" style="vertical-align: -4px"/> is the normal relative displacement between the elastic solid and an obstacle or between two elastic solids. The term <img class="math" src="../_images/math/d4ec31e22d0db8d01157185b9fd46dfd69e24f73.png" alt="\text{gap}_i" style="vertical-align: -4px"/> represents the normal gap between the two solids in the reference configuration. The friction condition reads</p>
+<div class="math">
+<p><img src="../_images/math/40a3d2219446580288a592fc8ff3e757af8e9205.png" alt="\|\lambda_T^i\| \le -{\mathscr F} \lambda_N^i,
+
+\lambda_T^i = {\mathscr F} \lambda_N^i \frac{\dot{u}_T}{\|\dot{u}_T\|} ~~~ \text{ when } \dot{u}_T \ne 0,"/></p>
+</div><p>where <img class="math" src="../_images/math/743d2d28e4c965a2c32273d18372ebddb831dd1f.png" alt="\dot{u}_T" style="vertical-align: -3px"/> is the relative slip velocity, <img class="math" src="../_images/math/3cceff95a957686059b71f99927b8e8add349fe3.png" alt="{\mathscr F}" style="vertical-align: 0px"/> is the friction coefficient and <img class="math" src="../_images/math/e547338d13284addf7bafb2af8a030034535df4e.png" alt="\lambda_T^i" style="vertical-align: -5px"/> the equivalent nodal friction force on <img class="math" src="../_images/math/412787c048e28774dc63fc27db42dc52ca858de7.png" alt="a_i" style="vertical-align: -3px"/>. The friction condition can be summarized by the inclusion</p>
+<div class="math">
+<p><img src="../_images/math/2eb97d8f56afcc633a372581d6cebf1053a5c83a.png" alt="\lambda_T^i \in {\mathscr F} \lambda_N^i \text{Dir}(\dot{u}_T),"/></p>
+</div><p>where <img class="math" src="../_images/math/207ecbddd93d12debe78fbffa83cfe4887a2af43.png" alt="\text{Dir}(\dot{u}_T)" style="vertical-align: -4px"/> is the multivalued map being the sub-differential of <img class="math" src="../_images/math/96d6eb533cf9c8b618a966947c2dd399febfee97.png" alt="x \mapsto \|x_T\|" style="vertical-align: -5px"/> (i.e. <img class="math" src="../_images/math/3a46529ac5d773db1094df1eeca450bc1521448b.png" alt="\text{Dir}(x) = \frac{x}{\|x\|}" style="vertical-align: -10px"/> when <img class="math" src="../_images/math/6cfe818b88e225c12025cbb701eb2e8cabb5517c.png" alt="x \ne 0" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/a34ea03dc9cc0f64c92483e7ba8a9d8488d94851.png" alt="\text{Dir}(0)" style="vertical-align: -4px"/> the closed unit ball). For two dimensional cases, <img class="math" src="../_images/math/207ecbddd93d12debe78fbffa83cfe4887a2af43.png" alt="\text{Dir}(\dot{u}_T)" style="vertical-align: -4px"/> reduces to <img class="math" src="../_images/math/9d739f48717b7610b6dc5feab5a63c2070a59d83.png" alt="\text{Sign}(\dot{u}_T)" style="vertical-align: -4px"/> where <img class="math" src="../_images/math/c8cba9508c3bbb0c5b0ef368408148cff4a886ae.png" alt="\text{Sign}" style="vertical-align: -3px"/> is the multivalued sign map.</p>
+<p>A complete linearized elasticity problem with contact with friction reads as</p>
+<p>Given an augmentation parameter <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" style="vertical-align: 0px"/>, the contact and friction conditions can be equivalently expressed in term of projection as</p>
+<div class="math">
+<p><img src="../_images/math/a8629fae910fcca3534b1bc37a226b8dcac602c2.png" alt="\frac{1}{r}(\lambda_N^i - P_{]-\infty, 0]}(\lambda_N^i - r (u_N(a_i) - \text{gap}_i))) = 0,
+
+\frac{1}{r}(\lambda_T^i - P_{{\mathscr B}(-{\mathscr F}P_{]-\infty, 0]}(\lambda_N^i - r(u_N(a_i) - \text{gap}_i))}(\lambda_T^i - r \dot{u}_T(a_i))) = 0,"/></p>
+</div><p>where <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> is the projection on the convex <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/91d5606a87a6fef63a5aca4c9f7ae223557c171d.png" alt="{\mathscr B}(-{\mathscr F}\lambda_N^i)" style="vertical-align: -5px"/> is the ball of center <img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0" style="vertical-align: 0px"/> and radius <img class="math" src="../_images/math/5e878a7a99cf3294b9a214a59af3492ff1b732ce.png" alt="-{\mathscr F}\lambda_N^i" style="vertical-align: -5px"/>.
+These expressions will be used to perform a semi-smooth Newton method.</p>
+<p>Suppose now that you approximate a linearized elasticity problem submitted to contact with friction. Then, if <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> is the vector of the unknown for the displacement you will be able to express the matrices <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/e7f63fb006edebab65ba811568fbde44427d09fb.png" alt="B_T" style="vertical-align: -3px"/> such that</p>
+<div class="math">
+<p><img src="../_images/math/f0df7b68a557613854e369cae76df96021e5c363.png" alt="u_N(a_i) = (B_N U)_i,
+
+(\dot{u}_T(a_i))_k = (B_T \dot{U})_{(d-1)(i-1)+k},"/></p>
+</div><p>where <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> is the dimension of the domain and <img class="math" src="../_images/math/228e760f63a5f7eb597fa98877face2332801981.png" alt="k = 1..d-1" style="vertical-align: -1px"/>. The expression of the elasticity problem with contact with friction can be written as</p>
+<div class="math">
+<p><img src="../_images/math/7b3cc7ba3e2510ebd9d000fbddb6e3e2ea30cbe6.png" alt="K U = L + B_N^T \lambda_N + B_T^T \lambda_T,
+
+-\frac{1}{r\alpha_i}(\lambda_N^i - P_{]-\infty, 0]}(\lambda_N^i - \alpha_i r ((B_N U)_i - \text{gap}_i))) = 0, ~~ i = 1..N_c,
+
+-\frac{1}{r\alpha_i}(\lambda_T^i - P_{{\mathscr B}(-{\mathscr F}P_{]-\infty, 0]}(\lambda_N^i - \alpha_i r ((B_N U)_i - \text{gap}_i))))}(\lambda_T^i - \alpha_i r (B_T U - B_T U^{0})_i)) = 0, ~~ i = 1..N_c,"/></p>
+</div><p>where <img class="math" src="../_images/math/7e46fc708bb0d019ec0b54d24b166024d6c146ff.png" alt="\alpha_i" style="vertical-align: -3px"/> is a parameter which can be added for the homogenization of the augmentation parameter, <img class="math" src="../_images/math/0a83241e36504e21f440635920311336d371f6a2.png" alt="(B_T U)_i" style="vertical-align: -4px"/> denotes here the sub-vector of indices from <img class="math" src="../_images/math/a149c2ba30e5e4a8227ca8f17bfc367f1051a31e.png" alt="(d-1)(i-1)+1" style="vertical-align: -4px"/> to <img class="math" src="../_images/math/1d4a517c666f55b940068784845ab762d4734071.png" alt="(d-1)i" style="vertical-align: -4px"/> for the sake of simplicity and the sliding velocity <img class="math" src="../_images/math/0c21028dfbd77f67a9e2934c8a4ebb9bac8d3c1f.png" alt="B_T \dot{U}" style="vertical-align: -3px"/> have been discretized into <img class="math" src="../_images/math/4700da3624c6e3e2a429c6e0e46ba5a042b6d8c2.png" alt="\frac{(B_T U - B_T U^{0})}{\Delta t}" style="vertical-align: -6px"/> with <img class="math" src="../_images/math/c77aa3bd9d99e659cf5245b32c87d7e2872a8afb.png" alt="U^{0}" style="vertical-align: 0px"/> the displacement at the previous time step. Note that of course another discretization of the sliding velocity is possible and that the time step <img class="math" src="../_images/math/a1ffc0a012620941fe660cedabff822ce7162eca.png" alt="\Delta t" style="vertical-align: 0px"/> do not appear in the expression of the friction condition since it does not influence the direction of the sliding velocity.</p>
+<p>In that case, the homogenization coefficient <img class="math" src="../_images/math/7e46fc708bb0d019ec0b54d24b166024d6c146ff.png" alt="\alpha_i" style="vertical-align: -3px"/> can be taken proportional to <img class="math" src="../_images/math/263035b51dcf5be69175bc37b698b27bd10f16aa.png" alt="h^{d-2}" style="vertical-align: 0px"/> (<img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/> being the diameter of the element). In this way, the augmentation parameter <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" style="vertical-align: 0px"/> can be expressed in <img class="math" src="../_images/math/702f36fe3c3236ee12cb6ce99d8a4683a26e47a0.png" alt="N/m^2" style="vertical-align: -5px"/> and chosen closed to the Young modulus of the elastic body. Note that the solution is not sensitive to the value of the augmentation parameter.</p>
+</div>
+<div class="section" id="weak-nodal-contact-condition">
+<h2>Weak nodal contact condition<a class="headerlink" href="#weak-nodal-contact-condition" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The direct nodal condition may have some drawback : locking phenomena, over-constraint. It is in fact often more stable and for the same accuracy to use multiplier of reduced order compared to the displacement (the direct nodal contact condition corresponds more or less to a multiplier described on the same finite element method than the displacement).</p>
+<p>Let <img class="math" src="../_images/math/87686aa0f5136421c8415c7169adcb308e36c7a8.png" alt="\varphi_i" style="vertical-align: -4px"/> be the shapes functions of the finite element describing the displacement and <img class="math" src="../_images/math/75b7bc3d0bbe11946d21dabacfde02b7d0978b3f.png" alt="\psi_i" style="vertical-align: -4px"/> be the shape functions of a finite element describing a multiplier on the contact boundary <img class="math" src="../_images/math/2e78fb4781b2620fa10368d193dd418062230428.png" alt="\Gamma_c" style="vertical-align: -3px"/>. It is assumed that the set of admissible multiplier describing the normal stress will be</p>
+<div class="math">
+<p><img src="../_images/math/c94301a67db20bcdbfc66ecb92fd822c2706ce2d.png" alt="\Lambda_N^h = \{ \mu^h_N = \sum \mu^j_N \psi_j : \mu^h_N(a_i) \le 0, ~i = 1..N_c \}"/></p>
+</div><p>where <img class="math" src="../_images/math/412787c048e28774dc63fc27db42dc52ca858de7.png" alt="a_i" style="vertical-align: -3px"/>, <img class="math" src="../_images/math/b3dc84ef617947d4e7dd819230905aec93c4eb60.png" alt="~~i=1..N_c" style="vertical-align: -3px"/> are the finite element nodes corresponding to the multiplier. The discrete contact condition is now expressed in a weak form by</p>
+<div class="math">
+<p><img src="../_images/math/ac9e27fa5abb8f35f234da94219c8c0dc097a40a.png" alt="\int_{\Gamma_c} (\mu_N^h - \lambda_N^h) (u_N - \text{gap}) d\Gamma \ge 0 ~~ \forall \mu_N^h \in \Lambda_N^h."/></p>
+</div><p>In that case, the component <img class="math" src="../_images/math/de5d763e30c0c58cb7ee7b3218111923fc6081a8.png" alt="\lambda_N^i" style="vertical-align: -5px"/> is a contact stress (<img class="math" src="../_images/math/702f36fe3c3236ee12cb6ce99d8a4683a26e47a0.png" alt="N/m^2" style="vertical-align: -5px"/>) and the matrix <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> can be written</p>
+<div class="math">
+<p><img src="../_images/math/f1fb4a683c28bc6aab08b3ff39ac56b82c957378.png" alt="(B_N)_{ij} = \int_{\Gamma_c} \psi_i \varphi_j d\Gamma."/></p>
+</div><p>The matrix <img class="math" src="../_images/math/e7f63fb006edebab65ba811568fbde44427d09fb.png" alt="B_T" style="vertical-align: -3px"/> can also be written in a similar way. The friction condition can be written in a weak form</p>
+<div class="math">
+<p><img src="../_images/math/bf6a480c26b6593912d9e7a06b1ca02464a92db4.png" alt="\int_{\Gamma_c} (\mu_T^h - \lambda_T^h) \dot{u}_T d\Gamma \ge 0 ~~ \forall \mu_T^h \in \Lambda_T^h({\mathscr F}\lambda_N^h),"/></p>
+</div><p>where <img class="math" src="../_images/math/7b4c00846d62abf3e3dd12c7fa568b3d139601f4.png" alt="\Lambda_T^h({\mathscr F}\lambda_N^h)" style="vertical-align: -5px"/> is the discrete set of admissible friction stress.</p>
+<p>Finally, the expression of the direct nodal contact condition are recovered</p>
+<div class="math">
+<p><img src="../_images/math/4a9f1dc1a35eebac35bd691dfc0bed3822f3a4a7.png" alt="K U = L + B_N^T \lambda_N + B_T^T \lambda_T,
+
+-\frac{1}{r\alpha_i}(\lambda_N^i - P_{]-\infty, 0]}(\lambda_N^i - \alpha_i r ((B_N U)_i - \text{gap}_i))) = 0, ~~ i = 1..N_c,
+
+-\frac{1}{r\alpha_i}(\lambda_T^i - P_{{\mathscr B}(-{\mathscr F}P_{]-\infty, 0]}(\lambda_N^i - \alpha_i r ((B_N U)_i - \text{gap}_i)))}(\lambda_T^i - \alpha_i r (B_T U - B_T U^{0})_i)) = 0, ~~ i = 1..N_c,"/></p>
+</div><p>except that now <img class="math" src="../_images/math/de5d763e30c0c58cb7ee7b3218111923fc6081a8.png" alt="\lambda_N^i" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/e547338d13284addf7bafb2af8a030034535df4e.png" alt="\lambda_T^i" style="vertical-align: -5px"/> are force densities, and <img class="math" src="../_images/math/7e46fc708bb0d019ec0b54d24b166024d6c146ff.png" alt="\alpha_i" style="vertical-align: -3px"/> has to be now chosen proportional to <img class="math" src="../_images/math/4a18e6a79f8a4d426093a459d67df102178d5187.png" alt="1/h^d" style="vertical-align: -5px"/> such that the augmentation parameter <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" style="vertical-align: 0px"/> can still be chosen close to the Young modulus of the elastic body.</p>
+<p>Note that without additional stabilization technique (see <a class="reference internal" href="../biblio.html#hi-re2010" id="id4">[HI-RE2010]</a>) an inf-sup condition have to be satisfied between the finite element of the displacement and the one for the multipliers. This means in particular that the finite element for the multiplier have to be &#8220;less rich&#8221; than the one for the displacement.</p>
+</div>
+<div class="section" id="weak-integral-contact-condition">
+<span id="weak-integral-contact-section"></span><h2>Weak integral contact condition<a class="headerlink" href="#weak-integral-contact-condition" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The weak integral contact formulation allows not to explicitly describe the discrete set of admissible stress. See also <a class="reference internal" href="model_Nitsche.html#nitsche-contact-small-def-section"><em>Generic Nitsche&#8217;s method for contact with friction condition</em></a>. The contact stress (including the friction one) is described on a finite element space <img class="math" src="../_images/math/55b12682e66c892221aca326192f7a8be9c5844a.png" alt="W^h" style="vertical-align: 0px"/> on the contact boundary <img class="math" src="../_images/math/2e78fb4781b2620fa10368d193dd418062230428.png" alt="\Gamma_c" style="vertical-align: -3px"/>:</p>
+<div class="math">
+<p><img src="../_images/math/a3cd91f0fa9a7f1613fdcd30871a8b85a264df23.png" alt="\lambda^h \in W^h = \left\{ \sum \lambda_i \psi_i, \lambda_i \in I\hspace{-0.2em}R^d \right\}"/></p>
+</div><p>where <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> is the dimension of the problem and <img class="math" src="../_images/math/75b7bc3d0bbe11946d21dabacfde02b7d0978b3f.png" alt="\psi_i" style="vertical-align: -4px"/> still the shapes functions on which the contact stress is developed. Now, given a outward unit vector <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> on the contact boundary <img class="math" src="../_images/math/2e78fb4781b2620fa10368d193dd418062230428.png" alt="\Gamma_c" style="vertical-align: -3px"/> (usually the normal to the obstacle), we make the standard decompositions:</p>
+<div class="math">
+<p><img src="../_images/math/4b8a0847476ac2abc267ada77988830fec66c63e.png" alt="\lambda_N^h = \lambda^h \cdot n, ~~~~ \lambda_T^h = \lambda^h - \lambda_N^h n, ~~~~
+u_N^h = u^h \cdot n, ~~~~ u_T^h = u^h - u_N^h n,"/></p>
+</div><p>where <img class="math" src="../_images/math/072fa92ba1c8a5d43b0dfa5628bc88d08e6a9808.png" alt="u^h" style="vertical-align: 0px"/> is the displacement field approximated on a finite element space <img class="math" src="../_images/math/f66eeb03c997a4a17f10178433d3dbc3db338cd3.png" alt="V^h" style="vertical-align: 0px"/>. This allows to express the contact condition in the following way</p>
+<div class="math">
+<p><img src="../_images/math/1534de5430249d85501f4ce29835be57130e94e0.png" alt="\displaystyle \int_{\Gamma_c} (\lambda^h_N + (\lambda^h_N - r(u^h_N-gap))_-)\mu^h_N d\Gamma = 0 ~~~~ \forall \mu^h \in W^h,"/></p>
+</div><p>where <img class="math" src="../_images/math/b6c4d75697e73d0a735f8c916e08f068031d8335.png" alt="gap" style="vertical-align: -4px"/> is a given initial gap in reference configuration, <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" style="vertical-align: 0px"/> is an augmentation parameter and <img class="math" src="../_images/math/6b12b1f2b6d6251fcd15bda6cf9e963617f8c737.png" alt="(\cdot)_-:I\hspace{-0.2em}R\rightarrow I\hspace{-0.2em}R_+" style="vertical-align: -5px"/> is the negative part. The friction condition can similarly be written:</p>
+<div class="math">
+<p><img src="../_images/math/5950ea8154876c04bab542c644056eb9ffa7d8dc.png" alt="\displaystyle \int_{\Gamma_c} (\lambda^h_T -P_{B(\mathscr F(\lambda^h_N - r(u^h_N-gap))_-)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)))\cdot \mu^h_T d\Gamma = 0 ~~~~ \forall \mu^h \in W^h,"/></p>
+</div><p>where <img class="math" src="../_images/math/9d089fa4f45734d47aacb931c7114c718ecc48d9.png" alt="B(\rho)" style="vertical-align: -4px"/> is the closed ball of center  <img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0" style="vertical-align: 0px"/> and radius <img class="math" src="../_images/math/0027034d8a10372a06deaf4f4084c01956587479.png" alt="\rho" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/b3162d96e63665b4fb1a30cb51aaf4feabae7a4c.png" alt="P_{B(\rho)}" style="vertical-align: -6px"/> is the orthogonal projection on it (By convenyion, the ball reduces to the origin dor <img class="math" src="../_images/math/d97c65bf1a266ce51a28a9120b8fcfd6a1bd8078.png" alt="\rho \le 0" style="vertical-align: -4px"/>). The term <img class="math" src="../_images/math/e90f19d82a9ae020f42bb5a691041d0ec74f5d8c.png" alt="\alpha(u^h_T-w^h_T)" style="vertical-align: -5px"/> represent here an approximation of the sliding velocity. The parameter <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha" style="vertical-align: 0px"/> and the field <img class="math" src="../_images/math/0e69684a3a2731e395f5931cb2017e34a56279aa.png" alt="w^h_T" style="vertical-align: -5px"/> have to be adapted with respect to the chosen approximation. For instance, if the standard finite difference</p>
+<div class="math">
+<p><img src="../_images/math/f3d35b2454d7d07b47f46b6dd759d9540327f0df.png" alt="(\dot{u}^h_T)^{n+1} \approx \displaystyle \frac{(u^h_T)^{n+1} - (u^h_T)^{n}}{dt}"/></p>
+</div><p>is chosen, then one has to take <img class="math" src="../_images/math/20762f70597fc57373c2a07ce732017a7d3a5f0c.png" alt="\alpha = 1/dt" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/14112aa612390be3f16e3a40e846be2e41ef7ff5.png" alt="w^h_T = (u^h_T)^{n}" style="vertical-align: -5px"/>. Note that due to the symmetry of the ball, the parameter <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha" style="vertical-align: 0px"/> do not play an important role in the formulation. It can simply be viewed as a scaling between the augmentation parameter for the contact condition and the one for the friction condition. Note also that contrarily to the previous formulations of contact, here there is not a strict independance of the conditions with respect to the augmentation parameter (the independance only occurs at the continuous level).</p>
+<p>GetFEM++ bricks implement four versions of the contact condition derived from the Alart-Curnier augmented Lagrangian formulation <a class="reference internal" href="../biblio.html#al-cu1991" id="id5">[AL-CU1991]</a>. The first one corresponds to the non-symmetric version. It consists in solving:</p>
+<div class="math">
+<p><img src="../_images/math/e9cc5da12c4d9acfa3d074b78b258dba4cc1ffa2.png" alt="\left\{\begin{array}{l}
+a(u^h, v^h) + \displaystyle \int_{\Gamma_c} \lambda^h \cdot v^h d\Gamma = \ell(v^h) ~~~~ \forall v^h \in V^h, \\
+\displaystyle -\frac{1}{r}\int_{\Gamma_c} (\lambda^h_N + (\lambda^h_N - r(u^h_N-gap))_-)\mu^h_N d\Gamma \\
+~~~~~~~~~~\displaystyle -\frac{1}{r}\int_{\Gamma_c} (\lambda^h_T -P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)))\cdot \mu^h_T d\Gamma = 0 ~~~~ \forall \mu^h \in W^h,
+\end{array}\right."/></p>
+</div><p>where <img class="math" src="../_images/math/8567268d770c82c986858ab36cd724c03a223411.png" alt="a(\cdot, \cdot)" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/a9192543717fdd21375d78aac43a0b819e9a3890.png" alt="\ell(v)" style="vertical-align: -4px"/> represent the remaining parts of the problem in  <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>, for instance linear elasticity and <img class="math" src="../_images/math/3d65bd53adf3d8c58db21c2d7c4ae1edb13d3504.png" alt="\rho={\mathscr F}(\lambda^h_N - r(u^h_N-gap))_-" style="vertical-align: -5px"/>. Note that in this case, the mathematical analysis leads to choose a value for the augmentation parameter of the kind <img class="math" src="../_images/math/ab82def8ce7dd398aabf7da5b85032f53612a50e.png" alt="r = r_0 / r" style="vertical-align: -5px"/> with <img class="math" src="../_images/math/630f232dcbff18b52c950e05ea525a8a119ff77b.png" alt="r_0" style="vertical-align: -3px"/> having the dimension of a elasticity modulus (a classical choice is the value of Young&#8217;s modulus). In order to write a Newton iteration, one has to derive the tangent system. It can be written, reporting only the contact and friction terms and not the right hand side:</p>
+<div class="math">
+<p><img src="../_images/math/19aa2a60296df9825e09cda0dbec78832a5d2eb8.png" alt="\left\{\begin{array}{l}
+\cdots - \displaystyle \int_{\Gamma_c} \delta_{\lambda} \cdot v d\Gamma = \cdots  ~~~~ \forall v^h \in V^h, \\
+\displaystyle -\frac{1}{r}\int_{\Gamma_c}(1-H(r(u^h_N-gap)-\lambda_N))\delta_{\lambda_N}\mu^h_N d\Gamma
+\displaystyle -\int_{\Gamma_c}H(r(u^h_N-gap)-\lambda_N)\delta_{u_N}\mu^h_N d\Gamma \\
+~~~~~~\displaystyle -\frac{1}{r}\int_{\Gamma_c}(\delta_{\lambda_T} - D_xP_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{\lambda_T})\cdot\mu^h_T d\Gamma \\
+~~~~~~\displaystyle -\int_{\Gamma_c}\alpha D_xP_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{u_T}\cdot\mu^h_T d\Gamma \\
+~~~~~~ \displaystyle +\int_{\Gamma_c}({\mathscr F} D_{\rho}P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{u_N})\cdot\mu^h_T d\Gamma \\
+~~~~~~ \displaystyle -\int_{\Gamma_c}(\frac{\mathscr F}{r} D_{\rho}P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{\lambda_N})\cdot\mu^h_T d\Gamma = \cdots ~~~ \forall \mu^h \in W^h,
+\end{array}\right."/></p>
+</div><p>where <img class="math" src="../_images/math/b88bf4b6e846e26da67cf1506ef5b2ed629c1473.png" alt="H(\cdot)" style="vertical-align: -4px"/> is the Heaviside function (0 for a negative argument and 1 for a non-negative argument), <img class="math" src="../_images/math/a1a7197cc3a387aee3237b06bcc84c57e0ccd602.png" alt="D_xP_{B(\rho)}(x)" style="vertical-align: -6px"/> and <img class="math" src="../_images/math/688de8f1e61b06331c375dc0893482d92188f1e9.png" alt="D_{\rho}P_{B(\rho)}(x)" style="vertical-align: -6px"/> are the derivatives of the projection on <img class="math" src="../_images/math/9d089fa4f45734d47aacb931c7114c718ecc48d9.png" alt="B(\rho)" style="vertical-align: -4px"/> (assumed to vanish for <img class="math" src="../_images/math/d97c65bf1a266ce51a28a9120b8fcfd6a1bd8078.png" alt="\rho \le 0" style="vertical-align: -4px"/>) and <img class="math" src="../_images/math/9258fbd95515181f2348a03b512cfea45e0bad3d.png" alt="\delta_{\lambda}" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/870f57fc2b9e34d7f6a3e8ecb10519274ee6f1b4.png" alt="\delta_{u}" style="vertical-align: -3px"/> are the unknown corresponding to the tangent problem.</p>
+<p>The second version corresponds to the &#8220;symmetric&#8221; version. It is in fact symmetric in the frictionless case only (because in this case it directly derives from the augmented Lagrangian formulation). It reads:</p>
+<div class="math">
+<p><img src="../_images/math/0510b8d1e23fb5f9f0eeff47959d3fc14402ff33.png" alt="\left\{\begin{array}{l}
+a(u^h, v^h) + \displaystyle \int_{\Gamma_c} (\lambda^h_N - r(u^h_N-gap))_- v^h_N d\Gamma \\
+~~~~~~ - \displaystyle \int_{\Gamma_c} P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)))\cdot v^h_T d\Gamma = \ell(v^h) ~~~~ \forall v^h \in V^h, \\
+\displaystyle -\frac{1}{r}\int_{\Gamma_c} (\lambda^h_N + (\lambda^h_N - r(u^h_N-gap))_-)\mu^h_N d\Gamma \\
+~~~~~~~~~~\displaystyle -\frac{1}{r}\int_{\Gamma_c} (\lambda^h_T -P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)))\cdot \mu^h_T d\Gamma = 0 ~~~~ \forall \mu^h \in W^h,
+\end{array}\right."/></p>
+</div><p>and the tangent system:</p>
+<div class="math">
+<p><img src="../_images/math/6fbfa845906e338b4bd6db27bf6dae50e501a92b.png" alt="\left\{\begin{array}{l}
+\cdots + \displaystyle \int_{\Gamma_c} rH(r(u^h_N-gap)-\lambda_N)\delta_{u_N} v_N -  H(r(u^h_N-gap)-\lambda_N)\delta_{\lambda_N} v_N d\Gamma \\
+~~~~~~+ \displaystyle \int_{\Gamma_c} r \alpha D_xP_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)) \delta_{u_T}\cdot v^h_T d\Gamma \\
+~~~~~~- \displaystyle \int_{\Gamma_c} D_xP_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)) \delta_{\lambda_T}\cdot v^h_T d\Gamma \\
+~~~~~~- \displaystyle \int_{\Gamma_c} (r{\mathscr F} D_{\rho}P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)) \delta_{u_N})\cdot v^h_T d\Gamma \\
+~~~~~~- \displaystyle \int_{\Gamma_c} ({\mathscr F} D_{\rho}P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T)) \delta_{\lambda_N})\cdot v^h_T d\Gamma = \cdots  ~~~~ \forall v^h \in V^h, \\
+\displaystyle -\frac{1}{r}\int_{\Gamma_c}(1-H(r(u^h_N-gap)-\lambda_N))\delta_{\lambda_N}\mu^h_N d\Gamma
+\displaystyle -\int_{\Gamma_c}H(r(u^h_N-gap)-\lambda_N)\delta_{u_N}\mu^h_N d\Gamma \\
+~~~~~~\displaystyle -\frac{1}{r}\int_{\Gamma_c}(\delta_{\lambda_T} - D_xP_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{\lambda_T})\cdot\mu^h_T d\Gamma \\
+~~~~~~\displaystyle -\int_{\Gamma_c}\alpha D_xP_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{u_T}\cdot\mu^h_T d\Gamma \\
+~~~~~~ \displaystyle +\int_{\Gamma_c}({\mathscr F} D_{\rho}P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{u_N})\cdot\mu^h_T d\Gamma \\
+~~~~~~ \displaystyle -\int_{\Gamma_c}(\frac{\mathscr F}{r} D_{\rho}P_{B(\rho)}(\lambda^h_T - r\alpha(u^h_T-w^h_T))\delta_{\lambda_N})\cdot\mu^h_T d\Gamma = \cdots ~~~ \forall \mu^h \in W^h,
+\end{array}\right."/></p>
+</div><p>still with <img class="math" src="../_images/math/3d65bd53adf3d8c58db21c2d7c4ae1edb13d3504.png" alt="\rho={\mathscr F}(\lambda^h_N - r(u^h_N-gap))_-" style="vertical-align: -5px"/>.</p>
+<p>The third version corresponds to a penalized contact and friction condition. It does not require the use of a multiplier. In this version, the parameter <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" style="vertical-align: 0px"/> is a penalization parameter and as to be large enough to perform a good approximation of the non-penetration and the Coulomb friction conditions. The formulation reads:</p>
+<div class="math">
+<p><img src="../_images/math/f5c1d78efd4d5858a07834b4e1dce053a1e850c3.png" alt="\left\{\begin{array}{l}
+a(u^h, v^h) + \displaystyle \int_{\Gamma_c} r(u^h_N-gap)_+ v^h_N d\Gamma \\
+~~~~~~ + \displaystyle \int_{\Gamma_c} P_{B(\mathscr F r(u^h_N-gap)_+)}(r\alpha(u^h_T-w^h_T))\cdot v^h_T d\Gamma = \ell(v^h) ~~~~ \forall v^h \in V^h,
+\end{array}\right."/></p>
+</div><p>and the tangent system:</p>
+<div class="math">
+<p><img src="../_images/math/7d490d86af2ab63d54cf35091c09d08b238d44ef.png" alt="\left\{\begin{array}{l}
+\cdots + \displaystyle \int_{\Gamma_c} rH(u^h_N-gap)\delta_{u_N} v_N d\Gamma \\
+~~~~~~- \displaystyle \int_{\Gamma_c} r \alpha D_xP_{B(\mathscr F r(u^h_N-gap)_+)}(r\alpha(u^h_T-w^h_T)) \delta_{u_T}\cdot v^h_T d\Gamma \\
+~~~~~~+ \displaystyle \int_{\Gamma_c} ({r\mathscr F} H(u^h_N-gap) D_{\rho}P_{B(\mathscr F r(u^h_N-gap)_+)}(r\alpha(u^h_T-w^h_T)) \delta_{u_N})\cdot v^h_T d\Gamma = \cdots  ~~~~ \forall v^h \in V^h,
+\end{array}\right."/></p>
+</div></div>
+<div class="section" id="numerical-continuation">
+<h2>Numerical continuation<a class="headerlink" href="#numerical-continuation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>In addition, <em>GetFEM++</em> develops a method of numerical continuation for finding numerical solutions of discretized evolutionary contact problems based on the weak integral contact condition (see <a class="reference internal" href="model_continuation.html#ud-model-continuation"><em>Numerical continuation and bifurcation</em></a> for a general introduction). For this purpose, a parameter-dependent sliding velocity may be added to the friction condition so that it becomes:</p>
+<div class="math">
+<p><img src="../_images/math/afd4e55e95413b445e6406b9a17c751355587d1f.png" alt="\displaystyle \int_{\Gamma_c} \Bigl(\lambda^h_T -P_{B(-\mathscr F\lambda^h_N)}\bigl(\lambda^h_T - r\bigl(\alpha(u^h_T-w^h_T)+(1-\gamma)z^h_T\bigr)\bigr)\Bigr)\cdot \mu^h_T d\Gamma = 0 ~~~~ \forall \mu^h \in W^h."/></p>
+</div><p>Here, <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" style="vertical-align: -4px"/> is a parameter and <img class="math" src="../_images/math/c8ab6fab07d507879ffacdf898d85b172da77a66.png" alt="z^h_T" style="vertical-align: -5px"/> is an initial sliding velocity. It is worth mentioning that if one chooses</p>
+<div class="math">
+<p><img src="../_images/math/999e050d59af1fa57886a3278a26aedea58bbb04.png" alt="\displaystyle \alpha = \frac{1}{dt},\quad w^h_T = (u^h_T)^{n},\quad z^h_T = \frac{(u^h_T)^{n} - (u^h_T)^{n-1}}{dt},"/></p>
+</div><p>then he recovers the standard friction condition at time <img class="math" src="../_images/math/6e3b73df5052dad2dbf7f5a7f82882bc2f0a2095.png" alt="t_{n}" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/1b9dd954ceaf76bff220ad646427c943137b3bd4.png" alt="t_{n+1}" style="vertical-align: -5px"/> for <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" style="vertical-align: -4px"/> equal to 0 and 1, respectively.</p>
+</div>
+<div class="section" id="friction-law">
+<h2>Friction law<a class="headerlink" href="#friction-law" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Apart from pure Coulomb friction <img class="math" src="../_images/math/abb661a130d18e4ead49cd0970ce196a1dc75279.png" alt="\rho = {\mathscr F} \left| \sigma_n \right|" style="vertical-align: -5px"/>,
+the weak integral contact framework in <em>GetFEM++</em> also supports a more generic friction
+law description:</p>
+<div class="math">
+<p><img src="../_images/math/6eda895e107c4c97636baf95b0d74dce0a5b0cd0.png" alt="\displaystyle \rho = \left\{\begin{array}{ll}
+\tau_{adh} + {\mathscr F} \left| \sigma_n \right| &amp;
+~~~\mbox{if } ~~ \tau_{adh} + {\mathscr F} \left| \sigma_n \right| &lt; \tau_{tresca} \\
+\tau_{tresca} &amp; ~~~\mbox{otherwise}
+\end{array}\right."/></p>
+</div><p>In this equation <img class="math" src="../_images/math/0027034d8a10372a06deaf4f4084c01956587479.png" alt="\rho" style="vertical-align: -4px"/> is the admissible friction stress for a given
+normal stress <img class="math" src="../_images/math/c5e9247c3c8ef53d6cb3ff2598c539b6aac31cdd.png" alt="\sigma_n" style="vertical-align: -3px"/>, <img class="math" src="../_images/math/3cceff95a957686059b71f99927b8e8add349fe3.png" alt="{\mathscr F}" style="vertical-align: 0px"/> is the coefficient of friction,
+<img class="math" src="../_images/math/db550b0171b812446d4c3738eaf7ae391d429175.png" alt="\tau_{adh}" style="vertical-align: -3px"/> is an adhesional (load-independent) shear stress and
+<img class="math" src="../_images/math/dc7ea32d28e2c997aef8bc5c3cab4bce82849160.png" alt="\tau_{tresca}" style="vertical-align: -3px"/> is a maximum shear stress limit.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/getfemuserfrictionlaw.png"><img alt="../_images/getfemuserfrictionlaw.png" src="../_images/getfemuserfrictionlaw.png" style="width: 198.5px; height: 130.0px;" /></a>
+</div>
+</div>
+<div class="section" id="add-a-contact-with-or-without-friction-to-a-model">
+<h2>Add a contact with or without friction to a model<a class="headerlink" href="#add-a-contact-with-or-without-friction-to-a-model" title="このヘッドラインへのパーマリンク">¶</a></h2>
+</div>
+<div class="section" id="frictionless-basic-contact-brick">
+<h2>Frictionless basic contact brick<a class="headerlink" href="#frictionless-basic-contact-brick" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>In order to add a frictionless contact brick you call the model object method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_basic_contact_brick</span>
+     <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname_u</span><span class="p">,</span> <span class="n">multname_n</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span> <span class="n">BN</span><span class="p">,</span> <span class="n">dataname_gap</span><span class="p">,</span> <span class="n">dataname_alpha</span><span class="p">,</span> <span class="n">aug_version</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a frictionless contact brick on <tt class="docutils literal"><span class="pre">varname_u</span></tt> thanks to a multiplier variable <tt class="docutils literal"><span class="pre">multname_n</span></tt>. If <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> is the vector of degrees of freedom on which the unilateral constraint is applied, the matrix <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> have to be such that this condition is defined by <img class="math" src="../_images/math/361fde00fd044201671f74ac3588ea25b234ba3e.png" alt="B_N U \le 0" style="vertical-align: -3px"/>. The constraint is prescribed thank to a multiplier <tt class="docutils literal"><span class="pre">multname_n</span></tt> whose dimension should be equal to the number of lines of <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/>. The variable <tt class="docutils literal"><span class="pre">dataname_r</span></tt> is the name of the augmentation parameter <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" style="vertical-align: 0px"/> should be chosen in a range of acceptable values. <tt class="docutils literal"><span class="pre">dataname_gap</span></tt> is an optional parameter representing the initial gap. It can be a single value or a vector of value. <tt class="docutils literal"><span class="pre">dataname_alpha</span></tt> is an optional homogenization parameter for the augmentation parameter.</p>
+<p>The parameter <cite>aug_version</cite> indicates the augmentation strategy : 1 for the non-symmetric Alart-Curnier augmented Lagrangian, 2 for the symmetric one, 3 for the unsymmetric method based on augmented multipliers.</p>
+<p>Note that is possible to change the basic contact matrix <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> by using:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">contact_brick_set_BN</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">indbrick</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="basic-contact-brick-with-friction">
+<h2>Basic contact brick with friction<a class="headerlink" href="#basic-contact-brick-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><dl class="docutils">
+<dt>getfem::add_basic_contact_brick</dt>
+<dd>(md, varname_u, multname_n, multname_t, dataname_r, BN, dataname_friction_coeff, dataname_gap, dataname_alpha, aug_version);</dd>
+</dl>
+</div></blockquote>
+<p>This function adds a contact brick with friction on <tt class="docutils literal"><span class="pre">varname_u</span></tt> thanks to two
+multiplier variables <tt class="docutils literal"><span class="pre">multname_n</span></tt> and <tt class="docutils literal"><span class="pre">multname_t</span></tt>. If <tt class="docutils literal"><span class="pre">U</span></tt> is the vector
+of degrees of freedom on which the condition is applied,
+the matrix <tt class="docutils literal"><span class="pre">B_N</span></tt> has to be such that the contact condition is defined
+by <img class="math" src="../_images/math/af8e84d978242532bc967a1e4e8665fb34195b04.png" alt="B_N U \le gap" style="vertical-align: -4px"/> and <tt class="docutils literal"><span class="pre">B_T</span></tt> have to be such that the relative
+tangential
+displacement is <img class="math" src="../_images/math/39353b525a768cd19e1233a61c4ae7e83791d598.png" alt="B_T U" style="vertical-align: -3px"/>. The matrix <tt class="docutils literal"><span class="pre">B_T</span></tt> should have as many rows as
+<tt class="docutils literal"><span class="pre">B_N</span></tt> multiplied by <img class="math" src="../_images/math/6a9f2f925b6ad9c226b9ad118c60d88d4a8b6bd3.png" alt="d-1" style="vertical-align: -1px"/> where <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> is the domain dimension.
+The contact condition is prescribed thank to a multiplier
+<tt class="docutils literal"><span class="pre">multname_n</span></tt> whose dimension should be equal to the number of rows of
+<tt class="docutils literal"><span class="pre">B_N</span></tt> and the friction condition by a multiplier <tt class="docutils literal"><span class="pre">multname_t</span></tt> whose
+size should be the number of rows of <tt class="docutils literal"><span class="pre">B_T</span></tt>.
+The parameter <tt class="docutils literal"><span class="pre">dataname_friction_coeff</span></tt> describes the friction
+coefficient. It could be a scalar or a vector describing the
+coefficient on each contact condition.
+The augmentation parameter <tt class="docutils literal"><span class="pre">r</span></tt> should be chosen in a range of acceptable values
+(see Getfem user documentation). <tt class="docutils literal"><span class="pre">dataname_gap</span></tt> is an
+optional parameter representing the initial gap. It can be a single value
+or a vector of value. <tt class="docutils literal"><span class="pre">dataname_alpha</span></tt> is an optional homogenization
+parameter for the augmentation parameter.</p>
+<p>The parameter <cite>aug_version</cite> indicates the augmentation strategy :
+1 for the non-symmetric Alart-Curnier augmented Lagrangian,
+2 for the symmetric one,
+3 for the unsymmetric method based on augmented multipliers and
+4 for the unsymmetric method based on augmented multipliers with De Saxce projection.</p>
+<p>Note that is possible to change the basic contact matrices <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/e7f63fb006edebab65ba811568fbde44427d09fb.png" alt="B_T" style="vertical-align: -3px"/> by using:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">contact_brick_set_BN</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">indbrick</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">contact_brick_set_BT</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">indbrick</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="frictionless-nodal-contact-with-a-rigid-obstacle-brick">
+<h2>Frictionless nodal contact with a rigid obstacle brick<a class="headerlink" href="#frictionless-nodal-contact-with-a-rigid-obstacle-brick" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><dl class="docutils">
+<dt>getfem::add_nodal_contact_with_rigid_obstacle_brick</dt>
+<dd>(md, mim, varname_u, multname_n, dataname_r, region, obstacle, aug_version);</dd>
+</dl>
+</div></blockquote>
+<p>This function adds a direct nodal frictionless contact condition with a rigid obstacle to the model. The condition is applied on the variable <tt class="docutils literal"><span class="pre">varname_u</span></tt>
+on the boundary corresponding to <tt class="docutils literal"><span class="pre">region</span></tt>. The rigid obstacle should
+be described with the string <tt class="docutils literal"><span class="pre">obstacle</span></tt> being a signed distance to
+the obstacle. This string should be an expression where the coordinates
+are &#8216;x&#8217;, &#8216;y&#8217; in 2D and &#8216;x&#8217;, &#8216;y&#8217;, &#8216;z&#8217; in 3D. For instance, if the rigid
+obstacle correspond to <img class="math" src="../_images/math/2b07223c0a658743f3814bc594df03ba64566a8e.png" alt="z \le 0" style="vertical-align: -3px"/>, the corresponding signed distance will
+be simply &#8216;z&#8217;. <tt class="docutils literal"><span class="pre">multname_n</span></tt> should be a fixed size variable whose size is
+the number of degrees of freedom on boundary <tt class="docutils literal"><span class="pre">region</span></tt>. It represents the
+contact equivalent nodal forces.
+The augmentation parameter <tt class="docutils literal"><span class="pre">r</span></tt> should be chosen in a
+range of acceptable values (close to the Young modulus of the elastic
+body, see Getfem user documentation). 1 for the non-symmetric Alart-Curnier augmented Lagrangian, 2 for the symmetric one, 3 for the unsymmetric method based on augmented multipliers.</p>
+</div>
+<div class="section" id="nodal-contact-with-a-rigid-obstacle-brick-with-friction">
+<h2>Nodal contact with a rigid obstacle brick with friction<a class="headerlink" href="#nodal-contact-with-a-rigid-obstacle-brick-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><dl class="docutils">
+<dt>getfem::add_nodal_contact_with_rigid_obstacle_brick</dt>
+<dd>(md, mim, varname_u, multname_n, multname_t, dataname_r,
+dataname_friction_coeff, region, obstacle, aug_version);</dd>
+</dl>
+</div></blockquote>
+<p>This function adds a direct nodal contact with friction condition with a rigid
+obstacle to the model. The condition is applied on the variable <tt class="docutils literal"><span class="pre">varname_u</span></tt>
+on the boundary corresponding to <tt class="docutils literal"><span class="pre">region</span></tt>. The rigid obstacle should
+be described with the string <tt class="docutils literal"><span class="pre">obstacle</span></tt> being a signed distance to
+the obstacle. This string should be an expression where the coordinates
+are &#8216;x&#8217;, &#8216;y&#8217; in 2D and &#8216;x&#8217;, &#8216;y&#8217;, &#8216;z&#8217; in 3D. For instance, if the rigid
+obstacle correspond to <img class="math" src="../_images/math/2b07223c0a658743f3814bc594df03ba64566a8e.png" alt="z \le 0" style="vertical-align: -3px"/>, the corresponding signed distance will
+be simply &#8216;z&#8217;. <tt class="docutils literal"><span class="pre">multname_n</span></tt> should be a fixed size variable whose size is
+the number of degrees of freedom on boundary <tt class="docutils literal"><span class="pre">region</span></tt>. It represents the
+contact equivalent nodal forces.
+<tt class="docutils literal"><span class="pre">multname_t</span></tt> should be a fixed size variable whose size is
+the number of degrees of freedom on boundary <tt class="docutils literal"><span class="pre">region</span></tt> multiplied by
+<img class="math" src="../_images/math/6a9f2f925b6ad9c226b9ad118c60d88d4a8b6bd3.png" alt="d-1" style="vertical-align: -1px"/> where <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> is the domain dimension. It represents the
+friction equivalent nodal forces.
+The augmentation parameter <tt class="docutils literal"><span class="pre">r</span></tt> should be chosen in a
+range of acceptable values (close to the Young modulus of the elastic
+body, see Getfem user documentation). <tt class="docutils literal"><span class="pre">dataname_friction_coeff</span></tt> is
+the friction coefficient. It could be a scalar or a vector of values
+representing the friction coefficient on each contact node.</p>
+<p>The parameter <cite>aug_version</cite> indicates the augmentation strategy :
+1 for the non-symmetric Alart-Curnier augmented Lagrangian,
+2 for the symmetric one,
+3 for the unsymmetric method based on augmented multipliers and
+4 for the unsymmetric method based on augmented multipliers with De Saxce projection.</p>
+</div>
+<div class="section" id="frictionless-nodal-contact-between-non-matching-meshes-brick">
+<h2>Frictionless nodal contact between non-matching meshes brick<a class="headerlink" href="#frictionless-nodal-contact-between-non-matching-meshes-brick" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><dl class="docutils">
+<dt>getfem::add_nodal_contact_between_nonmatching_meshes_brick</dt>
+<dd>(md, mim1, mim2, varname_u1, varname_u2, multname_n, dataname_r,
+rg1, rg2, slave1=true, slave2=false, aug_version=1);</dd>
+</dl>
+</div></blockquote>
+<p>This function adds a frictionless contact condition between two faces of one
+or two elastic bodies. The condition is applied on the variable <cite>varname_u</cite> or
+the variables <cite>varname_u1</cite> and <cite>varname_u2</cite> depending if a single or
+two distinct displacement fields are given. Vectors <cite>rg1</cite> and <cite>rg2</cite>
+contain pairs of regions expected to come in contact with each other. In
+case of a single region per side, <cite>rg1</cite> and <cite>rg2</cite> can be given as normal
+integers. In the single displacement variable case the regions defined in
+both <cite>rg1</cite> and <cite>rg2</cite> refer to the variable <cite>varname_u</cite>. In the case of
+two displacement variables, <cite>rg1</cite> refers to <cite>varname_u1</cite> and <cite>rg2</cite> refers
+to <cite>varname_u2</cite>. <cite>multname_n</cite> should be a fixed size variable whose size
+is the number of degrees of freedom on those regions among the ones
+defined in <cite>rg1</cite> and <cite>rg2</cite> which are characterized as &#8220;slaves&#8221;. It
+represents the contact equivalent nodal forces. The augmentation
+parameter <cite>r</cite> should be chosen in a range of acceptabe values (close to
+the Young modulus of the elastic body, see Getfem user documentation).
+The optional parameters <cite>slave1</cite> and <cite>slave2</cite> declare if the regions
+defined in <cite>rg1</cite> and <cite>rg2</cite> are correspondingly considered as &#8220;slaves&#8221;.
+By default <cite>slave1</cite> is true and <cite>slave2</cite> is false, i.e. <cite>rg1</cite> contains
+the slave surfaces, while <cite>rg2</cite> the master surfaces. Preferably only
+one of <cite>slave1</cite> and <cite>slave2</cite> is set to true.</p>
+<p>The parameter <cite>aug_version</cite> indicates the augmentation strategy :
+1 for the non-symmetric Alart-Curnier augmented Lagrangian,
+2 for the symmetric one,
+3 for the unsymmetric method with augmented multiplier.</p>
+<p>Basically, this brick computes the matrix <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> and the vectors
+gap and alpha and calls the basic contact brick.</p>
+</div>
+<div class="section" id="nodal-contact-between-non-matching-meshes-brick-with-friction">
+<h2>Nodal contact between non-matching meshes brick with friction<a class="headerlink" href="#nodal-contact-between-non-matching-meshes-brick-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><dl class="docutils">
+<dt>getfem::add_nodal_contact_between_nonmatching_meshes_brick</dt>
+<dd><dl class="first last docutils">
+<dt>(md, mim1, mim2, varname_u1, varname_u2, multname_n, multname_t,</dt>
+<dd>dataname_r, dataname_friction_coeff, rg1, rg2, slave1=true,
+slave2=false, aug_version=1);</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p>This function adds a contact with friction condition between two faces of
+one or two elastic bodies. The condition is applied on the variable
+<cite>varname_u</cite> or the variables <cite>varname_u1</cite> and <cite>varname_u2</cite> depending if a
+single or two distinct displacement fields are given. Vectors <cite>rg1</cite> and <cite>rg2</cite>
+contain pairs of regions expected to come in contact with each other. In
+case of a single region per side, <cite>rg1</cite> and <cite>rg2</cite> can be given as normal
+integers. In the single displacement variable case the regions defined in
+both <cite>rg1</cite> and <cite>rg2</cite> refer to the variable <cite>varname_u</cite>. In the case of
+two displacement variables, <cite>rg1</cite> refers to <cite>varname_u1</cite> and <cite>rg2</cite> refers
+to <cite>varname_u2</cite>. <cite>multname_n</cite> should be a fixed size variable whose size
+is the number of degrees of freedom on those regions among the ones
+defined in <cite>rg1</cite> and <cite>rg2</cite> which are characterized as &#8220;slaves&#8221;. It
+represents the contact equivalent nodal normal forces. <cite>multname_t</cite>
+should be a fixed size variable whose size corresponds to the size of
+<cite>multname_n</cite> multiplied by qdim - 1 . It represents the contact
+equivalent nodal tangent (frictional) forces. The augmentation parameter
+<cite>r</cite> should be chosen in a range of acceptabe values (close to the Young
+modulus of the elastic body, see Getfem user documentation). The friction
+coefficient stored in the parameter <cite>friction_coeff</cite> is either a single
+value or a vector of the same size as <cite>multname_n</cite>. The optional
+parameters <cite>slave1</cite> and <cite>slave2</cite> declare if the regions defined in <cite>rg1</cite>
+and <cite>rg2</cite> are correspondingly considered as &#8220;slaves&#8221;. By default <cite>slave1</cite>
+is true and <cite>slave2</cite> is false, i.e. <cite>rg1</cite> contains the slave surfaces,
+while <cite>rg2</cite> the master surfaces. Preferably only one of <cite>slave1</cite> and
+<cite>slave2</cite> is set to true.</p>
+<p>The parameter <cite>aug_version</cite> indicates the augmentation strategy :
+1 for the non-symmetric Alart-Curnier augmented Lagrangian,
+2 for the symmetric one,
+3 for the unsymmetric method with augmented multiplier and
+4 for the unsymmetric method with augmented multiplier and De Saxce projection.</p>
+<p>Basically, this brick computes the matrices <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/e7f63fb006edebab65ba811568fbde44427d09fb.png" alt="B_T" style="vertical-align: -3px"/>
+as well the vectors gap and alpha and calls the basic contact brick.</p>
+</div>
+<div class="section" id="hughes-stabilized-frictionless-contact-condition">
+<h2>Hughes stabilized frictionless contact condition<a class="headerlink" href="#hughes-stabilized-frictionless-contact-condition" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>In order to add a Hughes stabilized frictionless contact brick you call the model object method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_Hughes_stab_basic_contact_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname_u</span><span class="p">,</span> <span class="n">multname_n</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span> <span class="n">BN</span><span class="p">,</span> <span class="n">DN</span><span class="p">,</span> <span class="n">dataname_gap</span><span class="p">,</span> <span class="n">dataname_alpha</span><span class="p">,</span> <span class="n">aug_version</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a Hughes stabilized frictionless contact brick on <tt class="docutils literal"><span class="pre">varname_u</span></tt> thanks to a multiplier variable <tt class="docutils literal"><span class="pre">multname_n</span></tt>. If we take <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> is the vector of degrees of freedom on which the unilateral constraint is applied, and <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> the multiplier Vector of contact force. Then Hughes stabilized frictionless contact condition is defined by the matrix <img class="math" src="../_images/math/8749538be2814e127ab51d09493e373bd112fd14.png" alt="B_N" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/42c6aa7c661c58b660578bbb5fc98cae3ad7f435.png" alt="D_N" style="vertical-align: -3px"/> have to be such that this condition is defined by <img class="math" src="../_images/math/00a04ed2ea390b49354a67df4e8241fdfc0872b5.png" alt="B_N U - D_N \lambda \le 0" style="vertical-align: -3px"/>. Where <img class="math" src="../_images/math/42c6aa7c661c58b660578bbb5fc98cae3ad7f435.png" alt="D_N" style="vertical-align: -3px"/> is the mass matrix relative to stabilized term. The variable <tt class="docutils literal"><span class="pre">dataname_r</span></tt> is the name of the augmentation parameter <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" style="vertical-align: 0px"/> should be chosen in a range of acceptable values. <tt class="docutils literal"><span class="pre">dataname_gap</span></tt> is an optional parameter representing the initial gap. It can be a single value or a vector of value. <tt class="docutils literal"><span class="pre">dataname_alpha</span></tt> is an optional homogenization parameter for the augmentation parameter.</p>
+<p>The parameter <cite>aug_version</cite> indicates the augmentation strategy :  1 for the non-symmetric Alart-Curnier augmented Lagrangian, 2 for the symmetric one, 3 for the unsymmetric method based on augmented multipliers.</p>
+<p>Note that the matrix <img class="math" src="../_images/math/42c6aa7c661c58b660578bbb5fc98cae3ad7f435.png" alt="D_N" style="vertical-align: -3px"/> is a sum of the basic contact term and the Hughes stabilised term. You can change it with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">contact_brick_set_DN</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">indbrick</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="frictionless-integral-contact-with-a-rigid-obstacle-brick">
+<h2>Frictionless integral contact with a rigid obstacle brick<a class="headerlink" href="#frictionless-integral-contact-with-a-rigid-obstacle-brick" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_integral_contact_with_rigid_obstacle_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u</span><span class="p">,</span> <span class="n">multname_n</span><span class="p">,</span> <span class="n">dataname_obs</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a frictionless contact condition with a rigid obstacle
+to the model, which is defined in an integral way. It is the direct
+approximation of an augmented Lagrangian formulation defined at the
+continuous level. The advantage should be a better scalability:
+the number of
+Newton iterations should be more or less independent of the mesh size.
+The condition is applied on the variable <tt class="docutils literal"><span class="pre">varname_u</span></tt>
+on the boundary corresponding to <tt class="docutils literal"><span class="pre">region</span></tt>. The rigid obstacle should
+be described with the data <tt class="docutils literal"><span class="pre">dataname_obstacle</span></tt> being a signed distance to
+the obstacle (interpolated on a finite element method).
+<tt class="docutils literal"><span class="pre">multname_n</span></tt> should be a fem variable representing the contact stress.
+An inf-sup condition between <tt class="docutils literal"><span class="pre">multname_n</span></tt> and <tt class="docutils literal"><span class="pre">varname_u</span></tt> is required.
+The augmentation parameter <tt class="docutils literal"><span class="pre">dataname_r</span></tt> should be chosen in a
+range of acceptable values.</p>
+<p>Possible values for <cite>option</cite> is 1 for the non-symmetric Alart-Curnier
+augmented Lagrangian method, 2 for the symmetric one, 3 for the
+non-symmetric Alart-Curnier method with an additional augmentation
+and 4 for a new unsymmetric method. The default value is 1.</p>
+<p><tt class="docutils literal"><span class="pre">mim</span></tt> represents of course the integration method. Note that it should
+be accurate enough to integrate efficiently the nonlinear terms involved.</p>
+</div>
+<div class="section" id="integral-contact-with-a-rigid-obstacle-brick-with-friction">
+<h2>Integral contact with a rigid obstacle brick with friction<a class="headerlink" href="#integral-contact-with-a-rigid-obstacle-brick-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_integral_contact_with_rigid_obstacle_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u</span><span class="p">,</span> <span class="n">multname_n</span><span class="p">,</span> <span class="n">dataname_obs</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span>
+     <span class="n">dataname_friction_coeffs</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dataname_alpha</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+     <span class="n">dataname_wt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dataname_gamma</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dataname_vt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a contact with friction condition with a rigid obstacle
+to the model, which is defined in an integral way. It is the direct
+approximation of an augmented Lagrangian formulation defined at the
+continuous level.
+The advantage should be a better scalability: the number of Newton
+iterations should be more or less independent of the mesh size.
+The condition is applied on the variable <tt class="docutils literal"><span class="pre">varname_u</span></tt>
+on the boundary corresponding to <tt class="docutils literal"><span class="pre">region</span></tt>. The rigid obstacle should
+be described with the data <tt class="docutils literal"><span class="pre">dataname_obstacle</span></tt> being a signed distance to
+the obstacle (interpolated on a finite element method).
+<tt class="docutils literal"><span class="pre">multname_n</span></tt> should be a fem variable representing the contact stress.
+An inf-sup condition between <tt class="docutils literal"><span class="pre">multname_n</span></tt> and <tt class="docutils literal"><span class="pre">varname_u</span></tt> is required.
+The augmentation parameter <tt class="docutils literal"><span class="pre">dataname_r</span></tt> should be chosen in a
+range of acceptable values.</p>
+<p>The parameter <cite>dataname_friction_coeffs</cite> contains the Coulomb friction
+coefficient and optionally an adhesional shear stress threshold and the
+tresca limit shear stress. For constant coefficients its size is from
+1 to 3. For coefficients described on a finite element method, this
+vector contains a number of single values, value pairs or triplets
+equal to the number of the corresponding mesh_fem&#8217;s basic dofs.</p>
+<p>Possible values for <cite>option</cite> is 1 for the non-symmetric Alart-Curnier
+augmented Lagrangian method, 2 for the symmetric one, 3 for the
+non-symmetric Alart-Curnier method with an additional augmentation
+and 4 for a new unsymmetric method. The default value is 1.
+Option 4, assumes pure Coulomb friction and ignores any adhesional stress
+and tresca limit coefficients.</p>
+<p><tt class="docutils literal"><span class="pre">dataname_alpha</span></tt> and <tt class="docutils literal"><span class="pre">dataname_wt</span></tt> are optional parameters to solve
+evolutionary friction problems. <tt class="docutils literal"><span class="pre">dataname_gamma</span></tt> and <tt class="docutils literal"><span class="pre">dataname_vt</span></tt> denote
+optional data for adding a parameter-dependent sliding velocity to the friction
+condition. <tt class="docutils literal"><span class="pre">mim</span></tt> represents of course the integration method. Note that it
+should be accurate enough to integrate efficiently the nonlinear terms involved.</p>
+</div>
+<div class="section" id="frictionless-integral-contact-between-non-matching-meshes-brick">
+<h2>Frictionless integral contact between non-matching meshes brick<a class="headerlink" href="#frictionless-integral-contact-between-non-matching-meshes-brick" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_integral_contact_between_nonmatching_meshes_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u1</span><span class="p">,</span> <span class="n">varname_u2</span><span class="p">,</span> <span class="n">multname_n</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span>
+     <span class="n">region1</span><span class="p">,</span> <span class="n">region2</span><span class="p">,</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a frictionless contact condition between nonmatching meshes
+to the model, which is defined in an integral way. It is the direct
+approximation of an augmented Lagrangian formulation defined at the
+continuous level.
+The advantage should be a better scalability: the number of Newton
+iterations should be more or less independent of the mesh size.
+The condition is applied on the variables <tt class="docutils literal"><span class="pre">varname_u1</span></tt> and
+<tt class="docutils literal"><span class="pre">varname_u2</span></tt> on the boundaries corresponding to <tt class="docutils literal"><span class="pre">region1</span></tt> and
+<tt class="docutils literal"><span class="pre">region2</span></tt>.
+<tt class="docutils literal"><span class="pre">multname_n</span></tt> should be a fem variable representing the contact stress.
+An inf-sup condition between <tt class="docutils literal"><span class="pre">multname_n</span></tt> and <tt class="docutils literal"><span class="pre">varname_u1</span></tt> and
+<tt class="docutils literal"><span class="pre">varname_u2</span></tt> is required.
+The augmentation parameter <tt class="docutils literal"><span class="pre">dataname_r</span></tt> should be chosen in a
+range of acceptable values.</p>
+<p>Possible values for <cite>option</cite> is 1 for the non-symmetric Alart-Curnier
+augmented Lagrangian method, 2 for the symmetric one, 3 for the
+non-symmetric Alart-Curnier method with an additional augmentation
+and 4 for a new unsymmetric method. The default value is 1.</p>
+<p><tt class="docutils literal"><span class="pre">mim</span></tt> represents of course the integration method. Note that it should
+be accurate enough to integrate efficiently the nonlinear terms involved.</p>
+</div>
+<div class="section" id="integral-contact-between-non-matching-meshes-brick-with-friction">
+<h2>Integral contact between non-matching meshes brick with friction<a class="headerlink" href="#integral-contact-between-non-matching-meshes-brick-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_integral_contact_between_nonmatching_meshes_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u1</span><span class="p">,</span> <span class="n">varname_u2</span><span class="p">,</span> <span class="n">multname</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span>
+     <span class="n">dataname_friction_coeffs</span><span class="p">,</span> <span class="n">region1</span><span class="p">,</span> <span class="n">region2</span><span class="p">,</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+     <span class="n">dataname_alpha</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dataname_wt1</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dataname_wt2</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a contact with friction condition between nonmatching meshes
+to the model. This brick adds a contact which is defined in an integral way.
+It is the direct approximation of an augmented Lagrangian formulation
+defined at the continuous level. The advantage should be a better scalability:
+the number of Newton iterations should be more or less independent of the mesh size.
+The condition is applied on the variables <tt class="docutils literal"><span class="pre">varname_u1</span></tt> and <tt class="docutils literal"><span class="pre">varname_u2</span></tt>
+on the boundaries corresponding to <tt class="docutils literal"><span class="pre">region1</span></tt> and <tt class="docutils literal"><span class="pre">region2</span></tt>.
+<tt class="docutils literal"><span class="pre">multname</span></tt> should be a fem variable representing the contact and friction stress.
+An inf-sup condition between <tt class="docutils literal"><span class="pre">multname</span></tt> and <tt class="docutils literal"><span class="pre">varname_u1</span></tt> and
+<tt class="docutils literal"><span class="pre">varname_u2</span></tt> is required.
+The augmentation parameter <tt class="docutils literal"><span class="pre">dataname_r</span></tt> should be chosen in a
+range of acceptable values.</p>
+<p>The parameter <cite>dataname_friction_coeffs</cite> contains the Coulomb friction
+coefficient and optionally an adhesional shear stress threshold and the
+tresca limit shear stress. For constant coefficients its size is from
+1 to 3. For coefficients described on a finite element method on the
+same mesh as <tt class="docutils literal"><span class="pre">varname_u1</span></tt>, this vector contains a number of single values,
+value pairs or triplets equal to the number of the corresponding mesh_fem&#8217;s
+basic dofs.</p>
+<p>Possible values for <cite>option</cite> is 1 for the non-symmetric Alart-Curnier
+augmented Lagrangian method, 2 for the symmetric one, 3 for the
+non-symmetric Alart-Curnier method with an additional augmentation
+and 4 for a new unsymmetric method. The default value is 1.
+<tt class="docutils literal"><span class="pre">dataname_alpha</span></tt>, <tt class="docutils literal"><span class="pre">dataname_wt1</span></tt> and <tt class="docutils literal"><span class="pre">dataname_wt2</span></tt> are optional
+parameters to solve evolutionary friction problems.
+<tt class="docutils literal"><span class="pre">mim</span></tt> represents the integration method on the same mesh as <tt class="docutils literal"><span class="pre">varname_u1</span></tt>.
+Note that it should be accurate enough to integrate efficiently the nonlinear
+terms involved.</p>
+</div>
+<div class="section" id="frictionless-penalized-contact-with-a-rigid-obstacle-brick">
+<h2>Frictionless penalized contact with a rigid obstacle brick<a class="headerlink" href="#frictionless-penalized-contact-with-a-rigid-obstacle-brick" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_penalized_contact_with_rigid_obstacle_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u</span><span class="p">,</span> <span class="n">dataname_obs</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span>
+     <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dataname_lambda_n</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a frictionless penalized contact condition
+with a rigid obstacle to the model.
+The condition is applied on the variable <tt class="docutils literal"><span class="pre">varname_u</span></tt>
+on the boundary corresponding to <tt class="docutils literal"><span class="pre">region</span></tt>. The rigid obstacle should
+be described with the data <tt class="docutils literal"><span class="pre">dataname_obstacle</span></tt> being a signed distance to
+the obstacle (interpolated on a finite element method).
+The penalization parameter <tt class="docutils literal"><span class="pre">dataname_r</span></tt> should be chosen
+large enough to prescribe an approximate non-penetration condition
+but not too large not to deteriorate too much the conditioning of
+the tangent system. <tt class="docutils literal"><span class="pre">dataname_n</span></tt> is an optional parameter used if option
+is 2. In that case, the penalization term is shifted by <tt class="docutils literal"><span class="pre">lambda_n</span></tt> (this
+allows the use of an Uzawa algorithm on the corresponding augmented
+dLagrangian formulation)</p>
+</div>
+<div class="section" id="penalized-contact-with-a-rigid-obstacle-brick-with-friction">
+<h2>Penalized contact with a rigid obstacle brick with friction<a class="headerlink" href="#penalized-contact-with-a-rigid-obstacle-brick-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_penalized_contact_with_rigid_obstacle_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u</span><span class="p">,</span> <span class="n">dataname_obs</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span> <span class="n">dataname_friction_coeffs</span><span class="p">,</span>
+     <span class="n">region</span><span class="p">,</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dataname_lambda</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dataname_alpha</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+     <span class="n">dataname_wt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a penalized contact condition with Coulomb friction with a
+rigid obstacle to the model.
+The condition is applied on the variable <tt class="docutils literal"><span class="pre">varname_u</span></tt>
+on the boundary corresponding to <tt class="docutils literal"><span class="pre">region</span></tt>. The rigid obstacle should
+be described with the data <cite>dataname_obstacle</cite> being a signed distance to
+the obstacle (interpolated on a finite element method).</p>
+<p>The parameter <cite>dataname_friction_coeffs</cite> contains the Coulomb friction
+coefficient and optionally an adhesional shear stress threshold and the
+tresca limit shear stress. For constant coefficients its size is from
+1 to 3. For coefficients described on a finite element method, this
+vector contains a number of single values, value pairs or triplets
+equal to the number of the corresponding mesh_fem&#8217;s basic dofs.</p>
+<p>The penalization parameter <tt class="docutils literal"><span class="pre">dataname_r</span></tt> should be chosen
+large enough to prescribe approximate non-penetration and friction
+conditions but not too large not to deteriorate too much the
+conditioning of the tangent system.
+<tt class="docutils literal"><span class="pre">dataname_lambda</span></tt> is an optional parameter used if <tt class="docutils literal"><span class="pre">option</span></tt>
+is 2. In that case, the penalization term is shifted by <tt class="docutils literal"><span class="pre">lambda</span></tt> (this
+allows the use of an Uzawa algorithm on the corresponding augmented
+Lagrangian formulation).
+<tt class="docutils literal"><span class="pre">dataname_alpha</span></tt> and <tt class="docutils literal"><span class="pre">dataname_wt</span></tt> are optional parameters to solve
+evolutionary friction problems.</p>
+</div>
+<div class="section" id="frictionless-penalized-contact-between-non-matching-meshes-brick">
+<h2>Frictionless penalized contact between non-matching meshes brick<a class="headerlink" href="#frictionless-penalized-contact-between-non-matching-meshes-brick" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_penalized_contact_between_nonmatching_meshes_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u1</span><span class="p">,</span> <span class="n">varname_u2</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span>
+     <span class="n">region1</span><span class="p">,</span> <span class="n">region2</span><span class="p">,</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dataname_lambda_n</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a penalized contact frictionless condition between nonmatching
+meshes to the model.
+The condition is applied on the variables <tt class="docutils literal"><span class="pre">varname_u1</span></tt> and <tt class="docutils literal"><span class="pre">varname_u2</span></tt>
+on the boundaries corresponding to <tt class="docutils literal"><span class="pre">region1`</span> <span class="pre">and</span> <span class="pre">``region2`.</span>
+<span class="pre">The</span> <span class="pre">penalization</span> <span class="pre">parameter</span> <span class="pre">``dataname_r</span></tt> should be chosen
+large enough to prescribe an approximate non-penetration condition
+but not too large not to deteriorate too much the conditionning of
+the tangent system. <tt class="docutils literal"><span class="pre">dataname_n</span></tt> is an optional parameter used if
+option is 2. In that case, the penalization term is shifted by <tt class="docutils literal"><span class="pre">lambda_n</span></tt>
+(this allows the use of an Uzawa algorithm on the corresponding augmented
+Lagrangian formulation)</p>
+</div>
+<div class="section" id="penalized-contact-between-non-matching-meshes-brick-with-friction">
+<h2>Penalized contact between non-matching meshes brick with friction<a class="headerlink" href="#penalized-contact-between-non-matching-meshes-brick-with-friction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_penalized_contact_between_nonmatching_meshes_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname_u1</span><span class="p">,</span> <span class="n">varname_u2</span><span class="p">,</span> <span class="n">dataname_r</span><span class="p">,</span> <span class="n">dataname_friction_coeffs</span><span class="p">,</span>
+     <span class="n">region1</span><span class="p">,</span> <span class="n">region2</span><span class="p">,</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dataname_lambda</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+     <span class="n">dataname_alpha</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dataname_wt1</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dataname_wt2</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function adds a penalized contact condition with Coulomb friction between
+nonmatching meshes to the model.
+The condition is applied on the variables <tt class="docutils literal"><span class="pre">varname_u1</span></tt> and <tt class="docutils literal"><span class="pre">varname_u2</span></tt>
+on the boundaries corresponding to <tt class="docutils literal"><span class="pre">region1`</span> <span class="pre">and</span> <span class="pre">``region2`.</span>
+<span class="pre">The</span> <span class="pre">penalization</span> <span class="pre">parameter</span> <span class="pre">``dataname_r</span></tt> should be chosen
+large enough to prescribe an approximate non-penetration condition
+but not too large not to deteriorate too much the conditionning of
+the tangent system.</p>
+<p>The parameter <cite>dataname_friction_coeffs</cite> contains the Coulomb friction
+coefficient and optionally an adhesional shear stress threshold and the
+tresca limit shear stress. For constant coefficients its size is from
+1 to 3. For coefficients described on a finite element method on the
+same mesh as <cite>varname_u1</cite>, this vector contains a number of single
+values, value pairs or triplets equal to the number of the
+corresponding mesh_fem&#8217;s basic dofs.</p>
+<p><tt class="docutils literal"><span class="pre">dataname_lambda</span></tt> is an optional parameter used if <tt class="docutils literal"><span class="pre">option</span></tt> is 2.
+In that case, the penalization term is shifted by <tt class="docutils literal"><span class="pre">lambda</span></tt>
+(this allows the use of an Uzawa algorithm on the corresponding augmented
+Lagrangian formulation)
+<tt class="docutils literal"><span class="pre">dataname_alpha</span></tt>, <tt class="docutils literal"><span class="pre">dataname_wt1</span></tt> and <tt class="docutils literal"><span class="pre">dataname_wt2</span></tt> are optional
+parameters to solve evolutionary friction problems.
+<tt class="docutils literal"><span class="pre">mim</span></tt> represents the integration method on the same mesh as <tt class="docutils literal"><span class="pre">varname_u1</span></tt>.
+Note that it should be accurate enough to integrate efficiently the nonlinear
+terms involved.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Small sliding contact with friction bricks</a><ul>
+<li><a class="reference internal" href="#approximation-of-contact">Approximation of contact</a></li>
+<li><a class="reference internal" href="#direct-nodal-contact-condition">Direct nodal contact condition</a></li>
+<li><a class="reference internal" href="#weak-nodal-contact-condition">Weak nodal contact condition</a></li>
+<li><a class="reference internal" href="#weak-integral-contact-condition">Weak integral contact condition</a></li>
+<li><a class="reference internal" href="#numerical-continuation">Numerical continuation</a></li>
+<li><a class="reference internal" href="#friction-law">Friction law</a></li>
+<li><a class="reference internal" href="#add-a-contact-with-or-without-friction-to-a-model">Add a contact with or without friction to a model</a></li>
+<li><a class="reference internal" href="#frictionless-basic-contact-brick">Frictionless basic contact brick</a></li>
+<li><a class="reference internal" href="#basic-contact-brick-with-friction">Basic contact brick with friction</a></li>
+<li><a class="reference internal" href="#frictionless-nodal-contact-with-a-rigid-obstacle-brick">Frictionless nodal contact with a rigid obstacle brick</a></li>
+<li><a class="reference internal" href="#nodal-contact-with-a-rigid-obstacle-brick-with-friction">Nodal contact with a rigid obstacle brick with friction</a></li>
+<li><a class="reference internal" href="#frictionless-nodal-contact-between-non-matching-meshes-brick">Frictionless nodal contact between non-matching meshes brick</a></li>
+<li><a class="reference internal" href="#nodal-contact-between-non-matching-meshes-brick-with-friction">Nodal contact between non-matching meshes brick with friction</a></li>
+<li><a class="reference internal" href="#hughes-stabilized-frictionless-contact-condition">Hughes stabilized frictionless contact condition</a></li>
+<li><a class="reference internal" href="#frictionless-integral-contact-with-a-rigid-obstacle-brick">Frictionless integral contact with a rigid obstacle brick</a></li>
+<li><a class="reference internal" href="#integral-contact-with-a-rigid-obstacle-brick-with-friction">Integral contact with a rigid obstacle brick with friction</a></li>
+<li><a class="reference internal" href="#frictionless-integral-contact-between-non-matching-meshes-brick">Frictionless integral contact between non-matching meshes brick</a></li>
+<li><a class="reference internal" href="#integral-contact-between-non-matching-meshes-brick-with-friction">Integral contact between non-matching meshes brick with friction</a></li>
+<li><a class="reference internal" href="#frictionless-penalized-contact-with-a-rigid-obstacle-brick">Frictionless penalized contact with a rigid obstacle brick</a></li>
+<li><a class="reference internal" href="#penalized-contact-with-a-rigid-obstacle-brick-with-friction">Penalized contact with a rigid obstacle brick with friction</a></li>
+<li><a class="reference internal" href="#frictionless-penalized-contact-between-non-matching-meshes-brick">Frictionless penalized contact between non-matching meshes brick</a></li>
+<li><a class="reference internal" href="#penalized-contact-between-non-matching-meshes-brick-with-friction">Penalized contact between non-matching meshes brick with friction</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_time_integration.html"
+                        title="前の章へ">The model tools for the integration of transient problems</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_contact_friction_large_sliding.html"
+                        title="次の章へ">Large sliding/large deformation contact with friction bricks</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_contact_friction_large_sliding.html" title="Large sliding/large deformation contact with friction bricks"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_time_integration.html" title="The model tools for the integration of transient problems"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

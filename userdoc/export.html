@@ -1,0 +1,435 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Export and view a solution &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="A pure convection method" href="convect.html" />
+    <link rel="prev" title="Compute derivatives" href="computeD.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="convect.html" title="A pure convection method"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="computeD.html" title="Compute derivatives"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="export-and-view-a-solution">
+<span id="ud-export"></span><h1>Export and view a solution<a class="headerlink" href="#export-and-view-a-solution" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>There are essentially four ways to view the result of getfem computations:</p>
+<ul class="simple">
+<li>Matlab, with the matlab-interface.</li>
+<li>The open-source Mayavi or any other VTK files viewer.</li>
+<li>The open-source OpenDX program.</li>
+<li>The open-source Gmsh program.</li>
+</ul>
+<p>The objects that can be exported are, <cite>mesh</cite>, <cite>mesh_fem</cite> objects, and <cite>stored_mesh_slice</cite>.</p>
+<div class="section" id="saving-mesh-and-mesh-fem-objects-for-the-matlab-interface">
+<h2>Saving mesh and mesh_fem objects for the Matlab interface<a class="headerlink" href="#saving-mesh-and-mesh-fem-objects-for-the-matlab-interface" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>If you have installed the Matlab interface, you can simply use
+<tt class="docutils literal"><span class="pre">mesh_fem::write_to_file</span></tt> and save the solution as a plain text file, and then,
+load them into Matlab. For example, supposing you have a solution <tt class="docutils literal"><span class="pre">U</span></tt> on a <cite>mesh_fem</cite>
+<tt class="docutils literal"><span class="pre">mf</span></tt>,:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">fstream</span> <span class="n">f</span><span class="p">(</span><span class="s">&quot;solution.U&quot;</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">out</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">vect_size</span><span class="p">(</span><span class="n">U</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+  <span class="n">f</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\v</span><span class="s">erb+\+n&quot;</span><span class="p">;</span>
+
+<span class="c1">// when the 2nd arg is true, the mesh is saved with the |mf|</span>
+<span class="n">mf</span><span class="p">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&quot;solution.mf&quot;</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>and then, under matlab:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">U</span><span class="p">=</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;solution.U&#39;</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="s">&#39;load&#39;</span><span class="p">,</span><span class="s">&#39;solution.mf&#39;</span><span class="p">);</span>
+<span class="o">&gt;&gt;</span> <span class="n">gf_plot</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="s">&#39;mesh&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>See the getfem-matlab interface documentation for more details.</p>
+<p>Two other file formats are supported for export: the <a class="reference external" href="http://www.vtk.org">VTK</a> file format, the
+<a class="reference external" href="http://www.opendx.org">OpenDX</a> file format and the <a class="reference external" href="http://www.geuz.org/gmsh">Gmsh</a> post-processing file format. Both can export
+either a <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt> or <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> , but also the more versatile <tt class="docutils literal"><span class="pre">getfem::stored_mesh_slice</span></tt>.</p>
+<p>Examples of use can be found in the examples of the tests directory.</p>
+</div>
+<div class="section" id="producing-mesh-slices">
+<span id="ud-export-slices"></span><h2>Producing mesh slices<a class="headerlink" href="#producing-mesh-slices" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><em>GetFEM++</em> provides &#8220;slicers&#8221; objects which are dedicated to generating post-treatment
+data from meshes and solutions. These slicers, defined in the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_mesh_slicers.h</span></tt> take a <cite>mesh</cite> (and sometimes a <cite>mesh_fem</cite> with a
+solution field) on input, and produce a set of simplices after applying some
+operations such as <em>intersection with a plane</em>, <em>extraction of the mesh
+boundary</em>, <em>refinement of each convex</em>, <em>extraction of isosurfaces</em>, etc. The
+output of these slicers can be stored in a <tt class="docutils literal"><span class="pre">getfem::stored_mesh_slice</span></tt> object (see the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_mesh_slice.h</span></tt>). A <cite>stored_mesh_slice</cite> object may be considered as a P1
+discontinuous FEM on a non-conformal mesh with fast interpolation ability. Slices
+are made of segments, triangles and tetrahedrons, so the convexes of the original
+mesh are always simplexified.</p>
+<p>All slicer operation inherit from <tt class="docutils literal"><span class="pre">getfem::slicer_action</span></tt>, it is very easy to create a new
+slicer. Example of slicers are (some of them use a <tt class="docutils literal"><span class="pre">getfem::mesh_slice_cv_dof_data_base</span></tt> which is just a
+reference to a <cite>mesh_fem</cite> <tt class="docutils literal"><span class="pre">mf</span></tt> and a field <tt class="docutils literal"><span class="pre">U</span></tt> on this <cite>mesh_fem</cite>).</p>
+<dl class="function">
+<dt id="getfem::slicer_none">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_none</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem::slicer_none" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>empty slicer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_boundary">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_boundary</tt><big>(</big>const mesh<em>&nbsp;&amp;m</em>, ldots<big>)</big><a class="headerlink" href="#getfem::slicer_boundary" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>extract the boundary of a mesh.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_apply_deformation">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_apply_deformation</tt><big>(</big>mesh_slice_cv_dof_data_base<em>&nbsp;&amp;</em><big>)</big><a class="headerlink" href="#getfem::slicer_apply_deformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>apply a deformation to the mesh , the deformation field is defined on a <cite>mesh_fem</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_half_space">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_half_space</tt><big>(</big>base_node<em>&nbsp;x0</em>, base_node<em>&nbsp;n</em>, int<em>&nbsp;orient</em><big>)</big><a class="headerlink" href="#getfem::slicer_half_space" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>cut the mesh with a half space (if <tt class="docutils literal"><span class="pre">orient</span></tt> = -1 or +1), or a plane (if
+<tt class="docutils literal"><span class="pre">orient</span></tt> = 0), <tt class="docutils literal"><span class="pre">x0</span></tt> being a node of the plane, and <tt class="docutils literal"><span class="pre">n</span></tt> being a normal
+of the plane.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_sphere">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_sphere</tt><big>(</big>base_node<em>&nbsp;x0</em>, scalar_type<em>&nbsp;R</em>, int<em>&nbsp;orient</em><big>)</big><a class="headerlink" href="#getfem::slicer_sphere" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>cut with the interior (<tt class="docutils literal"><span class="pre">orient``=-1),</span> <span class="pre">boundary</span> <span class="pre">(``orient``=0)</span> <span class="pre">or</span> <span class="pre">exterior</span>
+<span class="pre">(``orient``=+1)</span> <span class="pre">or</span> <span class="pre">a</span> <span class="pre">sphere</span> <span class="pre">of</span> <span class="pre">center</span> <span class="pre">``x0</span></tt> and radius <tt class="docutils literal"><span class="pre">R</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_cylinder">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_cylinder</tt><big>(</big>base_node<em>&nbsp;x0</em>, base_node<em>&nbsp;x1</em>, scalar_type<em>&nbsp;R</em>, int<em>&nbsp;orient</em><big>)</big><a class="headerlink" href="#getfem::slicer_cylinder" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>slice with the interior/boundary/exterior of a cylinder of axis <tt class="docutils literal"><span class="pre">(x0,x1)</span></tt>
+and radius <tt class="docutils literal"><span class="pre">R</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_isovalues">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_isovalues</tt><big>(</big>const mesh_slice_cv_dof_data_base&amp;<em>&nbsp;mfU</em>, scalar_type<em>&nbsp;val</em>, int<em>&nbsp;orient</em><big>)</big><a class="headerlink" href="#getfem::slicer_isovalues" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>cut with the isosurface defined by the scalar field <tt class="docutils literal"><span class="pre">mfU</span></tt> and <tt class="docutils literal"><span class="pre">val</span></tt>.
+Keep only simplices where :<img class="math" src="../_images/math/2e5f9e06669a1c1c85b934397f5e92c898ab2e5e.png" alt="u(x)&lt;val" style="vertical-align: -4px"/> (<tt class="docutils literal"><span class="pre">orient``=-1),</span> <span class="pre">:math:`u(x)=val`</span>
+<span class="pre">(``orient=0</span></tt> or <img class="math" src="../_images/math/acd59ce65b9d4716be5bde79220cc50461532d10.png" alt="u(x)&gt;val" style="vertical-align: -4px"/>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_mesh_with_mesh">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_mesh_with_mesh</tt><big>(</big>const mesh&amp;<em>&nbsp;m2</em><big>)</big><a class="headerlink" href="#getfem::slicer_mesh_with_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>cut the convexes with the convexes of the mesh <tt class="docutils literal"><span class="pre">m2</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_union">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_union</tt><big>(</big>const slicer_action<em>&nbsp;&amp;sA</em>, const slicer_action<em>&nbsp;&amp;sB</em><big>)</big><a class="headerlink" href="#getfem::slicer_union" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>merges the output of two slicer operations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_intersect">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_intersect</tt><big>(</big>slicer_action<em>&nbsp;&amp;sA</em>, slicer_action<em>&nbsp;&amp;sB</em><big>)</big><a class="headerlink" href="#getfem::slicer_intersect" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>intersect the output of two slicer operations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_complementary">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_complementary</tt><big>(</big>slicer_action<em>&nbsp;&amp;s</em><big>)</big><a class="headerlink" href="#getfem::slicer_complementary" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return the complementary of a slicer operation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_build_edges_mesh">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_build_edges_mesh</tt><big>(</big>mesh&amp;<em>&nbsp;edges_m</em><big>)</big><a class="headerlink" href="#getfem::slicer_build_edges_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>slicer whose side-effect is to build the mesh <tt class="docutils literal"><span class="pre">edges_m</span></tt> with the edges of
+the sliced mesh.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_build_mesh">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_build_mesh</tt><big>(</big>mesh<em>&nbsp;&amp;m</em><big>)</big><a class="headerlink" href="#getfem::slicer_build_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>in some (rare) occasions , it might be useful to build a mesh from a slice.
+Note however that there is absolutely no guaranty that the mesh will be
+conformal (although it is often the case).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_build_stored_mesh_slice">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_build_stored_mesh_slice</tt><big>(</big>stored_mesh_slice&amp;<em>&nbsp;sl</em><big>)</big><a class="headerlink" href="#getfem::slicer_build_stored_mesh_slice" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>record the output of the slicing operation into a <cite>stored_mesh_slice</cite> object. Note that it
+is often more convenient to use the <tt class="docutils literal"><span class="pre">stored_mesh_slice::build(...)</span></tt> method to
+achieve the same result.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem::slicer_explode">
+<tt class="descclassname">getfem::</tt><tt class="descname">slicer_explode</tt><big>(</big>c<big>)</big><a class="headerlink" href="#getfem::slicer_explode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>shrink or expand each convex with respect to its gravity center.</p>
+</dd></dl>
+
+<p>In order to apply these slicers, a <tt class="docutils literal"><span class="pre">getfem::mesh_slicer(mesh&amp;)</span></tt> object should be
+created, and the <tt class="docutils literal"><span class="pre">getfem::slicer_action</span></tt> are then stacked with
+<tt class="docutils literal"><span class="pre">mesh_slicer::push_back_action(slicer_action&amp;)</span></tt> and
+<tt class="docutils literal"><span class="pre">mesh_slicer::push_front_action(slicer_action&amp;)</span></tt>. The slicing operation is
+finally executed with <tt class="docutils literal"><span class="pre">mesh_slicer::exec(int</span> <span class="pre">nrefine)</span></tt> (or
+<tt class="docutils literal"><span class="pre">mesh_slicer::exec(int</span> <span class="pre">nrefine,</span> <span class="pre">const</span> <span class="pre">mesh_region</span> <span class="pre">&amp;cvlst)</span></tt> to apply the operation
+to a subset of the mesh, or its boundary etc.).</p>
+<p>The <tt class="docutils literal"><span class="pre">nrefine</span></tt> parameter is very important, as the &#8220;precision&#8221; of the final result
+will depend on it: if the data that is represented on the final slice is just P1
+data on convexes with a linear geometric transformation, <tt class="docutils literal"><span class="pre">nrefine</span> <span class="pre">=</span> <span class="pre">1</span></tt> is the
+right choice, but for P2, P3, non linear transformation etc, it is better to refine
+each convex of the original mesh during the slicing operation. This allows an
+accurate representation of any finite element field onto a very simple structure
+(linear segment/triangles/tetrahedrons with P1 discontinuous data on them) which is
+what most visualization programs (gmsh, mayavi, opendx, matlab, etc.) expect.</p>
+<p>Example of use (cut the boundary of a mesh <tt class="docutils literal"><span class="pre">m</span></tt> with a half-space, and save the
+result into a <cite>stored_mesh_slice</cite>):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">slicer_boundary</span> <span class="n">a0</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">slicer_half_space</span> <span class="n">a1</span><span class="p">(</span><span class="n">base_node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">base_node</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">stored_mesh_slice</span> <span class="n">sl</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">slicer_build_stored_mesh_slice</span> <span class="n">a2</span><span class="p">(</span><span class="n">sl</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_slicer</span> <span class="n">slicer</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<span class="n">slicer</span><span class="p">.</span><span class="n">push_back_action</span><span class="p">(</span><span class="n">a1</span><span class="p">);</span>
+<span class="n">slicer</span><span class="p">.</span><span class="n">push_back_action</span><span class="p">(</span><span class="n">a2</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">nrefine</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="n">slicer</span><span class="p">.</span><span class="n">exec</span><span class="p">(</span><span class="n">nrefine</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In order to build a <tt class="docutils literal"><span class="pre">getfem::stored_mesh_slice</span></tt> object during the slicing operation, the <tt class="docutils literal"><span class="pre">stored_mesh_slice::build()</span></tt> method is often more convenient than using explicitly the <tt class="docutils literal"><span class="pre">slicer_build_stored_mesh_slice</span></tt> slicer:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">stored_mesh_slice</span> <span class="n">sl</span><span class="p">;</span>
+<span class="n">sl</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">getfem</span><span class="o">::</span><span class="n">slicer_boundary</span><span class="p">(</span><span class="n">m</span><span class="p">),</span>
+         <span class="n">getfem</span><span class="o">::</span><span class="n">slicer_half_space</span><span class="p">(</span><span class="n">base_node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">base_node</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+         <span class="n">nrefine</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The simplest way to use these slices is to export them to <em>VTK</em>, <em>OpenDX</em>, or
+<em>Gmsh</em>. The file <tt class="file docutils literal"><span class="pre">getfem/getfem_export.h</span></tt> contains three classes:
+<tt class="docutils literal"><span class="pre">getfem::vtk_export</span></tt>, <tt class="docutils literal"><span class="pre">getfem::dx_export</span></tt> and <tt class="docutils literal"><span class="pre">getfem::pos_export</span></tt>.</p>
+</div>
+<div class="section" id="exporting-m-mf-or-slices-to-vtk">
+<h2>Exporting <cite>mesh</cite>, <cite>mesh_fem</cite> or slices to VTK<a class="headerlink" href="#exporting-m-mf-or-slices-to-vtk" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>First, it is important to know the limitation of VTK data files: each file can
+contain only one mesh, with at most one scalar field and one vector field and one
+tensor field on this mesh (in that order). VTK files can handle data on segment,
+triangles, quadrangles, tetrahedrons and hexahedrons. Although quadratic
+triangles, segments etc are said to be supported, it is just equivalent to using
+<tt class="docutils literal"><span class="pre">nrefine=2</span></tt> when building a slice. VTK data file do support meshes with more
+than one type of element (i.e. meshes with triangles and quadrangles, for
+example).</p>
+<p>For example, supposing that a <cite>stored_mesh_slice</cite> <tt class="docutils literal"><span class="pre">sl</span></tt> has already been built:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// an optional the 2nd argument can be set to true to produce</span>
+<span class="c1">// a text file instead of a binary file</span>
+<span class="n">vtk_export</span> <span class="nf">exp</span><span class="p">(</span><span class="s">&quot;output.vtk&quot;</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">sl</span><span class="p">);</span> <span class="c1">// will save the geometrical structure of the slice</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mfp</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="s">&quot;pressure&quot;</span><span class="p">);</span> <span class="c1">// write a scalar field</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;displacement&quot;</span><span class="p">);</span> <span class="c1">// write a vector field</span>
+</pre></div>
+</div>
+<p>In this example, the fields <tt class="docutils literal"><span class="pre">P</span></tt> and <tt class="docutils literal"><span class="pre">U</span></tt> are interpolated on the slice nodes,
+and then written into the VTK field. The vector fields should always be written
+after the scalar fields (and the tensor fields should be written last).</p>
+<p>It is also possible to export a <cite>mesh_fem</cite> without having to build a slice:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// an optional the 2nd argument can be set to true to produce</span>
+<span class="c1">// a text file instead of a binary file</span>
+<span class="n">vtk_export</span> <span class="nf">exp</span><span class="p">(</span><span class="s">&quot;output.vtk&quot;</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">mfu</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mfp</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="s">&quot;pressure&quot;</span><span class="p">);</span> <span class="c1">// write a scalar field</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;displacement&quot;</span><span class="p">);</span> <span class="c1">// write a vector field</span>
+</pre></div>
+</div>
+<p>Note however that with this approach, the <tt class="docutils literal"><span class="pre">vtk_export</span></tt> will map each convex/fem
+of <tt class="docutils literal"><span class="pre">mfu</span></tt> to a VTK element type. As VTK does not handle elements of degree
+greater than 2, there will be a loss of precision for higher degree FEMs.</p>
+</div>
+<div class="section" id="exporting-m-mf-or-slices-to-opendx">
+<h2>Exporting <cite>mesh</cite>, <cite>mesh_fem</cite> or slices to OpenDX<a class="headerlink" href="#exporting-m-mf-or-slices-to-opendx" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The OpenDX data file is more versatile than the VTK one. It is able to store more
+that one mesh, any number of fields on these meshes etc. However, it does only
+handle elements of degree 1 and 0 (segments, triangles, tetrahedrons, quadrangles
+etc.). And each mesh can only be made of one type of element, it cannot mix
+triangles and quadrangles in a same object. For that reason, it is generally
+preferable to export <tt class="docutils literal"><span class="pre">getfem::stored_mesh_slice</span></tt> objects (in which non simplex elements are
+simplexified, and which allows refinement of elements) than <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> and <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt>
+objects.</p>
+<p>The basic usage is very similar to <tt class="docutils literal"><span class="pre">getfem::vtk_export</span></tt>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">dx_export</span> <span class="n">exp</span><span class="p">(</span><span class="s">&quot;output.dx&quot;</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">sl</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;displacement&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Moreover, <tt class="docutils literal"><span class="pre">getfem::dx_export</span></tt> is able to reopen a &#8216;.dx&#8217; file and append new data into
+it. Hence it is possible, if many time-steps are to be saved, to view intermediate
+results in OpenDX during the computations. The prototype of the constructor is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">dx_export</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">ascii</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">append</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+<span class="n">dx_export</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">os_</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">ascii</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>An example of use, with multiple time steps (taken from
+<tt class="file docutils literal"><span class="pre">tests/dynamic_friction.cc</span></tt>):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">stored_mesh_slice</span> <span class="n">sl</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">dx_export</span> <span class="n">exp</span><span class="p">(</span><span class="s">&quot;output.dx&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="n">sl</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">getfem</span><span class="o">::</span><span class="n">slicer_none</span><span class="p">(),</span><span class="mi">4</span><span class="p">);</span>
+<span class="k">else</span>        <span class="n">sl</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">getfem</span><span class="o">::</span><span class="n">slicer_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">),</span><span class="mi">4</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span><span class="nb">true</span><span class="p">);</span>
+
+<span class="c1">// for each mesh object, a corresponding ``mesh&#39;&#39; object will be</span>
+<span class="c1">// created in the data file for the edges of the original mesh</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">exporting_mesh_edges</span><span class="p">();</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mf_u</span><span class="p">,</span> <span class="n">U0</span><span class="p">);</span>
+  <span class="n">exp</span><span class="p">.</span><span class="n">serie_add_object</span><span class="p">(</span><span class="s">&quot;deformation&quot;</span><span class="p">);</span>
+  <span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mf_vm</span><span class="p">,</span> <span class="n">VM</span><span class="p">);</span>
+  <span class="n">exp</span><span class="p">.</span><span class="n">serie_add_object</span><span class="p">(</span><span class="s">&quot;von_mises_stress&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this example, an OpenDX &#8220;time series&#8221; is created, for each time step, two data
+fields are saved: a vector field called &#8220;deformation&#8221;, and a scalar field called
+&#8220;von_mises_stress&#8221;.</p>
+<p>Note also that the <tt class="docutils literal"><span class="pre">dx_export::exporting_mesh_edges()</span></tt> function has been called.
+It implies that for each mesh exported, the edges of the original mesh are also
+exported (into another OpenDX mesh). In this example, you have access in OpenDX to
+4 data fields: &#8220;deformation&#8221;, &#8220;deformation_edges&#8221;, &#8220;von_mises_stress&#8221; and
+&#8220;von_mises_stress_edges&#8221;.</p>
+<p>The <tt class="docutils literal"><span class="pre">tests/dynamic_friction.net</span></tt> is an example of OpenDX program for these data
+(run it with <tt class="docutils literal"><span class="pre">cd</span> <span class="pre">tests;</span> <span class="pre">dx</span> <span class="pre">-edit</span> <span class="pre">dynamic_friction.net</span></tt> , menu
+&#8220;Execute/sequencer&#8221;).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Export and view a solution</a><ul>
+<li><a class="reference internal" href="#saving-mesh-and-mesh-fem-objects-for-the-matlab-interface">Saving mesh and mesh_fem objects for the Matlab interface</a></li>
+<li><a class="reference internal" href="#producing-mesh-slices">Producing mesh slices</a></li>
+<li><a class="reference internal" href="#exporting-m-mf-or-slices-to-vtk">Exporting <cite>mesh</cite>, <cite>mesh_fem</cite> or slices to VTK</a></li>
+<li><a class="reference internal" href="#exporting-m-mf-or-slices-to-opendx">Exporting <cite>mesh</cite>, <cite>mesh_fem</cite> or slices to OpenDX</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="computeD.html"
+                        title="前の章へ">Compute derivatives</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="convect.html"
+                        title="次の章へ">A pure convection method</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="convect.html" title="A pure convection method"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="computeD.html" title="Compute derivatives"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python GetFEM++ interface &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Python Interface" href="index.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Preliminary" href="pre.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="pre.html" title="Preliminary"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>Python</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="py-gf-interface">
+<h1><em>Python</em> <em>GetFEM++</em> interface<a class="headerlink" href="#py-gf-interface" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><em>GetFEM++</em> provides an interface to the <em>Python</em> scripting language. <em>Python</em> is a nice,
+cross-platform, and free language. With the addition of the numpy package,
+python provides a subset of Matlab functionalities (i.e. dense arrays). The
+<a class="reference external" href="http://www.vtk.org">VTK</a> toolkit may provide visualization tools via its python interface (or
+via <a class="reference external" href="http://mayavi.sourceforge.net">MayaVi</a>), and data files for <a class="reference external" href="http://www.opendx.org">OpenDX</a>  may be exported. In this guide,
+nevertheless, to visualize the results, we will export to <a class="reference external" href="http://www.geuz.org/gmsh">Gmsh</a>
+post-processing format. The sparse matrix routines are provided by the getfem
+interface.</p>
+<p>The python interface is available via a python module getfem.py. In order to
+use the interface you have to load it with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">getfem</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">getfem</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;cartesian&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If the getfem.py (and the internal _getfem.so) module is not installed in a
+standard location for python, you may have to set the <tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt>
+environment variable to its location. For example with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;.../getfem/getfem++/interface/src/python/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="parallel-version">
+<h2>Parallel version<a class="headerlink" href="#parallel-version" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The python interface is the only one for the moment to interface the mpi based parallel version of Getfem. See <a class="reference internal" href="../userdoc/parallel.html#ud-parallel"><em>MPI Parallelization of GetFEM++</em></a>.</p>
+</div>
+<div class="section" id="memory-management">
+<h2>Memory Management<a class="headerlink" href="#memory-management" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A nice advantage over the Matlab interface is that you do not have to
+explicitly delete objects that are not used any more, this is done
+automagically. You can however inspect the content of the getfem workspace
+with the function <tt class="docutils literal"><span class="pre">getfem.memstats()</span></tt>.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The <cite>getfem</cite> module is largely documented. This documentation has been
+extracted into the <a class="reference internal" href="cmdref.html#api"><em>API reference</em></a>. The getfem-matlab user guide may also be used,
+as 95% of its content translates quite directly into python (with the exception
+of the plotting functions, which are specific to matlab).</p>
+</div>
+<div class="section" id="py-gf-organization">
+<h2><em>Python</em> <em>GetFEM++</em> organization<a class="headerlink" href="#py-gf-organization" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The general organization of the python-interface is the following:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Each class from the matlab interface has a corresponding class in the
+python interface: the gfMesh class becomes the getfem.Mesh class in python,
+the gfSlice becomes the getfem.Slice etc.</p>
+</li>
+<li><p class="first">Each get and set method of the matlab interface has been translated into a
+method of the corresponding class in the python interface. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;outer faces&#39;</span><span class="p">);</span>
+<span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;pts&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>becomes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">m</span><span class="o">.</span><span class="n">outer_faces</span><span class="p">();</span>
+<span class="n">m</span><span class="o">.</span><span class="n">pts</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Some methods have been renamed when there was ambiguity, for example
+<tt class="docutils literal"><span class="pre">gf_mesh_set(m,</span> <span class="pre">'pts',</span> <span class="pre">P)</span></tt> is <tt class="docutils literal"><span class="pre">m.set_pts(P)</span></tt>.</p>
+</li>
+<li><p class="first">The other getfem-matlab function have a very simple mapping to their python
+equivalent:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>gf_compute(mf,U,&#8217;foo&#8217;,...)</td>
+<td>getfem.compute_foo(mf,U) or
+getfem.compute(&#8216;foo&#8217;,...)</td>
+</tr>
+<tr class="row-even"><td>gf_asm(&#8216;foobar&#8217;,...)</td>
+<td>getfem.asm_foobar(...) or
+getfem.asm(&#8216;foobar&#8217;,...)</td>
+</tr>
+<tr class="row-odd"><td>gf_linsolve(&#8216;gmres&#8217;,...)</td>
+<td>getfem.linsolve_gmres(...) or
+getfem.linsolve(&#8216;gmres&#8217;,...)</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div></blockquote>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/hierarchy1.png"><img alt="../_images/hierarchy1.png" src="../_images/hierarchy1.png" style="width: 720.75px; height: 698.25px;" /></a>
+<p class="caption">python-getfem interface main objects hierarchy.</p>
+</div>
+<dl class="class">
+<dt id="CvStruct">
+<em class="property">class </em><tt class="descname">CvStruct</tt><big>(</big><em>self</em>, <em>*args</em><big>)</big><a class="headerlink" href="#CvStruct" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for a convex structure objects, stores formal information convex
+structures (nb. of points, nb. of faces which are themselves convex
+structures)</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="GeoTrans">
+<em class="property">class </em><tt class="descname">GeoTrans</tt><big>(</big><em>self</em>, <em>*args</em><big>)</big><a class="headerlink" href="#GeoTrans" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for geometric transformations objects (defines the shape/position
+of the convexes).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Mesh">
+<em class="property">class </em><tt class="descname">Mesh</tt><big>(</big><em>self</em>, <em>*args</em><big>)</big><a class="headerlink" href="#Mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for mesh structure (nodes, convexes, geometric transformations for
+each convex).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Fem">
+<em class="property">class </em><tt class="descname">Fem</tt><big>(</big><em>self</em>, <em>fem_name</em><big>)</big><a class="headerlink" href="#Fem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for FEM (Finite Element Method) objects (one per convex, can be
+PK, QK, HERMITE, etc...).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Integ">
+<em class="property">class </em><tt class="descname">Integ</tt><big>(</big><em>self</em>, <em>*args</em><big>)</big><a class="headerlink" href="#Integ" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for Integration Method objects (exact, quadrature formulaldots).
+Although not linked directly to GeoTrans, an integration method is usually
+specific to a given convex structure.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="MeshFem">
+<em class="property">class </em><tt class="descname">MeshFem</tt><big>(</big><em>self</em>, <em>*args</em><big>)</big><a class="headerlink" href="#MeshFem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for object linked to a mesh, where each convex has been assigned
+a FEM.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="MeshIm">
+<em class="property">class </em><tt class="descname">MeshIm</tt><big>(</big><em>self</em>, <em>*args</em><big>)</big><a class="headerlink" href="#MeshIm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for object linked to a mesh, where each convex has been assigned
+an integration method.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Model">
+<em class="property">class </em><tt class="descname">Model</tt><big>(</big><em>self</em>, <em>*args</em><big>)</big><a class="headerlink" href="#Model" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Descriptor for <em>model</em> object, holds the global data, variables and
+description of a model. Evolution of <em>model state</em> and <em>model brick</em>
+object for 4.0 version of <em>GetFEM++</em>.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><em>Python</em> <em>GetFEM++</em> interface</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#parallel-version">Parallel version</a></li>
+<li><a class="reference internal" href="#memory-management">Memory Management</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#py-gf-organization"><em>Python</em> <em>GetFEM++</em> organization</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="pre.html"
+                        title="前の章へ">Preliminary</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="examples.html"
+                        title="次の章へ">Examples</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="pre.html" title="Preliminary"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

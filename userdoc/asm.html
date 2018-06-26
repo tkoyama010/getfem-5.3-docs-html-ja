@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Some Standard assembly procedures (low-level generic assembly) &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Interpolation of arbitary quantities" href="interMM.html" />
+    <link rel="prev" title="Compute arbitrary terms - low-level generic assembly procedures" href="gasm_low.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="interMM.html" title="Interpolation of arbitary quantities"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="gasm_low.html" title="Compute arbitrary terms - low-level generic assembly procedures"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="some-standard-assembly-procedures-low-level-generic-assembly">
+<span id="ud-asm"></span><h1>Some Standard assembly procedures (low-level generic assembly)<a class="headerlink" href="#some-standard-assembly-procedures-low-level-generic-assembly" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Procedures defined in the file <tt class="file docutils literal"><span class="pre">getfem/getfem_assembling.h</span></tt> allow the
+assembly of stiffness matrices, mass matrices and boundary conditions for a few
+amount of classical partial differential equation problems. All the procedures
+have vectors and matrices template parameters in order to be used with any matrix library.</p>
+<p>CAUTION: The assembly procedures do not clean the matrix/vector at the begining of the assembly in order to keep the possibility to perform several assembly operations on the same matrix/vector. Consequently, one has to clean the matrix/vector before the first assembly operation.</p>
+<div class="section" id="laplacian-poisson-problem">
+<h2>Laplacian (Poisson) problem<a class="headerlink" href="#laplacian-poisson-problem" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>An assembling procedure is defined to solve the problem:</p>
+<div class="math">
+<p><img src="../_images/math/9eab1497126644ec5269ee26529f868d38ce090e.png" alt="-\mbox{div}(a(x)\cdot\mbox{grad}(u(x))) &amp;= f(x)\ \mbox{ in }\Omega,  \\
+u(x) &amp; = U(x)\ \mbox{ on }\Gamma_D, \\
+\frac{\partial u}{\partial\eta}(x) &amp; = F(x)\ \mbox{ on }\Gamma_N,"/></p>
+</div><p>where <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> is an open domain of arbitrary dimension, <img class="math" src="../_images/math/374511afe521f2b7acde053f039c570a9026ed20.png" alt="\Gamma_{D}" style="vertical-align: -3px"/>
+and <img class="math" src="../_images/math/ee86b3db4c3592e435f2e00931782755e066ed06.png" alt="\Gamma_{N}" style="vertical-align: -3px"/> are parts of the boundary of <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/4216c54b9c66ea6a2e02c7b59fb228bfbebc590b.png" alt="u(x)" style="vertical-align: -4px"/>
+is the unknown, <img class="math" src="../_images/math/df321a16c05c7d678128914f4147490710908e35.png" alt="a(x)" style="vertical-align: -4px"/> is a given coefficient, <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)" style="vertical-align: -4px"/> is a given
+source term, <img class="math" src="../_images/math/073f69367cee601cff7c1b8684c1453c6dd75e27.png" alt="U(x)" style="vertical-align: -4px"/> the prescribed value of <img class="math" src="../_images/math/4216c54b9c66ea6a2e02c7b59fb228bfbebc590b.png" alt="u(x)" style="vertical-align: -4px"/> on
+<img class="math" src="../_images/math/374511afe521f2b7acde053f039c570a9026ed20.png" alt="\Gamma_{D}" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/de8fdaa56ea5a8940d4bba79faa9e3dea0f6bf7c.png" alt="F(x)" style="vertical-align: -4px"/> is the prescribed normal derivative of
+<img class="math" src="../_images/math/4216c54b9c66ea6a2e02c7b59fb228bfbebc590b.png" alt="u(x)" style="vertical-align: -4px"/> on <img class="math" src="../_images/math/ee86b3db4c3592e435f2e00931782755e066ed06.png" alt="\Gamma_{N}" style="vertical-align: -3px"/>. The function to be called to assemble the
+stiffness matrix is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_stiffness_matrix_for_laplacian</span><span class="p">(</span><span class="n">SM</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">A</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">SM</span></tt> is a matrix of any type having the right dimension (i.e.
+<tt class="docutils literal"><span class="pre">mfu.nb_dof()</span></tt>),</li>
+<li><tt class="docutils literal"><span class="pre">mim</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> defining the integration method used,</li>
+<li><tt class="docutils literal"><span class="pre">mfu</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> and should define the finite element
+method for the solution,</li>
+<li><tt class="docutils literal"><span class="pre">mfd</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> (possibly equal to <tt class="docutils literal"><span class="pre">mfu</span></tt>) describing the
+finite element method on which the coefficient <img class="math" src="../_images/math/df321a16c05c7d678128914f4147490710908e35.png" alt="a(x)" style="vertical-align: -4px"/> is defined,</li>
+<li><tt class="docutils literal"><span class="pre">A</span></tt> is the (real or complex) vector of the values of this coefficient on each
+degree of freedom of <tt class="docutils literal"><span class="pre">mfd</span></tt>.</li>
+</ul>
+<p>Both <cite>mesh_fem</cite> should use the same mesh (i.e. <tt class="docutils literal"><span class="pre">&amp;mfu.linked_mesh()</span> <span class="pre">==</span>
+<span class="pre">&amp;mfd.linked_mesh()</span></tt>).</p>
+<p>It is important to pay attention to the fact that the integration methods stored
+in <tt class="docutils literal"><span class="pre">mim</span></tt>, used to compute the elementary matrices, have to be chosen of
+sufficient order. The order has to be determined considering the polynomial
+degrees of element in <tt class="docutils literal"><span class="pre">mfu</span></tt>, in <tt class="docutils literal"><span class="pre">mfd</span></tt> and the geometric transformations for
+non-linear cases. For example, with linear geometric transformations, if <tt class="docutils literal"><span class="pre">mfu</span></tt>
+is a <img class="math" src="../_images/math/d9f6c1b48c702cd2b8d4362a98b74527c93478cb.png" alt="P_{K}" style="vertical-align: -3px"/> FEM, and <tt class="docutils literal"><span class="pre">mfd</span></tt> is a <img class="math" src="../_images/math/515c38beda32fe99b2904dd3509311b1082e953e.png" alt="P_{L}" style="vertical-align: -3px"/> FEM, the integration will
+have to be chosen of order <img class="math" src="../_images/math/04168da45c603fdf663f4fa18980fad491bd0b5f.png" alt="\geq 2(K-1) + L" style="vertical-align: -4px"/>, since the elementary integrals
+computed during the assembly of <tt class="docutils literal"><span class="pre">SM</span></tt> are
+<img class="math" src="../_images/math/2e9c138cd93fbb5a5e3d4987b407662c7fb018ae.png" alt="\int\nabla\varphi_i\nabla\varphi_j\psi_k" style="vertical-align: -6px"/> (with <img class="math" src="../_images/math/87686aa0f5136421c8415c7169adcb308e36c7a8.png" alt="\varphi_i" style="vertical-align: -4px"/> the basis
+functions for <tt class="docutils literal"><span class="pre">mfu</span></tt> and <img class="math" src="../_images/math/75b7bc3d0bbe11946d21dabacfde02b7d0978b3f.png" alt="\psi_i" style="vertical-align: -4px"/> the basis functions for <tt class="docutils literal"><span class="pre">mfd</span></tt>).</p>
+<p>To assemble the source term, the function to be called is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_source_term</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">B</span></tt> is a vector of any type having the correct dimension (still
+<tt class="docutils literal"><span class="pre">mfu.nb_dof()</span></tt>), <tt class="docutils literal"><span class="pre">mim</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> defining the integration
+method used, <tt class="docutils literal"><span class="pre">mfd</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> (possibly equal to <tt class="docutils literal"><span class="pre">mfu</span></tt>)
+describing the finite element method on which <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)" style="vertical-align: -4px"/> is defined, and <tt class="docutils literal"><span class="pre">V</span></tt>
+is the vector of the values of <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)" style="vertical-align: -4px"/> on each degree of freedom of <tt class="docutils literal"><span class="pre">mfd</span></tt>.</p>
+<p>The function <tt class="docutils literal"><span class="pre">asm_source_term</span></tt> also has an optional argument, which is a
+reference to a <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt> (or just an integer <tt class="docutils literal"><span class="pre">i</span></tt>, in which case
+<tt class="docutils literal"><span class="pre">mim.linked_mesh().region(i)</span></tt> will be considered). Hence for the Neumann
+condition on <img class="math" src="../_images/math/ee86b3db4c3592e435f2e00931782755e066ed06.png" alt="\Gamma_{N}" style="vertical-align: -3px"/>, the same function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_source_term</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">mfd</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">nbound</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>is used again, with <tt class="docutils literal"><span class="pre">nbound</span></tt> is the index of the boundary <img class="math" src="../_images/math/ee86b3db4c3592e435f2e00931782755e066ed06.png" alt="\Gamma_{N}" style="vertical-align: -3px"/> in
+the linked mesh of <tt class="docutils literal"><span class="pre">mim</span></tt>, <tt class="docutils literal"><span class="pre">mfu</span></tt> and <tt class="docutils literal"><span class="pre">mfd</span></tt>.</p>
+<p>There is two manner (well not really, since it is also possible to use Lagrange
+multipliers, or to use penalization) to take into account the Dirichlet condition
+on <img class="math" src="../_images/math/374511afe521f2b7acde053f039c570a9026ed20.png" alt="\Gamma_{D}" style="vertical-align: -3px"/>, changing the linear system or explicitly reduce to the
+kernel of the Dirichlet condition. For the first manner, the following function is
+defined:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">assembling_Dirichlet_condition</span><span class="p">(</span><span class="n">SM</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">nbound</span><span class="p">,</span> <span class="n">R</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">nbound</span></tt> is the index of the boundary <img class="math" src="../_images/math/932d4407c87b1cb432a44ee87997e834b985003b.png" alt="\Gamma_D" style="vertical-align: -3px"/> where the Dirichlet
+condition is applied, <tt class="docutils literal"><span class="pre">R</span></tt> is the vector of the values of <img class="math" src="../_images/math/a3eeefa367883375994fd2e1f575d088bce9d8b1.png" alt="R(x)" style="vertical-align: -4px"/> on each
+degree of freedom of <tt class="docutils literal"><span class="pre">mfu</span></tt>. This operation should be the last one because it
+transforms the stiffness matrix <tt class="docutils literal"><span class="pre">SM</span></tt>. It works only for Lagrange elements. At
+the end, one obtains the discrete system:</p>
+<div class="math">
+<p><img src="../_images/math/360abdea2682c599c281923a7ff20fd101f59d75.png" alt="[SM] U = B,"/></p>
+</div><p>where <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> is the discrete unknown.</p>
+<p>For the second manner, one should use the more general:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_dirichlet_constraints</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">mf_mult</span><span class="p">,</span>
+                                  <span class="n">mf_r</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">nbound</span><span class="p">).</span>
+</pre></div>
+</div>
+<p>See the Dirichlet condition as a general linear constraint that must satisfy the
+solution <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>. This function does the assembly of Dirichlet conditions of
+type <img class="math" src="../_images/math/b32255a4012b92082aa37d0d1ec3052f92075707.png" alt="\int_{\Gamma} u(x)v(x) = \int_{\Gamma}r(x)v(x)" style="vertical-align: -6px"/> for all <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> in
+the space of multiplier defined by <tt class="docutils literal"><span class="pre">mf_mult</span></tt>. The fem <tt class="docutils literal"><span class="pre">mf_mult</span></tt> could be often
+chosen equal to <tt class="docutils literal"><span class="pre">mf_u</span></tt> except when <tt class="docutils literal"><span class="pre">mf_u</span></tt> is too &#8220;complex&#8221;.</p>
+<p>This function just assemble these constraints into a new linear system <img class="math" src="../_images/math/8e84f0e47618565614f33681b47de4315c5099ac.png" alt="H
+u=R" style="vertical-align: 0px"/>, doing some additional simplification in order to obtain a &#8220;simple&#8221;
+constraints matrix.</p>
+<p>Then, one should call:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ncols</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">Dirichlet_nullspace</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">Ud</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>which will return a vector <img class="math" src="../_images/math/c637453900fc179acd998cd01c8d43525e4b316d.png" alt="U_d" style="vertical-align: -3px"/> which satisfies the Dirichlet condition,
+and an orthogonal basis <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> of the kernel of <img class="math" src="../_images/math/b1902d279ba37d60bdce4e0e987b7cd19d48974e.png" alt="H" style="vertical-align: 0px"/>. Hence, the discrete
+system that must be solved is:</p>
+<div class="math">
+<p><img src="../_images/math/e9bc01b99157c20d9c7b5060d96f3fd432ba950b.png" alt="(N'[SM]N) U_{int}=N'(B-[SM]U_d),"/></p>
+</div><p>and the solution is $U=N U_{int}+U_d$. The output matrix <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> should be a
+<img class="math" src="../_images/math/b467a07984c704527c74d5213ef34ab53ff1ad7d.png" alt="nbdof \times nbdof" style="vertical-align: -4px"/> (sparse) matrix but should be resized to <tt class="docutils literal"><span class="pre">ncols</span></tt>
+columns. The output vector <img class="math" src="../_images/math/c637453900fc179acd998cd01c8d43525e4b316d.png" alt="U_d" style="vertical-align: -3px"/> should be a <img class="math" src="../_images/math/b9822d81135a48a35b9b7d4ee6d28383089f8b04.png" alt="nbdof" style="vertical-align: -4px"/> vector. A big
+advantage of this approach is to be generic, and do not prescribed for the finite
+element method <tt class="docutils literal"><span class="pre">mf_u</span></tt> to be of Lagrange type. If <tt class="docutils literal"><span class="pre">mf_u</span></tt> and <tt class="docutils literal"><span class="pre">mf_d</span></tt> are
+different, there is implicitly a projection (with respect to the <img class="math" src="../_images/math/07c3de5211dc08b13546363f8b139700a16dd963.png" alt="L^2" style="vertical-align: 0px"/> norm)
+of the data on the finite element <tt class="docutils literal"><span class="pre">mf_u</span></tt>.</p>
+<p>If you want to treat the more general scalar elliptic equation
+<img class="math" src="../_images/math/344f0e54dc8c2acfc94632898ca41de377939f95.png" alt="\mbox{div}(A(x)\nabla u)" style="vertical-align: -4px"/>, where <img class="math" src="../_images/math/133abca2101afa88a51f60a6747c47e699a858e5.png" alt="A(x)" style="vertical-align: -4px"/> is square matrix, you should
+use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_stiffness_matrix_for_scalar_elliptic</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span>
+                                                 <span class="n">mfdata</span><span class="p">,</span> <span class="n">A</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The matrix data <tt class="docutils literal"><span class="pre">A</span></tt> should be defined on <tt class="docutils literal"><span class="pre">mfdata</span></tt>. It is expected as a vector
+representing a <img class="math" src="../_images/math/5033ce098377400f3ddb583c889abcbdafa6ba64.png" alt="n \times n \times nbdof" style="vertical-align: -4px"/> tensor (in Fortran order), where
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> is the mesh dimension of <tt class="docutils literal"><span class="pre">mfu</span></tt>, and <img class="math" src="../_images/math/b9822d81135a48a35b9b7d4ee6d28383089f8b04.png" alt="nbdof" style="vertical-align: -4px"/> is the number of dof
+of <tt class="docutils literal"><span class="pre">mfdata</span></tt>.</p>
+</div>
+<div class="section" id="linear-elasticity-problem">
+<h2>Linear Elasticity problem<a class="headerlink" href="#linear-elasticity-problem" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The following function assembles the stiffness matrix for linear elasticity:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_stiffness_matrix_for_linear_elasticity</span><span class="p">(</span><span class="n">SM</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span>
+                                                   <span class="n">mfd</span><span class="p">,</span> <span class="n">LAMBDA</span><span class="p">,</span> <span class="n">MU</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">SM</span></tt> is a matrix of any type having the right dimension (i.e. here
+<tt class="docutils literal"><span class="pre">mfu.nb_dof()</span></tt>), <tt class="docutils literal"><span class="pre">mim</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> defining the integration
+method used, <tt class="docutils literal"><span class="pre">mfu</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> and should define the finite
+element method for the solution, <tt class="docutils literal"><span class="pre">mfd</span></tt> is a variable of type <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> (possibly
+equal to <tt class="docutils literal"><span class="pre">mfu</span></tt>) describing the finite element method on which the Lamé
+coefficient are defined, <tt class="docutils literal"><span class="pre">LAMBDA</span></tt> and <tt class="docutils literal"><span class="pre">MU</span></tt> are vectors of the values of Lamé
+coefficients on each degree of freedom of <tt class="docutils literal"><span class="pre">mfd</span></tt>.</p>
+<div class="admonition caution">
+<p class="first admonition-title">ご用心</p>
+<p class="last">Linear elasticity problem is a vectorial problem, so the target dimension of
+<tt class="docutils literal"><span class="pre">mfu</span></tt> (see <tt class="docutils literal"><span class="pre">mf.set_qdim(Q)</span></tt>) should be the same as the dimension of the
+mesh.</p>
+</div>
+<p>In order to assemble source term, Neumann and Dirichlet conditions, same functions
+as in previous section can be used.</p>
+</div>
+<div class="section" id="stokes-problem-with-mixed-finite-element-method">
+<h2>Stokes Problem with mixed finite element method<a class="headerlink" href="#stokes-problem-with-mixed-finite-element-method" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The assembly of the mixed term <img class="math" src="../_images/math/c6c5b7802cd0348ac145c55f590e3c92e9101318.png" alt="B = - \int p\nabla.v" style="vertical-align: -6px"/> is done with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_stokes_B</span><span class="p">(</span><span class="n">MATRIX</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">mesh_im</span> <span class="o">&amp;</span><span class="n">mim</span><span class="p">,</span>
+                     <span class="k">const</span> <span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">mf_u</span><span class="p">,</span> <span class="k">const</span> <span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">mf_p</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="assembling-a-mass-matrix">
+<h2>Assembling a mass matrix<a class="headerlink" href="#assembling-a-mass-matrix" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Assembly of a mass matrix between two finite elements:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">asm_mass_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf1</span><span class="p">,</span> <span class="n">mf2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>It is also possible to obtain mass matrix on a boundary with the same function:</p>
+<blockquote>
+<div>getfem::asm_mass_matrix(M, mim, mf1, mf2, nbound);</div></blockquote>
+<p>where <tt class="docutils literal"><span class="pre">nbound</span></tt> is the region index in <tt class="docutils literal"><span class="pre">mim.linked_mesh()</span></tt>, or a
+<tt class="docutils literal"><span class="pre">mesh_region</span></tt> object.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Some Standard assembly procedures (low-level generic assembly)</a><ul>
+<li><a class="reference internal" href="#laplacian-poisson-problem">Laplacian (Poisson) problem</a></li>
+<li><a class="reference internal" href="#linear-elasticity-problem">Linear Elasticity problem</a></li>
+<li><a class="reference internal" href="#stokes-problem-with-mixed-finite-element-method">Stokes Problem with mixed finite element method</a></li>
+<li><a class="reference internal" href="#assembling-a-mass-matrix">Assembling a mass matrix</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="gasm_low.html"
+                        title="前の章へ">Compute arbitrary terms - low-level generic assembly procedures</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="interMM.html"
+                        title="次の章へ">Interpolation of arbitary quantities</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="interMM.html" title="Interpolation of arbitary quantities"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="gasm_low.html" title="Compute arbitrary terms - low-level generic assembly procedures"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

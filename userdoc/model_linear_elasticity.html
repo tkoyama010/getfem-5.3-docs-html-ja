@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Isotropic linearized elasticity brick &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Mass brick" href="model_mass.html" />
+    <link rel="prev" title="Fourier-Robin brick" href="model_fourier_robin.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_mass.html" title="Mass brick"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_fourier_robin.html" title="Fourier-Robin brick"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="isotropic-linearized-elasticity-brick">
+<span id="ud-model-linear-elasticity"></span><span id="index-0"></span><h1>Isotropic linearized elasticity brick<a class="headerlink" href="#isotropic-linearized-elasticity-brick" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This brick represents a term</p>
+<div class="math">
+<p><img src="../_images/math/bcb442724759cfaebfdd0d3fc693a63ec08b6691.png" alt="-div(\sigma) = \ldots"/></p>
+</div><p>with</p>
+<div class="math">
+<p><img src="../_images/math/b90c2f0c03811fe930bdd8254a45eddcd11cc899.png" alt="\sigma &amp;= \lambda\mbox{tr}(\varepsilon(u))I + 2\mu\varepsilon(u) \\
+\varepsilon(u) &amp;= (\nabla u + \nabla u^T)/2"/></p>
+</div><p><img class="math" src="../_images/math/6805fcc41ae33ab73370b02dd5b944c212328b92.png" alt="\varepsilon(u)" style="vertical-align: -4px"/> is the small strain tensor, <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> is the stress
+tensor, <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu" style="vertical-align: -4px"/> are the Lamé coefficients. This represents
+the system of linearized isotropic elasticity. It can also be used with
+<img class="math" src="../_images/math/ab8ccbedc8ad9dd3e5fb8e654b94ee38f70f19e9.png" alt="\lambda=0" style="vertical-align: 0px"/> together with the linear incompressible brick to build the
+Stokes problem.</p>
+<p>Let us recall that the relation between the Lamé coefficients an Young modulus <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> and Poisson ratio <img class="math" src="../_images/math/d6a7ccf879c4a4fe694033606332cb83806db296.png" alt="\nu" style="vertical-align: 0px"/> is</p>
+<div class="math">
+<p><img src="../_images/math/f3f47d0da92c187424ddf6fe6a0be013c9a69926.png" alt="\lambda = \Frac{E\nu}{(1+\nu)(1-2\nu)}, ~~~ \mu = \Frac{E}{2(1+\nu)},"/></p>
+</div><p>except for the plane stress approximation (2D model) where</p>
+<div class="math">
+<p><img src="../_images/math/5729fb1245bb76bc4ee07711662dce2204e109ec.png" alt="\lambda^* = \Frac{E\nu}{(1-\nu^2)}, ~~~ \mu = \Frac{E}{2(1+\nu)},"/></p>
+</div><p>The function which adds this brick to a model and parametrized with the Lamé coefficients is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind_brick</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_isotropic_linearized_elasticity_brick</span>
+            <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">data_lambda</span><span class="p">,</span> <span class="n">data_mu</span><span class="p">,</span>
+             <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">dataname_lambda</span></tt> and <tt class="docutils literal"><span class="pre">dataname_mu</span></tt> are the data of the model
+representing the Lamé coefficients.</p>
+<p>The function which adds this brick to a model and parametrized with Young modulus and Poisson ratio is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind_brick</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_isotropic_linearized_elasticity_brick_pstrain</span>
+            <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">data_E</span><span class="p">,</span> <span class="n">data_nu</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>This brick represent a plane strain approximation when it is applied to a 2D mesh (and a standard model on a 3D mesh). in order to obtain a plane stress approximation for 2D meshes, one can use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind_brick</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_isotropic_linearized_elasticity_brick_pstress</span>
+            <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">data_E</span><span class="p">,</span> <span class="n">data_nu</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>For 3D meshes, the two previous bricks give the same result.</p>
+<p>The function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">compute_isotropic_linearized_Von_Mises_or_Tresca</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">dataname_lambda</span><span class="p">,</span> <span class="n">dataname_mu</span><span class="p">,</span> <span class="n">mf_vm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="n">tresca_flag</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>compute the Von Mises criterion (or Tresca if <tt class="docutils literal"><span class="pre">tresca_flag</span></tt> is set to true) on
+the displacement field stored in <tt class="docutils literal"><span class="pre">varname</span></tt>. The stress is evaluated on the <cite>mesh_fem</cite>
+<tt class="docutils literal"><span class="pre">mf_vm</span></tt> and stored in the vector <tt class="docutils literal"><span class="pre">VM</span></tt>. It is not valid for 2D plane stress approximation and is parametrized with Lamé coefficients. The functions:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">compute_isotropic_linearized_Von_Mises</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">data_E</span><span class="p">,</span> <span class="n">data_nu</span><span class="p">,</span> <span class="n">mf_vm</span><span class="p">,</span> <span class="n">VM</span><span class="p">);</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">compute_isotropic_linearized_Von_Mises</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">data_E</span><span class="p">,</span> <span class="n">data_nu</span><span class="p">,</span> <span class="n">mf_vm</span><span class="p">,</span> <span class="n">VM</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>compute the Von Mises stress, parametrized with Young modulus and Poisson ratio, the second one being valid for 2D plane stress approximation when it is applied on a 2D mesh (the two functions give the same result for 3D problems).</p>
+<p>The program <tt class="file docutils literal"><span class="pre">tests/elastostatic.cc</span></tt> can be taken as a model of use of a linearized isotropic elasticity brick.</p>
+</div>
+<div class="section" id="linear-incompressibility-or-nearly-incompressibility-brick">
+<h1>Linear incompressibility (or nearly incompressibility) brick<a class="headerlink" href="#linear-incompressibility-or-nearly-incompressibility-brick" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This brick adds a linear incompressibility condition (or a nearly incompressible
+condition) in a problem of type:</p>
+<div class="math">
+<p><img src="../_images/math/2ee33b5cf9b3fdb796d5bf93f018e648e3fd07c2.png" alt="\mbox{div}(u) = 0,\quad (\mbox{ or } \mbox{div}(u) = \varepsilon p)"/></p>
+</div><p>This constraint is enforced with Lagrange multipliers representing the pressure,
+introduced in a mixed formulation.</p>
+<p>The function adding this incompressibility condition is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind_brick</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_linear_incompressibility</span>
+            <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">multname_pressure</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+             <span class="n">dataexpr_penal_coeff</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">varname</span></tt> is the variable on which the incompressibility condition is
+prescribed, <tt class="docutils literal"><span class="pre">multname_pressure</span></tt> is a variable which should be described on a
+scalar fem representing the multiplier (the pressure) and <tt class="docutils literal"><span class="pre">dataexpr_penal_coeff</span></tt>
+is an optional penalization coefficient for the nearly incompressible condition.</p>
+<p>In nearly incompressible homogeneous linearized elasticity, one has
+<img class="math" src="../_images/math/f2c8e52b049ec8b471ddd97abe1d5fc3e12c6278.png" alt="\varepsilon = 1 / \lambda" style="vertical-align: -5px"/> where <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> is one of the Lamé
+coefficient and <img class="math" src="../_images/math/e2a63918a6fa75b62ad87ad17aaf65f782d71546.png" alt="\varepsilon" style="vertical-align: 0px"/> the penalization coefficient.</p>
+<p>For instance, the following program defines a Stokes problem with a source term
+and an homogeneous Dirichlet condition on boundary 0. <tt class="docutils literal"><span class="pre">mf_u</span></tt>, <tt class="docutils literal"><span class="pre">mf_data</span></tt> and
+<tt class="docutils literal"><span class="pre">mf_p</span></tt> have to be valid finite element description on the same mesh. <tt class="docutils literal"><span class="pre">mim</span></tt>
+should be a valid integration method on the same mesh:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">getfem</span><span class="o">::</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">plain_vector</span><span class="p">;</span>
+<span class="n">size_type</span> <span class="n">N</span> <span class="o">=</span> <span class="n">mf_u</span><span class="p">.</span><span class="n">linked_mesh</span><span class="p">().</span><span class="n">dim</span><span class="p">();</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">model</span> <span class="n">Stokes_model</span><span class="p">;</span>
+
+<span class="n">laplacian_model</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">);</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">scalar_type</span> <span class="n">mu</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="n">Stokes_model</span><span class="p">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&quot;lambda&quot;</span><span class="p">,</span> <span class="n">plain_vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">));</span>
+<span class="n">Stokes_model</span><span class="p">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&quot;mu&quot;</span><span class="p">,</span> <span class="n">plain_vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mu</span><span class="p">));</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_isotropic_linearized_elasticity_brick</span><span class="p">(</span><span class="n">Stokes_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span>
+                                                  <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;lambda&quot;</span><span class="p">,</span> <span class="s">&quot;mu&quot;</span><span class="p">);</span>
+
+<span class="n">laplacian_model</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span> <span class="n">mf_p</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_linear_incompressibility</span><span class="p">(</span><span class="n">Stokes_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;p&quot;</span><span class="p">);</span>
+
+<span class="n">plain_vector</span> <span class="nf">F</span><span class="p">(</span><span class="n">mf_data</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">()</span><span class="o">*</span><span class="n">N</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">mf_data</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">()</span><span class="o">*</span><span class="n">N</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="n">F</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="p">...;</span>
+<span class="n">Stokes_model</span><span class="p">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&quot;VolumicData&quot;</span><span class="p">,</span> <span class="n">mf_data</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">Stokes_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;VolumicData&quot;</span><span class="p">);</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">Stokes_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span>
+                                                 <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">40000</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">standard_solve</span><span class="p">(</span><span class="n">Stokes_model</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>
+
+<span class="n">plain_vector</span> <span class="nf">U</span><span class="p">(</span><span class="n">mf_u</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">Stokes_model</span><span class="p">.</span><span class="n">real_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>An example for a nearly incompressibility condition can be found in the program
+<tt class="file docutils literal"><span class="pre">tests/elastostatic.cc</span></tt>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Isotropic linearized elasticity brick</a></li>
+<li><a class="reference internal" href="#linear-incompressibility-or-nearly-incompressibility-brick">Linear incompressibility (or nearly incompressibility) brick</a></li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_fourier_robin.html"
+                        title="前の章へ">Fourier-Robin brick</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_mass.html"
+                        title="次の章へ">Mass brick</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_mass.html" title="Mass brick"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_fourier_robin.html" title="Fourier-Robin brick"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

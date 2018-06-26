@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MPI Parallelization of GetFEM++ &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Catch errors" href="catch.html" />
+    <link rel="prev" title="Linear algebra procedures" href="linalg.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="linalg.html" title="Linear algebra procedures"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mpi-parallelization-of-gf">
+<span id="ud-parallel"></span><h1>MPI Parallelization of <em>GetFEM++</em><a class="headerlink" href="#mpi-parallelization-of-gf" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Of course, each different problem should require a different
+parallelization adapted to its specificities in order to
+obtain a good load balancing. You may build your own parallelization
+using the mesh regions to parallelize assembly procedures.</p>
+<p>Nevertheless, the brick system offers a generic parallelization based on MPI
+(communication between processes),
+<a class="reference external" href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a>
+(partition of the mesh)
+and <a class="reference external" href="http://graal.ens-lyon.fr/MUMPS">MUMPS</a> (parallel sparse direct solver).
+It is available with the compiler option <tt class="docutils literal"><span class="pre">-D</span> <span class="pre">GETFEM_PARA_LEVEL=2</span></tt>
+and the library itself has to be compiled with the
+option <tt class="docutils literal"><span class="pre">--enable-paralevel=2</span></tt> of the configure script.
+Initial MPI parallelization of <em>GetFEM++</em> has been designed with the help of Nicolas Renon from CALMIP, Toulouse.</p>
+<p>When the configure script is run with the option <tt class="docutils literal"><span class="pre">--enable-paralevel=2</span></tt>,
+it searches for MPI, METIS and parallel MUMPS libraries.
+If the python interface is built, it searches also for MPI4PY library.
+In that case, the python interface can
+be used to drive the parallel version of getfem (the other interfaces has
+not been parallelized for the moment). See demo_parallel_laplacian.py in
+the interface/test/python directory.</p>
+<p>With the option <tt class="docutils literal"><span class="pre">-D</span> <span class="pre">GETFEM_PARA_LEVEL=2</span></tt>, each mesh used is implicitely
+partitionned (using METIS) into a
+number of regions corresponding to the number of processors and the assembly
+procedures are parallelized. This means that the tangent matrix and the
+constraint matrix assembled in the model_state variable are distributed.
+The choice made (for the moment) is not to distribute the vectors.
+So that the right hand side vectors in the model_state variable
+are communicated to each processor (the sum of each contribution is made
+at the end of the assembly and each processor has the complete vector).
+Note that you have to think to the fact that the matrices stored by the
+bricks are all distributed.</p>
+<p>A model of C++ parallelized program is <tt class="file docutils literal"><span class="pre">tests/elastostatic.cc</span></tt>.
+To run it in parallel you have to lauch for instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mpirun</span> <span class="o">-</span><span class="n">n</span> <span class="mi">4</span> <span class="n">elastostatic</span> <span class="n">elastostatic</span><span class="p">.</span><span class="n">param</span>
+</pre></div>
+</div>
+<p>For a python interfaced program, the call reads:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mpirun</span> <span class="o">-</span><span class="n">n</span> <span class="mi">4</span> <span class="n">python</span> <span class="n">demo_parallel_laplacian</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>If you do not perform a <cite>make install</cite>, do not forget to first set the shell variable PYTHONPATH to the python-getfem library with for instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">export</span> <span class="n">PYTHONPATH</span><span class="o">=</span><span class="n">my_getfem_directory</span><span class="o">/</span><span class="n">interface</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">python</span>
+</pre></div>
+</div>
+<div class="section" id="state-of-progress-of-gf-mpi-parallelization">
+<h2>State of progress of <em>GetFEM++</em> MPI parallelization<a class="headerlink" href="#state-of-progress-of-gf-mpi-parallelization" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Parallelization of getfem is still considered a &#8220;work in progress&#8221;. A certain number of procedure are still remaining sequential. Of course, a good test to see if the parallelization of your program is correct is to verify that the result of the computation is indeed independent of the number of process.</p>
+<ul>
+<li><p class="first">Assembly procedures</p>
+<p>Most of assembly procedures (in <tt class="file docutils literal"><span class="pre">getfem/getfem_assembling.h</span></tt>) have a parameter corresponding to the region in which the assembly is to be computed. They are not parallelized themselves but aimed to be called with a different region in each process to distribute the job. Note that the file <tt class="file docutils literal"><span class="pre">getfem/getfem_config.h</span></tt> contains a procedures called MPI_SUM_SPARSE_MATRIX allowing to gather the contributions of a distributed sparse matrix.</p>
+<p>The following assembly procedures are implicitely parallelized using the option <tt class="docutils literal"><span class="pre">-D</span> <span class="pre">GETFEM_PARA_LEVEL=2</span></tt>:</p>
+<ul class="simple">
+<li>computation of norms (<tt class="docutils literal"><span class="pre">asm_L2_norm</span></tt>, <tt class="docutils literal"><span class="pre">asm_H1_norm</span></tt>, <tt class="docutils literal"><span class="pre">asm_H2_norm</span></tt> ..., in <tt class="file docutils literal"><span class="pre">getfem/getfem_assembling.h</span></tt>),</li>
+<li><tt class="docutils literal"><span class="pre">asm_mean_value</span></tt> (in <tt class="file docutils literal"><span class="pre">getfem/getfem_assembling.h</span></tt>),</li>
+<li><tt class="docutils literal"><span class="pre">error_estimate</span></tt> (in <tt class="file docutils literal"><span class="pre">getfem/getfem_error_estimate.h</span></tt>).</li>
+</ul>
+<p>This means in particular that these functions have to be called on each
+processor.</p>
+</li>
+<li><p class="first">Mesh_fem object</p>
+<p>The dof numbering of the getfem::mesh_fem object remains sequential and is executed on each process.  The parallelization is to be done. This could affect the efficiency of the parallelization for very large and/or evoluting meshes.</p>
+</li>
+<li><p class="first">Model object and bricks</p>
+<p>The model system is globally parallelized, which mainly means that the
+assembly procedures of standard bricks use a METIS partition of the
+meshes to distribute the assembly. The tangent/stiffness matrices
+remain distibuted and the standard solve call the parallel version
+of MUMPS (which accept distributed matrices).</p>
+<p>For the moment, the procedure <tt class="docutils literal"><span class="pre">actualize_sizes()</span></tt> of the model
+object remains sequential and is executed on each process.
+The parallelization is to be done.</p>
+<p>Some specificities:</p>
+<ul class="simple">
+<li>The explicit matrix brick: the given matrix is considered to be
+distributed. If it is not, only add it on the master process (otherwize,
+the contribution will be multiplied by the numberof processes).</li>
+<li>The explicit rhs brick: the given vector is not considered to be
+distributed. Only the given vector on the master process is taken into
+account.</li>
+<li>Constraint brick: The given mastrix and rhs are not considered to be
+distributed. Only the given matrix and vector on the master process are
+taken into account.</li>
+<li>Concerning contact bricks, only integral contact bricks are fully
+parallelized for the moment. Nodal contact bricks work in parallel
+but all the computation is done on the master process.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MPI Parallelization of <em>GetFEM++</em></a><ul>
+<li><a class="reference internal" href="#state-of-progress-of-gf-mpi-parallelization">State of progress of <em>GetFEM++</em> MPI parallelization</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="linalg.html"
+                        title="前の章へ">Linear algebra procedures</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="catch.html"
+                        title="次の章へ">Catch errors</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="linalg.html" title="Linear algebra procedures"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

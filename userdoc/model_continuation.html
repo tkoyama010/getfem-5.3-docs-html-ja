@@ -1,0 +1,525 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Numerical continuation and bifurcation &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Finite strain Elasticity bricks" href="model_nonlinear_elasticity.html" />
+    <link rel="prev" title="Large sliding/large deformation contact with friction bricks" href="model_contact_friction_large_sliding.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_nonlinear_elasticity.html" title="Finite strain Elasticity bricks"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_contact_friction_large_sliding.html" title="Large sliding/large deformation contact with friction bricks"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="numerical-continuation-and-bifurcation">
+<span id="ud-model-continuation"></span><span id="index-0"></span><h1>Numerical continuation and bifurcation<a class="headerlink" href="#numerical-continuation-and-bifurcation" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Let an algebraic problem coming from discretisation of a FEM-model can be
+written in the form</p>
+<div class="math">
+<p><img src="../_images/math/74b9bb1fe8612ae481599cddbf80127fff24345f.png" alt="F(U) = 0."/></p>
+</div><p>In what follows, we shall suppose that the model depends on an additional scalar
+parameter <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> so that <img class="math" src="../_images/math/da0855516adb19f81825c9c353246f63e620546b.png" alt="F(U) = F(U, \lambda)" style="vertical-align: -4px"/>.</p>
+<div class="section" id="numerical-continuation">
+<h2>Numerical continuation<a class="headerlink" href="#numerical-continuation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Methods of numerical continuation serve for tracing solutions of the system</p>
+<div class="math">
+<p><img src="../_images/math/0e089bb21988c0e2f71b90ca5a35bed72ea88a01.png" alt="F(U, \lambda) = 0, \quad F\colon \mathbb{R}^{N} \times \mathbb{R} \to \mathbb{R}^{N}."/></p>
+</div><p>In <em>GetFEM++</em>, a continuation technique for piecewise <img class="math" src="../_images/math/7bbb63778d316caf69c5c2b30c46b0353429aec1.png" alt="C^{1}" style="vertical-align: 0px"/> (<img class="math" src="../_images/math/cd1b7b1464813d62e5ed164e2ca2c84e81063c9d.png" alt="PC^{1}" style="vertical-align: 0px"/>)
+solution curves is implemented (see <a class="reference internal" href="../biblio.html#li-re2014" id="id1">[Li-Re2014]</a> for more details). Since it
+does not make an explicit difference between the state variable <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> and
+the parameter <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/>, we shall denote <img class="math" src="../_images/math/7b9dfe52ba0c158d8f291d1bd007cc49351d7b0e.png" alt="Y := (U, \lambda)" style="vertical-align: -4px"/> for
+brevity. Nevertheless, to avoid bad scaling when calculating tangents, for
+example, we shall use the following weighted scalar product and norm:</p>
+<div class="math">
+<p><img src="../_images/math/6a9726d2c1e4bce0499e357c2b4243c5bae9cc29.png" alt="\langle Y, \tilde{Y} \rangle_{w} := \kappa \langle U, \tilde{U} \rangle + \lambda \tilde{\lambda},\quad \lVert Y \rVert_{w} := \sqrt{\kappa \lVert U \rVert^{2} + \lambda^{2}},\qquad Y = (U, \lambda),\, \tilde{Y} = (\tilde{U}, \tilde{\lambda})."/></p>
+</div><p>Here, <img class="math" src="../_images/math/da61bb0fa48fe71269aebf9c8e56b39275813994.png" alt="\kappa" style="vertical-align: 0px"/> should be chosen so that
+<img class="math" src="../_images/math/9e66041441bad7c372d51a7777b65bfb72ae7159.png" alt="\kappa \langle U, \tilde{U} \rangle" style="vertical-align: -5px"/> is proportional to the scalar
+product of the corresponding space variables, usually in <img class="math" src="../_images/math/88356ac308d0c7c158922632b1b3cfd8b92cf7cc.png" alt="L^{2}" style="vertical-align: 0px"/>. One can
+take, for example, <img class="math" src="../_images/math/e47ecd7eee2beb04504bde872339e9f4f99cbf43.png" alt="\kappa = h^{d}" style="vertical-align: 0px"/>, where <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/> is the mesh size and
+<img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> stands for the dimension of the underlying problem. Alternatively,
+<img class="math" src="../_images/math/da61bb0fa48fe71269aebf9c8e56b39275813994.png" alt="\kappa" style="vertical-align: 0px"/> can be chosen as <img class="math" src="../_images/math/ced170796c600ff6f461d136fbfe282ca16c4bb4.png" alt="1/N" style="vertical-align: -5px"/> for simplicity.</p>
+<p>The idea of the continuation strategy is to continue smooth pieces of solution
+curves by a classical predictor-corrector method and to join the smooth pieces
+continuously.</p>
+<p>The particular predictor-corrector method employed is a slight modification of
+the <em>inexact Moore-Penrose</em> continuation implemented in MATCONT <a class="reference internal" href="../biblio.html#dh-go-ku2003" id="id2">[Dh-Go-Ku2003]</a>.
+It computes a sequence of consecutive points <img class="math" src="../_images/math/fcc0be5e08ec43b5d0d626715fbbc1a666a7fef8.png" alt="Y_{j}" style="vertical-align: -6px"/> lying approximately
+on a solution curve and a sequence of the corresponding unit tangent vectors
+<img class="math" src="../_images/math/ee2873d28c4e44bb4b35c0a65bc95740bfe7e1f5.png" alt="T_{j}" style="vertical-align: -6px"/>:</p>
+<div class="math">
+<p><img src="../_images/math/4a1ef1faaa9e9ccf6f4d117fd0f2f1f5d4ca640b.png" alt="\lVert F(Y_{j}) \rVert \leq \varepsilon,\quad F'(Y_{j}; T_{j}) = 0,\quad \lVert T_{j} \rVert_{w} = 1,\quad j = 0, 1,\dotsc."/></p>
+</div><p>To describe it, let us suppose that we have a couple <img class="math" src="../_images/math/d73ef4ae12b46df5536b8b2b0df4a218bb73f121.png" alt="(Y_{j}, T_{j})" style="vertical-align: -6px"/>
+satisfying the relations above at our disposal. In the <em>prediction</em>, an initial
+approximation of <img class="math" src="../_images/math/24f18187b8ea66ad057903328f66441b0c9b44d5.png" alt="(Y_{j+1}, T_{j+1})" style="vertical-align: -6px"/> is taken as</p>
+<div class="math">
+<p><img src="../_images/math/3b2fd1226ab6dbd729adcdac152efda38217ec84.png" alt="Y_{j+1}^{0} := Y_{j} + h_{j} T_{j},\quad T_{j+1}^{0} := T_{j},"/></p>
+</div><p>where <img class="math" src="../_images/math/6ec70da23b1342ba43e0703ff022fee4873eca7b.png" alt="h_{j}" style="vertical-align: -6px"/> is a step size. Its choice will be discussed later on.</p>
+<p>In the <em>correction</em>, one computes a sequence
+<img class="math" src="../_images/math/1b9af35207da45e6cf5164f755f2b5079ad87d12.png" alt="\{(Y_{j+1}^{l}, T_{j+1}^{l})\}" style="vertical-align: -8px"/>, where
+<img class="math" src="../_images/math/fd650e9aaafbfb3958dedcd8c03c462a12cb212b.png" alt="T_{j+1}^{l} := \tilde{T}_{j+1}^{l} / \lVert \tilde{T}_{j+1}^{l} \rVert_{w}" style="vertical-align: -8px"/>
+and the couple <img class="math" src="../_images/math/f08e48d00c5dda0ac0e8cfdcca5d96ea75e021da.png" alt="(Y_{j+1}^{l}, \tilde{T}_{j+1}^{l})" style="vertical-align: -8px"/> is given by one
+iteration of the Newton method applied to the equation <img class="math" src="../_images/math/49abf1fb74b6759adf25332745b302f75f59568f.png" alt="F^{l}(Y, T) = 0" style="vertical-align: -4px"/>
+with</p>
+<div class="math">
+<p><img src="../_images/math/691873597eeca9d38201e37c5a3f6fd73162da6e.png" alt="F^{l}(Y, T) := \begin{pmatrix}F(Y)\\ (T_{j+1}^{l-1})^{\top}(Y - Y_{j+1}^{l-1})\\ \nabla F(Y_{j+1}^{l-1})T\\ \langle T_{j+1}^{l-1}, T \rangle_{w} - \langle T_{j+1}^{l-1}, T_{j+1}^{l-1} \rangle_{w}\end{pmatrix}"/></p>
+</div><p>and the initial approximation <img class="math" src="../_images/math/7144fa03f446a0f3cdfbf786917253b17dbda29f.png" alt="(Y_{j+1}^{l-1}, T_{j+1}^{l-1})" style="vertical-align: -8px"/>. Due to the
+potential non-differentiability of <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" style="vertical-align: 0px"/>, a piecewise-smooth variant of the
+Newton method is used (Algorithm 7.2.14 in <a class="reference internal" href="../biblio.html#fa-pa2003" id="id3">[Fa-Pa2003]</a>).</p>
+<div class="figure align-center" id="ud-fig-correction">
+<img alt="../_images/getfemusercorrection.png" src="../_images/getfemusercorrection.png" />
+<p class="caption">Correction.</p>
+</div>
+<p>A couple <img class="math" src="../_images/math/2df6d2109086eec4aaf2a08597e01bae3d7554f6.png" alt="(Y_{j+1}^{l}, T_{j+1}^{l})" style="vertical-align: -8px"/> is accepted for
+<img class="math" src="../_images/math/24f18187b8ea66ad057903328f66441b0c9b44d5.png" alt="(Y_{j+1}, T_{j+1})" style="vertical-align: -6px"/> if
+<img class="math" src="../_images/math/0ab536ea87e5d8967815bf6c4aac86cc535d6a1a.png" alt="\lVert F(Y_{j+1}^{l})\rVert \leq \varepsilon" style="vertical-align: -8px"/>,
+<img class="math" src="../_images/math/2e526656676438a7724141dbb9084208ab0c9c51.png" alt="\lVert Y_{j+1}^{l} - Y_{j+1}^{l-1}\rVert_{w} \leq \varepsilon'" style="vertical-align: -8px"/>, and the
+cosine of the angle between <img class="math" src="../_images/math/c08066ff2d5cd190bc7d56764659b01a78236e80.png" alt="T_{j+1}^{l}" style="vertical-align: -8px"/> and <img class="math" src="../_images/math/ee2873d28c4e44bb4b35c0a65bc95740bfe7e1f5.png" alt="T_{j}" style="vertical-align: -6px"/> is greater or
+equal to <img class="math" src="../_images/math/020ff9bf08a2362b8cf02d05d48486e633238907.png" alt="c_{\mathrm{min}}" style="vertical-align: -4px"/>. Let us note that the partial gradient of
+<img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" style="vertical-align: 0px"/> (or of one of its selection functions in the case of the
+non-differentiability) with respect to <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> is assembled analytically
+whereas the partial gradient with respect to <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> is evaluated by
+forward finite differences with an increment equal to 1e-8.</p>
+<p>The step size <img class="math" src="../_images/math/26c691671c571bf9b27863fc01df3a8805fb8540.png" alt="h_{j+1}" style="vertical-align: -6px"/> in the next prediction depends on how the Newton
+correction has been successful. Denoting the number of iterations needed by
+<img class="math" src="../_images/math/0b15542580ed267331b3e1187fedae7061abd996.png" alt="l_{\mathrm{it}}" style="vertical-align: -4px"/>, it is selected as</p>
+<div class="math">
+<p><img src="../_images/math/bf8112217bff4a4ed077ee6f79949af9a875ec1b.png" alt="h_{j+1} := \begin{cases}\max\{h_{\mathrm{dec}} h_{j}, h_{\mathrm{min}}\}&amp; \text{if no new couple has been accepted},\\ \min\{h_{\mathrm{inc}} h_{j}, h_{\mathrm{max}}\}&amp; \text{if a new couple has been accepted and } l_{\mathrm{it}} &lt; l_{\mathrm{thr}},\\ h_{j}&amp; \text{otherwise},\end{cases}"/></p>
+</div><p>where <img class="math" src="../_images/math/711b32fad2369e23158d53ce81d183406214bc7a.png" alt="0 &lt; h_{\mathrm{dec}} &lt; 1 &lt; h_{\mathrm{inc}}" style="vertical-align: -4px"/>,
+<img class="math" src="../_images/math/64b64d165682121e850a36f0c39a3864dc4c4954.png" alt="0 &lt; l_{\mathrm{thr}}" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/ecc6071b948723779952af2eccd52885f2e2de5a.png" alt="0 &lt; h_{\mathrm{min}} &lt; h_{\mathrm{max}}" style="vertical-align: -4px"/> are given constants. At the
+beginning, one sets <img class="math" src="../_images/math/d2b3f93c6cbb0a04aa21b86ff8e3e0f4063a31ed.png" alt="h_{1} := h_{\mathrm{init}}" style="vertical-align: -4px"/> for some
+<img class="math" src="../_images/math/70cf1245a3149cbde018aa70cf1ef7c64557a83c.png" alt="h_{\mathrm{min}} \leq h_{\mathrm{init}} \leq h_{\mathrm{max}}" style="vertical-align: -4px"/>.</p>
+<p>Now, let us suppose that we have approximated a piece of a solution curve
+corresponding to one sub-domain of smooth behaviour of <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" style="vertical-align: 0px"/> and we want to
+recover a piece corresponding to another sub-domain of smooth behaviour. Let
+<img class="math" src="../_images/math/ad031d6aed1d75244bbea0c594567ebe8737e456.png" alt="(Y_{j},T_{j})" style="vertical-align: -6px"/> be the last computed couple.</p>
+<div class="figure align-center" id="ud-fig-transition">
+<img alt="../_images/getfemusertransition.png" src="../_images/getfemusertransition.png" />
+<p class="caption">Transition between smooth pieces of a solution curve.</p>
+</div>
+<p>To approximate the tangent to the other smooth piece, we first take a point
+<img class="math" src="../_images/math/4c90b79a5911deef1543d81685f21af34a43fa5e.png" alt="Y_{j} + h T_{j}" style="vertical-align: -6px"/> with <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/> a bit greater than
+<img class="math" src="../_images/math/661e8f991a9194cb7ba225488f81ecde20a37538.png" alt="h_{\mathrm{min}}" style="vertical-align: -4px"/> so that this point belongs to the interior of the other
+sub-domain of smooth behaviour. Then we find <img class="math" src="../_images/math/913b227df2f9261075348880fb4dc35a967892eb.png" alt="\tilde{T}" style="vertical-align: 0px"/> such that</p>
+<div class="math">
+<p><img src="../_images/math/8fb05468c1ac960454e820de0accc6d71cc32a77.png" alt="\nabla F(Y_{j} + h T_{j}) \tilde{T} = 0,\quad \lVert \tilde{T} \rVert_{w} = 1,"/></p>
+</div><p>and it remains to determine an appropriate direction of this vector. This can be
+done on the basis of the following observations:  First, there exists
+<img class="math" src="../_images/math/d21b09291a3856ddc149b718600e8a5c5926c060.png" alt="r \in \{\pm 1\}" style="vertical-align: -5px"/> such that <img class="math" src="../_images/math/da797b606603d5d716c567fca839c479925e9fd1.png" alt="Y_{j} - r \tilde{h} \tilde{T}" style="vertical-align: -6px"/> remains
+in the same sub-domain as <img class="math" src="../_images/math/fcc0be5e08ec43b5d0d626715fbbc1a666a7fef8.png" alt="Y_{j}" style="vertical-align: -6px"/> for any <img class="math" src="../_images/math/e56ae32936fcacf98172aa9a82636ed9444a7081.png" alt="\tilde{h}" style="vertical-align: 0px"/> positive.
+This is characterised by the fact that
+<img class="math" src="../_images/math/ea84eaddd6f8b1362acc1b8e66be8d1978caf4b6.png" alt="\frac{\lvert T_{-}^{\top} \tilde{T}\rvert}{\lVert T_{-} \rVert \lVert \tilde{T} \rVert}" style="vertical-align: -12px"/>
+is significantly smaller than 1 for <img class="math" src="../_images/math/f73f7569c55a41be4234fc8a80879ed51d6a76c7.png" alt="T_{-}" style="vertical-align: -1px"/> with
+<img class="math" src="../_images/math/b5a788946479e28f3e894408d8277f8b2120acfb.png" alt="\nabla F(Y_{j} - r \tilde{h} \tilde{T}) T_{-} = 0" style="vertical-align: -6px"/>. Second,
+<img class="math" src="../_images/math/05bd5a5343ffbfebcd845f330498dcd9122f6d3f.png" alt="Y_{j} + r \tilde{h} \tilde{T}" style="vertical-align: -6px"/> appears in the other sub-domain for
+<img class="math" src="../_images/math/e56ae32936fcacf98172aa9a82636ed9444a7081.png" alt="\tilde{h}" style="vertical-align: 0px"/> larger than some positive threshold, and, for such values,
+<img class="math" src="../_images/math/240878dc37add9e36d26c1f1f98a9a31f4788857.png" alt="\frac{\lvert T_{+}^{\top} \tilde{T}\rvert}{\lVert T_{+} \rVert \lVert \tilde{T} \rVert}" style="vertical-align: -12px"/>
+is close to 1 for <img class="math" src="../_images/math/23127da850b1ab3bf7a6d2106bd9bbd411b240ae.png" alt="T_{+}" style="vertical-align: -5px"/> with
+<img class="math" src="../_images/math/9e7391fee20747aa6edb15e9935ef553a21f2ee6.png" alt="\nabla F(Y_{j} + r \tilde{h} \tilde{T}) T_{+} = 0" style="vertical-align: -6px"/>.</p>
+<p>This suggests the following procedure for selecting the desired direction of
+<img class="math" src="../_images/math/913b227df2f9261075348880fb4dc35a967892eb.png" alt="\tilde{T}" style="vertical-align: 0px"/>: Increase the values of <img class="math" src="../_images/math/e56ae32936fcacf98172aa9a82636ed9444a7081.png" alt="\tilde{h}" style="vertical-align: 0px"/> successively from
+<img class="math" src="../_images/math/661e8f991a9194cb7ba225488f81ecde20a37538.png" alt="h_{\mathrm{min}}" style="vertical-align: -4px"/>, and when you arrive at <img class="math" src="../_images/math/e56ae32936fcacf98172aa9a82636ed9444a7081.png" alt="\tilde{h}" style="vertical-align: 0px"/> and
+<img class="math" src="../_images/math/d21b09291a3856ddc149b718600e8a5c5926c060.png" alt="r \in \{\pm 1\}" style="vertical-align: -5px"/> such that</p>
+<div class="math">
+<p><img src="../_images/math/1452bc48751dcac64a6d9dfa3d0fd6065924011f.png" alt="\frac{\lvert T^{\top} \tilde{T}\rvert}{\lVert T \rVert \lVert \tilde{T} \rVert} \approx 1\quad \text{if}\ \nabla F(Y_{j} + r \tilde{h} \tilde{T}) T = 0,"/></p>
+</div><p>take <img class="math" src="../_images/math/50f78066756ccec03c9b4164e9abd4b1c3479fcb.png" alt="r \tilde{T}" style="vertical-align: 0px"/> as the approximation of the tangent to the other smooth
+piece.</p>
+<p>Having this approximation at our disposal, we restart the predictor-corrector
+with <img class="math" src="../_images/math/4638246a11cf4d86af615644d6fcec5fd4744888.png" alt="(Y_{j}, r \tilde{T})" style="vertical-align: -6px"/>.</p>
+<p>In <em>GetFEM++</em>, the continuation is implemented for two ways of parametrisation of the
+model:</p>
+<ol class="arabic">
+<li><p class="first">The parameter <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> is directly a scalar datum, which the model
+depends on.</p>
+</li>
+<li><p class="first">The model is parametrised by the scalar parameter <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> <em>via</em> a
+vector datum <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, which the model depends on. In this case, one takes
+the linear path</p>
+<div class="math">
+<p><img src="../_images/math/ed8167738ff9b26fc424b05e8661872661624077.png" alt="\lambda \mapsto P(\lambda) := (1 - \lambda)P^{0} + \lambda P^{1},"/></p>
+</div><p>where <img class="math" src="../_images/math/2d7242d2e3d72c155165b12a64d34dbb7f5cf502.png" alt="P^{0}" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/f6354d880dd286957eedaba30343a7b56d84bbd1.png" alt="P^{1}" style="vertical-align: 0px"/> are given values of <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" style="vertical-align: 0px"/>, and one
+traces the solution set of the problem</p>
+<div class="math">
+<p><img src="../_images/math/0414fb58ec2ec255bcaa70799df2147ee44a65c5.png" alt="F(U, P(\lambda)) = 0."/></p>
+</div></li>
+</ol>
+</div>
+<div class="section" id="detection-of-limit-points">
+<h2>Detection of limit points<a class="headerlink" href="#detection-of-limit-points" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>When tracing solutions of the system <img class="math" src="../_images/math/348c83d8675f5ae221b77896532e9e5709f8e4cc.png" alt="F(U,\lambda) = 0" style="vertical-align: -4px"/>, one may be
+interested in <em>limit points</em> (also called fold or turning points), where the
+number of solutions with the same value of <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> changes. These points
+can be detected by a sign change of a test function <img class="math" src="../_images/math/6a39734566d89fa521a4ee3e9a2da7f136dc1e40.png" alt="\tau_{\mathrm{LP}}" style="vertical-align: -3px"/>:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/2c467d65f2d953ce38191a165cf60dcc3193ee4d.png" alt="\tau_{\mathrm{LP}}(T_{j}) \tau_{\mathrm{LP}}(T_{j+1}) &lt; 0,"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="../_images/math/6a39734566d89fa521a4ee3e9a2da7f136dc1e40.png" alt="\tau_{\mathrm{LP}}" style="vertical-align: -3px"/> is defined by</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/0ca4ad3f927cb37b2dd3159b6a33907f76a634a1.png" alt="\tau_{\mathrm{LP}}(T) := T_{\lambda},\quad T = (T_{U},T_{\lambda}) \in \mathbb{R}^{N} \times \mathbb{R}."/></p>
+</div></div></blockquote>
+<div class="figure align-center" id="ud-fig-limitpoint">
+<img alt="../_images/getfemuserlimitpoint.png" src="../_images/getfemuserlimitpoint.png" />
+<p class="caption">Limit point.</p>
+</div>
+</div>
+<div class="section" id="numerical-bifurcation">
+<h2>Numerical bifurcation<a class="headerlink" href="#numerical-bifurcation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A point <img class="math" src="../_images/math/269372464e500719da00a76c126c8a9b6cbdce94.png" alt="\bar{Y}" style="vertical-align: 0px"/> is called a <em>bifurcation point</em> of the system
+<img class="math" src="../_images/math/861ece295ea0fc7a11bc8fe2dbdc99becd8c8aeb.png" alt="F(Y) = 0" style="vertical-align: -4px"/> if <img class="math" src="../_images/math/25f56fdacb33c55e22e46772d39d374c5123a656.png" alt="F(\bar{Y}) = 0" style="vertical-align: -4px"/> and two or more distinct solution
+curves pass through it. The following result gives a test for <em>smooth</em>
+bifurcation points (see, e.g., <a class="reference internal" href="../biblio.html#georg2001" id="id4">[Georg2001]</a>):</p>
+<p>Let <img class="math" src="../_images/math/e2e58653dc0c4570b657a49d886185ad04040137.png" alt="s \mapsto Y(s)" style="vertical-align: -4px"/> be a parametrisation of a solution curve and
+<img class="math" src="../_images/math/dfa5bec8bc52e4945e3ab2c6fde1119b2f1d3593.png" alt="\bar{Y} := Y(\bar{s})" style="vertical-align: -4px"/> be a bifurcation point. Moreover, let
+<img class="math" src="../_images/math/ec7a67a7ef11b62290fd4a11c3a8e4add8de4e82.png" alt="T^{\top} \dot{Y}(\bar{s}) &gt; 0" style="vertical-align: -4px"/>,
+<img class="math" src="../_images/math/60ff94b7cd5c661a2be65975810bef7ad05578c0.png" alt="B \notin \mathrm{Im}(J(\bar{Y}))" style="vertical-align: -5px"/>,
+<img class="math" src="../_images/math/2148632ec92278bdc0aa90a9f5b4e7dd32e74a3e.png" alt="C \notin \mathrm{Im}(J(\bar{Y})^{\top})" style="vertical-align: -5px"/>, <img class="math" src="../_images/math/88f3959ca427dd3090838b28d8c9b44b7fbc3f92.png" alt="d \in \mathbb{R}" style="vertical-align: -1px"/> and</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/500fbb98371dc1878eaa20f67d57de55720472ef.png" alt="J(Y) := \begin{pmatrix}\nabla F(Y)\\ T^{\top}\end{pmatrix}."/></p>
+</div></div></blockquote>
+<p>Define <img class="math" src="../_images/math/0c85189f0526c663045aa81a1ab20ee0017752de.png" alt="\tau_{\mathrm{BP}}(Y)" style="vertical-align: -4px"/> via</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/368fe1d2d46d076ae0baeb1b65f76501e6bce6d9.png" alt="\begin{pmatrix}J(Y)&amp; B\\ C^{\top}&amp; d\end{pmatrix} \begin{pmatrix}V(Y)\\ \tau_{\mathrm{BP}}(Y)\end{pmatrix} = \begin{pmatrix}0\\ 1\end{pmatrix}."/></p>
+</div></div></blockquote>
+<p>Then <img class="math" src="../_images/math/13c688b70f93e8b52d977044a1b4871597dac789.png" alt="\tau_{\mathrm{BP}}(Y(s))" style="vertical-align: -4px"/> changes its sign at <img class="math" src="../_images/math/678905acba1062b521de35df4039a2bbc2cddb31.png" alt="s = \bar{s}" style="vertical-align: 0px"/>.</p>
+<p>Obviously, if one takes <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> randomly, it is
+highly possible that they satisfy the requirements above. Consequently, the
+numerical continuation method is able to detect bifurcation points by
+taking the vectors <img class="math" src="../_images/math/ce58e4af225c93d08606c26554caaa5ae32edeba.png" alt="Y" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/2554b6496c3b678897e9b060ef00aa9f0a7d7ece.png" alt="T" style="vertical-align: 0px"/> supplied by the correction at each
+continuation step and monitoring the signs of <img class="math" src="../_images/math/c0d7369eef3b4bc4eb0a23248404f6dcc3dcc1e3.png" alt="\tau_{\mathrm{BP}}" style="vertical-align: -3px"/>.</p>
+<p>Once a bifurcation point <img class="math" src="../_images/math/269372464e500719da00a76c126c8a9b6cbdce94.png" alt="\bar{Y}" style="vertical-align: 0px"/> is detected by a sign change
+<img class="math" src="../_images/math/41707b8ce2f8382196e8937ed32965b59866629c.png" alt="\tau_{\mathrm{BP}}(Y_{j}) \tau_{\mathrm{BP}}(Y_{j+1}) &lt; 0" style="vertical-align: -6px"/>, it can be
+approximated more precisely by the predictor-corrector steps described above
+with a special step-length adaptation (see Section 8.1 in <a class="reference internal" href="../biblio.html#al-ge1997" id="id5">[Al-Ge1997]</a>). Namely,
+one can take the subsequent step lengths as</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/f630cc44e76ab02f087ee6c9f0ba6e916003884f.png" alt="h_{j+1} := -\frac{\tau_{\mathrm{BP}}(Y_{j+1})}{\tau_{\mathrm{BP}}(Y_{j+1}) - \tau_{\mathrm{BP}}(Y_{j})}h_{j}"/></p>
+</div></div></blockquote>
+<p>until <img class="math" src="../_images/math/e1885c47a0268517c1b81e038b61d623c819730c.png" alt="\lvert h_{j+1} \rvert &lt; h_{\mathrm{min}}" style="vertical-align: -6px"/>, which corresponds to the
+secant method for finding a zero of the function
+<img class="math" src="../_images/math/5ce0002b22dcc61b673d1a22edb1dfb9879d9394.png" alt="s \mapsto \tau_{\mathrm{BP}}(Y(s))" style="vertical-align: -4px"/>.</p>
+<p>Finally, it would be desirable to switch solution branches. To this end, we
+shall consider the case of the so-called <em>simple bifurcation point</em>, where only
+two distinct solution curves intersect.</p>
+<p>Let <img class="math" src="../_images/math/42a5ddfe983a335a056b7517650c412e6c7ba1c4.png" alt="\tilde{Y}" style="vertical-align: 0px"/> be an approximation of <img class="math" src="../_images/math/269372464e500719da00a76c126c8a9b6cbdce94.png" alt="\bar{Y}" style="vertical-align: 0px"/> that we are given
+and <img class="math" src="../_images/math/9dfb055c66a5d16965ade7b1933bad30e5a0cbcb.png" alt="V(\tilde{Y})" style="vertical-align: -4px"/> be the first part of the solution of the augmented
+system for computing the test function <img class="math" src="../_images/math/fd6a2d16b7be203b76d7431ca238289afecdf6a6.png" alt="\tau_{\mathrm{BP}}(\tilde{Y})" style="vertical-align: -4px"/>. As
+proposed in <a class="reference internal" href="../biblio.html#georg2001" id="id6">[Georg2001]</a>, one can take <img class="math" src="../_images/math/9dfb055c66a5d16965ade7b1933bad30e5a0cbcb.png" alt="V(\tilde{Y})" style="vertical-align: -4px"/> as a predictor
+direction and do one continuation step starting with
+<img class="math" src="../_images/math/3795bb52df9c253ad5b44f73460cb7949b9b7edf.png" alt="(\tilde{Y}, V(\tilde{Y}))" style="vertical-align: -4px"/> to obtain a point on a new branch. After this
+continuation step has been performed successfully and a point on the new branch
+has been recovered, one can proceed with usual predictor-corrector steps to
+trace this branch.</p>
+<p>Recently, tools for numerical <img class="math" src="../_images/math/cd1b7b1464813d62e5ed164e2ca2c84e81063c9d.png" alt="PC^{1}" style="vertical-align: 0px"/>-bifurcation have been developed in
+<em>GetFEM++</em>. Let <img class="math" src="../_images/math/abb5588023cfa1ac14643e9778699f03eecc57a3.png" alt="J" style="vertical-align: 0px"/> be a matrix function of a real parameter now defined by</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/3664303de05f76080ecd013acfa80e493c3fd77c.png" alt="J(\alpha) := (1-\alpha)\begin{pmatrix}\nabla F(Y_{j})\\ T_{j}^{\top}\end{pmatrix} + \alpha\begin{pmatrix}\nabla F(Y_{j+1})\\ T_{j+1}^{\top}\end{pmatrix}."/></p>
+</div></div></blockquote>
+<p>As proposed in <a class="reference internal" href="../biblio.html#li-re2014hal" id="id7">[Li-Re2014hal]</a>, the following test can be used for detection of
+a <img class="math" src="../_images/math/cd1b7b1464813d62e5ed164e2ca2c84e81063c9d.png" alt="PC^{1}" style="vertical-align: 0px"/> bifurcation point between <img class="math" src="../_images/math/fcc0be5e08ec43b5d0d626715fbbc1a666a7fef8.png" alt="Y_{j}" style="vertical-align: -6px"/> and <img class="math" src="../_images/math/23771a2119529908a3529d5ecc935edbb9d9f803.png" alt="Y_{j+1}" style="vertical-align: -6px"/>:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/b726d97e7dedadb16ff07dea11f2b46a88ffd8da.png" alt="\det J(0) \det J(1) &lt; 0."/></p>
+</div></div></blockquote>
+<p>To perform this test numerically, introduce</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/69ad83dadec13863d05732d7eead91c84393ea91.png" alt="M(\alpha) := \begin{pmatrix}J(\alpha)&amp; B\\ C^{\top}&amp; d\end{pmatrix}"/></p>
+</div></div></blockquote>
+<p>and <img class="math" src="../_images/math/aef5288f14914159a9663ff88c85d2b39ba2803c.png" alt="\tau_{\mathrm{BP}}(\alpha)" style="vertical-align: -4px"/> analogously as above via</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/b4b97325374263cb502c0f28e25c08eb6ca6209f.png" alt="M(\alpha) \begin{pmatrix}V(\alpha)\\ \tau_{\mathrm{BP}}(\alpha)\end{pmatrix} = \begin{pmatrix}0\\ 1\end{pmatrix}."/></p>
+</div></div></blockquote>
+<p>It follows from Cramer&#8217;s rule that</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/909c532318b15bb5170eccb9e8623da69e6e8d1d.png" alt="\tau_{\mathrm{BP}}(\alpha) = \frac{\det J(\alpha)}{\det M(\alpha)}"/></p>
+</div></div></blockquote>
+<p>provided that <img class="math" src="../_images/math/500af0b918f0d14a8e81272f15b4c345ce4dc139.png" alt="\det M(\alpha)" style="vertical-align: -4px"/> is non-zero. Hence if <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C" style="vertical-align: 0px"/>
+and <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> are chosen so that <img class="math" src="../_images/math/500af0b918f0d14a8e81272f15b4c345ce4dc139.png" alt="\det M(\alpha)" style="vertical-align: -4px"/> is non-zero whenever
+<img class="math" src="../_images/math/8b123cf76adc21895382b3ac8f6e480b3a80e293.png" alt="\det J(\alpha)" style="vertical-align: -4px"/> is zero, then the sign changes of <img class="math" src="../_images/math/8b123cf76adc21895382b3ac8f6e480b3a80e293.png" alt="\det J(\alpha)" style="vertical-align: -4px"/>
+are characterised by passings of <img class="math" src="../_images/math/aef5288f14914159a9663ff88c85d2b39ba2803c.png" alt="\tau_{\mathrm{BP}}(\alpha)" style="vertical-align: -4px"/> through 0
+whereas the sign changes of <img class="math" src="../_images/math/500af0b918f0d14a8e81272f15b4c345ce4dc139.png" alt="\det M(\alpha)" style="vertical-align: -4px"/> by sign changes of
+<img class="math" src="../_images/math/aef5288f14914159a9663ff88c85d2b39ba2803c.png" alt="\tau_{\mathrm{BP}}(\alpha)" style="vertical-align: -4px"/> caused by singularities. To conclude, the
+sign of <img class="math" src="../_images/math/ba58e50575d6f501b481b22b2aaedb14b962236b.png" alt="\det J(0)\det J(1)" style="vertical-align: -4px"/> is determined by following the
+behaviour of <img class="math" src="../_images/math/aef5288f14914159a9663ff88c85d2b39ba2803c.png" alt="\tau_{\mathrm{BP}}(\alpha)" style="vertical-align: -4px"/> and monitoring the sign changes
+of <img class="math" src="../_images/math/8b123cf76adc21895382b3ac8f6e480b3a80e293.png" alt="\det J(\alpha)" style="vertical-align: -4px"/> when <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha" style="vertical-align: 0px"/> passes through <img class="math" src="../_images/math/e861e10e1c19918756b9c8b7717684593c63aeb8.png" alt="[0,1]" style="vertical-align: -5px"/>.</p>
+<p>As justified in <a class="reference internal" href="../biblio.html#li-re2014hal" id="id8">[Li-Re2014hal]</a>, <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> can be
+chosen randomly again. The increments <img class="math" src="../_images/math/0a42a8b725c200085e5253db2d2fbf8dab898a8f.png" alt="\delta" style="vertical-align: 0px"/> of the current values of
+<img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha" style="vertical-align: 0px"/> are changed adaptively so that singularities of
+<img class="math" src="../_images/math/c0d7369eef3b4bc4eb0a23248404f6dcc3dcc1e3.png" alt="\tau_{\mathrm{BP}}" style="vertical-align: -3px"/> are treated effectively. After each calculation of
+<img class="math" src="../_images/math/aef5288f14914159a9663ff88c85d2b39ba2803c.png" alt="\tau_{\mathrm{BP}}(\alpha)" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/0a42a8b725c200085e5253db2d2fbf8dab898a8f.png" alt="\delta" style="vertical-align: 0px"/> is set as follows:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/b67832a63314e0b7e2b38665646238bed43d8cf2.png" alt="\delta := \begin{cases}\min\{2\delta, \delta_{\mathrm{max}}\}&amp; \text{if $\lvert \tau_{\mathrm{BP}}(\alpha) - \tau_{\mathrm{BP}}(\alpha - \delta) \rvert &lt; 0.5 \tau_{\mathrm{fac}} \tau_{\mathrm{ref}}$,}\\ \max\{0.1\delta, \delta_{\mathrm{min}}\}&amp; \text{if $\lvert \tau_{\mathrm{BP}}(\alpha) - \tau_{\mathrm{BP}}(\alpha - \delta) \rvert &gt; \tau_{\mathrm{fac}} \tau_{\mathrm{ref}}$,}\\ \delta&amp; \text{otherwise},\end{cases}"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="../_images/math/8126fe6d97fae650fa789ab171aa727c1542b65f.png" alt="\delta_{\mathrm{max}} &gt; \delta_{\mathrm{min}} &gt; 0" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/2ae15baaba9064ae876cfa6fd0f03eca9c06b917.png" alt="\tau_{\mathrm{fac}} &gt; 0" style="vertical-align: -4px"/> are given constants and
+<img class="math" src="../_images/math/efdd4b577b83946253990eb05d865d68338f2579.png" alt="\tau_{\mathrm{ref}} := \max\{\lvert \tau_{\mathrm{BP}}(1) - \tau_{\mathrm{BP}}(0) \rvert, 10^{-8}\}" style="vertical-align: -5px"/>.</p>
+<p>When a <img class="math" src="../_images/math/cd1b7b1464813d62e5ed164e2ca2c84e81063c9d.png" alt="PC^{1}" style="vertical-align: 0px"/> bifurcation point is detected between <img class="math" src="../_images/math/fcc0be5e08ec43b5d0d626715fbbc1a666a7fef8.png" alt="Y_{j}" style="vertical-align: -6px"/> and
+<img class="math" src="../_images/math/23771a2119529908a3529d5ecc935edbb9d9f803.png" alt="Y_{j+1}" style="vertical-align: -6px"/>, it is approximated more precisely by a bisection-like
+procedure. The obtained approximation lies on the same smooth branch as
+<img class="math" src="../_images/math/480a5c79a1d7677c5b7d8655475be48d0854ba3a.png" alt="Y_{j}," style="vertical-align: -6px"/> and the corresponding unit tangent that points out from the
+corresponding region of smoothness is calculated too.</p>
+<p>Contrary to the smooth case, it is not clear how many branches can emanate from
+the <img class="math" src="../_images/math/cd1b7b1464813d62e5ed164e2ca2c84e81063c9d.png" alt="PC^{1}" style="vertical-align: 0px"/> bifurcation point and in which directions they could be
+sought. For this reason, continuation steps for a whole sequence of predictor
+directions are tried out for finding points on new branches.</p>
+<p>Denoting <img class="math" src="../_images/math/42a5ddfe983a335a056b7517650c412e6c7ba1c4.png" alt="\tilde{Y}" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/913b227df2f9261075348880fb4dc35a967892eb.png" alt="\tilde{T}" style="vertical-align: 0px"/> the approximation of the
+bifurcation point and the corresponding tangent, respectively, the predictor
+directions are taken as follows: For a couple of reference vectors
+<img class="math" src="../_images/math/628b54c697efe432deee642e5b29dd8fcf20a7ca.png" alt="\tilde{V}_{1}" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/b788e185b32ee6b7ed35b1cf1d22692b9d472c75.png" alt="\tilde{V}_{2}" style="vertical-align: -3px"/>, one takes <img class="math" src="../_images/math/e256cdfb3af02aa1bec7be5ad8091446e288ce77.png" alt="\pm V" style="vertical-align: 0px"/> with
+<img class="math" src="../_images/math/12d58aa29201da09d8e620f8698e3a37547f6b4a.png" alt="V" style="vertical-align: 0px"/> satisfying</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/3d411d4a8711586fcf37367f9ca171c22ebfccda.png" alt="\nabla F(\tilde{Y}+h_{\mathrm{min}}\tilde{V}) V = 0, \quad \lVert V \rVert_{w} = 1,"/></p>
+</div></div></blockquote>
+<p>where <img class="math" src="../_images/math/ea22caf189869837238b2f389595eb40c126ab44.png" alt="\tilde{V}" style="vertical-align: 0px"/> passes through a set of linear combinations of
+<img class="math" src="../_images/math/628b54c697efe432deee642e5b29dd8fcf20a7ca.png" alt="\tilde{V}_{1}" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/b788e185b32ee6b7ed35b1cf1d22692b9d472c75.png" alt="\tilde{V}_{2}" style="vertical-align: -3px"/>. The total number of the linear
+combinations is given by <img class="math" src="../_images/math/756fd48450b984129a55c4ad1244f7e936c5c6fb.png" alt="n_{\mathrm{dir}}," style="vertical-align: -4px"/> and the reference vectors are
+chosen successively according to the following strategy:</p>
+<ol class="arabic">
+<li><p class="first">One takes <img class="math" src="../_images/math/ba956d113b4722c35c8c30e215fe71f00a5807a9.png" alt="\tilde{V}_{1} := -\tilde{T}" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/b788e185b32ee6b7ed35b1cf1d22692b9d472c75.png" alt="\tilde{V}_{2}" style="vertical-align: -3px"/> such
+that</p>
+<div class="math">
+<p><img src="../_images/math/6339ac1836764a00e263423a2f8bc9059e9a8ceb.png" alt="\nabla F(\tilde{Y}+h_{\mathrm{min}}\tilde{T}) \tilde{V}_{2} = 0, \quad \lVert \tilde{V}_{2} \rVert_{w} = 1."/></p>
+</div></li>
+<li><p class="first">Let <img class="math" src="../_images/math/2898f0f79f2c17244b9c0d000556d8badd0d376c.png" alt="\{\tilde{T}_{1},\dotsc\tilde{T}_{n_{\mathrm{br}}}\}" style="vertical-align: -6px"/> denote the
+set of unit tangents that correspond to the points from the branches found so
+far and that are oriented in the directions of branching from the bifurcation
+point. Then <img class="math" src="../_images/math/628b54c697efe432deee642e5b29dd8fcf20a7ca.png" alt="\tilde{V}_{1}" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/b788e185b32ee6b7ed35b1cf1d22692b9d472c75.png" alt="\tilde{V}_{2}" style="vertical-align: -3px"/> are taken
+successively as different combinations from
+<img class="math" src="../_images/math/2898f0f79f2c17244b9c0d000556d8badd0d376c.png" alt="\{\tilde{T}_{1},\dotsc\tilde{T}_{n_{\mathrm{br}}}\}" style="vertical-align: -6px"/>.</p>
+</li>
+<li><p class="first">If all combinations that are available so far have already been used, let
+<img class="math" src="../_images/math/628b54c697efe432deee642e5b29dd8fcf20a7ca.png" alt="\tilde{V}_{1}" style="vertical-align: -4px"/> be unchanged and take
+<img class="math" src="../_images/math/aa0454b4e980184dd701bc8fb12c4b9060b60eca.png" alt="\tilde{V}_{2} := \tilde{V}_{2}^{+}" style="vertical-align: -4px"/> with <img class="math" src="../_images/math/b2b61916d9481320effff580600dbe248a43d4e5.png" alt="\tilde{V}_{2}^{+}" style="vertical-align: -4px"/>
+satisfying</p>
+<div class="math">
+<p><img src="../_images/math/1f9cda6b20015cdb8c5b8f753573fff3669fd91c.png" alt="\nabla F\Bigl(\tilde{Y}+h_{\mathrm{min}}\Bigl(\tilde{V}_{2}^{-} + 0.1\frac{\tilde{V}_{3}}{\lVert \tilde{V}_{3} \rVert_{w}}\Bigr)\Bigr) \tilde{V}_{2}^{+} = 0, \quad \lVert \tilde{V}_{2}^{+} \rVert_{w} = 1."/></p>
+</div><p>Here, <img class="math" src="../_images/math/11b1838847d8b8bafb86161fd560fb302a5f227c.png" alt="\tilde{V}_{2}^{-}" style="vertical-align: -4px"/> equals the vector <img class="math" src="../_images/math/b788e185b32ee6b7ed35b1cf1d22692b9d472c75.png" alt="\tilde{V}_{2}" style="vertical-align: -3px"/>
+employed previously and <img class="math" src="../_images/math/f6c2d59b9c6a098ee58d342ba55721b709b20708.png" alt="\tilde{V}_{3}" style="vertical-align: -3px"/> is chosen randomly.</p>
+</li>
+</ol>
+<p>The total number of selections of <img class="math" src="../_images/math/628b54c697efe432deee642e5b29dd8fcf20a7ca.png" alt="\tilde{V}_{1}" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/b788e185b32ee6b7ed35b1cf1d22692b9d472c75.png" alt="\tilde{V}_{2}" style="vertical-align: -3px"/> is given by <img class="math" src="../_images/math/d2c644360388650d1a0b371fae08c12365e6061c.png" alt="n_{\mathrm{span}}" style="vertical-align: -6px"/>.</p>
+<p>More details on <img class="math" src="../_images/math/fed6fa0757efdc070b88479f74b39d34e8a772ae.png" alt="PC^1" style="vertical-align: 0px"/> numerical branching can be found in
+<a class="reference internal" href="../biblio.html#li-re2015hal" id="id9">[Li-Re2015hal]</a>.</p>
+</div>
+<div class="section" id="approximation-of-solution-curves-of-a-model">
+<h2>Approximation of solution curves of a model<a class="headerlink" href="#approximation-of-solution-curves-of-a-model" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The numerical continuation is defined in <tt class="docutils literal"><span class="pre">getfem/getfem_continuation.h</span></tt>. In
+order to use it, one has to set it up via the corresponding object first:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">cont_struct_getfem_model</span> <span class="n">S</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">sfac</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">h_init</span><span class="p">,</span> <span class="n">h_max</span><span class="p">,</span> <span class="n">h_min</span><span class="p">,</span> <span class="n">h_inc</span><span class="p">,</span> <span class="n">h_dec</span><span class="p">,</span>
+                                   <span class="n">maxit</span><span class="p">,</span> <span class="n">thrit</span><span class="p">,</span> <span class="n">maxres</span><span class="p">,</span> <span class="n">maxdiff</span><span class="p">,</span> <span class="n">mincos</span><span class="p">,</span> <span class="n">maxres_solve</span><span class="p">,</span> <span class="n">noisy</span><span class="p">,</span> <span class="n">singularities</span><span class="p">,</span>
+                                   <span class="n">non</span><span class="o">-</span><span class="n">smooth</span><span class="p">,</span> <span class="n">delta_max</span><span class="p">,</span> <span class="n">delta_min</span><span class="p">,</span> <span class="n">thrvar</span><span class="p">,</span> <span class="n">ndir</span><span class="p">,</span> <span class="n">nspan</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">parameter_name</span></tt> is the name of the model datum representing
+<img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/>, <tt class="docutils literal"><span class="pre">sfac</span></tt> represents the scale factor <img class="math" src="../_images/math/da61bb0fa48fe71269aebf9c8e56b39275813994.png" alt="\kappa" style="vertical-align: 0px"/>, and <tt class="docutils literal"><span class="pre">ls</span></tt>
+is the name of the solver to be used for the linear systems incorporated in the
+process (e.g., <tt class="docutils literal"><span class="pre">getfem::default_linear_solver&lt;getfem::model_real_sparse_matrix,</span> <span class="pre">getfem::model_real_plain_vector&gt;(model)</span></tt>). The real numbers <tt class="docutils literal"><span class="pre">h_init</span></tt>,
+<tt class="docutils literal"><span class="pre">h_max</span></tt>, <tt class="docutils literal"><span class="pre">h_min</span></tt>, <tt class="docutils literal"><span class="pre">h_inc</span></tt>, <tt class="docutils literal"><span class="pre">h_dec</span></tt> denote <img class="math" src="../_images/math/6460adb6dc94c6fa24d9231c1219de24660a02cb.png" alt="h_{\mathrm{init}}" style="vertical-align: -4px"/>,
+<img class="math" src="../_images/math/cccd8809c0644735c18d9551c379bbbe6bdcf8fa.png" alt="h_{\mathrm{max}}" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/661e8f991a9194cb7ba225488f81ecde20a37538.png" alt="h_{\mathrm{min}}" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/a432fd0e3b456e2aeb56ecf8f4f0e5c1b27ff33f.png" alt="h_{\mathrm{inc}}" style="vertical-align: -4px"/>,
+and <img class="math" src="../_images/math/f636b00414beb1f04d7e8dd7317148926a32dbf9.png" alt="h_{\mathrm{dec}}" style="vertical-align: -3px"/>, the integer <tt class="docutils literal"><span class="pre">maxit</span></tt> is the maximum number of
+iterations allowed in the correction and <tt class="docutils literal"><span class="pre">thrit</span></tt>, <tt class="docutils literal"><span class="pre">maxres</span></tt>, <tt class="docutils literal"><span class="pre">maxdiff</span></tt>,
+<tt class="docutils literal"><span class="pre">mincos</span></tt>, and <tt class="docutils literal"><span class="pre">maxres_solve</span></tt> denote <img class="math" src="../_images/math/e0bd2402e57f1bc7ec2dbbf2b3f3c76fb0dc51ee.png" alt="l_{\mathrm{thr}}" style="vertical-align: -4px"/>,
+<img class="math" src="../_images/math/e2a63918a6fa75b62ad87ad17aaf65f782d71546.png" alt="\varepsilon" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/3197791e0ee550b52ba71b3639f70f62d76364a0.png" alt="\varepsilon'" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/020ff9bf08a2362b8cf02d05d48486e633238907.png" alt="c_{\mathrm{min}}" style="vertical-align: -4px"/>, and the
+target residual value for the linear systems to be solved, respectively. The
+non-negative integer <tt class="docutils literal"><span class="pre">noisy</span></tt> determines how detailed information has to be
+displayed in the course of the continuation process (the larger value the more
+details), the integer <tt class="docutils literal"><span class="pre">singularities</span></tt> determines whether the tools for
+detection and treatment of singular points have to be used (0 for ignoring them
+completely, 1 for detecting limit points, and 2 for detecting and treating
+bifurcation points, as well), and the boolean value of <tt class="docutils literal"><span class="pre">non-smooth</span></tt> determines
+whether only tools for smooth continuation and bifurcation have to be used
+or even tools for non-smooth ones do. The real numbers <tt class="docutils literal"><span class="pre">delta_max</span></tt>,
+<tt class="docutils literal"><span class="pre">delta_min</span></tt> and <tt class="docutils literal"><span class="pre">thrvar</span></tt> represent <img class="math" src="../_images/math/0d33aa991abc088e2507977a533d1d2c5302e302.png" alt="\delta_{\mathrm{max}}" style="vertical-align: -4px"/>,
+<img class="math" src="../_images/math/3a56a59cd6d62f015099259f62733f9409a2ee5d.png" alt="\delta_{\mathrm{min}}" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/868793e881d5c122c044e088c5e21ab29788a558.png" alt="\tau_{\mathrm{fac}}" style="vertical-align: -4px"/>, and the integers
+<tt class="docutils literal"><span class="pre">ndir</span></tt> and <tt class="docutils literal"><span class="pre">nspan</span></tt> stand for <img class="math" src="../_images/math/dd25422704d9016b9cbdce400823d42e73b656ef.png" alt="n_{\mathrm{dir}}" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/d2c644360388650d1a0b371fae08c12365e6061c.png" alt="n_{\mathrm{span}}" style="vertical-align: -6px"/>, respectively.</p>
+<p>Optionally, parametrisation by a vector datum is then declared by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">S</span><span class="p">.</span><span class="n">set_parametrised_data_names</span><span class="p">(</span><span class="n">initdata_name</span><span class="p">,</span> <span class="n">finaldata_name</span><span class="p">,</span> <span class="n">currentdata_name</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Here, the data names <tt class="docutils literal"><span class="pre">initdata_name</span></tt> and <tt class="docutils literal"><span class="pre">finaldata_name</span></tt> should represent
+<img class="math" src="../_images/math/2d7242d2e3d72c155165b12a64d34dbb7f5cf502.png" alt="P^{0}" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/f6354d880dd286957eedaba30343a7b56d84bbd1.png" alt="P^{1}" style="vertical-align: 0px"/>, respectively. Under <tt class="docutils literal"><span class="pre">currentdata_name</span></tt>, the
+values of <img class="math" src="../_images/math/4f5f4400cfab9a0bf7a047a530290a606c1128b7.png" alt="P(\lambda)" style="vertical-align: -4px"/> have to be stored, that is, actual values of the
+datum the model depends on.</p>
+<p>Next, the continuation is initialised by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">S</span><span class="p">.</span><span class="n">init_Moore_Penrose_continuation</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">lambda</span><span class="p">,</span> <span class="n">T_U</span><span class="p">,</span> <span class="n">T_lambda</span><span class="p">,</span> <span class="n">h</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">U</span></tt> should be a solution for the value of the parameter <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/>
+equal to <tt class="docutils literal"><span class="pre">lambda</span></tt> so that <img class="math" src="../_images/math/e080f3355269e6dc1ed1890b686ce7a743f7f3ec.png" alt="Y_{0}=" style="vertical-align: -3px"/> (<tt class="docutils literal"><span class="pre">U</span></tt>,<tt class="docutils literal"><span class="pre">lambda</span></tt>). During
+this initialisation, an initial unit tangent <img class="math" src="../_images/math/fbd60834399c1164b2884ec3b5c0e34fbbdf4b70.png" alt="T_{0}" style="vertical-align: -3px"/> corresponding to
+<img class="math" src="../_images/math/7ffbdd5ddecbb0a9efb4c3d8a3efbfab12ad4ea2.png" alt="Y_{0}" style="vertical-align: -3px"/> is computed in accordance with the sign of the initial value
+<tt class="docutils literal"><span class="pre">T_lambda</span></tt>, and it is returned in <tt class="docutils literal"><span class="pre">T_U</span></tt>, <tt class="docutils literal"><span class="pre">T_lambda</span></tt>. Moreover, <tt class="docutils literal"><span class="pre">h</span></tt> is
+set to the initial step size <tt class="docutils literal"><span class="pre">h_init</span></tt>.</p>
+<p>Subsequently, one step of the continuation is called by</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">S</span><span class="p">.</span><span class="n">Moore_Penrose_continuation</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">lambda</span><span class="p">,</span> <span class="n">T_U</span><span class="p">,</span> <span class="n">T_lambda</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">h0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>After each call, a new point on a solution curve and the corresponding tangent
+are returned in the variables <tt class="docutils literal"><span class="pre">U</span></tt>, <tt class="docutils literal"><span class="pre">lambda</span></tt> and <tt class="docutils literal"><span class="pre">T_U</span></tt>, <tt class="docutils literal"><span class="pre">T_lambda</span></tt>. The
+step size for the next prediction is returned in <tt class="docutils literal"><span class="pre">h</span></tt>. The size of the
+current step is returned in the optional argument <tt class="docutils literal"><span class="pre">h0</span></tt>. According to the
+chosen value of <tt class="docutils literal"><span class="pre">singularities</span></tt>, the test functions for limit and bifurcation
+points are evaluated at the end of each continuation step. Furthermore, if a
+smooth bifurcation point is detected, the procedure for numerical bifurcation
+is performed and an approximation of the branching point as well as tangents to
+both bifurcating curves are saved in the continuation object <tt class="docutils literal"><span class="pre">S</span></tt>. From
+there, they can easily be recovered with member functions of <tt class="docutils literal"><span class="pre">S</span></tt> so that one
+can initialise the continuation to trace either of the curves next time.</p>
+<p>Complete examples of use on a smooth problem are shown in the test programs
+<tt class="docutils literal"><span class="pre">tests/test_continuation.cc</span></tt>, <tt class="docutils literal"><span class="pre">interface/tests/matlab/demo_continuation.m</span></tt>
+and <tt class="docutils literal"><span class="pre">interface/src/scilab/demos/demo_continuation.sce</span></tt>, whereas
+<tt class="docutils literal"><span class="pre">interface/src/scilab/demos/demo_continuation_vee.sce</span></tt> and
+<tt class="docutils literal"><span class="pre">interface/src/scilab/demos/demo_continuation_block.sce</span></tt> employ also
+non-smooth tools.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Numerical continuation and bifurcation</a><ul>
+<li><a class="reference internal" href="#numerical-continuation">Numerical continuation</a></li>
+<li><a class="reference internal" href="#detection-of-limit-points">Detection of limit points</a></li>
+<li><a class="reference internal" href="#numerical-bifurcation">Numerical bifurcation</a></li>
+<li><a class="reference internal" href="#approximation-of-solution-curves-of-a-model">Approximation of solution curves of a model</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_contact_friction_large_sliding.html"
+                        title="前の章へ">Large sliding/large deformation contact with friction bricks</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_nonlinear_elasticity.html"
+                        title="次の章へ">Finite strain Elasticity bricks</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_nonlinear_elasticity.html" title="Finite strain Elasticity bricks"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_contact_friction_large_sliding.html" title="Large sliding/large deformation contact with friction bricks"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

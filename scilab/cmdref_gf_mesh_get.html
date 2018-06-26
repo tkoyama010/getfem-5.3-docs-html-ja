@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_mesh_get &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_mesh_set" href="cmdref_gf_mesh_set.html" />
+    <link rel="prev" title="gf_mesh" href="cmdref_gf_mesh.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_set.html" title="gf_mesh_set"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh.html" title="gf_mesh"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-mesh-get">
+<h1>gf_mesh_get<a class="headerlink" href="#gf-mesh-get" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>d = gf_mesh_get(mesh M, &#x27;dim&#x27;)
+np = gf_mesh_get(mesh M, &#x27;nbpts&#x27;)
+nc = gf_mesh_get(mesh M, &#x27;nbcvs&#x27;)
+P = gf_mesh_get(mesh M, &#x27;pts&#x27;[, ivec PIDs])
+Pid = gf_mesh_get(mesh M, &#x27;pid&#x27;)
+PIDs = gf_mesh_get(mesh M, &#x27;pid in faces&#x27;, imat CVFIDs)
+PIDs = gf_mesh_get(mesh M, &#x27;pid in cvids&#x27;, imat CVIDs)
+PIDs = gf_mesh_get(mesh M, &#x27;pid in regions&#x27;, imat RIDs)
+PIDs = gf_mesh_get(mesh M, &#x27;pid from coords&#x27;, mat PTS[, scalar radius=0])
+{Pid, IDx} = gf_mesh_get(mesh M, &#x27;pid from cvid&#x27;[, imat CVIDs])
+{Pts, IDx} = gf_mesh_get(mesh M, &#x27;pts from cvid&#x27;[, imat CVIDs])
+CVid = gf_mesh_get(mesh M, &#x27;cvid&#x27;)
+m = gf_mesh_get(mesh M, &#x27;max pid&#x27;)
+m = gf_mesh_get(mesh M, &#x27;max cvid&#x27;)
+[E,C] = gf_mesh_get(mesh M, &#x27;edges&#x27; [, CVLST][, &#x27;merge&#x27;])
+[E,C] = gf_mesh_get(mesh M, &#x27;curved edges&#x27;, int N [, CVLST])
+PIDs = gf_mesh_get(mesh M, &#x27;orphaned pid&#x27;)
+CVIDs = gf_mesh_get(mesh M, &#x27;cvid from pid&#x27;, ivec PIDs[, bool share=False])
+CVFIDs = gf_mesh_get(mesh M, &#x27;faces from pid&#x27;, ivec PIDs)
+CVFIDs = gf_mesh_get(mesh M, &#x27;outer faces&#x27;[, CVIDs])
+CVFIDs = gf_mesh_get(mesh M, &#x27;inner faces&#x27;[, CVIDs])
+CVFIDs = gf_mesh_get(mesh M, &#x27;outer faces with direction&#x27;, vec v, scalar angle [, CVIDs])
+CVFIDs = gf_mesh_get(mesh M, &#x27;outer faces in box&#x27;, vec pmin, vec pmax [, CVIDs])
+CVFIDs = gf_mesh_get(mesh M, &#x27;adjacent face&#x27;, int cvid, int fid)
+CVFIDs = gf_mesh_get(mesh M, &#x27;faces from cvid&#x27;[, ivec CVIDs][, &#x27;merge&#x27;])
+[mat T] = gf_mesh_get(mesh M, &#x27;triangulated surface&#x27;, int Nrefine [,CVLIST])
+N = gf_mesh_get(mesh M, &#x27;normal of face&#x27;, int cv, int f[, int nfpt])
+N = gf_mesh_get(mesh M, &#x27;normal of faces&#x27;, imat CVFIDs)
+Q = gf_mesh_get(mesh M, &#x27;quality&#x27;[, ivec CVIDs])
+A = gf_mesh_get(mesh M, &#x27;convex area&#x27;[, ivec CVIDs])
+A = gf_mesh_get(mesh M, &#x27;convex radius&#x27;[, ivec CVIDs])
+{S, CV2S} = gf_mesh_get(mesh M, &#x27;cvstruct&#x27;[, ivec CVIDs])
+{GT, CV2GT} = gf_mesh_get(mesh M, &#x27;geotrans&#x27;[, ivec CVIDs])
+RIDs = gf_mesh_get(mesh M, &#x27;boundaries&#x27;)
+RIDs = gf_mesh_get(mesh M, &#x27;regions&#x27;)
+RIDs = gf_mesh_get(mesh M, &#x27;boundary&#x27;)
+CVFIDs = gf_mesh_get(mesh M, &#x27;region&#x27;, ivec RIDs)
+gf_mesh_get(mesh M, &#x27;save&#x27;, string filename)
+s = gf_mesh_get(mesh M, &#x27;char&#x27;)
+gf_mesh_get(mesh M, &#x27;export to vtk&#x27;, string filename, ... [,&#x27;ascii&#x27;][,&#x27;quality&#x27;])
+gf_mesh_get(mesh M, &#x27;export to dx&#x27;, string filename, ... [,&#x27;ascii&#x27;][,&#x27;append&#x27;][,&#x27;as&#x27;,string name,[,&#x27;serie&#x27;,string serie_name]][,&#x27;edges&#x27;])
+gf_mesh_get(mesh M, &#x27;export to pos&#x27;, string filename[, string name])
+z = gf_mesh_get(mesh M, &#x27;memsize&#x27;)
+gf_mesh_get(mesh M, &#x27;display&#x27;)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General mesh inquiry function. All these functions accept also a
+mesh_fem argument instead of a mesh M (in that case, the mesh_fem
+linked mesh will be used).</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'dim')</span></tt></p>
+<blockquote>
+<div>Get the dimension of the mesh (2 for a 2D mesh, etc).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">np</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'nbpts')</span></tt></p>
+<blockquote>
+<div>Get the number of points of the mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">nc</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'nbcvs')</span></tt></p>
+<blockquote>
+<div>Get the number of convexes of the mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">P</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pts'[,</span> <span class="pre">ivec</span> <span class="pre">PIDs])</span></tt></p>
+<blockquote>
+<div><p>Return the list of point coordinates of the mesh.</p>
+<p>Each column of the returned matrix contains the coordinates of one
+point. If the optional argument &lt;literal&gt;PIDs&lt;/literal&gt; was given, only the points
+whose #id is listed in this vector are returned. Otherwise, the
+returned matrix will have gf_mesh_get(mesh M, &#8216;max_pid&#8217;) columns, which might
+be greater than gf_mesh_get(mesh M, &#8216;nbpts&#8217;) (if some points of the mesh have
+been destroyed and no call to gf_mesh_set(mesh M, &#8216;optimize structure&#8217;) have
+been issued). The columns corresponding to deleted points will be
+filled with NaN. You can use gf_mesh_get(mesh M, &#8216;pid&#8217;) to filter such invalid
+points.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Pid</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pid')</span></tt></p>
+<blockquote>
+<div><p>Return the list of points #id of the mesh.</p>
+<p>Note that their numbering is not supposed to be contiguous from
+1 to gf_mesh_get(mesh M, &#8216;nbpts&#8217;),
+especially if some points have been removed from the mesh. You
+can use gf_mesh_set(mesh M, &#8216;optimize_structure&#8217;) to enforce a contiguous
+numbering.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pid</span> <span class="pre">in</span> <span class="pre">faces',</span> <span class="pre">imat</span> <span class="pre">CVFIDs)</span></tt></p>
+<blockquote>
+<div><p>Search point #id listed in &lt;literal&gt;CVFIDs&lt;/literal&gt;.</p>
+<p>&lt;literal&gt;CVFIDs&lt;/literal&gt; is a two-rows matrix, the first row lists convex #ids,
+and the second lists face numbers. On return, &lt;literal&gt;PIDs&lt;/literal&gt; is a
+vector containing points #id.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pid</span> <span class="pre">in</span> <span class="pre">cvids',</span> <span class="pre">imat</span> <span class="pre">CVIDs)</span></tt></p>
+<blockquote>
+<div><p>Search point #id listed in &lt;literal&gt;CVIDs&lt;/literal&gt;.</p>
+<p>&lt;literal&gt;PIDs&lt;/literal&gt; is a vector containing points #id.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pid</span> <span class="pre">in</span> <span class="pre">regions',</span> <span class="pre">imat</span> <span class="pre">RIDs)</span></tt></p>
+<blockquote>
+<div><p>Search point #id listed in &lt;literal&gt;RIDs&lt;/literal&gt;.</p>
+<p>&lt;literal&gt;PIDs&lt;/literal&gt; is a vector containing points #id.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pid</span> <span class="pre">from</span> <span class="pre">coords',</span> <span class="pre">mat</span> <span class="pre">PTS[,</span> <span class="pre">scalar</span> <span class="pre">radius=0])</span></tt></p>
+<blockquote>
+<div><p>Search point #id whose coordinates are listed in &lt;literal&gt;PTS&lt;/literal&gt;.</p>
+<p>&lt;literal&gt;PTS&lt;/literal&gt; is an array containing a list of point coordinates. On
+return, &lt;literal&gt;PIDs&lt;/literal&gt; is a vector containing points
+#id for each point found in &lt;literal&gt;eps&lt;/literal&gt; range, and -1 for those
+which where not found in the mesh.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">{Pid,</span> <span class="pre">IDx}</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pid</span> <span class="pre">from</span> <span class="pre">cvid'[,</span> <span class="pre">imat</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Return the points attached to each convex of the mesh.</p>
+<p>If &lt;literal&gt;CVIDs&lt;/literal&gt; is omitted, all the convexes will be considered
+(equivalent to &lt;literal&gt;CVIDs = gf_mesh_get(mesh M, &#8216;max cvid&#8217;)&lt;/literal&gt;). &lt;literal&gt;IDx&lt;/literal&gt; is a
+vector, length(IDx) = length(CVIDs)+1. &lt;literal&gt;Pid&lt;/literal&gt; is a
+vector containing the concatenated list of #id of
+points of each convex in &lt;literal&gt;CVIDs&lt;/literal&gt;. Each entry of &lt;literal&gt;IDx&lt;/literal&gt; is the
+position of the corresponding convex point list in &lt;literal&gt;Pid&lt;/literal&gt;. Hence,
+for example, the list of #id of points of the second convex is
+Pid(IDx(2):IDx(3)-1).</p>
+<p>If &lt;literal&gt;CVIDs&lt;/literal&gt; contains convex #id which do not exist in the mesh,
+their point list will be empty.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">{Pts,</span> <span class="pre">IDx}</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'pts</span> <span class="pre">from</span> <span class="pre">cvid'[,</span> <span class="pre">imat</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Search point listed in &lt;literal&gt;CVID&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;CVIDs&lt;/literal&gt; is omitted, all the convexes will be considered
+(equivalent to &lt;literal&gt;CVIDs = gf_mesh_get(mesh M, &#8216;max cvid&#8217;)&lt;/literal&gt;). &lt;literal&gt;IDx&lt;/literal&gt; is a
+vector, length(IDx) = length(CVIDs)+1. &lt;literal&gt;Pts&lt;/literal&gt; is a
+vector containing the concatenated list of points
+of each convex in &lt;literal&gt;CVIDs&lt;/literal&gt;. Each entry of &lt;literal&gt;IDx&lt;/literal&gt; is the position
+of the corresponding convex point list in &lt;literal&gt;Pts&lt;/literal&gt;. Hence, for
+example, the list of points of the second convex is
+Pts(:,IDx(2):IDx(3)-1).</p>
+<p>If &lt;literal&gt;CVIDs&lt;/literal&gt; contains convex #id which do not exist in the mesh,
+their point list will be empty.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVid</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'cvid')</span></tt></p>
+<blockquote>
+<div><p>Return the list of all convex #id.</p>
+<p>Note that their numbering is not supposed to be contiguous from
+1 to gf_mesh_get(mesh M, &#8216;nbcvs&#8217;),
+especially if some points have been removed from the mesh. You
+can use gf_mesh_set(mesh M, &#8216;optimize_structure&#8217;) to enforce a contiguous
+numbering.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'max</span> <span class="pre">pid')</span></tt></p>
+<blockquote>
+<div>Return the maximum #id of all points in the mesh (see &#8216;max cvid&#8217;).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'max</span> <span class="pre">cvid')</span></tt></p>
+<blockquote>
+<div>Return the maximum #id of all convexes in the mesh (see &#8216;max pid&#8217;).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">[E,C]</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'edges'</span> <span class="pre">[,</span> <span class="pre">CVLST][,</span> <span class="pre">'merge'])</span></tt></p>
+<blockquote>
+<div><p>[OBSOLETE FUNCTION! will be removed in a future release]</p>
+<p>Return the list of edges of mesh M for the convexes listed in the
+row vector CVLST. E is a 2 x nb_edges matrix containing point
+indices. If CVLST is omitted, then the edges of all convexes are
+returned. If CVLST has two rows then the first row is supposed to
+contain convex numbers, and the second face numbers, of which the
+edges will be returned.  If &#8216;merge&#8217; is indicated, all common
+edges of convexes are merged in a single edge.  If the optional
+output argument C is specified, it will contain the convex number
+associated with each edge.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">[E,C]</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'curved</span> <span class="pre">edges',</span> <span class="pre">int</span> <span class="pre">N</span> <span class="pre">[,</span> <span class="pre">CVLST])</span></tt></p>
+<blockquote>
+<div><p>[OBSOLETE FUNCTION! will be removed in a future release]</p>
+<p>More sophisticated version of gf_mesh_get(mesh M, &#8216;edges&#8217;) designed for
+curved elements. This one will return N (N&gt;=2) points of the
+(curved) edges. With N==2, this is equivalent to
+gf_mesh_get(mesh M, &#8216;edges&#8217;). Since the points are no more always part of
+the mesh, their coordinates are returned instead of points
+number, in the array E which is a [ mesh_dim x 2 x nb_edges ]
+array.  If the optional output argument C is specified, it will
+contain the convex number associated with each edge.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'orphaned</span> <span class="pre">pid')</span></tt></p>
+<blockquote>
+<div>Search point #id which are not linked to a convex.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'cvid</span> <span class="pre">from</span> <span class="pre">pid',</span> <span class="pre">ivec</span> <span class="pre">PIDs[,</span> <span class="pre">bool</span> <span class="pre">share=False])</span></tt></p>
+<blockquote>
+<div><p>Search convex #ids related with the point #ids given in &lt;literal&gt;PIDs&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;share=False&lt;/literal&gt;, search convex whose vertex #ids are in &lt;literal&gt;PIDs&lt;/literal&gt;.
+If &lt;literal&gt;share=True&lt;/literal&gt;, search convex #ids that share the point #ids
+given in &lt;literal&gt;PIDs&lt;/literal&gt;. &lt;literal&gt;CVIDs&lt;/literal&gt; is a  vector (possibly
+empty).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'faces</span> <span class="pre">from</span> <span class="pre">pid',</span> <span class="pre">ivec</span> <span class="pre">PIDs)</span></tt></p>
+<blockquote>
+<div><p>Return the convex faces whose vertex #ids are in &lt;literal&gt;PIDs&lt;/literal&gt;.</p>
+<p>&lt;literal&gt;CVFIDs&lt;/literal&gt; is a two-rows matrix, the first row lists convex #ids,
+and the second lists face numbers (local number in the convex).
+For a convex face to be returned, EACH of its points have to be
+listed in &lt;literal&gt;PIDs&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'outer</span> <span class="pre">faces'[,</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Return the set of faces not shared by two elements.</p>
+<p>The output &lt;literal&gt;CVFIDs&lt;/literal&gt; is a two-rows matrix, the first row lists
+convex #ids, and the second one lists face numbers (local number
+in the convex). If &lt;literal&gt;CVIDs&lt;/literal&gt; is not given, all convexes are
+considered, and it basically returns the mesh boundary. If &lt;literal&gt;CVIDs&lt;/literal&gt;
+is given, it returns the boundary of the convex set whose #ids are
+listed in &lt;literal&gt;CVIDs&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'inner</span> <span class="pre">faces'[,</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div>Return the set of faces shared at least by two elements in CVIDs.
+Each face is represented only once and is arbitrarily chosen
+between the two neighbour elements.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'outer</span> <span class="pre">faces</span> <span class="pre">with</span> <span class="pre">direction',</span> <span class="pre">vec</span> <span class="pre">v,</span> <span class="pre">scalar</span> <span class="pre">angle</span> <span class="pre">[,</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Return the set of faces not shared by two convexes and with a mean outward vector lying within an angle &lt;literal&gt;angle&lt;/literal&gt; (in radians) from vector &lt;literal&gt;v&lt;/literal&gt;.</p>
+<p>The output &lt;literal&gt;CVFIDs&lt;/literal&gt; is a two-rows matrix, the first row lists convex
+#ids, and the second one lists face numbers (local number in the
+convex). If &lt;literal&gt;CVIDs&lt;/literal&gt; is given, it returns portion of the boundary of
+the convex set defined by the #ids listed in &lt;literal&gt;CVIDs&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'outer</span> <span class="pre">faces</span> <span class="pre">in</span> <span class="pre">box',</span> <span class="pre">vec</span> <span class="pre">pmin,</span> <span class="pre">vec</span> <span class="pre">pmax</span> <span class="pre">[,</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Return the set of faces not shared by two convexes and lying within the box defined by the corner points &lt;literal&gt;pmin&lt;/literal&gt; and &lt;literal&gt;pmax&lt;/literal&gt;.</p>
+<p>The output &lt;literal&gt;CVFIDs&lt;/literal&gt; is a two-rows matrix, the first row lists convex
+#ids, and the second one lists face numbers (local number in the
+convex). If &lt;literal&gt;CVIDs&lt;/literal&gt; is given, it returns portion of the boundary of
+the convex set defined by the #ids listed in &lt;literal&gt;CVIDs&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'adjacent</span> <span class="pre">face',</span> <span class="pre">int</span> <span class="pre">cvid,</span> <span class="pre">int</span> <span class="pre">fid)</span></tt></p>
+<blockquote>
+<div>Return convex face of the neighbour element if it exists.
+If the convex have more than one neighbour
+relativley to the face &lt;literal&gt;&lt;/literal&gt;f&lt;literal&gt;&lt;/literal&gt; (think to bar elements in 3D for instance),
+return the first face found.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'faces</span> <span class="pre">from</span> <span class="pre">cvid'[,</span> <span class="pre">ivec</span> <span class="pre">CVIDs][,</span> <span class="pre">'merge'])</span></tt></p>
+<blockquote>
+<div><p>Return a list of convex faces from a list of convex #id.</p>
+<p>&lt;literal&gt;CVFIDs&lt;/literal&gt; is a two-rows matrix, the first row lists convex #ids,
+and the second lists face numbers (local number in the convex).
+If &lt;literal&gt;CVIDs&lt;/literal&gt; is not given, all convexes are considered. The optional
+argument &#8216;merge&#8217; merges faces shared by the convex of &lt;literal&gt;CVIDs&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">[mat</span> <span class="pre">T]</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'triangulated</span> <span class="pre">surface',</span> <span class="pre">int</span> <span class="pre">Nrefine</span> <span class="pre">[,CVLIST])</span></tt></p>
+<blockquote>
+<div><p>[DEPRECATED FUNCTION! will be removed in a future release]</p>
+<p>Similar function to gf_mesh_get(mesh M, &#8216;curved edges&#8217;) : split (if
+necessary, i.e. if the geometric transformation if non-linear)
+each face into sub-triangles and return their coordinates in T
+(see also gf_compute(&#8216;eval on P1 tri mesh&#8217;))</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'normal</span> <span class="pre">of</span> <span class="pre">face',</span> <span class="pre">int</span> <span class="pre">cv,</span> <span class="pre">int</span> <span class="pre">f[,</span> <span class="pre">int</span> <span class="pre">nfpt])</span></tt></p>
+<blockquote>
+<div><p>Evaluates the normal of convex &lt;literal&gt;cv&lt;/literal&gt;, face &lt;literal&gt;f&lt;/literal&gt; at the &lt;literal&gt;nfpt&lt;/literal&gt; point of the face.</p>
+<p>If &lt;literal&gt;nfpt&lt;/literal&gt; is not specified, then the normal is evaluated at each
+geometrical node of the face.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'normal</span> <span class="pre">of</span> <span class="pre">faces',</span> <span class="pre">imat</span> <span class="pre">CVFIDs)</span></tt></p>
+<blockquote>
+<div><p>Evaluates (at face centers) the normals of convexes.</p>
+<p>&lt;literal&gt;CVFIDs&lt;/literal&gt; is supposed a two-rows matrix, the first row lists convex
+#ids, and the second lists face numbers (local number in the convex).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'quality'[,</span> <span class="pre">ivec</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div>Return an estimation of the quality of each convex (&lt;latex style=&#8221;text&#8221;&gt;&lt;![CDATA[0 leq Q leq 1]]&gt;&lt;/latex&gt;).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'convex</span> <span class="pre">area'[,</span> <span class="pre">ivec</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div>Return an estimate of the area of each convex.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'convex</span> <span class="pre">radius'[,</span> <span class="pre">ivec</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div>Return an estimate of the radius of each convex.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">{S,</span> <span class="pre">CV2S}</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'cvstruct'[,</span> <span class="pre">ivec</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Return an array of the convex structures.</p>
+<p>If &lt;literal&gt;CVIDs&lt;/literal&gt; is not given, all convexes are considered. Each convex
+structure is listed once in &lt;literal&gt;S&lt;/literal&gt;, and &lt;literal&gt;CV2S&lt;/literal&gt; maps the convexes
+indice in &lt;literal&gt;CVIDs&lt;/literal&gt; to the indice of its structure in &lt;literal&gt;S&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">{GT,</span> <span class="pre">CV2GT}</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'geotrans'[,</span> <span class="pre">ivec</span> <span class="pre">CVIDs])</span></tt></p>
+<blockquote>
+<div><p>Returns an array of the geometric transformations.</p>
+<p>See also gf_mesh_get(mesh M, &#8216;cvstruct&#8217;).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">RIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'boundaries')</span></tt></p>
+<blockquote>
+<div>DEPRECATED FUNCTION. Use &#8216;regions&#8217; instead.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">RIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'regions')</span></tt></p>
+<blockquote>
+<div>Return the list of valid regions stored in the mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">RIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'boundary')</span></tt></p>
+<blockquote>
+<div>DEPRECATED FUNCTION. Use &#8216;region&#8217; instead.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVFIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'region',</span> <span class="pre">ivec</span> <span class="pre">RIDs)</span></tt></p>
+<blockquote>
+<div><p>Return the list of convexes/faces on the regions &lt;literal&gt;RIDs&lt;/literal&gt;.</p>
+<p>&lt;literal&gt;CVFIDs&lt;/literal&gt; is a two-rows matrix, the first row lists convex #ids,
+and the second lists face numbers (local number in the convex).
+(and 0 when the whole convex is in the
+regions).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'save',</span> <span class="pre">string</span> <span class="pre">filename)</span></tt></p>
+<blockquote>
+<div><p>Save the mesh object to an ascii file.</p>
+<p>This mesh can be restored with gf_mesh(&#8216;load&#8217;, filename).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'char')</span></tt></p>
+<blockquote>
+<div>Output a string description of the mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'export</span> <span class="pre">to</span> <span class="pre">vtk',</span> <span class="pre">string</span> <span class="pre">filename,</span> <span class="pre">...</span> <span class="pre">[,'ascii'][,'quality'])</span></tt></p>
+<blockquote>
+<div><p>Exports a mesh to a VTK file .</p>
+<p>If &#8216;quality&#8217; is specified, an estimation of the quality of each
+convex will be written to the file.</p>
+<p>See also gf_mesh_fem_get(mesh_fem MF, &#8216;export to vtk&#8217;), gf_slice_get(slice S, &#8216;export to vtk&#8217;).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'export</span> <span class="pre">to</span> <span class="pre">dx',</span> <span class="pre">string</span> <span class="pre">filename,</span> <span class="pre">...</span> <span class="pre">[,'ascii'][,'append'][,'as',string</span> <span class="pre">name,[,'serie',string</span> <span class="pre">serie_name]][,'edges'])</span></tt></p>
+<blockquote>
+<div><p>Exports a mesh to an OpenDX file.</p>
+<p>See also gf_mesh_fem_get(mesh_fem MF, &#8216;export to dx&#8217;), gf_slice_get(slice S, &#8216;export to dx&#8217;).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'export</span> <span class="pre">to</span> <span class="pre">pos',</span> <span class="pre">string</span> <span class="pre">filename[,</span> <span class="pre">string</span> <span class="pre">name])</span></tt></p>
+<blockquote>
+<div><p>Exports a mesh to a POS file .</p>
+<p>See also gf_mesh_fem_get(mesh_fem MF, &#8216;export to pos&#8217;), gf_slice_get(slice S, &#8216;export to pos&#8217;).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'memsize')</span></tt></p>
+<blockquote>
+<div>Return the amount of memory (in bytes) used by the mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_get(mesh</span> <span class="pre">M,</span> <span class="pre">'display')</span></tt></p>
+<blockquote>
+<div>displays a short summary for a mesh object.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh.html"
+                        title="前の章へ">gf_mesh</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_set.html"
+                        title="次の章へ">gf_mesh_set</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_set.html" title="gf_mesh_set"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh.html" title="gf_mesh"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

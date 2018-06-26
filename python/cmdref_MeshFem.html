@@ -1,0 +1,632 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MeshFem &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="MeshIm" href="cmdref_MeshIm.html" />
+    <link rel="prev" title="Mesh" href="cmdref_Mesh.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_MeshIm.html" title="MeshIm"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Mesh.html" title="Mesh"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="meshfem">
+<h1>MeshFem<a class="headerlink" href="#meshfem" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.MeshFem">
+<em class="property">class </em><tt class="descname">MeshFem</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshFem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM MeshFem object</p>
+<p>This object represents a finite element method defined on a whole mesh.</p>
+<p>General constructor for MeshFem objects</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem(Mesh</span> <span class="pre">m[,</span> <span class="pre">int</span> <span class="pre">Qdim1=1[,</span> <span class="pre">int</span> <span class="pre">Qdim2=1,</span> <span class="pre">...]])</span></tt>
+Build a new MeshFem object.</p>
+<p>The <cite>Qdim</cite> parameters specifies the dimension of the field represented
+by the finite element method. Qdim1 = 1 for a scalar field,
+Qdim1 = n for a vector field off size n, Qdim1=m, Qdim2=n for
+a matrix field of size mxn ...
+Returns the handle of the created object.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('load',</span> <span class="pre">string</span> <span class="pre">fname[,</span> <span class="pre">Mesh</span> <span class="pre">m])</span></tt>
+Load a MeshFem from a file.</p>
+<p>If the mesh <cite>m</cite> is not supplied (this kind of file does not store the
+mesh), then it is read from the file <cite>fname</cite> and its descriptor is
+returned as the second output argument.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('from</span> <span class="pre">string',</span> <span class="pre">string</span> <span class="pre">s[,</span> <span class="pre">Mesh</span> <span class="pre">m])</span></tt>
+Create a MeshFem object from its string description.</p>
+<p>See also <tt class="docutils literal"><span class="pre">MeshFem.char()</span></tt></p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('clone',</span> <span class="pre">MeshFem</span> <span class="pre">mf)</span></tt>
+Create a copy of a MeshFem.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('sum',</span> <span class="pre">MeshFem</span> <span class="pre">mf1,</span> <span class="pre">MeshFem</span> <span class="pre">mf2[,</span> <span class="pre">MeshFem</span> <span class="pre">mf3[,</span> <span class="pre">...]])</span></tt>
+Create a MeshFem that spans two (or more) MeshFem&#8217;s.</p>
+<p>All MeshFem must share the same mesh.</p>
+<p>After that, you should not modify the FEM of <cite>mf1</cite>, <cite>mf2</cite> etc.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('product',</span> <span class="pre">MeshFem</span> <span class="pre">mf1,</span> <span class="pre">MeshFem</span> <span class="pre">mf2)</span></tt>
+Create a MeshFem that spans all the product of a selection of shape
+functions of <cite>mf1</cite> by all shape functions of <cite>mf2</cite>.
+Designed for Xfem enrichment.</p>
+<p><cite>mf1</cite> and <cite>mf2</cite> must share the same mesh.</p>
+<p>After that, you should not modify the FEM of <cite>mf1</cite>, <cite>mf2</cite>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('levelset',</span> <span class="pre">MeshLevelSet</span> <span class="pre">mls,</span> <span class="pre">MeshFem</span> <span class="pre">mf)</span></tt>
+Create a MeshFem that is conformal to implicit surfaces defined in
+MeshLevelSet.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('global</span> <span class="pre">function',</span> <span class="pre">Mesh</span> <span class="pre">m,</span> <span class="pre">LevelSet</span> <span class="pre">ls,</span> <span class="pre">(GlobalFunction</span> <span class="pre">GF1,...)[,</span> <span class="pre">int</span> <span class="pre">Qdim_m])</span></tt>
+Create a MeshFem whose base functions are global function given by the
+user in the system of coordinate defined by the iso-values of the two
+level-set function of <cite>ls</cite>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">MeshFem('partial',</span> <span class="pre">MeshFem</span> <span class="pre">mf,</span> <span class="pre">ivec</span> <span class="pre">DOFs[,</span> <span class="pre">ivec</span> <span class="pre">RCVs])</span></tt>
+Build a restricted MeshFem by keeping only a subset of the degrees of
+freedom of <cite>mf</cite>.</p>
+<p>If <cite>RCVs</cite> is given, no FEM will be put on the convexes listed in
+<cite>RCVs</cite>.</p>
+</li>
+</ul>
+<dl class="method">
+<dt id="getfem.MeshFem.adapt">
+<tt class="descname">adapt</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.adapt" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>For a MeshFem levelset object only. Adapt the mesh_fem object to a
+change of the levelset function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.basic_dof_from_cv">
+<tt class="descname">basic_dof_from_cv</tt><big>(</big><em>CVids</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.basic_dof_from_cv" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the dof of the convexes listed in <cite>CVids</cite>.</p>
+<p>WARNING: the Degree of Freedom might be returned in ANY order, do
+not use this function in your assembly routines. Use &#8216;basic dof from cvid&#8217;
+instead, if you want to be able to map a convex number with its
+associated degrees of freedom.</p>
+<p>One can also get the list of basic dof on a set on convex faces, by
+indicating on the second row of <cite>CVids</cite> the faces numbers (with
+respect to the convex number on the first row).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.basic_dof_from_cvid">
+<tt class="descname">basic_dof_from_cvid</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.basic_dof_from_cvid" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the degrees of freedom attached to each convex of the mesh.</p>
+<p>If <cite>CVids</cite> is omitted, all the convexes will be considered (equivalent
+to <cite>CVids = 1 ... Mesh.max_cvid()</cite>).</p>
+<p><cite>IDx</cite> is a vector, <cite>length(IDx) = length(CVids)+1</cite>.
+<cite>DOFs</cite> is a vector containing the concatenated list
+of dof of each convex in <cite>CVids</cite>. Each entry of <cite>IDx</cite> is the position
+of the corresponding convex point list in <cite>DOFs</cite>. Hence, for example,
+the list of points of the second convex is DOFs[IDx(2):IDx(3)].</p>
+<p>If <cite>CVids</cite> contains convex #id which do not exist in the mesh, their
+point list will be empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.basic_dof_nodes">
+<tt class="descname">basic_dof_nodes</tt><big>(</big><em>DOFids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.basic_dof_nodes" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get location of basic degrees of freedom.</p>
+<p>Return the list of interpolation points for the specified
+dof #IDs in <cite>DOFids</cite> (if <cite>DOFids</cite> is omitted, all basic dof are
+considered).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.basic_dof_on_region">
+<tt class="descname">basic_dof_on_region</tt><big>(</big><em>Rs</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.basic_dof_on_region" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of basic dof (before the optional reduction) lying on one
+of the mesh regions listed in <cite>Rs</cite>.</p>
+<p>More precisely, this function returns the basic dof whose support is
+non-null on one of regions whose #ids are listed in <cite>Rs</cite> (note
+that for boundary regions, some dof nodes may not lie exactly
+on the boundary, for example the dof of Pk(n,0) lies on the center
+of the convex, but the base function in not null on the convex
+border).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.char">
+<tt class="descname">char</tt><big>(</big><em>opt=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a string description of the MeshFem.</p>
+<p>By default, it does not include the description of the linked mesh
+object, except if <cite>opt</cite> is &#8216;with_mesh&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.convex_index">
+<tt class="descname">convex_index</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.convex_index" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of convexes who have a FEM.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a MeshFem object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.dof_from_cv">
+<tt class="descname">dof_from_cv</tt><big>(</big><em>CVids</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.dof_from_cv" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Deprecated function. Use MeshFem.basic_dof_from_cv() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.dof_from_cvid">
+<tt class="descname">dof_from_cvid</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.dof_from_cvid" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Deprecated function. Use MeshFem.basic_dof_from_cvid() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.dof_from_im">
+<tt class="descname">dof_from_im</tt><big>(</big><em>mim</em>, <em>p=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.dof_from_im" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a selection of dof who contribute significantly to the
+mass-matrix that would be computed with <cite>mf</cite> and the integration
+method <cite>mim</cite>.</p>
+<p><cite>p</cite> represents the dimension on what the integration method
+operates (default <cite>p = mesh dimension</cite>).</p>
+<p>IMPORTANT: you still have to set a valid integration method on
+the convexes which are not crosses by the levelset!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.dof_nodes">
+<tt class="descname">dof_nodes</tt><big>(</big><em>DOFids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.dof_nodes" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Deprecated function. Use MeshFem.basic_dof_nodes() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.dof_on_region">
+<tt class="descname">dof_on_region</tt><big>(</big><em>Rs</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.dof_on_region" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of dof (after the optional reduction) lying on one
+of the mesh regions listed in <cite>Rs</cite>.</p>
+<p>More precisely, this function returns the basic dof whose support is
+non-null on one of regions whose #ids are listed in <cite>Rs</cite> (note
+that for boundary regions, some dof nodes may not lie exactly
+on the boundary, for example the dof of Pk(n,0) lies on the center
+of the convex, but the base function in not null on the convex
+border).</p>
+<p>For a reduced mesh_fem
+a dof is lying on a region if its potential corresponding shape
+function is nonzero on this region. The extension matrix is used
+to make the correspondance between basic and reduced dofs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.dof_partition">
+<tt class="descname">dof_partition</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.dof_partition" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get the &#8216;dof_partition&#8217; array.</p>
+<p>Return the array which associates an integer (the partition number)
+to each convex of the MeshFem. By default, it is an all-zero array.
+The degrees of freedom of each convex of the MeshFem are connected
+only to the dof of neighbouring convexes which have the same
+partition number, hence it is possible to create partially
+discontinuous MeshFem very easily.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.eval">
+<tt class="descname">eval</tt><big>(</big><em>expression</em>, <em>gl={}</em>, <em>lo={}</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.eval" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>interpolate an expression on the (lagrangian) MeshFem.</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">mf</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;x*y&#39;</span><span class="p">)</span> <span class="c"># interpolates the function &#39;x*y&#39;</span>
+<span class="n">mf</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;[x,y]&#39;</span><span class="p">)</span> <span class="c"># interpolates the vector field &#39;[x,y]&#39;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="n">mf</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s">&#39;np.sin(x)&#39;</span><span class="p">,</span><span class="nb">globals</span><span class="p">(),</span><span class="nb">locals</span><span class="p">())</span> <span class="c"># interpolates the function sin(x)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.export_to_dx">
+<tt class="descname">export_to_dx</tt><big>(</big><em>filename</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.export_to_dx" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: MeshFem.export_to_dx(self,string filename, ...[&#8216;as&#8217;, string mesh_name][,&#8217;edges&#8217;][&#8216;serie&#8217;,string serie_name][,&#8217;ascii&#8217;][,&#8217;append&#8217;], U, &#8216;name&#8217;...)</p>
+<p>Export a MeshFem and some fields to an OpenDX file.</p>
+<p>This function will fail if the MeshFem mixes different convex types
+(i.e. quads and triangles), or if OpenDX does not handle a specific
+element type (i.e. prism connections are not known by OpenDX).</p>
+<p>The FEM will be mapped to order 1 Pk (or Qk) FEMs. If you need to
+represent high-order FEMs or high-order geometric transformations,
+you should consider Slice.export_to_dx().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.export_to_pos">
+<tt class="descname">export_to_pos</tt><big>(</big><em>filename</em>, <em>name=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.export_to_pos" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: MeshFem.export_to_pos(self,string filename[, string name][[,MeshFem mf1], mat U1, string nameU1[[,MeshFem mf2], mat U2, string nameU2,...]])</p>
+<p>Export a MeshFem and some fields to a pos file.</p>
+<p>The FEM and geometric transformations will be mapped to order 1
+isoparametric Pk (or Qk) FEMs (as GMSH does not handle higher
+order elements).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.export_to_vtk">
+<tt class="descname">export_to_vtk</tt><big>(</big><em>filename</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.export_to_vtk" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: MeshFem.export_to_vtk(self,string filename, ... [&#8216;ascii&#8217;], U, &#8216;name&#8217;...)</p>
+<p>Export a MeshFem and some fields to a vtk file.</p>
+<p>The FEM and geometric transformations will be mapped to order 1
+or 2 isoparametric Pk (or Qk) FEMs (as VTK does not handle higher
+order elements). If you need to represent high-order FEMs or
+high-order geometric transformations, you should consider
+Slice.export_to_vtk().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.extend_vector">
+<tt class="descname">extend_vector</tt><big>(</big><em>V</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.extend_vector" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Multiply the provided vector V with the reduction matrix of the MeshFem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.extension_matrix">
+<tt class="descname">extension_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.extension_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the optional extension matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.fem">
+<tt class="descname">fem</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.fem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a list of FEM used by the MeshFem.</p>
+<p><cite>FEMs</cite> is an array of all Fem objects found in the convexes
+given in <cite>CVids</cite>. If <cite>CV2F</cite> was supplied as an output argument,
+it contains, for each convex listed in <cite>CVids</cite>, the index of its
+correspounding FEM in <cite>FEMs</cite>.</p>
+<p>Convexes which are not part of the mesh, or convexes which do not
+have any FEM have their correspounding entry in <cite>CV2F</cite> set to -1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.has_linked_mesh_levelset">
+<tt class="descname">has_linked_mesh_levelset</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.has_linked_mesh_levelset" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Is a mesh_fem_level_set or not.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.interpolate_convex_data">
+<tt class="descname">interpolate_convex_data</tt><big>(</big><em>Ucv</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.interpolate_convex_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Interpolate data given on each convex of the mesh to the MeshFem dof.
+The MeshFem has to be lagrangian, and should be discontinuous (typically
+a FEM_PK(N,0) or FEM_QK(N,0) should be used).</p>
+<p>The last dimension of the input vector Ucv should have
+Mesh.max_cvid() elements.</p>
+<p>Example of use: MeshFem.interpolate_convex_data(Mesh.quality())</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.is_equivalent" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Test if the MeshFem is equivalent.</p>
+<p>See MeshFem.is_lagrangian()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.is_lagrangian">
+<tt class="descname">is_lagrangian</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.is_lagrangian" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Test if the MeshFem is Lagrangian.</p>
+<p>Lagrangian means that each base function Phi[i] is such that
+Phi[i](P[j]) = delta(i,j), where P[j] is the dof location of
+the jth base function, and delta(i,j) = 1 if i==j, else 0.</p>
+<p>If <cite>CVids</cite> is omitted, it returns 1 if all convexes in the mesh
+are Lagrangian. If <cite>CVids</cite> is used, it returns the convex indices
+(with respect to <cite>CVids</cite>) which are Lagrangian.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.is_polynomial">
+<tt class="descname">is_polynomial</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.is_polynomial" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Test if all base functions are polynomials.</p>
+<p>See MeshFem.is_lagrangian()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.is_reduced">
+<tt class="descname">is_reduced</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.is_reduced" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 1 if the optional reduction matrix is applied to the dofs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.linked_mesh">
+<tt class="descname">linked_mesh</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.linked_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a reference to the Mesh object linked to <cite>mf</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.linked_mesh_levelset">
+<tt class="descname">linked_mesh_levelset</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.linked_mesh_levelset" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>if it is a mesh_fem_level_set gives the linked mesh_level_set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.memsize">
+<tt class="descname">memsize</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.memsize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the amount of memory (in bytes) used by the mesh_fem object.</p>
+<p>The result does not take into account the linked mesh object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.mesh">
+<tt class="descname">mesh</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a reference to the Mesh object linked to <cite>mf</cite>.
+(identical to Mesh.linked_mesh())</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.nb_basic_dof">
+<tt class="descname">nb_basic_dof</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.nb_basic_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the number of basic degrees of freedom (dof) of the MeshFem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.nbdof">
+<tt class="descname">nbdof</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.nbdof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the number of degrees of freedom (dof) of the MeshFem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.non_conformal_basic_dof">
+<tt class="descname">non_conformal_basic_dof</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.non_conformal_basic_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return partially linked degrees of freedom.</p>
+<p>Return the basic dof located on the border of a convex and which belong
+to only one convex, except the ones which are located on the border
+of the mesh.  For example, if the convex &#8216;a&#8217; and &#8216;b&#8217; share a common
+face, &#8216;a&#8217; has a P1 FEM, and &#8216;b&#8217; has a P2 FEM, then the basic dof on the
+middle of the face will be returned by this function (this can be
+useful when searching the interfaces between classical FEM and
+hierarchical FEM).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.non_conformal_dof">
+<tt class="descname">non_conformal_dof</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.non_conformal_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Deprecated function. Use MeshFem.non_conformal_basic_dof() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.qdim">
+<tt class="descname">qdim</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.qdim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the dimension Q of the field interpolated by the MeshFem.</p>
+<p>By default, Q=1 (scalar field). This has an impact on the dof numbering.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.reduce_meshfem">
+<tt class="descname">reduce_meshfem</tt><big>(</big><em>RM</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.reduce_meshfem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set reduction mesh fem
+This function selects the degrees of freedom of the finite element
+method by selecting a set of independent vectors of the matrix RM.
+The numer of columns of RM should corresponds to the number of degrees
+of fredoom of the finite element method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.reduce_vector">
+<tt class="descname">reduce_vector</tt><big>(</big><em>V</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.reduce_vector" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Multiply the provided vector V with the extension matrix of the MeshFem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.reduction">
+<tt class="descname">reduction</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.reduction" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set or unset the use of the reduction/extension matrices.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.reduction_matrices">
+<tt class="descname">reduction_matrices</tt><big>(</big><em>R</em>, <em>E</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.reduction_matrices" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the reduction and extension matrices and valid their use.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.reduction_matrix">
+<tt class="descname">reduction_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshFem.reduction_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the optional reduction matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.save">
+<tt class="descname">save</tt><big>(</big><em>filename</em>, <em>opt=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.save" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Save a MeshFem in a text file (and optionaly its linked mesh object
+if <cite>opt</cite> is the string &#8216;with_mesh&#8217;).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.set_classical_discontinuous_fem">
+<tt class="descname">set_classical_discontinuous_fem</tt><big>(</big><em>k</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.set_classical_discontinuous_fem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: MeshFem.set_classical_discontinuous_fem(self, int k[[, &#8216;complete&#8217;], &#64;tscalar alpha[, ivec CVIDX]])</p>
+<p>Assigns a classical (Lagrange polynomial) discontinuous fem of order k.</p>
+<p>Similar to MeshFem.set_classical_fem() except that
+FEM_PK_DISCONTINUOUS is used. Param <cite>alpha</cite> the node inset,
+<img class="math" src="../_images/math/2fa649a4b68a3d2c10949bc7f5f012bd2958132b.png" alt="0 \leq alpha &lt; 1" style="vertical-align: -4px"/>, where 0 implies usual dof nodes, greater values
+move the nodes toward the center of gravity, and 1 means that all
+degrees of freedom collapse on the center of gravity.
+The option &#8216;complete&#8217; requests complete Langrange polynomial elements,
+even if the element geometric transformation is an incomplete one
+(e.g. 8-node quadrilateral or 20-node hexahedral).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.set_classical_fem">
+<tt class="descname">set_classical_fem</tt><big>(</big><em>k</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.set_classical_fem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: MeshFem.set_classical_fem(self, int k[[, &#8216;complete&#8217;], ivec CVids])</p>
+<p>Assign a classical (Lagrange polynomial) fem of order <cite>k</cite> to the MeshFem.
+The option &#8216;complete&#8217; requests complete Langrange polynomial elements,
+even if the element geometric transformation is an incomplete one
+(e.g. 8-node quadrilateral or 20-node hexahedral).</p>
+<p>Uses FEM_PK for simplexes, FEM_QK for parallelepipeds etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.set_dof_partition">
+<tt class="descname">set_dof_partition</tt><big>(</big><em>DOFP</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.set_dof_partition" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Change the &#8216;dof_partition&#8217; array.</p>
+<p><cite>DOFP</cite> is a vector holding a integer value for each convex of the MeshFem.
+See MeshFem.dof_partition() for a description of &#8220;dof partition&#8221;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.set_enriched_dofs">
+<tt class="descname">set_enriched_dofs</tt><big>(</big><em>DOFs</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.set_enriched_dofs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>For a MeshFem product object only. Set te enriched dofs and adapt the MeshFem product.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.set_fem">
+<tt class="descname">set_fem</tt><big>(</big><em>f</em>, <em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.set_fem" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the Finite Element Method.</p>
+<p>Assign a FEM <cite>f</cite> to all convexes whose #ids are listed in <cite>CVids</cite>.
+If <cite>CVids</cite> is not given, the integration is assigned to all convexes.</p>
+<p>See the help of Fem to obtain a list of available FEM methods.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.set_partial">
+<tt class="descname">set_partial</tt><big>(</big><em>DOFs</em>, <em>RCVs=None</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.set_partial" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Can only be applied to a partial MeshFem. Change the subset of the
+degrees of freedom of <cite>mf</cite>.</p>
+<p>If <cite>RCVs</cite> is given, no FEM will be put on the convexes listed
+in <cite>RCVs</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshFem.set_qdim">
+<tt class="descname">set_qdim</tt><big>(</big><em>Q</em><big>)</big><a class="headerlink" href="#getfem.MeshFem.set_qdim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Change the <cite>Q</cite> dimension of the field that is interpolated by the MeshFem.</p>
+<p><cite>Q = 1</cite> means that the MeshFem describes a scalar field, <cite>Q = N</cite> means
+that the MeshFem describes a vector field of dimension N.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Mesh.html"
+                        title="前の章へ">Mesh</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_MeshIm.html"
+                        title="次の章へ">MeshIm</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_MeshIm.html" title="MeshIm"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Mesh.html" title="Mesh"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

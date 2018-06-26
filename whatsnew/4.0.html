@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>What’s New in GetFEM++ 4.0 &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="What’s New in GetFEM++" href="index.html" />
+    <link rel="next" title="What’s New in GetFEM++ 3.1" href="3.1.html" />
+    <link rel="prev" title="What’s New in GetFEM++ 4.1" href="4.1.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="3.1.html" title="What’s New in GetFEM++ 3.1"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="4.1.html" title="What’s New in GetFEM++ 4.1"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="what-s-new-in-gf-4-0">
+<h1>What&#8217;s New in <em>GetFEM++</em> 4.0<a class="headerlink" href="#what-s-new-in-gf-4-0" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This is a major update to <em>GetFEM++</em>. The main changes is the introduction
+of a new model bricks system. The old system is kept and compatibility
+with 3.x releases is globally ensured. However some functionalities are
+deprecated. The main changes are:</p>
+<blockquote>
+<div><p>Released version, 2009/09/19:</p>
+<ul class="simple">
+<li>The mesh_fem object has undergone significant changes. Now it is
+possible to perform linear combination of degrees of freedom in
+order to describe some special finite element spaces. The main
+application is to obtain a finite element space reduced on a
+boundary or a curve. But it can be used also to prescibe directly
+some matching condition. The main change in the use of the mesh_fem
+object is the introduction of &#8220;basic&#8221; and &#8220;reduced&#8221; dofs. See the
+documentation.</li>
+<li>A new algorithm gmm_range_basis allows to select a basis between the
+columns of a matrix. It has been specially designed to select a basis
+of the trace on a boundary of a finite element space.</li>
+<li>The partial_mesh_fem object has been completely changed. It is now a
+lighter object which is intensively used in the new model bricks to
+obtain finite element spaces on a boundary.</li>
+<li>Introduction of the new model brick system. The bricks are more simple
+to build and it is now really designed to the representation of
+coupled/multiphysics models. A generic manner to deals with time
+dependent models from static models is also introduced.</li>
+<li>Python interface uses Numpy instead of Numarray.</li>
+</ul>
+</div></blockquote>
+<p>All the old bricks have not been rewritten into new bricks. This will be
+done gradually in the near future. A Scilab interface is close to be
+finished and should be included in the future release.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="4.1.html"
+                        title="前の章へ">What&#8217;s New in <em>GetFEM++</em> 4.1</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="3.1.html"
+                        title="次の章へ">What&#8217;s New in <em>GetFEM++</em> 3.1</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="3.1.html" title="What’s New in GetFEM++ 3.1"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="4.1.html" title="What’s New in GetFEM++ 4.1"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

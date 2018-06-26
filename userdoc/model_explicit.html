@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Other “explicit” bricks &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Helmholtz brick" href="model_helmholtz.html" />
+    <link rel="prev" title="Constraint brick" href="model_constraint.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_helmholtz.html" title="Helmholtz brick"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_constraint.html" title="Constraint brick"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="other-explicit-bricks">
+<span id="ud-model-explicit"></span><span id="index-0"></span><h1>Other &#8220;explicit&#8221; bricks<a class="headerlink" href="#other-explicit-bricks" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Two (very simple) bricks allow to add some explicit terms to the tangent system.</p>
+<p>The function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">indbrick</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_explicit_matrix</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname1</span><span class="p">,</span> <span class="n">varname2</span><span class="p">,</span> <span class="n">B</span>
+                                       <span class="n">issymmetric</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span>
+                                       <span class="n">iscoercive</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>adds a brick which just adds the matrix <tt class="docutils literal"><span class="pre">B</span></tt> to the tangent system relatively to
+the variables <tt class="docutils literal"><span class="pre">varname1</span></tt> and <tt class="docutils literal"><span class="pre">varname2</span></tt>. The given matrix should have as many
+rows as the dimension of <tt class="docutils literal"><span class="pre">varname1</span></tt> and as many columns as the dimension of
+<tt class="docutils literal"><span class="pre">varname2</span></tt>. If the two variables are different and if <tt class="docutils literal"><span class="pre">issymmetric</span></tt> is set to
+true then the transpose of the matrix is also added to the tangent system (default
+is false). Set <tt class="docutils literal"><span class="pre">iscoercive</span></tt> to true if the term does not affect the coercivity
+of the tangent system (default is false). The matrix can be changed by the
+command:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">set_private_data_matrix</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">indbrick</span><span class="p">,</span> <span class="n">B</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_explicit_rhs</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">L</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>adds a brick which just add the vector <tt class="docutils literal"><span class="pre">L</span></tt> to the right hand side of the tangent
+system relatively to the variable <tt class="docutils literal"><span class="pre">varname</span></tt>. The given vector should have the
+same size as the variable <tt class="docutils literal"><span class="pre">varname</span></tt>. The value of the vector can by changed by
+the command:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">set_private_data_rhs</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">indbrick</span><span class="p">,</span> <span class="n">L</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_constraint.html"
+                        title="前の章へ">Constraint brick</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_helmholtz.html"
+                        title="次の章へ">Helmholtz brick</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_helmholtz.html" title="Helmholtz brick"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_constraint.html" title="Constraint brick"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

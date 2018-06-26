@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables) &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="GetFEM++ Tutorial" href="index.html" />
+    <link rel="next" title="Description of the Project" href="../project/index.html" />
+    <link rel="prev" title="Example of Thermo-elastic and electrical coupling (simple nonlinear coupled problem, model object, generic assembly, solve and visualization)" href="thermo_coupling.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../project/index.html" title="Description of the Project"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="thermo_coupling.html" title="Example of Thermo-elastic and electrical coupling (simple nonlinear coupled problem, model object, generic assembly, solve and visualization)"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>GetFEM++</em> Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="example-of-wheel-in-contact-assembly-between-two-meshes-transformations-use-of-fixed-size-variables">
+<span id="tut-wheel"></span><h1>Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)<a class="headerlink" href="#example-of-wheel-in-contact-assembly-between-two-meshes-transformations-use-of-fixed-size-variables" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>In this example of a deformable &#8216;&#8217;wheel&#8217;&#8217; enters in contact with a deformable foundation. We use here python interface, translate this program for another interface or in C++ is easy (see the previous example). The complete program  <cite>demo_wheel_contact.py</cite> can be found in the directory <cite>interface/tests/python</cite>.</p>
+<div class="section" id="the-problem-setting">
+<h2>The problem setting<a class="headerlink" href="#the-problem-setting" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Let <img class="math" src="../_images/math/3bfd78daba9f047f58f0f71f26a56cb2f7d2e5a0.png" alt="\Omega^1 \subset \R^2" style="vertical-align: -1px"/> be the reference configuration of a 2D wheel and <img class="math" src="../_images/math/9fe9d6f3b185c77b35e589e7cbc34646d4e61092.png" alt="\Omega^2 \subset \R^2" style="vertical-align: -1px"/> the reference configuration of a deformable foundation. We consider small deformation of these two bodies (linearized elasticity) and the contact between them. We also consider that the rim of the wheel is rigid and apply a vertical force on the wheel.</p>
+</div>
+<div class="section" id="building-the-program">
+<h2>Building the program<a class="headerlink" href="#building-the-program" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Let us begin by loading Getfem and fixing the parameters of the problem</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">getfem</span> <span class="kn">as</span> <span class="nn">gf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">E</span> <span class="o">=</span> <span class="mf">21E6</span>                         <span class="c"># Young Modulus (N/cm^2)</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="mf">0.3</span>                         <span class="c"># Poisson ratio</span>
+<span class="n">clambda</span> <span class="o">=</span> <span class="n">E</span><span class="o">*</span><span class="n">nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">))</span> <span class="c"># First Lame coefficient (N/cm^2)</span>
+<span class="n">cmu</span> <span class="o">=</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">))</span>               <span class="c"># Second Lame coefficient (N/cm^2)</span>
+<span class="n">clambdastar</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">clambda</span><span class="o">*</span><span class="n">cmu</span><span class="o">/</span><span class="p">(</span><span class="n">clambda</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">cmu</span><span class="p">)</span> <span class="c"># Lame coefficient for Plane stress (N/cm^2)</span>
+<span class="n">applied_force</span> <span class="o">=</span> <span class="mf">1E7</span>              <span class="c"># Force at the hole boundary (N)</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="mi">1</span>                      <span class="c"># Approximate mesh size</span>
+<span class="n">elements_degree</span> <span class="o">=</span> <span class="mi">2</span>        <span class="c"># Degree of the finite element methods</span>
+<span class="n">gamma0</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">E</span><span class="p">;</span>             <span class="c"># Augmentation parameter for the augmented Lagrangian</span>
+</pre></div>
+</div>
+<div class="section" id="mesh-generation">
+<h3>Mesh generation<a class="headerlink" href="#mesh-generation" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We consider that the radius of the wheel is 15cm and the one of the rim 8cm and that the wheel lies on a deformable foundation of thickness 10cm. We generate the mesh of the wheel using the experimental mesher of <em>GetFEM++</em>. Concerning the mesh of the foundation, we build a structured mesh (see the documentation of the Mesh object in the python interface).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">mo1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span> <span class="mf">15.</span><span class="p">)</span>
+<span class="n">mo2</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span> <span class="mf">8.</span><span class="p">)</span>
+<span class="n">mo3</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;set minus&#39;</span><span class="p">,</span> <span class="n">mo1</span><span class="p">,</span> <span class="n">mo2</span><span class="p">)</span>
+<span class="n">gf</span><span class="o">.</span><span class="n">util</span><span class="p">(</span><span class="s">&#39;trace level&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>   <span class="c"># No trace for mesh generation</span>
+<span class="n">mesh1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;generate&#39;</span><span class="p">,</span> <span class="n">mo3</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">mesh2</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;import&#39;</span><span class="p">,</span><span class="s">&#39;structured&#39;</span><span class="p">,</span><span class="s">&#39;GT=&quot;GT_PK(2,1)&quot;;SIZES=[30,10];NOISED=0;NSUBDIV=[</span><span class="si">%d</span><span class="s">,</span><span class="si">%d</span><span class="s">];&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">30</span><span class="o">/</span><span class="n">h</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="o">/</span><span class="n">h</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">mesh2</span><span class="o">.</span><span class="n">translate</span><span class="p">([</span><span class="o">-</span><span class="mf">15.</span><span class="p">,</span><span class="o">-</span><span class="mf">10.</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The result is the following</p>
+<div class="figure align-center" id="tut-fig-wheelmesh">
+<a class="reference internal image-reference" href="../_images/wheel_mesh.png"><img alt="../_images/wheel_mesh.png" src="../_images/wheel_mesh.png" style="width: 596.0px; height: 611.0px;" /></a>
+</div>
+</div>
+<div class="section" id="boundary-selection">
+<h3>Boundary selection<a class="headerlink" href="#boundary-selection" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We have to select the different parts of the boundary where we will set some boundary conditions, namely the boundary of the rim (in order to apply a force and the fact that the rim is rigid), the contact boundary of the wheel and the bottom boundary of the foundation that we will assume clamped.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fb1</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">outer_faces_in_box</span><span class="p">([</span><span class="o">-</span><span class="mf">8.1</span><span class="p">,</span> <span class="mf">6.9</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.1</span><span class="p">,</span> <span class="mf">23.1</span><span class="p">])</span>     <span class="c"># Boundary of the hole</span>
+<span class="n">fb2</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">outer_faces_with_direction</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.5</span><span class="p">)</span> <span class="c"># Contact boundary of the wheel</span>
+<span class="n">fb3</span> <span class="o">=</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">outer_faces_with_direction</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">)</span>      <span class="c"># Bottom boundary of the foundation</span>
+
+<span class="n">HOLE_BOUND</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">CONTACT_BOUND</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span> <span class="n">BOTTOM_BOUND</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span>
+
+<span class="n">mesh1</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">HOLE_BOUND</span><span class="p">,</span> <span class="n">fb1</span><span class="p">)</span>
+<span class="n">mesh1</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">CONTACT_BOUND</span><span class="p">,</span> <span class="n">fb2</span><span class="p">)</span>
+<span class="n">mesh1</span><span class="o">.</span><span class="n">region_subtract</span><span class="p">(</span><span class="n">CONTACT_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+<span class="n">mesh2</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">BOTTOM_BOUND</span><span class="p">,</span> <span class="n">fb3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the command <cite>mesh1.outer_faces_with_direction([0., -1.], n.pi/4)</cite> allows to select all the faces having a unit outward normal having an angle less or equal to <cite>n.pi/4</cite> with the vector <cite>[0., -1.]</cite>. The command <cite>mesh1.region_subtract(CONTACT_BOUND, HOLE_BOUND)</cite> allow to delete the faces corresponding to the rim in the contact boundary.</p>
+</div>
+<div class="section" id="definition-of-finite-elements-methods-and-integration-method">
+<h3>Definition of finite elements methods and integration method<a class="headerlink" href="#definition-of-finite-elements-methods-and-integration-method" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We define <cite>mfu1</cite>, <cite>mfu2</cite> two finite element methods which will approximate the displacements in the wheel and the foundation respectively. <cite>mflambda</cite> is  finite element method to approximate a multiplier to take into account the rigidity of the rim, <cite>mflambda_C</cite> is to approximate the contact multiplier (contact pressure) and <cite>mfvm1</cite>, <cite>mfvm2</cite> will be used to interpolate the Von Mises stresses of the wheel and the foundation for post-processing. <cite>mim1</cite>, <cite>mim2</cite> are two integration methods on the  wheel and the foundation.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">mfu1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">mfu1</span><span class="o">.</span><span class="n">set_classical_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)</span>
+<span class="n">mflambda</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">mflambda</span><span class="o">.</span><span class="n">set_classical_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">mflambda_C</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mflambda_C</span><span class="o">.</span><span class="n">set_classical_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">mfu2</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">mfu2</span><span class="o">.</span><span class="n">set_classical_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)</span>
+<span class="n">mfvm1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mfvm1</span><span class="o">.</span><span class="n">set_classical_discontinuous_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)</span>
+<span class="n">mfvm2</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mfvm2</span><span class="o">.</span><span class="n">set_classical_discontinuous_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)</span>
+<span class="n">mim1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshIm</span><span class="p">(</span><span class="n">mesh1</span><span class="p">,</span> <span class="nb">pow</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">mim2</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshIm</span><span class="p">(</span><span class="n">mesh2</span><span class="p">,</span> <span class="nb">pow</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="model-definition">
+<h3>Model definition<a class="headerlink" href="#model-definition" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We use a real model and declare the two variables which will represent the displacements:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">=</span><span class="n">gf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">);</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&#39;u1&#39;</span><span class="p">,</span> <span class="n">mfu1</span><span class="p">)</span>       <span class="c"># Displacement of the structure 1</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&#39;u2&#39;</span><span class="p">,</span> <span class="n">mfu2</span><span class="p">)</span>       <span class="c"># Displacement of the structure 2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="linearized-elasticity-bricks">
+<h3>Linearized elasticity bricks<a class="headerlink" href="#linearized-elasticity-bricks" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We add the Lamé coefficients as data of the model and add a linearized elasticity brick for the wheel and the foundation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">cmu</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">clambdastar</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_isotropic_linearized_elasticity_brick</span><span class="p">(</span><span class="n">mim1</span><span class="p">,</span> <span class="s">&#39;u1&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_isotropic_linearized_elasticity_brick</span><span class="p">(</span><span class="n">mim2</span><span class="p">,</span> <span class="s">&#39;u2&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="clamped-condition-at-the-bottom-of-the-foundation">
+<h3>Clamped condition at the bottom of the foundation<a class="headerlink" href="#clamped-condition-at-the-bottom-of-the-foundation" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We prescribed the displacement at  bottom face of the foundation to vanish, for instance with a multiplier with the add of the following brick:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">mim2</span><span class="p">,</span> <span class="s">&#39;u2&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">BOTTOM_BOUND</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="contact-condition-use-of-interpolate-transformations">
+<h3>Contact condition (use of interpolate transformations)<a class="headerlink" href="#contact-condition-use-of-interpolate-transformations" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Now, let us see how to prescribed the contact condition between the two structures. It is possible to use predefined bricks (see  <a class="reference internal" href="../userdoc/model_contact_friction.html#ud-model-contact-friction"><em>Small sliding contact with friction bricks</em></a> for small deformation/small sliding contact and <a class="reference internal" href="../userdoc/model_contact_friction_large_sliding.html#ud-model-contact-friction-large"><em>Large sliding/large deformation contact with friction bricks</em></a> for large deformation/large sliding contact). However, we will see here how to directly prescribe a contact condition using an augmented Lagrangian formulation and the interpolate transformations.</p>
+<p>For small deformation contact, the correspondence between points of one contact surface to the other have to be described on the reference configuration and is not evolving, which is of course simpler but is an approximation.</p>
+<p>We consider that the contact boundary of the wheel is the slave one and we have to describe the transformation from the contact boundary of the wheel to the contact boundary of the foundation. This is quite simple here, since the contact boundary of the foundation corresponds to a vanishing vertical coordinate. So we define the transformation</p>
+<div class="math">
+<p><img src="../_images/math/b4c1a3795452998894b77725782519dfee5bf1be.png" alt="X \longmapsto (X(1), 0)"/></p>
+</div><p>where <img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X" style="vertical-align: 0px"/> is the vector of coordinates of the point. We add this transformation to the model with the command</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_interpolate_transformation_from_expression</span><span class="p">(</span><span class="s">&#39;Proj1&#39;</span><span class="p">,</span> <span class="n">mesh1</span><span class="p">,</span> <span class="n">mesh2</span><span class="p">,</span> <span class="s">&#39;[X(1);0]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As a consequence, it will be possible to use this transformation, from the mesh of the wheel to the mesh of the foundation, into weak form language expressions. Notes that this is here a very simple constant expression. More complex expressions depending on the data or even the variables of the model can be used. If the expression of a transformation depends on the variable of the model, the tangent linear system will automatically takes into account this dependence (see <a class="reference internal" href="../userdoc/gasm_high.html#ud-gasm-high-transf"><em>Interpolate transformations</em></a> for more details. Note also that transformation corresponding to a large sliding contact and automatically searching for the correspondence between contact boundaries exist in <em>GetFEM++</em> (see <a class="reference internal" href="../userdoc/model_contact_friction_large_sliding.html#ud-model-contact-friction-large-hlgav"><em>Integral contact brick with raytrace</em></a>).</p>
+<p>Using the defined transformation, we can write an integral contact condition using an augmented Lagrangian formulation (see <a class="reference internal" href="../userdoc/model_contact_friction.html#ud-model-contact-friction"><em>Small sliding contact with friction bricks</em></a> for more details). The corresponding term (to be added to the rest of the weak formulation) reads:</p>
+<div class="math">
+<p><img src="../_images/math/7af5173b94667134d7e0464ec5a7fac31f0d0b80.png" alt="&amp; \cdots + \ds \int_{\Gamma_c} \lambda_N(X) (\delta_{u^1}(X)-\delta_{u^2}(\Pi(X)))\cdot n d\Gamma \\
+&amp; -  \ds \int_{\Gamma_c} \left(\lambda_N(X) + \left(\lambda_N(X) + \Frac{1}{h_T\gamma_0}((X + u^1(X))\cdot n - (\Pi(X) - u^2(\Pi(X)))\cdot n\right)_-\right)\delta_{\lambda_N}(X) d\Gamma = 0 ~~~~ \forall \delta_{\lambda_N}, \forall \delta_{u^1}, \forall \delta_{u^2},"/></p>
+</div><p>where <img class="math" src="../_images/math/2e78fb4781b2620fa10368d193dd418062230428.png" alt="\Gamma_c" style="vertical-align: -3px"/> is the slave contact boundary, <img class="math" src="../_images/math/5b25ea40e7493b07f4e97bea02533a0c8861b07c.png" alt="\lambda_N" style="vertical-align: -3px"/> is the contact multiplier (contact pressure), <img class="math" src="../_images/math/6d366326170663b7b7e8aee5db7aaf68a11e36b7.png" alt="h_T" style="vertical-align: -3px"/> is the radius of the element, <img class="math" src="../_images/math/c3e77f8dac39bd44cff4ca15469c871bab27c02e.png" alt="\Pi" style="vertical-align: -1px"/> is the transformation, <cite>n</cite> is the outward normal vector to the master contact boundary (here <img class="math" src="../_images/math/fc8152eaffd8411ddc69cc776c023d0a7443b17e.png" alt="n = (0,1)" style="vertical-align: -4px"/>), <img class="math" src="../_images/math/cbe065ef1957f1cfa20281d4ea41ba2cbb716906.png" alt="\gamma_0" style="vertical-align: -4px"/> is an augmentation parameter, <img class="math" src="../_images/math/6b12b1f2b6d6251fcd15bda6cf9e963617f8c737.png" alt="(\cdot)_-:I\hspace{-0.2em}R\rightarrow I\hspace{-0.2em}R_+" style="vertical-align: -5px"/> is the negative part and <img class="math" src="../_images/math/7ad7e323661545990d45d4a0063f49510b5c6816.png" alt="\delta_{\lambda_N}, \delta_{u^1}, \delta_{u^2}" style="vertical-align: -5px"/> are the test  functions corresponding to <img class="math" src="../_images/math/92b8d17b712b84a0c5e9b13fe61da237803c5a3c.png" alt="\lambda_N, u^1, u^2" style="vertical-align: -4px"/>, respectively.</p>
+<p>Using the weak form language, the contact condition can be added by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;gamma0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">gamma0</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_filtered_fem_variable</span><span class="p">(</span><span class="s">&#39;lambda1&#39;</span><span class="p">,</span> <span class="n">mflambda_C</span><span class="p">,</span> <span class="n">CONTACT_BOUND</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_nonlinear_term</span><span class="p">(</span><span class="n">mim1</span><span class="p">,</span> <span class="s">&#39;lambda1*(Test_u1.[0;1])&#39;</span>
+                    <span class="s">&#39;-lambda1*(Interpolate(Test_u2,Proj1).[0;1])&#39;</span><span class="p">,</span> <span class="n">CONTACT_BOUND</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_nonlinear_term</span><span class="p">(</span><span class="n">mim1</span><span class="p">,</span> <span class="s">&#39;-(gamma0*element_size)&#39;</span>
+          <span class="s">&#39;*(lambda1 + neg_part(lambda1+(1/(gamma0*element_size))&#39;</span>
+          <span class="s">&#39;*((u1-Interpolate(u2,Proj1)+X-Interpolate(X,Proj1)).[0;1])))*Test_lambda1&#39;</span><span class="p">,</span> <span class="n">CONTACT_BOUND</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="prescribing-the-rigidity-of-the-rim-and-the-vertical-force">
+<h3>Prescribing the rigidity of the rim and the vertical force<a class="headerlink" href="#prescribing-the-rigidity-of-the-rim-and-the-vertical-force" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We have now to prescribe the rigidity of the rim. This is a non-standard condition, since we do not know a priori what will be the vertical displacement of the rim. We can use an additional unknown for that vertical displacement. We add an additional fixed size variable <cite>alpha_D</cite> (which mean that it does not a finite element field) of size 1 with</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="s">&#39;alpha_D&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We need a multiplier to prescribe the displacement on the rim boundary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_filtered_fem_variable</span><span class="p">(</span><span class="s">&#39;lambda_D&#39;</span><span class="p">,</span> <span class="n">mflambda</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This multiplier represents the boundary stress that is necessary to prescribe the vertical displacement to be :math`(0, -alpha_D)`. The constraint we want to apply on this multiplier is that its integral over the rim boundary is the vertical force we want to apply. The corresponding weak formulation term to be added to the rest of the weak formulation reads</p>
+<div class="math">
+<p><img src="../_images/math/d55a1cd7ad378dd090cddf52338c8f064bde1350.png" alt="\cdots + \int_{\Gamma_D} -\lambda_D.\delta_{u^1} + ((0, \alpha_D) - u^1).\delta_{\lambda_D} + (\lambda_D.(0,1) + F)\delta_{\alpha_D} d\Gamma = 0,"/></p>
+</div><p>where <img class="math" src="../_images/math/932d4407c87b1cb432a44ee87997e834b985003b.png" alt="\Gamma_D" style="vertical-align: -3px"/> is the rim boundary, <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" style="vertical-align: 0px"/> is the applied density of force.</p>
+<p>This could be added to the model with the weak form language:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_filtered_fem_variable</span><span class="p">(</span><span class="s">&#39;lambda_D&#39;</span><span class="p">,</span> <span class="n">mflambda</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;F&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">applied_force</span><span class="o">/</span><span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_linear_term</span><span class="p">(</span><span class="n">mim1</span><span class="p">,</span> <span class="s">&#39;-lambda_D.Test_u1 + (alpha_D*[0;1]-u1).Test_lambda_D&#39;</span>
+      <span class="s">&#39; + (lambda_D.[0;1]+F)*Test_alpha_D&#39;</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more robustness, a small penalization on <img class="math" src="../_images/math/5287d7ee29e3bc0926c9ed7d41c85bdaf9689d88.png" alt="alpha_D" style="vertical-align: -4px"/> can be added</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_linear_term</span><span class="p">(</span><span class="n">mim1</span><span class="p">,</span> <span class="s">&#39;1E-6*alpha_D*Test_alpha_D&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Note that the fixed size variable <cite>alpha_D</cite> is linked to each points of the rim boundary. This means that the line of the tangent matrix corresponding to <cite>alpha_D</cite> may have a lot of nonzero components. This is why such a use of fixed size variable have to be done with care.</p>
+</div>
+<div class="section" id="model-solve">
+<h3>Model solve<a class="headerlink" href="#model-solve" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We can now solve our problem with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that in some configuration, it is preferable to use a more basic line search than the default one:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">,</span> <span class="s">&#39;lsearch&#39;</span><span class="p">,</span> <span class="s">&#39;simplest&#39;</span><span class="p">,</span>  <span class="s">&#39;alpha min&#39;</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="export-the-solution">
+<h3>Export the solution<a class="headerlink" href="#export-the-solution" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Now the code to export the solution with the VonMiss stress:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">U1</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s">&#39;u1&#39;</span><span class="p">)</span>
+<span class="n">U2</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s">&#39;u2&#39;</span><span class="p">)</span>
+<span class="n">VM1</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">compute_isotropic_linearized_Von_Mises_or_Tresca</span><span class="p">(</span><span class="s">&#39;u1&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="n">mfvm1</span><span class="p">)</span>
+<span class="n">VM2</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">compute_isotropic_linearized_Von_Mises_or_Tresca</span><span class="p">(</span><span class="s">&#39;u2&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="n">mfvm2</span><span class="p">)</span>
+
+<span class="n">mfvm1</span><span class="o">.</span><span class="n">export_to_vtk</span><span class="p">(</span><span class="s">&#39;displacement_with_von_mises1.vtk&#39;</span><span class="p">,</span> <span class="n">mfvm1</span><span class="p">,</span>  <span class="n">VM1</span><span class="p">,</span> <span class="s">&#39;Von Mises Stresses&#39;</span><span class="p">,</span>
+                     <span class="n">mfu1</span><span class="p">,</span> <span class="n">U1</span><span class="p">,</span> <span class="s">&#39;Displacements&#39;</span><span class="p">)</span>
+
+<span class="n">mfvm2</span><span class="o">.</span><span class="n">export_to_vtk</span><span class="p">(</span><span class="s">&#39;displacement_with_von_mises2.vtk&#39;</span><span class="p">,</span> <span class="n">mfvm2</span><span class="p">,</span>  <span class="n">VM2</span><span class="p">,</span> <span class="s">&#39;Von Mises Stresses&#39;</span><span class="p">,</span>
+                    <span class="n">mfu2</span><span class="p">,</span> <span class="n">U2</span><span class="p">,</span> <span class="s">&#39;Displacements&#39;</span><span class="p">)</span>
+<span class="c"># You can view solutions with for instance:</span>
+<span class="c"># mayavi2 -d displacement_with_von_mises1.vtk -f WarpVector -m Surface -d displacement_with_von_mises2.vtk -f WarpVector -m Surface</span>
+</pre></div>
+</div>
+<div class="figure align-center" id="tut-fig-wheelsol">
+<a class="reference internal image-reference" href="../_images/wheel.png"><img alt="../_images/wheel.png" src="../_images/wheel.png" style="width: 1028.0px; height: 795.0px;" /></a>
+<p class="caption">Plot of the solution.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)</a><ul>
+<li><a class="reference internal" href="#the-problem-setting">The problem setting</a></li>
+<li><a class="reference internal" href="#building-the-program">Building the program</a><ul>
+<li><a class="reference internal" href="#mesh-generation">Mesh generation</a></li>
+<li><a class="reference internal" href="#boundary-selection">Boundary selection</a></li>
+<li><a class="reference internal" href="#definition-of-finite-elements-methods-and-integration-method">Definition of finite elements methods and integration method</a></li>
+<li><a class="reference internal" href="#model-definition">Model definition</a></li>
+<li><a class="reference internal" href="#linearized-elasticity-bricks">Linearized elasticity bricks</a></li>
+<li><a class="reference internal" href="#clamped-condition-at-the-bottom-of-the-foundation">Clamped condition at the bottom of the foundation</a></li>
+<li><a class="reference internal" href="#contact-condition-use-of-interpolate-transformations">Contact condition (use of interpolate transformations)</a></li>
+<li><a class="reference internal" href="#prescribing-the-rigidity-of-the-rim-and-the-vertical-force">Prescribing the rigidity of the rim and the vertical force</a></li>
+<li><a class="reference internal" href="#model-solve">Model solve</a></li>
+<li><a class="reference internal" href="#export-the-solution">Export the solution</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="thermo_coupling.html"
+                        title="前の章へ">Example of Thermo-elastic and electrical coupling (simple nonlinear coupled problem, model object, generic assembly, solve and visualization)</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="../project/index.html"
+                        title="次の章へ">Description of the Project</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../project/index.html" title="Description of the Project"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="thermo_coupling.html" title="Example of Thermo-elastic and electrical coupling (simple nonlinear coupled problem, model object, generic assembly, solve and visualization)"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>GetFEM++</em> Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

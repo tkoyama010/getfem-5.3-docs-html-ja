@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Level-sets, Xfem, fictitious domains, Cut-fem &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Interpolation of a finite element method on non-matching meshes" href="interNMM.html" />
+    <link rel="prev" title="Incorporate new approximated integration methods in GetFEM++" href="iinteg.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="interNMM.html" title="Interpolation of a finite element method on non-matching meshes"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="iinteg.html" title="Incorporate new approximated integration methods in GetFEM++"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="level-sets-xfem-fictitious-domains-cut-fem">
+<span id="ud-xfem"></span><h1>Level-sets, Xfem, fictitious domains, Cut-fem<a class="headerlink" href="#level-sets-xfem-fictitious-domains-cut-fem" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Since v2.0, <em>GetFEM++</em> offers a certain number of facilities to support Xfem
+and fictitious domain methods with a cut-fem strategy. Most of these
+tools have been initially mainly developed by Julien Pommier for the
+study published in <a class="reference internal" href="../biblio.html#la-po-re-sa2005" id="id1">[LA-PO-RE-SA2005]</a>.</p>
+<p>The implementation is a fairly large generality, based on the use of
+level-sets, as suggested in <a class="reference internal" href="../biblio.html#su-ch-mo-be2001" id="id2">[SU-CH-MO-BE2001]</a> and allows simultaneous
+use of a large number of level-sets which can cross.</p>
+<p>The Xfem implementation for the discretization of the jump follows
+the strategy of <a class="reference internal" href="../biblio.html#ha-ha2004" id="id3">[HA-HA2004]</a> although we had no knowledge of this work
+during implementation. This means that there is no degree of freedom
+representing the jump across the level-set. Instead, the degrees of
+freedom represent the displacement of each side of the level-set.
+This is essential in any way in the presence of level-set that
+intersect each other because it may exist more than two different
+zones of continuity inside a single element.</p>
+<p>The cut fem strategy for fictitious domain method has been used for
+the first time with <em>GetFEM++</em> for the study published in <a class="reference internal" href="../biblio.html#ha-re2009" id="id4">[HA-RE2009]</a> where
+a quite simple stabilization strategy is proposed. Here also, before
+knowing the existence of the Work of
+E. Burman and P. Hanbo <a class="reference internal" href="../biblio.html#bu-ha2010" id="id5">[bu-ha2010]</a> on that topic.</p>
+<p>The tools for Xfem have been then enriched by the PhD works
+of J. Larsy (see for instance <a class="reference internal" href="../biblio.html#la-re-sa2010" id="id6">[LA-RE-SA2010]</a>) the one
+of E. Chahine (see for instance <a class="reference internal" href="../biblio.html#ch-la-re2011" id="id7">[CH-LA-RE2011]</a>, <a class="reference internal" href="../biblio.html#ni-re-ch2011" id="id8">[NI-RE-CH2011]</a>),
+of S. Amdouni  (see for instance <a class="reference internal" href="../biblio.html#am-mo-re2014" id="id9">[AM-MO-RE2014]</a>, <a class="reference internal" href="../biblio.html#am-mo-re2014b" id="id10">[AM-MO-RE2014b]</a>)
+and of M. Fabre (see for instance  <a class="reference internal" href="../biblio.html#fa-po-re2015" id="id11">[Fa-Po-Re2015]</a>).</p>
+<div class="admonition important">
+<p class="first admonition-title">重要</p>
+<p class="last">All the tools listed below needs the package <a class="reference external" href="http://www.qhull.org">qhull</a>
+installed on your system. This package is widely available.
+It computes convex hull and Delaunay triangulations in arbitrary dimension.</p>
+</div>
+<p>The programs <tt class="file docutils literal"><span class="pre">tests/crack.cc</span></tt>, <tt class="file docutils literal"><span class="pre">interface/tests/matlab/crack.m</span></tt> and <tt class="file docutils literal"><span class="pre">interface/tests/python/crack.py</span></tt> are some good examples of use of these tools.</p>
+<div class="section" id="representation-of-level-sets">
+<h2>Representation of level-sets<a class="headerlink" href="#representation-of-level-sets" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Some structure are defined to manipulate level-set functions defined by
+piecewise polynomial function on a mesh. In the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_levelset.h</span></tt> a level-set is represented by a
+function defined on a Lagrange fem of a certain degree on a mesh.
+The constructor to define a new <tt class="docutils literal"><span class="pre">getfem::level_set</span></tt> is the following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">level_set</span> <span class="n">ls</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">degree</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">with_secondary</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mesh</span></tt> is a valid mesh of type <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt>, <tt class="docutils literal"><span class="pre">degree</span></tt> is the degree of the
+polynomials (1 is the default value), and <tt class="docutils literal"><span class="pre">with_secondary</span></tt> is a boolean whose
+default value is false. The secondary level-set is used to represent
+fractures (if <img class="math" src="../_images/math/2751d79d3bbfb34440d68c685fe6ba7414951749.png" alt="p(x)" style="vertical-align: -4px"/> is the primary level-set function and
+<img class="math" src="../_images/math/9703e10f151c26e976f124951c28a2dac5f1884d.png" alt="s(x)" style="vertical-align: -4px"/> is the secondary level-set function, the crack is defined
+by <img class="math" src="../_images/math/127697818cf6924311e6c66824483814e2371986.png" alt="p(x) = 0" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/8bab1ded935b2f7819ec84828a0a424291292b05.png" alt="s(x) \leq 0" style="vertical-align: -4px"/>: the role of the secondary
+is to delimit the crack).</p>
+<p>Each level-set function is defined by a <cite>mesh_fem</cite> <tt class="docutils literal"><span class="pre">mf</span></tt> and the dof values
+over this <cite>mesh_fem</cite>, in a vector. The object <tt class="docutils literal"><span class="pre">getfem::level_set</span></tt> contains a <cite>mesh_fem</cite> and the
+vectors of dof for the corresponding function(s). The method
+<tt class="docutils literal"><span class="pre">ls.value(0)</span></tt> returns the vector of dof for the primary level-set
+function, so that these values can be set. The method <tt class="docutils literal"><span class="pre">ls.value(1)</span></tt>
+returns the dof vector for the secondary level-set function if any.
+The method <tt class="docutils literal"><span class="pre">ls.get_mesh_fem()</span></tt> returns a reference on the <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object.</p>
+<p>Note that, in applications, the level-set function often evolves thanks
+to an Hamilton-Jacobi equation (for its re-initialization for instance).
+See the <a class="reference internal" href="convect.html#ud-convect"><em>A pure convection method</em></a> which can be used in the approximation of a
+Hamilton-Jacobi equation.</p>
+</div>
+<div class="section" id="mesh-cut-by-level-sets">
+<h2>Mesh cut by level-sets<a class="headerlink" href="#mesh-cut-by-level-sets" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>In order to compute adapted integration methods and finite element methods to
+represent a field which is discontinuous across one or several level-sets,
+a certain number of pre-computations have to be done at the mesh level. In
+<tt class="file docutils literal"><span class="pre">getfem/getfem_mesh_level_set.h</span></tt> is defined the object <tt class="docutils literal"><span class="pre">getfem::mesh_level_set</span></tt> which
+handles these pre-computations. The constructor of this object is the
+following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_level_set</span> <span class="n">mls</span><span class="p">(</span><span class="n">mesh</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mesh</span></tt> is a valid mesh of type <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt>. In order to indicate that
+the mesh is cut by a level-set, one has to call the method
+<tt class="docutils literal"><span class="pre">mls.add_level_set(ls)</span></tt>, where <tt class="docutils literal"><span class="pre">ls</span></tt> is an object of type <tt class="docutils literal"><span class="pre">getfem::level_set</span></tt>.
+An arbitrary number of level-sets can be added. To initialize the object
+or to actualize it when the value of the level-set function is modified,
+one has to call the method <tt class="docutils literal"><span class="pre">mls.adapt()</span></tt>.</p>
+<p>In particular a subdivision of each element cut by the level-set is made with
+simplices. Note that the whole cut-mesh is generally not conformal.</p>
+<p>The cut-mesh can be obtained for instance for post-treatment thanks to <tt class="docutils literal"><span class="pre">mls.global_cut_mesh(m)</span></tt> which fill <tt class="docutils literal"><span class="pre">m</span></tt> with the cut-mesh.</p>
+</div>
+<div class="section" id="adapted-integration-methods">
+<h2>Adapted integration methods<a class="headerlink" href="#adapted-integration-methods" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For fields which are discontinuous across a level-set, integration methods have
+to be adapted. The object <tt class="docutils literal"><span class="pre">getfem::mesh_im_level_set</span></tt> defined in the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_mesh_im_level_set.h</span></tt> defines a composite integration method
+for the elements cut by the level-set. The constructor of this object is the
+following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_im_level_set</span> <span class="n">mim</span><span class="p">(</span><span class="n">mls</span><span class="p">,</span> <span class="n">where</span><span class="p">,</span> <span class="n">regular_im</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">singular_im</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mls</span></tt> is an object of type <tt class="docutils literal"><span class="pre">getfem::mesh_level_set</span></tt>, <tt class="docutils literal"><span class="pre">where</span></tt> is an enum for which
+possible values are</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">getfem::mesh_im_level_set::INTEGRATE_INSIDE</span></tt> (integrate over <img class="math" src="../_images/math/1d5f1bf8b0957bad8f36357986123d5fb9ec18c3.png" alt="p(x)&lt;0" style="vertical-align: -4px"/>),</li>
+<li><tt class="docutils literal"><span class="pre">getfem::mesh_im_level_set::INTEGRATE_OUTSIDE</span></tt> (integrate over <img class="math" src="../_images/math/23032d8e77f22acd2f25c48537cd4862465f86f3.png" alt="p(x)&gt;0" style="vertical-align: -4px"/>),</li>
+<li><tt class="docutils literal"><span class="pre">getfem::mesh_im_level_set::INTEGRATE_ALL</span></tt>,</li>
+<li><tt class="docutils literal"><span class="pre">getfem::mesh_im_level_set::INTEGRATE_BOUNDARY</span></tt> (integrate over <img class="math" src="../_images/math/43407f6a2b5d524f6e57c70c914ef7dca7d505b3.png" alt="p(x)=0" style="vertical-align: -4px"/>
+and <img class="math" src="../_images/math/70869d2e94a911e3cb2c044071bd452005bfa39c.png" alt="s(x)\leq 0" style="vertical-align: -4px"/>)</li>
+</ul>
+<p>The argument <tt class="docutils literal"><span class="pre">regular_im</span></tt> should be of type <tt class="docutils literal"><span class="pre">pintegration_method</span></tt>, and will be
+the integration method applied on each sub-simplex of the composite integration
+for elements cut by the level-set. The optional <tt class="docutils literal"><span class="pre">singular_im</span></tt> should be also of
+type <tt class="docutils literal"><span class="pre">pintegration_method</span></tt> and is used for crack singular functions: it is
+applied to sub-simplices which share a vertex with the crack tip (the specific
+integration method <tt class="docutils literal"><span class="pre">IM_QUASI_POLAR(..)</span></tt> is well suited for this purpose).</p>
+<p>The object <tt class="docutils literal"><span class="pre">getfem::mesh_im_level_set</span></tt> can be used as a classical <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> object (for instance the
+method <tt class="docutils literal"><span class="pre">mim.set_integration_method(...)</span></tt> allows to set the integration methods
+for the elements which are not cut by the level-set).</p>
+<p>To initialize the object or to actualize it when the value of the level-set
+function is modified, one has to call the method <tt class="docutils literal"><span class="pre">mim.adapt()</span></tt>.</p>
+<p>When more than one level-set is declared on the <tt class="docutils literal"><span class="pre">getfem::mesh_level_set</span></tt> object, it is possible to set more precisely the integration domain using the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mim</span><span class="p">.</span><span class="n">set_level_set_boolean_operations</span><span class="p">(</span><span class="s">&quot;desc&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where &#8220;desc&#8221; is a string containing the description of the boolean operation which defines the integration domain. The syntax is simple, for example if there are 3 different level-set,</p>
+<blockquote>
+<div><p>&#8220;a*b*c&#8221; is the intersection of the domains defined by each
+level-set (this is the default behavior if this function is not
+called).</p>
+<p>&#8220;a+b+c&#8221; is the union of their domains.</p>
+<p>&#8220;c-(a+b)&#8221; is the domain of the third level-set minus the union of
+the domains of the two others.</p>
+<p>&#8221;!a&#8221; is the complementary of the domain of a (i.e. it is the
+domain where a(x)&gt;0)</p>
+<p>The first level-set is always referred to with &#8220;a&#8221;, the second
+with &#8220;b&#8221;, and so on.</p>
+</div></blockquote>
+</div>
+<div class="section" id="cut-fem">
+<h2>Cut-fem<a class="headerlink" href="#cut-fem" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The implementation of a cut finite element method such as described in <a class="reference internal" href="../biblio.html#bu-ha2010" id="id12">[bu-ha2010]</a>, i.e. a finite element on a fictitious domain restricted to a smaller real domain, is possible just using the previous tools and mainly the adapted integration method. Several examples are available on <em>GetFEM++</em> test programs. See for instance <tt class="file docutils literal"><span class="pre">interface/tests/python/demo_fictitious_domain.py</span></tt> or <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_fictitious_domain.m</span></tt>.</p>
+<p>In this context, one often needs to restrict the unknown finite element field to the degrees of freedom whose corresponding shape function supports have an intersection with the real domain. This can be done using the <tt class="docutils literal"><span class="pre">partial_mesh_fem</span></tt> object. See for instance <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_structural_optimization.m</span></tt>.</p>
+<p>Note that often, a stabilization technique have to be considered in order to treat eventual locking phenomena due to element with very small intersection with the real domain for example when applying a Dirichlet condition. See for instance <a class="reference internal" href="../biblio.html#bu-ha2010" id="id13">[bu-ha2010]</a>,  <a class="reference internal" href="../biblio.html#ha-re2009" id="id14">[HA-RE2009]</a> and <a class="reference internal" href="../biblio.html#fa-po-re2015" id="id15">[Fa-Po-Re2015]</a>.</p>
+</div>
+<div class="section" id="discontinuous-field-across-some-level-sets">
+<h2>Discontinuous field across some level-sets<a class="headerlink" href="#discontinuous-field-across-some-level-sets" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The object <tt class="docutils literal"><span class="pre">getfem::mesh_fem_level_set</span></tt> is defined in the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_mesh_fem_level_set.h</span></tt>. It is derived from <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object
+and can be used in the same way. It defines a finite element method with
+discontinuity across the level-sets (it can deal with an arbitrary number of
+level-sets). The constructor is the following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem_level_set</span> <span class="n">mfls</span><span class="p">(</span><span class="n">mls</span><span class="p">,</span> <span class="n">mf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mls</span></tt> is a valid mesh of type <tt class="docutils literal"><span class="pre">getfem::mesh_level_set</span></tt> and <tt class="docutils literal"><span class="pre">mf</span></tt> is the an object of type
+<tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> which defines the finite element method used for elements which are not
+cut by the level-sets.</p>
+<p>To initialize the object or to actualize it when the value of the level-set
+function is modified, one has to call the method <tt class="docutils literal"><span class="pre">mfls.adapt()</span></tt>.</p>
+<p>To represent discontinuous fields, the finite element method is enriched
+with discontinuous functions which are the product of some Heaviside functions
+by the shape functions of the finite element method represented by <tt class="docutils literal"><span class="pre">mf</span></tt>
+(see <a class="reference internal" href="../biblio.html#ha-ha2004" id="id16">[HA-HA2004]</a> and <a class="reference internal" href="../biblio.html#xfem" id="id17">[Xfem]</a> for more details).</p>
+</div>
+<div class="section" id="xfem">
+<h2>Xfem<a class="headerlink" href="#xfem" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The Xfem (see <a class="reference internal" href="../biblio.html#xfem" id="id18">[Xfem]</a>) consists not only in the enrichment with some Heaviside functions (which is done by the object <tt class="docutils literal"><span class="pre">getfem::mesh_fem_level_set</span></tt>) but also the enrichment with asymptotic displacement at the crack tip. There is several manner to enrich with an asymptotic displacement: enrichment only on the element containing the crack tip as in <a class="reference internal" href="../biblio.html#xfem" id="id19">[Xfem]</a>, enrichment in a fixed size zone as in <a class="reference internal" href="../biblio.html#la-po-re-sa2005" id="id20">[LA-PO-RE-SA2005]</a> or <a class="reference internal" href="../biblio.html#be-mi-mo-bu2005" id="id21">[Be-Mi-Mo-Bu2005]</a>, enrichment with a cut-off function as in <a class="reference internal" href="../biblio.html#ch-la-re2008" id="id22">[CH-LA-RE2008]</a> or <a class="reference internal" href="../biblio.html#ni-re-ch2011" id="id23">[NI-RE-CH2011]</a> or with an integral matching condition between the enriched and non-enriched zones as in <a class="reference internal" href="../biblio.html#ch-la-re2011" id="id24">[CH-LA-RE2011]</a>. The choice in Getfem fell on maximum flexibility to easily implement all possibilities. As it is mainly a transformation of the finite element method itself, two tools have been defined to produce some enriched finite elements:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem_product</span> <span class="n">mf_asympt</span><span class="p">(</span><span class="n">mf_part_unity</span><span class="p">,</span> <span class="n">mf_sing</span><span class="p">)</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem_sum</span> <span class="n">mf_sum</span><span class="p">(</span><span class="n">mf1</span><span class="p">,</span> <span class="n">mf2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mf_sing</span></tt> should be a global &#8216;finite element method&#8217;, in fact just a collection of global functions (with or without a cut-off function) defined thanks to the object <tt class="docutils literal"><span class="pre">getfem::mesh_fem_global_function</span></tt> (see the file <tt class="file docutils literal"><span class="pre">src/getfem/getfem_mesh_fem_global_function.h</span></tt>) and <tt class="docutils literal"><span class="pre">mf_part_unity</span></tt> a basic scalar finite element method. The resulting `` getfem::mesh_fem_product`` is the linear combination of all the product of the shape function of the two given finite element methods, possibly restricted to a sub-set of degrees of freedom of the first finite element method given by the method <tt class="docutils literal"><span class="pre">mf_asympt.set_enrichment(enriched_dofs)</span></tt>.</p>
+<p>Once the asymptotic enrichment is defined, the object <tt class="docutils literal"><span class="pre">getfem::mesh_fem_sum</span></tt> allows to produce the direct sum of two finite element methods. For instance of the one enriched by the Heaviside functions (<tt class="docutils literal"><span class="pre">getfem::mesh_fem_level_set</span></tt> object) and the asymptotic enrichment.</p>
+<p>See <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_crack.m</span></tt>, <tt class="file docutils literal"><span class="pre">interface/tests/python/demo_crack.py</span></tt> or <tt class="file docutils literal"><span class="pre">tests/crack.cc</span></tt> for some examples of use of these tools.</p>
+<p>Additionally, the weak form language defines the two commands <tt class="docutils literal"><span class="pre">Xfem_plus</span></tt> and <tt class="docutils literal"><span class="pre">Xfem_minus</span></tt> allowing to take into account the jump of any field or derivative of any field across a level-set (see <a class="reference internal" href="gasm_high.html#ud-gasm-high-xfem"><em>Xfem discontinuity evaluation (with mesh_fem_level_set)</em></a>). This a priori allows to write any interface law easily.</p>
+<p>Note also that some procedures are available in the file <tt class="file docutils literal"><span class="pre">src/getfem/getfem_crack_sif.h</span></tt> to compute the stress intensity factors in 2D (restricted to homogeneous isotropic linearized elasticity).</p>
+</div>
+<div class="section" id="post-treatment">
+<h2>Post treatment<a class="headerlink" href="#post-treatment" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Several tools are available to represent the solution only on a side of a levels-set or on both taking into account the discontinuity (for Xfem approximation).</p>
+<p>When a cut-mesh <tt class="docutils literal"><span class="pre">mls</span></tt> is used (i.e. a <tt class="docutils literal"><span class="pre">getfem::mesh_level_set</span></tt> object), is is possible to obtain the set of all sub-elements with the command:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mls</span><span class="p">.</span><span class="n">global_cut_mesh</span><span class="p">(</span><span class="n">mcut</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mcut</span></tt> has to be an empty mesh which will be fill by the sub-elements. Note that the resulting mesh is a non-regular one in the sense that the sub-mesh of all elements are not conformal at the element edges/faces. It is however possible to interolate on a Lagrange fem on this mesh and make a post-treatment with it to correctly represent a discontinuous field.</p>
+<p>Another mean to represent only the interesting part of the solution when a fictitious domain method is used is to use the mesh slices defined by an isovalue level-set (see <a class="reference internal" href="export.html#ud-export-slices"><em>Producing mesh slices</em></a>).</p>
+<p>see for instance files <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_crack.m</span></tt>, <tt class="file docutils literal"><span class="pre">interface/tests/python/demo_fictitious_domain.py</span></tt> and <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_structural_optimization.m</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Level-sets, Xfem, fictitious domains, Cut-fem</a><ul>
+<li><a class="reference internal" href="#representation-of-level-sets">Representation of level-sets</a></li>
+<li><a class="reference internal" href="#mesh-cut-by-level-sets">Mesh cut by level-sets</a></li>
+<li><a class="reference internal" href="#adapted-integration-methods">Adapted integration methods</a></li>
+<li><a class="reference internal" href="#cut-fem">Cut-fem</a></li>
+<li><a class="reference internal" href="#discontinuous-field-across-some-level-sets">Discontinuous field across some level-sets</a></li>
+<li><a class="reference internal" href="#xfem">Xfem</a></li>
+<li><a class="reference internal" href="#post-treatment">Post treatment</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="iinteg.html"
+                        title="前の章へ">Incorporate new approximated integration methods in <em>GetFEM++</em></a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="interNMM.html"
+                        title="次の章へ">Interpolation of a finite element method on non-matching meshes</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="interNMM.html" title="Interpolation of a finite element method on non-matching meshes"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="iinteg.html" title="Incorporate new approximated integration methods in GetFEM++"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

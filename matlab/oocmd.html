@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GetFEM++ OO-commands &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="MatLab Interface" href="index.html" />
+    <link rel="next" title="Python Interface" href="../python/index.html" />
+    <link rel="prev" title="gf_workspace" href="cmdref_gf_workspace.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../python/index.html" title="Python Interface"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_workspace.html" title="gf_workspace"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gfm-oo-commands">
+<span id="mlab-oocmd"></span><h1><em>GetFEM++</em> OO-commands<a class="headerlink" href="#gfm-oo-commands" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The toolbox comes with a set of <em>MatLab</em> objects <a class="reference external" href="http://www.mathworks.com/products/matlab/object_oriented_programming.htm">mathworks-oo</a>, (look at the
+<tt class="file docutils literal"><span class="pre">&#64;gf*</span></tt> sub-directories in the toolbox directory). These object are no more
+than the getfem object handles, which are flagged by <em>MatLab</em> as objects.</p>
+<p>In order to use these objects, you have to call their constructors: <tt class="docutils literal"><span class="pre">gfMesh</span></tt>,
+<tt class="docutils literal"><span class="pre">gfMeshFem</span></tt>, <tt class="docutils literal"><span class="pre">gfGeoTrans</span></tt>, <tt class="docutils literal"><span class="pre">gfFem</span></tt>, <tt class="docutils literal"><span class="pre">gfInteg</span></tt>.  These constructor just
+call the corresponding <em>GetFEM++</em> function (i.e.  <tt class="docutils literal"><span class="pre">gf_mesh</span></tt>, <tt class="docutils literal"><span class="pre">gf_mesh_fem</span></tt>, ...),
+and convert the structure returned by these function into a <em>MatLab</em> object. There
+is also a <tt class="docutils literal"><span class="pre">gfObject</span></tt> function which converts any getfem handle into the
+corresponding <em>MatLab</em> object.</p>
+<p>With such object, the most interesting feature is that you do not have to call
+the &#8220;long&#8221; functions names <tt class="docutils literal"><span class="pre">gf_mesh_fem_get(obj,...)</span></tt>,
+<tt class="docutils literal"><span class="pre">gf_slice_set(obj,...)</span></tt> etc., instead you just call the shorter
+<tt class="docutils literal"><span class="pre">get(obj,...)</span></tt> or <tt class="docutils literal"><span class="pre">set(obj,...)</span></tt> whatever the type of <tt class="docutils literal"><span class="pre">obj</span></tt> is.</p>
+<p>A small number of &#8220;pseudo-properties&#8221; are also defined on these objects, for
+example if <tt class="docutils literal"><span class="pre">m</span></tt> is a <tt class="docutils literal"><span class="pre">gfMesh</span></tt> object, you can use directly <tt class="docutils literal"><span class="pre">m.nbpts</span></tt> instead
+of <tt class="docutils literal"><span class="pre">get(m,</span> <span class="pre">'nbpts')</span></tt>.</p>
+<p>As an example:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="c">% classical creation of a mesh object</span>
+<span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">=</span><span class="n">gf_mesh</span><span class="p">(</span><span class="s">&#39;load&#39;</span><span class="p">,</span> <span class="s">&#39;many_element.mesh_fem&#39;</span><span class="p">)</span>
+<span class="n">m</span> <span class="p">=</span>
+     <span class="n">id</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="n">cid</span><span class="p">:</span> <span class="mi">0</span>
+<span class="c">% conversion to a matlab object. the display function is overloaded for gfMesh.</span>
+<span class="o">&gt;&gt;</span> <span class="n">mm</span><span class="p">=</span><span class="n">gfMesh</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="n">gfMesh</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span><span class="mi">2</span> <span class="p">[</span><span class="mi">11544</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">dim</span><span class="p">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">7</span>
+<span class="c">% direct creation of a gfMesh object. Arguments are the same than those of gf_mesh</span>
+<span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">=</span><span class="n">gfMesh</span><span class="p">(</span><span class="s">&#39;load&#39;</span><span class="p">,</span> <span class="s">&#39;many_element.mesh_fem&#39;</span><span class="p">)</span>
+<span class="n">gfMesh</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span><span class="mi">3</span> <span class="p">[</span><span class="mi">11544</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">dim</span><span class="p">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">7</span>
+<span class="c">% get(m, &#39;pid_from_cvid&#39;) is redirected to gf_mesh_get(m,&#39;pid from cvid&#39;)</span>
+<span class="o">&gt;&gt;</span> <span class="n">get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&#39;pid_from_cvid&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nb">ans</span> <span class="p">=</span>
+     <span class="mi">8</span>     <span class="mi">9</span>    <span class="mi">11</span>    <span class="mi">15</span>    <span class="mi">17</span>    <span class="mi">16</span>    <span class="mi">18</span>    <span class="mi">10</span>    <span class="mi">12</span>
+<span class="c">% m.nbpts is directly translated into gf_mesh_get(m,&#39;nbpts&#39;)</span>
+<span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">.</span><span class="n">nbpts</span>
+<span class="nb">ans</span> <span class="p">=</span>
+    <span class="mi">40</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">=</span><span class="n">gfMeshFem</span><span class="p">(</span><span class="s">&#39;load&#39;</span><span class="p">,</span><span class="s">&#39;many_element.mesh_fem&#39;</span><span class="p">)</span>
+<span class="n">gfMeshFem</span> <span class="n">object</span><span class="p">:</span> <span class="n">ID</span><span class="p">=</span><span class="mi">5</span> <span class="p">[</span><span class="mi">1600</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">qdim</span><span class="p">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">=</span><span class="mi">99</span><span class="p">,</span>
+  <span class="n">linked</span> <span class="n">gfMesh</span> <span class="n">object</span><span class="p">:</span> <span class="n">dim</span><span class="p">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">7</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">.</span><span class="n">mesh</span>
+<span class="n">gfMesh</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span><span class="mi">4</span> <span class="p">[</span><span class="mi">11544</span> <span class="n">bytes</span><span class="p">],</span> <span class="n">dim</span><span class="p">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">nbcvs</span><span class="p">=</span><span class="mi">7</span>
+<span class="c">% accessing the linked mesh object</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">.</span><span class="n">mesh</span><span class="p">.</span><span class="n">nbpts</span>
+<span class="nb">ans</span> <span class="p">=</span>
+    <span class="mi">40</span>
+<span class="o">&gt;&gt;</span> <span class="n">get</span><span class="p">(</span><span class="n">mf</span><span class="p">.</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;pid_from_cvid&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nb">ans</span> <span class="p">=</span>
+     <span class="mi">8</span>     <span class="mi">9</span>    <span class="mi">11</span>    <span class="mi">15</span>    <span class="mi">17</span>    <span class="mi">16</span>    <span class="mi">18</span>    <span class="mi">10</span>    <span class="mi">12</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">.</span><span class="n">nbdof</span>
+<span class="nb">ans</span> <span class="p">=</span>
+    <span class="mi">99</span>
+
+<span class="c">% access to fem of convex 1</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">.</span><span class="n">fem</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">gfFem</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span><span class="mi">0</span> <span class="n">dim</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">target_dim</span><span class="p">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">=</span><span class="mi">9</span><span class="p">,[</span><span class="n">EQUIV</span><span class="p">,</span> <span class="n">POLY</span><span class="p">,</span> <span class="n">LAGR</span><span class="p">],</span> <span class="n">est</span><span class="p">.</span><span class="n">degree</span><span class="p">=</span><span class="mi">4</span>
+ <span class="o">-&gt;</span> <span class="n">FEM_QK</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">mf</span><span class="p">.</span><span class="n">mesh</span><span class="p">.</span><span class="n">geotrans</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">gfGeoTrans</span> <span class="n">object</span> <span class="n">ID</span><span class="p">=</span> <span class="mi">0</span> <span class="n">dim</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nbpts</span><span class="p">=</span> <span class="mi">6</span> <span class="p">:</span> <span class="n">GT_PK</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Although this interface seems more convenient, you must be aware that this always
+induce a call to a mex-file, and additional <em>MatLab</em> code:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">tic</span><span class="p">;</span> <span class="nb">j</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span> <span class="k">for</span> <span class="nb">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">1000</span><span class="p">,</span> <span class="nb">j</span><span class="p">=</span><span class="nb">j</span><span class="o">+</span><span class="n">mf</span><span class="p">.</span><span class="n">nbdof</span><span class="p">;</span> <span class="k">end</span><span class="p">;</span> <span class="n">toc</span>
+<span class="n">elapsed_time</span> <span class="p">=</span>
+    <span class="mf">0.6060</span>
+<span class="o">&gt;&gt;</span> <span class="n">tic</span><span class="p">;</span> <span class="nb">j</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span> <span class="k">for</span> <span class="nb">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">1000</span><span class="p">,</span> <span class="nb">j</span><span class="p">=</span><span class="nb">j</span><span class="o">+</span><span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span><span class="s">&#39;nbdof&#39;</span><span class="p">);</span> <span class="k">end</span><span class="p">;</span> <span class="n">toc</span>
+<span class="n">elapsed_time</span> <span class="p">=</span>
+    <span class="mf">0.1698</span>
+<span class="o">&gt;&gt;</span> <span class="n">tic</span><span class="p">;</span> <span class="nb">j</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span><span class="n">n</span><span class="p">=</span><span class="n">mf</span><span class="p">.</span><span class="n">nbdof</span><span class="p">;</span>  <span class="k">for</span> <span class="nb">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">1000</span><span class="p">,</span> <span class="nb">j</span><span class="p">=</span><span class="nb">j</span><span class="o">+</span><span class="n">n</span><span class="p">;</span> <span class="k">end</span><span class="p">;</span> <span class="n">toc</span>
+<span class="n">elapsed_time</span> <span class="p">=</span>
+    <span class="mf">0.0088</span>
+</pre></div>
+</div>
+<p>Hence you should always try to store data in <em>MatLab</em> arrays instead of
+repetitively calling the getfem functions.</p>
+<p>Avalaible object types are <span class="target" id="index-0"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfCvStruct</span></tt>, <span class="target" id="index-1"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfGeoTrans</span></tt>,
+<span class="target" id="index-2"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfEltm</span></tt>, <span class="target" id="index-3"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfInteg</span></tt>, <span class="target" id="index-4"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfFem</span></tt>, <span class="target" id="index-5"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMesh</span></tt>,
+<span class="target" id="index-6"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMeshFem</span></tt>, <span class="target" id="index-7"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMeshIm</span></tt>, <span class="target" id="index-8"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMdBrick</span></tt>,
+<span class="target" id="index-9"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfMdState</span></tt>, <span class="target" id="index-10"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfModel</span></tt>, <span class="target" id="index-11"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfSpmat</span></tt>, <span class="target" id="index-12"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfPrecond</span></tt>,
+and <span class="target" id="index-13"></span><tt class="xref std std-envvar docutils literal"><span class="pre">gfSlice</span></tt>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_workspace.html"
+                        title="前の章へ">gf_workspace</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="../python/index.html"
+                        title="次の章へ"><em>Python</em> Interface</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../python/index.html" title="Python Interface"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_workspace.html" title="gf_workspace"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

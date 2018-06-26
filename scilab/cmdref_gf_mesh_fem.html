@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_mesh_fem &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_mesh_fem_get" href="cmdref_gf_mesh_fem_get.html" />
+    <link rel="prev" title="gf_mesh_set" href="cmdref_gf_mesh_set.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_fem_get.html" title="gf_mesh_fem_get"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_set.html" title="gf_mesh_set"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-mesh-fem">
+<h1>gf_mesh_fem<a class="headerlink" href="#gf-mesh-fem" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>MF = gf_mesh_fem(mesh m[, int Qdim1=1[, int Qdim2=1, ...]])
+MF = gf_mesh_fem(&#x27;load&#x27;, string fname[, mesh m])
+MF = gf_mesh_fem(&#x27;from string&#x27;, string s[, mesh m])
+MF = gf_mesh_fem(&#x27;clone&#x27;, mesh_fem mf)
+MF = gf_mesh_fem(&#x27;sum&#x27;, mesh_fem mf1, mesh_fem mf2[, mesh_fem mf3[, ...]])
+MF = gf_mesh_fem(&#x27;product&#x27;, mesh_fem mf1, mesh_fem mf2)
+MF = gf_mesh_fem(&#x27;levelset&#x27;, mesh_levelset mls, mesh_fem mf)
+MF = gf_mesh_fem(&#x27;global function&#x27;, mesh m, levelset ls, {global_function GF1,...}[, int Qdim_m])
+MF = gf_mesh_fem(&#x27;partial&#x27;, mesh_fem mf, ivec DOFs[, ivec RCVs])</pre>
+</div>
+<p><strong>Description :</strong></p>
+<p>General constructor for mesh_fem objects.</p>
+<blockquote>
+<div>This object represents a finite element method defined on a whole mesh.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem(mesh</span> <span class="pre">m[,</span> <span class="pre">int</span> <span class="pre">Qdim1=1[,</span> <span class="pre">int</span> <span class="pre">Qdim2=1,</span> <span class="pre">...]])</span></tt></p>
+<blockquote>
+<div><p>Build a new mesh_fem object.</p>
+<p>The &lt;literal&gt;Qdim&lt;/literal&gt; parameters specifies the dimension of the field represented
+by the finite element method. Qdim1 = 1 for a scalar field,
+Qdim1 = n for a vector field off size n, Qdim1=m, Qdim2=n for
+a matrix field of size mxn ...
+Returns the handle of the created object.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('load',</span> <span class="pre">string</span> <span class="pre">fname[,</span> <span class="pre">mesh</span> <span class="pre">m])</span></tt></p>
+<blockquote>
+<div><p>Load a mesh_fem from a file.</p>
+<p>If the mesh &lt;literal&gt;m&lt;/literal&gt; is not supplied (this kind of file does not store the
+mesh), then it is read from the file &lt;literal&gt;fname&lt;/literal&gt; and its descriptor is
+returned as the second output argument.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('from</span> <span class="pre">string',</span> <span class="pre">string</span> <span class="pre">s[,</span> <span class="pre">mesh</span> <span class="pre">m])</span></tt></p>
+<blockquote>
+<div><p>Create a mesh_fem object from its string description.</p>
+<p>See also &lt;literal&gt;&lt;/literal&gt;gf_mesh_fem_get(mesh_fem MF, &#8216;char&#8217;)&lt;literal&gt;&lt;/literal&gt;</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('clone',</span> <span class="pre">mesh_fem</span> <span class="pre">mf)</span></tt></p>
+<blockquote>
+<div>Create a copy of a mesh_fem.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('sum',</span> <span class="pre">mesh_fem</span> <span class="pre">mf1,</span> <span class="pre">mesh_fem</span> <span class="pre">mf2[,</span> <span class="pre">mesh_fem</span> <span class="pre">mf3[,</span> <span class="pre">...]])</span></tt></p>
+<blockquote>
+<div><p>Create a mesh_fem that spans two (or more) mesh_fem&#8217;s.</p>
+<p>All mesh_fem must share the same mesh.</p>
+<p>After that, you should not modify the FEM of &lt;literal&gt;mf1&lt;/literal&gt;, &lt;literal&gt;mf2&lt;/literal&gt; etc.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('product',</span> <span class="pre">mesh_fem</span> <span class="pre">mf1,</span> <span class="pre">mesh_fem</span> <span class="pre">mf2)</span></tt></p>
+<blockquote>
+<div><p>Create a mesh_fem that spans all the product of a selection of shape
+functions of &lt;literal&gt;mf1&lt;/literal&gt; by all shape functions of &lt;literal&gt;mf2&lt;/literal&gt;.
+Designed for Xfem enrichment.</p>
+<p>&lt;literal&gt;mf1&lt;/literal&gt; and &lt;literal&gt;mf2&lt;/literal&gt; must share the same mesh.</p>
+<p>After that, you should not modify the FEM of &lt;literal&gt;mf1&lt;/literal&gt;, &lt;literal&gt;mf2&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('levelset',</span> <span class="pre">mesh_levelset</span> <span class="pre">mls,</span> <span class="pre">mesh_fem</span> <span class="pre">mf)</span></tt></p>
+<blockquote>
+<div>Create a mesh_fem that is conformal to implicit surfaces defined in
+mesh_levelset.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('global</span> <span class="pre">function',</span> <span class="pre">mesh</span> <span class="pre">m,</span> <span class="pre">levelset</span> <span class="pre">ls,</span> <span class="pre">{global_function</span> <span class="pre">GF1,...}[,</span> <span class="pre">int</span> <span class="pre">Qdim_m])</span></tt></p>
+<blockquote>
+<div>Create a mesh_fem whose base functions are global function given by the
+user in the system of coordinate defined by the iso-values of the two
+level-set function of &lt;literal&gt;ls&lt;/literal&gt;.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">MF</span> <span class="pre">=</span> <span class="pre">gf_mesh_fem('partial',</span> <span class="pre">mesh_fem</span> <span class="pre">mf,</span> <span class="pre">ivec</span> <span class="pre">DOFs[,</span> <span class="pre">ivec</span> <span class="pre">RCVs])</span></tt></p>
+<blockquote>
+<div><p>Build a restricted mesh_fem by keeping only a subset of the degrees of
+freedom of &lt;literal&gt;mf&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;RCVs&lt;/literal&gt; is given, no FEM will be put on the convexes listed in
+&lt;literal&gt;RCVs&lt;/literal&gt;.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_set.html"
+                        title="前の章へ">gf_mesh_set</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_fem_get.html"
+                        title="次の章へ">gf_mesh_fem_get</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_fem_get.html" title="gf_mesh_fem_get"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_set.html" title="gf_mesh_set"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

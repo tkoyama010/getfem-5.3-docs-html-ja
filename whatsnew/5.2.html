@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>What’s New in GetFEM++ 5.2 &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="What’s New in GetFEM++" href="index.html" />
+    <link rel="next" title="What’s New in GetFEM++ 5.1" href="5.1.html" />
+    <link rel="prev" title="What’s New in GetFEM++ 5.3" href="5.3.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="5.1.html" title="What’s New in GetFEM++ 5.1"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="5.3.html" title="What’s New in GetFEM++ 5.3"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="what-s-new-in-gf-5-2">
+<h1>What&#8217;s New in <em>GetFEM++</em> 5.2<a class="headerlink" href="#what-s-new-in-gf-5-2" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The main contribution of this release is the sharp optimization of the high level generic assembly. Speed up in assembly time can be very important. The first pyramidal elements were also designed.</p>
+<p>Released version, 2017/06/30.</p>
+<p>The main changes are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>GetFEM++</em> project is now hosted by <a class="reference external" href="https://savannah.nongnu.org/projects/getfem">Savannah</a>.</li>
+<li>Sharp optimization of the high level generic assembly: optimization of
+the most used instructions and most used elements, optimization of the
+storage into sparse matrix optimization, factorization of some elementary
+operations, etc.</li>
+<li>Isoparametric Lagrange pyramidal elements of degree 1 and 2 have been
+added together with corresponding quadrature methods.</li>
+<li>Python interface is now compatible with Python 3.x versions.</li>
+<li>Import of Ansys meshes.</li>
+<li>A new transformation has been added to the weak form
+language for the extrapolation on a neighbour element.</li>
+<li>Compatibility for Windows and Mac installation has been checked.</li>
+<li>For std::vector&lt;T&gt; the overload of std::cout &lt;&lt; V &lt;&lt; endl; added to gmm
+induces some conflicts. Is has been suppressed. Please use instead
+std::cout &lt;&lt; gmm::vref(V) &lt;&lt; endl;</li>
+</ul>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="5.3.html"
+                        title="前の章へ">What&#8217;s New in <em>GetFEM++</em> 5.3</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="5.1.html"
+                        title="次の章へ">What&#8217;s New in <em>GetFEM++</em> 5.1</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="5.1.html" title="What’s New in GetFEM++ 5.1"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="5.3.html" title="What’s New in GetFEM++ 5.3"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

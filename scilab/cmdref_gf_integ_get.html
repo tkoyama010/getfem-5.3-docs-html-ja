@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_integ_get &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_levelset" href="cmdref_gf_levelset.html" />
+    <link rel="prev" title="gf_integ" href="cmdref_gf_integ.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_levelset.html" title="gf_levelset"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_integ.html" title="gf_integ"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-integ-get">
+<h1>gf_integ_get<a class="headerlink" href="#gf-integ-get" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>b = gf_integ_get(integ I, &#x27;is_exact&#x27;)
+d = gf_integ_get(integ I, &#x27;dim&#x27;)
+n = gf_integ_get(integ I, &#x27;nbpts&#x27;)
+Pp = gf_integ_get(integ I, &#x27;pts&#x27;)
+Pf = gf_integ_get(integ I, &#x27;face_pts&#x27;,F)
+Cp = gf_integ_get(integ I, &#x27;coeffs&#x27;)
+Cf = gf_integ_get(integ I, &#x27;face_coeffs&#x27;,F)
+s = gf_integ_get(integ I, &#x27;char&#x27;)
+gf_integ_get(integ I, &#x27;display&#x27;)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function for querying information about integration method objects.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'is_exact')</span></tt></p>
+<blockquote>
+<div>Return 0 if the integration is an approximate one.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'dim')</span></tt></p>
+<blockquote>
+<div>Return the dimension of the reference convex of
+the method.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'nbpts')</span></tt></p>
+<blockquote>
+<div><p>Return the total number of integration points.</p>
+<p>Count the points for the volume integration, and points for
+surface integration on each face of the reference convex.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Pp</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'pts')</span></tt></p>
+<blockquote>
+<div><p>Return the list of integration points</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Pf</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'face_pts',F)</span></tt></p>
+<blockquote>
+<div><p>Return the list of integration points for a face.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Cp</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'coeffs')</span></tt></p>
+<blockquote>
+<div><p>Returns the coefficients associated to each integration point.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Cf</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'face_coeffs',F)</span></tt></p>
+<blockquote>
+<div><p>Returns the coefficients associated to each integration of a face.</p>
+<p>Only for approximate methods, this has no meaning for exact
+integration methods!</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'char')</span></tt></p>
+<blockquote>
+<div><p>Ouput a (unique) string representation of the integration method.</p>
+<p>This can be used to  comparisons between two different integ
+objects.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_integ_get(integ</span> <span class="pre">I,</span> <span class="pre">'display')</span></tt></p>
+<blockquote>
+<div>displays a short summary for a integ object.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_integ.html"
+                        title="前の章へ">gf_integ</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_levelset.html"
+                        title="次の章へ">gf_levelset</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_levelset.html" title="gf_levelset"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_integ.html" title="gf_integ"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

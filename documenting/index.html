@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Documenting &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="next" title="Style Guide" href="style.html" />
+    <link rel="prev" title="What’s New in GetFEM++ 1.0" href="../whatsnew/1.0.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="style.html" title="Style Guide"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="../whatsnew/1.0.html" title="What’s New in GetFEM++ 1.0"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="documenting">
+<span id="documenting-index"></span><h1>Documenting<a class="headerlink" href="#documenting" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The GetFEM++ library has a substantial body of documentation, much of it
+contributed by various authors. The markup used for the GetFEM++ documentation
+is <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>, developed by the <a class="reference external" href="http://docutils.sourceforge.net/">docutils</a> project, amended by custom
+directives and using a toolset named <a class="reference external" href="http://sphinx.pocoo.org/">Sphinx</a> to postprocess the HTML output.</p>
+<p>This document describes the style guide for our documentation, the custom
+reStructuredText markup introduced to support Python documentation and how it
+should be used, as well as the Sphinx build system.</p>
+<p>If you&#8217;re interested in contributing to GetFEM++&#8217;s documentation, there&#8217;s no
+need to write reStructuredText if you&#8217;re not so inclined; plain text
+contributions are more than welcome as well. The main documentations are in the directory <tt class="docutils literal"><span class="pre">doc/sphinx/source</span></tt> of the project. A part of the documentation is automatic and comes from the sources of the project. This is in particular the case for the documentations of the interface commands which are located in the <tt class="docutils literal"><span class="pre">interface/src/gf_*.cc</span></tt> files.</p>
+<p>It is highly recommending to document each created C++ class and exported function both in sources (for Oxygen documentation) and in the user documentation.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="style.html">Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rest.html">reStructuredText Primer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#paragraphs">Paragraphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#inline-markup">Inline markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#lists-and-quotes">Lists and Quotes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#source-code">Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#hyperlinks">Hyperlinks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rest.html#external-links">External links</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rest.html#internal-links">Internal links</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#sections">Sections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#explicit-markup">Explicit Markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#footnotes">Footnotes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#comments">Comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#source-encoding">Source encoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rest.html#gotchas">Gotchas</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="markup.html">Additional Markup Constructs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#meta-information-markup">Meta-information markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#module-specific-markup">Module-specific markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#information-units">Information units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#showing-code-examples">Showing code examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#inline-markup">Inline markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#cross-linking-markup">Cross-linking markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#paragraph-level-markup">Paragraph-level markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#table-of-contents-markup">Table-of-contents markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#index-generating-markup">Index-generating markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#grammar-production-displays">Grammar production displays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="markup.html#substitutions">Substitutions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fromlatex.html">Differences to the LaTeX markup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fromlatex.html#inline-markup">Inline markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fromlatex.html#information-units">Information units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fromlatex.html#structure">Structure</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="../whatsnew/1.0.html"
+                        title="前の章へ">What&#8217;s New in <em>GetFEM++</em> 1.0</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="style.html"
+                        title="次の章へ">Style Guide</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="style.html" title="Style Guide"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="../whatsnew/1.0.html" title="What’s New in GetFEM++ 1.0"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

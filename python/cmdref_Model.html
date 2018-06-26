@@ -1,0 +1,2384 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Model &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="Precond" href="cmdref_Precond.html" />
+    <link rel="prev" title="MesherObject" href="cmdref_MesherObject.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Precond.html" title="Precond"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_MesherObject.html" title="MesherObject"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="model">
+<h1>Model<a class="headerlink" href="#model" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.Model">
+<em class="property">class </em><tt class="descname">Model</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM Model object</p>
+<p>Model variables store the variables and the state data and the
+description of a model. This includes the global tangent matrix, the right
+hand side and the constraints. There are two kinds of models, the <cite>real</cite>
+and the <cite>complex</cite> models.</p>
+<p>General constructor for Model objects</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">MD</span> <span class="pre">=</span> <span class="pre">Model('real')</span></tt>
+Build a model for real unknowns.</li>
+<li><tt class="docutils literal"><span class="pre">MD</span> <span class="pre">=</span> <span class="pre">Model('complex')</span></tt>
+Build a model for complex unknowns.</li>
+</ul>
+<dl class="method">
+<dt id="getfem.Model.Neumann_term">
+<tt class="descname">Neumann_term</tt><big>(</big><em>varname</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.Neumann_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the assembly string corresponding to the Neumann term of
+the fem variable <cite>varname</cite> on <cite>region</cite>. It is deduced from the
+assembly string declared by the model bricks.
+<cite>region</cite> should be the index of a boundary region
+on the mesh where <cite>varname</cite> is defined. Care to call this function
+only after all the volumic bricks have been declared.
+Complains, if a brick
+omit to declare an assembly string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Dirichlet_condition_with_Nitsche_method">
+<tt class="descname">add_Dirichlet_condition_with_Nitsche_method</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>Neumannterm</em>, <em>datagamma0</em>, <em>region</em>, <em>theta=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Dirichlet_condition_with_Nitsche_method" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_Dirichlet_condition_with_Nitsche_method(self, MeshIm mim, string varname, string Neumannterm, string datagamma0, int region[, scalar theta][, string dataname])</p>
+<p>Add a Dirichlet condition on the variable <cite>varname</cite> and the mesh
+region <cite>region</cite>. This region should be a boundary. <cite>Neumannterm</cite>
+is the expression of the Neumann term (obtained by the Green formula)
+described as an expression of the high-level
+generic assembly language. This term can be obtained by 
+Model.Neumann_term(varname, region) once all volumic bricks have
+been added to the model. The Dirichlet
+condition is prescribed with Nitsche&#8217;s method. <cite>datag</cite> is the optional
+right hand side of the Dirichlet condition. <cite>datagamma0</cite> is the
+Nitsche&#8217;s method parameter. <cite>theta</cite> is a scalar value which can be
+positive or negative. <cite>theta = 1</cite> corresponds to the standard symmetric
+method which is conditionnaly coercive for  <cite>gamma0</cite> small.
+<cite>theta = -1</cite> corresponds to the skew-symmetric method which is
+inconditionnaly coercive. <cite>theta = 0</cite> (default) is the simplest method
+for which the second derivative of the Neumann term is not necessary
+even for nonlinear problems. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Dirichlet_condition_with_multipliers">
+<tt class="descname">add_Dirichlet_condition_with_multipliers</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>mult_description</em>, <em>region</em>, <em>dataname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Dirichlet_condition_with_multipliers" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition on the variable <cite>varname</cite> and the mesh
+region <cite>region</cite>. This region should be a boundary. The Dirichlet
+condition is prescribed with a multiplier variable described by
+<cite>mult_description</cite>. If <cite>mult_description</cite> is a string this is assumed
+to be the variable name corresponding to the multiplier (which should be
+first declared as a multiplier variable on the mesh region in the model).
+If it is a finite element method (mesh_fem object) then a multiplier
+variable will be added to the model and build on this finite element
+method (it will be restricted to the mesh region <cite>region</cite> and eventually
+some conflicting dofs with some other multiplier variables will be
+suppressed). If it is an integer, then a  multiplier variable will be
+added to the model and build on a classical finite element of degree
+that integer. <cite>dataname</cite> is the optional right hand side of  the
+Dirichlet condition. It could be constant or described on a fem; scalar
+or vector valued, depending on the variable on which the Dirichlet
+condition is prescribed. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Dirichlet_condition_with_penalization">
+<tt class="descname">add_Dirichlet_condition_with_penalization</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>coeff</em>, <em>region</em>, <em>dataname=None</em>, <em>mf_mult=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Dirichlet_condition_with_penalization" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition on the variable <cite>varname</cite> and the mesh
+region <cite>region</cite>. This region should be a boundary. The Dirichlet
+condition is prescribed with penalization. The penalization coefficient
+is initially <cite>coeff</cite> and will be added to the data of the model.
+<cite>dataname</cite> is the optional right hand side of the Dirichlet condition.
+It could be constant or described on a fem; scalar or vector valued,
+depending on the variable on which the Dirichlet condition is prescribed.
+<cite>mf_mult</cite> is an optional parameter which allows to weaken the
+Dirichlet condition specifying a multiplier space.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Dirichlet_condition_with_simplification">
+<tt class="descname">add_Dirichlet_condition_with_simplification</tt><big>(</big><em>varname</em>, <em>region</em>, <em>dataname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Dirichlet_condition_with_simplification" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a (simple) Dirichlet condition on the variable <cite>varname</cite> and
+the mesh region <cite>region</cite>. The Dirichlet condition is prescribed by
+a simple post-treatment of the final linear system (tangent system
+for nonlinear problems) consisting of modifying the lines corresponding
+to the degree of freedom of the variable on <cite>region</cite> (0 outside the
+diagonal, 1 on the diagonal of the matrix and the expected value on
+the right hand side).
+The symmetry of the linear system is kept if all other bricks are
+symmetric.
+This brick is to be reserved for simple Dirichlet conditions (only dof
+declared on the correspodning boundary are prescribed). The application
+of this brick on reduced dof may be problematic. Intrinsic vectorial
+finite element method are not supported. 
+<cite>dataname</cite> is the optional right hand side of  the Dirichlet condition.
+It could be constant (but in that case, it can only be applied to
+Lagrange f.e.m.) or (important) described on the same finite
+element method as <cite>varname</cite>.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Fourier_Robin_brick">
+<tt class="descname">add_Fourier_Robin_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataexpr</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Fourier_Robin_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Fourier-Robin term to the model relatively to the variable
+<cite>varname</cite>. This corresponds to a weak term of the form
+<img class="math" src="../_images/math/383635895c06366bb600ade9f4c7e60ffb4b392e.png" alt="\int (qu).v" style="vertical-align: -6px"/>. <cite>dataexpr</cite> is the parameter <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" style="vertical-align: -4px"/> of
+the Fourier-Robin condition.  It can be an arbitrary valid expression
+of the high-level generic assembly language (except for the complex version
+for which it should be a data of the model). <cite>region</cite> is the mesh region
+on which the term is added. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Helmholtz_brick">
+<tt class="descname">add_Helmholtz_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataexpr</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Helmholtz_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Helmholtz term to the model relatively to the variable <cite>varname</cite>.
+<cite>dataexpr</cite> is the wave number. <cite>region</cite> is an optional mesh
+region on which the term is added. If it is not specified, it is added
+on the whole mesh. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Kirchhoff_Love_Neumann_term_brick">
+<tt class="descname">add_Kirchhoff_Love_Neumann_term_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataname_M</em>, <em>dataname_divM</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Kirchhoff_Love_Neumann_term_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Neumann term brick for Kirchhoff-Love model
+on the variable <cite>varname</cite> and the mesh region <cite>region</cite>.
+<cite>dataname_M</cite> represents the bending moment tensor and  <cite>dataname_divM</cite>
+its divergence.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Kirchhoff_Love_plate_brick">
+<tt class="descname">add_Kirchhoff_Love_plate_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataname_D</em>, <em>dataname_nu</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Kirchhoff_Love_plate_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a bilaplacian brick on the variable
+<cite>varname</cite> and on the mesh region <cite>region</cite>.
+This represent a term <img class="math" src="../_images/math/94b9d02d6141ee22b8cdcdcc80d860600197d12e.png" alt="\Delta(D \Delta u)" style="vertical-align: -4px"/> where <img class="math" src="../_images/math/8a2040e00c5533e3da9f83349e48b5fb00ef920a.png" alt="D(x)" style="vertical-align: -4px"/>
+is a the flexion modulus determined by <cite>dataname_D</cite>. The term is
+integrated by part following a Kirchhoff-Love plate model
+with <cite>dataname_nu</cite> the poisson ratio.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Laplacian_brick">
+<tt class="descname">add_Laplacian_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Laplacian_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Laplacian term to the model relatively to the variable <cite>varname</cite>
+(in fact with a minus : <img class="math" src="../_images/math/38ea220d9d3e17bd3673451421beba6e5c34b7a2.png" alt="-\text{div}(\nabla u)" style="vertical-align: -4px"/>).
+If this is a vector valued variable, the Laplacian term is added
+componentwise. <cite>region</cite> is an optional mesh region on which the term
+is added. If it is not specified, it is added on the whole mesh. Return
+the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Mindlin_Reissner_plate_brick">
+<tt class="descname">add_Mindlin_Reissner_plate_brick</tt><big>(</big><em>mim</em>, <em>mim_reduced</em>, <em>varname_u3</em>, <em>varname_theta</em>, <em>param_E</em>, <em>param_nu</em>, <em>param_epsilon</em>, <em>param_kappa</em>, <em>variant=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Mindlin_Reissner_plate_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_Mindlin_Reissner_plate_brick(self, MeshIm mim, MeshIm mim_reduced, string varname_u3, string varname_theta , string param_E, string param_nu, string param_epsilon, string param_kappa [,int variant [, int region]])</p>
+<p>Add a term corresponding to the classical Reissner-Mindlin plate
+model for which <cite>varname_u3</cite> is the transverse displacement,
+<cite>varname_theta</cite> the rotation of
+fibers normal to the midplane, &#8216;param_E&#8217; the Young Modulus,
+<cite>param_nu</cite> the poisson ratio,
+<cite>param_epsilon</cite> the plate thickness,
+<cite>param_kappa</cite> the shear correction factor. Note that since this brick
+uses the high level generic assembly language, the parameter can
+be regular expression of this language.
+There are three variants.
+<cite>variant = 0</cite> corresponds to the an
+unreduced formulation and in that case only the integration
+method <cite>mim</cite> is used. Practically this variant is not usable since
+it is subject to a strong locking phenomenon.
+<cite>variant = 1</cite> corresponds to a reduced integration where <cite>mim</cite> is
+used for the rotation term and <cite>mim_reduced</cite> for the transverse
+shear term. <cite>variant = 2</cite> (default) corresponds to the projection onto
+a rotated RT0 element of the transverse shear term. For the moment, this
+is adapted to quadrilateral only (because it is not sufficient to
+remove the locking phenomenon on triangle elements). Note also that if
+you use high order elements, the projection on RT0 will reduce the order
+of the approximation.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Newmark_scheme">
+<tt class="descname">add_Newmark_scheme</tt><big>(</big><em>varname</em>, <em>beta</em>, <em>gamma</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Newmark_scheme" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Attach a theta method for the time discretization of the variable
+<cite>varname</cite>. Valid only if there is at most second order time derivative
+of the variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Nitsche_contact_with_rigid_obstacle_brick">
+<tt class="descname">add_Nitsche_contact_with_rigid_obstacle_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>Neumannterm</em>, <em>dataname_obstacle</em>, <em>gamma0name</em>, <em>region</em>, <em>theta=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Nitsche_contact_with_rigid_obstacle_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_Nitsche_contact_with_rigid_obstacle_brick(self, MeshIm mim, string varname, string Neumannterm, string dataname_obstacle, string gamma0name,  int region[, scalar theta[, string dataname_friction_coeff[, string dataname_alpha, string dataname_wt]]])</p>
+<p>Adds a contact condition with or without Coulomb friction on the variable
+<cite>varname</cite> and the mesh boundary <cite>region</cite>. The contact condition
+is prescribed with Nitsche&#8217;s method. The rigid obstacle should
+be described with the data <cite>dataname_obstacle</cite> being a signed distance to
+the obstacle (interpolated on a finite element method).
+<cite>gamma0name</cite> is the Nitsche&#8217;s method parameter.
+<cite>theta</cite> is a scalar value which can be
+positive or negative. <cite>theta = 1</cite> corresponds to the standard symmetric
+method which is conditionnaly coercive for  <cite>gamma0</cite> small.
+<cite>theta = -1</cite> corresponds to the skew-symmetric method which is
+inconditionnaly coercive. <cite>theta = 0</cite> is the simplest method
+for which the second derivative of the Neumann term is not necessary.
+The optional parameter <cite>dataname_friction_coeff</cite> is the friction
+coefficient which could be constant or defined on a finite element
+method.
+CAUTION: This brick has to be added in the model after all the bricks
+corresponding to partial differential terms having a Neumann term.
+Moreover, This brick can only be applied to bricks declaring their
+Neumann terms. Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Nitsche_fictitious_domain_contact_brick">
+<tt class="descname">add_Nitsche_fictitious_domain_contact_brick</tt><big>(</big><em>mim</em>, <em>varname1</em>, <em>varname2</em>, <em>dataname_d1</em>, <em>dataname_d2</em>, <em>gamma0name</em>, <em>theta=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Nitsche_fictitious_domain_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_Nitsche_fictitious_domain_contact_brick(self, MeshIm mim, string varname1, string varname2, string dataname_d1, string dataname_d2, string gamma0name [, scalar theta[, string dataname_friction_coeff[, string dataname_alpha, string dataname_wt1,string dataname_wt2]]])</p>
+<p>Adds a contact condition with or without Coulomb friction between
+two bodies in a fictitious domain. The contact condition is applied on 
+the variable <cite>varname_u1</cite> corresponds with the first and slave body 
+with Nitsche&#8217;s method and on the variable <cite>varname_u2</cite> corresponds 
+with the second and master body with Nitsche&#8217;s method. 
+The contact condition is evaluated on the fictitious slave boundary.
+The first body should be described by the level-set <cite>dataname_d1</cite> 
+and the second body should be described by the level-set <cite>dataname_d2</cite>.
+<cite>gamma0name</cite> is the Nitsche&#8217;s method parameter. 
+<cite>theta</cite> is a scalar value which can be positive or negative. 
+<cite>theta = 1</cite> corresponds to the standard symmetric method which is
+conditionnaly coercive for  <cite>gamma0</cite> small.
+<cite>theta = -1</cite> corresponds to the skew-symmetric method which is inconditionnaly coercive.
+<cite>theta = 0</cite> is the simplest method for which the second derivative of
+the Neumann term is not necessary. The optional parameter <cite>dataname_friction_coeff</cite>
+is the friction coefficient which could be constant or defined on a finite element method. 
+CAUTION: This brick has to be added in the model after all the bricks
+corresponding to partial differential terms having a Neumann term.
+Moreover, This brick can only be applied to bricks declaring their
+Neumann terms. Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Nitsche_large_sliding_contact_brick_raytracing">
+<tt class="descname">add_Nitsche_large_sliding_contact_brick_raytracing</tt><big>(</big><em>unbiased_version</em>, <em>dataname_r</em>, <em>release_distance</em>, <em>dataname_fr=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Nitsche_large_sliding_contact_brick_raytracing" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_Nitsche_large_sliding_contact_brick_raytracing(self, bool unbiased_version, string dataname_r, scalar release_distance[, string dataname_fr[, string dataname_alpha[, int version]]])</p>
+<p>Adds a large sliding contact with friction brick to the model based on the Nitsche&#8217;s method.
+This brick is able to deal with self-contact, contact between
+several deformable bodies and contact with rigid obstacles.
+It uses the high-level generic assembly. It adds to the model
+a raytracing_interpolate_transformation object. &#8220;unbiased_version&#8221; refers to the version of Nische&#8217;s method to be used.
+(unbiased or biased one).
+For each slave boundary a  material law should be defined as a function of the dispacement variable on this boundary.
+The release distance should be determined with care
+(generally a few times a mean element size, and less than the
+thickness of the body). Initially, the brick is added with no contact
+boundaries. The contact boundaries and rigid bodies are added with
+special functions. <cite>version</cite> is 0 (the default value) for the
+non-symmetric version and 1 for the more symmetric one
+(not fully symmetric even without friction).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_Nitsche_midpoint_contact_with_rigid_obstacle_brick">
+<tt class="descname">add_Nitsche_midpoint_contact_with_rigid_obstacle_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>Neumannterm</em>, <em>Neumannterm_wt</em>, <em>dataname_obstacle</em>, <em>gamma0name</em>, <em>region</em>, <em>theta</em>, <em>dataname_friction_coeff</em>, <em>dataname_alpha</em>, <em>dataname_wt</em><big>)</big><a class="headerlink" href="#getfem.Model.add_Nitsche_midpoint_contact_with_rigid_obstacle_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>EXPERIMENTAL BRICK: for midpoint scheme only !!
+Adds a contact condition with or without Coulomb friction on the variable
+<cite>varname</cite> and the mesh boundary <cite>region</cite>. The contact condition
+is prescribed with Nitsche&#8217;s method. The rigid obstacle should
+be described with the data <cite>dataname_obstacle</cite> being a signed distance to
+the obstacle (interpolated on a finite element method).
+<cite>gamma0name</cite> is the Nitsche&#8217;s method parameter.
+<cite>theta</cite> is a scalar value which can be
+positive or negative. <cite>theta = 1</cite> corresponds to the standard symmetric
+method which is conditionnaly coercive for  <cite>gamma0</cite> small.
+<cite>theta = -1</cite> corresponds to the skew-symmetric method which is
+inconditionnaly coercive. <cite>theta = 0</cite> is the simplest method
+for which the second derivative of the Neumann term is not necessary.
+The optional parameter <cite>dataname_friction_coeff</cite> is the friction
+coefficient which could be constant or defined on a finite element
+method.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_assembly_assignment">
+<tt class="descname">add_assembly_assignment</tt><big>(</big><em>dataname</em>, <em>expression</em>, <em>region=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_assembly_assignment" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Model.add_assembly_assignment(self, string dataname, string expression[, int region[, int order[, int before]]])</p>
+<p>Adds expression <cite>expr</cite> to be evaluated at assembly time and being
+assigned to the data <cite>dataname</cite> which has to be of im_data type.
+This allows for instance to store a sub-expression of an assembly
+computation to be used on an other assembly. It can be used for instance
+to store the plastic strain in plasticity models.
+<cite>order</cite> represents the order of assembly where this assignement has to be
+done (potential(0), weak form(1) or tangent system(2) or at each
+order(-1)). The default value is 1.
+If before = 1, the the assignement is perfromed before the computation
+of the other assembly terms, such that the data can be used in the
+remaining of the assembly as an intermediary result (be careful that it is
+still considered as a data, no derivation of the expression is performed
+for the tangent system).     
+If before = 0 (default), the assignement is done after the assembly terms.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_basic_contact_brick">
+<tt class="descname">add_basic_contact_brick</tt><big>(</big><em>varname_u</em>, <em>multname_n</em>, <em>multname_t=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_basic_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_basic_contact_brick(self, string varname_u, string multname_n[, string multname_t], string dataname_r, Spmat BN[, Spmat BT, string dataname_friction_coeff][, string dataname_gap[, string dataname_alpha[, int augmented_version[, string dataname_gamma, string dataname_wt]]])</p>
+<p>Add a contact with or without friction brick to the model.
+If U is the vector
+of degrees of freedom on which the unilateral constraint is applied,
+the matrix <cite>BN</cite> have to be such that this constraint is defined by
+<img class="math" src="../_images/math/361fde00fd044201671f74ac3588ea25b234ba3e.png" alt="B_N U \le 0" style="vertical-align: -3px"/>. A friction condition can be considered by adding
+the three parameters <cite>multname_t</cite>, <cite>BT</cite> and <cite>dataname_friction_coeff</cite>.
+In this case, the tangential displacement is <img class="math" src="../_images/math/39353b525a768cd19e1233a61c4ae7e83791d598.png" alt="B_T U" style="vertical-align: -3px"/> and
+the matrix <cite>BT</cite> should have as many rows as <cite>BN</cite> multiplied by
+<img class="math" src="../_images/math/6a9f2f925b6ad9c226b9ad118c60d88d4a8b6bd3.png" alt="d-1" style="vertical-align: -1px"/> where <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> is the domain dimension.
+In this case also, <cite>dataname_friction_coeff</cite> is a data which represents
+the coefficient of friction. It can be a scalar or a vector representing a
+value on each contact condition.  The unilateral constraint is prescribed
+thank to a multiplier
+<cite>multname_n</cite> whose dimension should be equal to the number of rows of
+<cite>BN</cite>. If a friction condition is added, it is prescribed with a
+multiplier <cite>multname_t</cite> whose dimension should be equal to the number
+of rows of <cite>BT</cite>. The augmentation parameter <cite>r</cite> should be chosen in
+a range of
+acceptabe values (see Getfem user documentation). <cite>dataname_gap</cite> is an
+optional parameter representing the initial gap. It can be a single value
+or a vector of value. <cite>dataname_alpha</cite> is an optional homogenization
+parameter for the augmentation parameter
+(see Getfem user documentation).  The parameter <cite>augmented_version</cite>
+indicates the augmentation strategy : 1 for the non-symmetric
+Alart-Curnier augmented Lagrangian, 2 for the symmetric one (except for
+the coupling between contact and Coulomb friction), 3 for the
+unsymmetric method with augmented multipliers, 4 for the unsymmetric
+method with augmented multipliers and De Saxce projection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_basic_contact_brick_two_deformable_bodies">
+<tt class="descname">add_basic_contact_brick_two_deformable_bodies</tt><big>(</big><em>varname_u1</em>, <em>varname_u2</em>, <em>multname_n</em>, <em>dataname_r</em>, <em>BN1</em>, <em>BN2</em>, <em>dataname_gap=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_basic_contact_brick_two_deformable_bodies" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_basic_contact_brick_two_deformable_bodies(self, string varname_u1, string varname_u2, string multname_n, string dataname_r, Spmat BN1, Spmat BN2[, string dataname_gap[, string dataname_alpha[, int augmented_version]]])</p>
+<dl class="docutils">
+<dt>Add a frictionless contact condition to the model between two deformable</dt>
+<dd>bodies. If U1, U2 are the vector
+of degrees of freedom on which the unilateral constraint is applied,
+the matrices <cite>BN1</cite> and <cite>BN2</cite> have to be such that this condition
+is defined by
+$B_{N1} U_1 B_{N2} U_2 + le gap$. The constraint is prescribed thank
+to a multiplier
+<cite>multname_n</cite> whose dimension should be equal to the number of lines of
+<cite>BN</cite>. The augmentation parameter <cite>r</cite> should be chosen in a range of
+acceptabe values (see Getfem user documentation). <cite>dataname_gap</cite> is an
+optional parameter representing the initial gap. It can be a single value
+or a vector of value. <cite>dataname_alpha</cite> is an optional homogenization
+parameter for the augmentation parameter
+(see Getfem user documentation). The parameter <cite>aug_version</cite> indicates
+the augmentation strategy : 1 for the non-symmetric Alart-Curnier
+augmented Lagrangian, 2 for the symmetric one, 3 for the unsymmetric
+method with augmented multiplier.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_bilaplacian_brick">
+<tt class="descname">add_bilaplacian_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataname</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_bilaplacian_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a bilaplacian brick on the variable
+<cite>varname</cite> and on the mesh region <cite>region</cite>.
+This represent a term <img class="math" src="../_images/math/94b9d02d6141ee22b8cdcdcc80d860600197d12e.png" alt="\Delta(D \Delta u)" style="vertical-align: -4px"/>.
+where <img class="math" src="../_images/math/8a2040e00c5533e3da9f83349e48b5fb00ef920a.png" alt="D(x)" style="vertical-align: -4px"/> is a coefficient determined by <cite>dataname</cite> which
+could be constant or described on a f.e.m. The corresponding weak form
+is <img class="math" src="../_images/math/369464e75e59e5a1e16eabc2a3221bdc97acd76c.png" alt="\int D(x)\Delta u(x) \Delta v(x) dx" style="vertical-align: -6px"/>.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_constraint_with_multipliers">
+<tt class="descname">add_constraint_with_multipliers</tt><big>(</big><em>varname</em>, <em>multname</em>, <em>B</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_constraint_with_multipliers" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_constraint_with_multipliers(self, string varname, string multname, Spmat B, {vec L | string dataname})</p>
+<p>Add an additional explicit constraint on the variable <cite>varname</cite> thank to
+a multiplier <cite>multname</cite> peviously added to the model (should be a fixed
+size variable). The constraint is <img class="math" src="../_images/math/4a8febb00c8eb93e2d6a9ac048a3ffd66ff91301.png" alt="BU=L" style="vertical-align: 0px"/>
+with <cite>B</cite> being a rectangular sparse matrix. It is possible to change
+the constraint at any time with the methods Model.set_private_matrix()
+and Model.set_private_rhs(). If <cite>dataname</cite> is specified instead of <cite>L</cite>,
+the vector <cite>L</cite> is defined in the model as data with the given name.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_constraint_with_penalization">
+<tt class="descname">add_constraint_with_penalization</tt><big>(</big><em>varname</em>, <em>coeff</em>, <em>B</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_constraint_with_penalization" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_constraint_with_penalization(self, string varname, scalar coeff, Spmat B, {vec L | string dataname})</p>
+<p>Add an additional explicit penalized constraint on the variable <cite>varname</cite>.
+The constraint is :math`BU=L` with <cite>B</cite> being a rectangular sparse matrix.
+Be aware that <cite>B</cite> should not contain a palin row, otherwise the whole
+tangent matrix will be plain. It is possible to change the constraint
+at any time with the methods Model.set_private_matrix()
+and Model.set_private_rhs(). The method
+Model.change_penalization_coeff() can be used.
+If <cite>dataname</cite> is specified instead of <cite>L</cite>, the vector <cite>L</cite> is defined
+in the model as data with the given name.
+Return the brick
+index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_contact_boundary_to_unbiased_Nitsche_large_sliding_contact_brick">
+<tt class="descname">add_contact_boundary_to_unbiased_Nitsche_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>mim</em>, <em>region</em>, <em>dispname</em>, <em>lambdaname</em>, <em>wname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_contact_boundary_to_unbiased_Nitsche_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a contact boundary to an existing unbiased Nitschelarge sliding contact
+with friction brick which is both master and slave.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_contact_with_rigid_obstacle_brick">
+<tt class="descname">add_contact_with_rigid_obstacle_brick</tt><big>(</big><em>mim</em>, <em>varname_u</em>, <em>multname_n</em>, <em>multname_t=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_contact_with_rigid_obstacle_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_contact_with_rigid_obstacle_brick(self,  MeshIm mim, string varname_u, string multname_n[, string multname_t], string dataname_r[, string dataname_friction_coeff], int region, string obstacle[,  int augmented_version])</p>
+<p>DEPRECATED FUNCTION. Use &#8216;add nodal contact with rigid obstacle brick&#8217; instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_data">
+<tt class="descname">add_data</tt><big>(</big><em>name</em>, <em>size</em><big>)</big><a class="headerlink" href="#getfem.Model.add_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a fixed size data to the model.  <cite>sizes</cite> is either a
+integer (for a scalar or vector data) or a vector of dimensions
+for a tensor data. <cite>name</cite> is the data name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_elastoplasticity_brick">
+<tt class="descname">add_elastoplasticity_brick</tt><big>(</big><em>mim</em>, <em>projname</em>, <em>varname</em>, <em>previous_dep_name</em>, <em>datalambda</em>, <em>datamu</em>, <em>datathreshold</em>, <em>datasigma</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_elastoplasticity_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Old (obsolete) brick which do not use the high level generic
+assembly. Add a nonlinear elastoplastic term to the model relatively
+to the variable <cite>varname</cite>, in small deformations, for an isotropic
+material and for a quasistatic model. <cite>projname</cite> is the type of
+projection that used: only the Von Mises projection is
+available with &#8216;VM&#8217; or &#8216;Von Mises&#8217;.
+<cite>datasigma</cite> is the variable representing the constraints on the material.
+<cite>previous_dep_name</cite> represents the displacement at the previous time step.
+Moreover, the finite element method on which <cite>varname</cite> is described
+is an K ordered mesh_fem, the <cite>datasigma</cite> one have to be at least
+an K-1 ordered mesh_fem.
+<cite>datalambda</cite> and <cite>datamu</cite> are the Lame coefficients of the studied
+material.
+<cite>datathreshold</cite> is the plasticity threshold of the material.
+The three last variables could be constants or described on the
+same finite element method.
+<cite>region</cite> is an optional mesh region on which the term is added.
+If it is not specified, it is added on the whole mesh.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_element_extrapolation_transformation">
+<tt class="descname">add_element_extrapolation_transformation</tt><big>(</big><em>transname</em>, <em>source_mesh</em>, <em>elt_corr</em><big>)</big><a class="headerlink" href="#getfem.Model.add_element_extrapolation_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a special interpolation transformation which represents the identity
+transformation but allows to evaluate the expression on another element
+than the current element by polynomial extrapolation. It is used for
+stabilization term in fictitious domain applications. the array elt_cor
+should be a two entry array whose first line contains the elements
+concerned by the transformation and the second line the respective
+elements on which the extrapolation has to be made. If an element
+is not listed in elt_cor the evaluation is just made on the current
+element.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_elementary_rotated_RT0_projection">
+<tt class="descname">add_elementary_rotated_RT0_projection</tt><big>(</big><em>transname</em><big>)</big><a class="headerlink" href="#getfem.Model.add_elementary_rotated_RT0_projection" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Experimental method ...</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_explicit_matrix">
+<tt class="descname">add_explicit_matrix</tt><big>(</big><em>varname1</em>, <em>varname2</em>, <em>B</em>, <em>issymmetric=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_explicit_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_explicit_matrix(self, string varname1, string varname2, Spmat B[, int issymmetric[, int iscoercive]])</p>
+<p>Add a brick representing an explicit matrix to be added to the tangent
+linear system relatively to the variables <cite>varname1</cite> and <cite>varname2</cite>.
+The given matrix should have has many rows as the dimension of
+<cite>varname1</cite> and as many columns as the dimension of <cite>varname2</cite>.
+If the two variables are different and if <cite>issymmetric</cite> is set to 1
+then the transpose of the matrix is also added to the tangent system
+(default is 0). Set <cite>iscoercive</cite> to 1 if the term does not affect the
+coercivity of the tangent system (default is 0). The matrix can be
+changed by the command Model.set_private_matrix(). Return the
+brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_explicit_rhs">
+<tt class="descname">add_explicit_rhs</tt><big>(</big><em>varname</em>, <em>L</em><big>)</big><a class="headerlink" href="#getfem.Model.add_explicit_rhs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a brick representing an explicit right hand side to be added to
+the right hand side of the tangent linear system relatively to the
+variable <cite>varname</cite>. The given rhs should have the same size than the
+dimension of <cite>varname</cite>. The rhs can be changed by the command
+Model.set_private_rhs(). If <cite>dataname</cite> is specified instead of
+<cite>L</cite>, the vector <cite>L</cite> is defined in the model as data with the given name.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_fem_data">
+<tt class="descname">add_fem_data</tt><big>(</big><em>name</em>, <em>mf</em>, <em>sizes=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_fem_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data to the model linked to a MeshFem. <cite>name</cite> is the data name,
+<cite>sizes</cite> an optional parameter which is either an 
+integer  or a vector of suplementary dimensions with respect to <cite>mf</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_fem_variable">
+<tt class="descname">add_fem_variable</tt><big>(</big><em>name</em>, <em>mf</em><big>)</big><a class="headerlink" href="#getfem.Model.add_fem_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a variable to the model linked to a MeshFem. <cite>name</cite> is the variable
+name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_filtered_fem_variable">
+<tt class="descname">add_filtered_fem_variable</tt><big>(</big><em>name</em>, <em>mf</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_filtered_fem_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a variable to the model linked to a MeshFem. The variable is filtered
+in the sense that only the dof on the region are considered.
+<cite>name</cite> is the variable name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_finite_strain_elasticity_brick">
+<tt class="descname">add_finite_strain_elasticity_brick</tt><big>(</big><em>mim</em>, <em>constitutive_law</em>, <em>varname</em>, <em>params</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_finite_strain_elasticity_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a nonlinear elasticity term to the model relatively to the
+variable <cite>varname</cite>. <cite>lawname</cite> is the constitutive law which
+could be &#8216;SaintVenant Kirchhoff&#8217;, &#8216;Mooney Rivlin&#8217;, &#8216;Neo Hookean&#8217;,
+&#8216;Ciarlet Geymonat&#8217; or &#8216;Generalized Blatz Ko&#8217;.
+&#8216;Mooney Rivlin&#8217; and &#8216;Neo Hookean&#8217; law names have to be preceeded with
+the word &#8216;Compressible&#8217; or &#8216;Incompressible&#8217; to force using the
+corresponding version.
+The compressible version of these laws requires one additional material
+coefficient.</p>
+<p>IMPORTANT : if the variable is defined on a 2D mesh, the plane strain
+approximation is automatically used.
+<cite>params</cite> is a vector of parameters for the constitutive law. Its length
+depends on the law. It could be a short vector of constant values or a
+vector field described on a finite element method for variable
+coefficients. <cite>region</cite> is an optional mesh region on which the term
+is added. If it is not specified, it is added on the whole mesh.
+This brick use the high-level generic assembly.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_finite_strain_elastoplasticity_brick">
+<tt class="descname">add_finite_strain_elastoplasticity_brick</tt><big>(</big><em>mim</em>, <em>lawname</em>, <em>unknowns_type</em>, <em>varnames=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_finite_strain_elastoplasticity_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_finite_strain_elastoplasticity_brick(self, MeshIm mim , string lawname, string unknowns_type [, string varnames, ...] [, string params, ...] [, int region = -1])</p>
+<p>Add a finite strain elastoplasticity brick to the model.
+For the moment there is only one supported law defined through 
+<cite>lawname</cite> as &#8220;Simo_Miehe&#8221;.
+This law supports to possibilities of unknown variables to solve for
+defined by means of <cite>unknowns_type</cite> set to either
+&#8216;DISPLACEMENT_AND_PLASTIC_MULTIPLIER&#8217; (integer value 1) or
+&#8216;DISPLACEMENT_AND_PLASTIC_MULTIPLIER_AND_PRESSURE&#8217; (integer value 3).
+The  &#8220;Simo_Miehe&#8221; law expects as <cite>varnames</cite> a set of the
+following names that have to be defined as variables in the model:</p>
+<ul class="simple">
+<li>the displacement variable which has to be defined as an unknown,</li>
+<li>the plastic multiplier which has also defined as an unknown,</li>
+<li>optionally the pressure variable for a mixed displacement-pressure
+formulation for &#8216;DISPLACEMENT_AND_PLASTIC_MULTIPLIER_AND_PRESSURE&#8217;
+as <cite>unknowns_type</cite>,</li>
+<li>the name of a (scalar) fem_data or im_data field that holds the
+plastic strain at the previous time step, and</li>
+<li>the name of a fem_data or im_data field that holds all
+non-repeated components of the inverse of the plastic right
+Cauchy-Green tensor at the previous time step
+(it has to be a 4 element vector for plane strain 2D problems
+and a 6 element vector for 3D problems).</li>
+</ul>
+<p>The  &#8220;Simo_Miehe&#8221; law also expects as <cite>params</cite> a set of the
+following three parameters:</p>
+<ul class="simple">
+<li>an expression for the initial bulk modulus K,</li>
+<li>an expression for the initial shear modulus G,</li>
+<li>the name of a user predefined function that decribes
+the yield limit as a function of the hardening variable
+(both the yield limit and the hardening variable values are
+assumed to be Frobenius norms of appropriate stress and strain
+tensors, respectively).</li>
+</ul>
+<p>As usual, <cite>region</cite> is an optional mesh region on which the term is added.
+If it is not specified, it is added on the whole mesh.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_finite_strain_incompressibility_brick">
+<tt class="descname">add_finite_strain_incompressibility_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>multname_pressure</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_finite_strain_incompressibility_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a finite strain incompressibility condition on <cite>variable</cite> (for large
+strain elasticity). <cite>multname_pressure</cite>
+is a variable which represent the pressure. Be aware that an inf-sup
+condition between the finite element method describing the pressure and the
+primal variable has to be satisfied. <cite>region</cite> is an optional mesh region on
+which the term is added. If it is not specified, it is added on the
+whole mesh. Return the brick index in the model.
+This brick is equivalent to the <tt class="docutils literal"><span class="pre">nonlinear</span> <span class="pre">incompressibility</span> <span class="pre">brick</span></tt> but
+uses the high-level generic assembly adding the term
+<tt class="docutils literal"><span class="pre">p*(1-Det(Id(meshdim)+Grad_u))</span></tt> if <tt class="docutils literal"><span class="pre">p</span></tt> is the multiplier and
+<tt class="docutils literal"><span class="pre">u</span></tt> the variable which represent the displacement.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_generalized_Dirichlet_condition_with_Nitsche_method">
+<tt class="descname">add_generalized_Dirichlet_condition_with_Nitsche_method</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>Neumannterm</em>, <em>gamma0name</em>, <em>region</em>, <em>theta=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_generalized_Dirichlet_condition_with_Nitsche_method" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition on the variable <cite>varname</cite> and the mesh
+region <cite>region</cite>.
+This version is for vector field. It prescribes a condition
+&#64;f$ Hu = r &#64;f$ where <cite>H</cite> is a matrix field.
+CAUTION : the matrix H should have all eigenvalues equal to 1 or 0.
+The region should be a boundary.   <cite>Neumannterm</cite>
+is the expression of the Neumann term (obtained by the Green formula)
+described as an expression of the high-level
+generic assembly language. This term can be obtained by 
+Model.Neumann_term(varname, region) once all volumic bricks have
+been added to the model.  The Dirichlet
+condition is prescribed with Nitsche&#8217;s method. <cite>dataname</cite> is the optional
+right hand side of the Dirichlet condition. It could be constant or
+described on a fem. <cite>gamma0name</cite> is the
+Nitsche&#8217;s method parameter. <cite>theta</cite> is a scalar value which can be
+positive or negative. <cite>theta = 1</cite> corresponds to the standard symmetric
+method which is conditionnaly coercive for  <cite>gamma0</cite> small.
+<cite>theta = -1</cite> corresponds to the skew-symmetric method which is
+inconditionnaly coercive. <cite>theta = 0</cite> is the simplest method
+for which the second derivative of the Neumann term is not necessary
+even for nonlinear problems. <cite>Hname</cite> is the data
+corresponding to the matrix field <cite>H</cite>. It has to be a constant matrix
+or described on a scalar fem. Returns the brick index in the model.
+(This brick is not fully tested)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_generalized_Dirichlet_condition_with_multipliers">
+<tt class="descname">add_generalized_Dirichlet_condition_with_multipliers</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>mult_description</em>, <em>region</em>, <em>dataname</em>, <em>Hname</em><big>)</big><a class="headerlink" href="#getfem.Model.add_generalized_Dirichlet_condition_with_multipliers" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition on the variable <cite>varname</cite> and the mesh
+region <cite>region</cite>.  This version is for vector field.
+It prescribes a condition <img class="math" src="../_images/math/a334eafb8cd5c12626424244a2fb439a21d01884.png" alt="Hu = r" style="vertical-align: 0px"/>
+where <cite>H</cite> is a matrix field. The region should be a boundary. The Dirichlet
+condition is prescribed with a multiplier variable described by
+<cite>mult_description</cite>. If <cite>mult_description</cite> is a string this is assumed
+to be the variable name corresponding to the multiplier (which should be
+first declared as a multiplier variable on the mesh region in the model).
+If it is a finite element method (mesh_fem object) then a multiplier
+variable will be added to the model and build on this finite element
+method (it will be restricted to the mesh region <cite>region</cite> and eventually
+some conflicting dofs with some other multiplier variables will be
+suppressed). If it is an integer, then a  multiplier variable will be
+added to the model and build on a classical finite element of degree
+that integer. <cite>dataname</cite> is the right hand side of  the
+Dirichlet condition. It could be constant or described on a fem; scalar
+or vector valued, depending on the variable on which the Dirichlet
+condition is prescribed. <cite>Hname</cite> is the data
+corresponding to the matrix field <cite>H</cite>.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_generalized_Dirichlet_condition_with_penalization">
+<tt class="descname">add_generalized_Dirichlet_condition_with_penalization</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>coeff</em>, <em>region</em>, <em>dataname</em>, <em>Hname</em>, <em>mf_mult=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_generalized_Dirichlet_condition_with_penalization" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition on the variable <cite>varname</cite> and the mesh
+region <cite>region</cite>. This version is for vector field.
+It prescribes a condition <img class="math" src="../_images/math/a334eafb8cd5c12626424244a2fb439a21d01884.png" alt="Hu = r" style="vertical-align: 0px"/>
+where <cite>H</cite> is a matrix field.
+The region should be a boundary. The Dirichlet
+condition is prescribed with penalization. The penalization coefficient
+is intially <cite>coeff</cite> and will be added to the data of the model.
+<cite>dataname</cite> is the right hand side of the Dirichlet condition.
+It could be constant or described on a fem; scalar or vector valued,
+depending on the variable on which the Dirichlet condition is prescribed.
+<cite>Hname</cite> is the data
+corresponding to the matrix field <cite>H</cite>. It has to be a constant matrix
+or described on a scalar fem.
+<cite>mf_mult</cite> is an optional parameter which allows to weaken the
+Dirichlet condition specifying a multiplier space.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_generic_elliptic_brick">
+<tt class="descname">add_generic_elliptic_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataname</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_generic_elliptic_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a generic elliptic term to the model relatively to the variable <cite>varname</cite>.
+The shape of the elliptic term depends both on the variable and the data.
+This corresponds to a term
+<img class="math" src="../_images/math/6d8f1e0624044e8ab92537997b5dec93767bd764.png" alt="-\text{div}(a\nabla u)" style="vertical-align: -4px"/>
+where <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" style="vertical-align: 0px"/> is the data and <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> the variable. The data can be
+a scalar,
+a matrix or an order four tensor. The variable can be vector valued or
+not. If the data is a scalar or a matrix and the variable is vector
+valued then the term is added componentwise. An order four tensor data
+is allowed for vector valued variable only. The data can be constant or
+describbed on a fem. Of course, when the data is a tensor describe on a
+finite element method (a tensor field) the data can be a huge vector.
+The components of the matrix/tensor have to be stored with the fortran
+order (columnwise) in the data vector (compatibility with blas). The
+symmetry of the given matrix/tensor is not verified (but assumed). If
+this is a vector valued variable, the elliptic term is added
+componentwise. <cite>region</cite> is an optional mesh region on which the term is
+added. If it is not specified, it is added on the whole mesh. Note that
+for the real
+version which uses the high-level generic assembly language, <cite>dataname</cite>
+can be any regular expression of the high-level generic assembly
+language (like &#8220;1&#8221;, &#8220;sin(X(1))&#8221; or &#8220;Norm(u)&#8221; for instance) even
+depending on model variables. Return the
+brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_im_data">
+<tt class="descname">add_im_data</tt><big>(</big><em>name</em>, <em>mimd</em><big>)</big><a class="headerlink" href="#getfem.Model.add_im_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data set to the model linked to a MeshImd. <cite>name</cite> is the data
+name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_initialized_data">
+<tt class="descname">add_initialized_data</tt><big>(</big><em>name</em>, <em>V</em>, <em>sizes=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_initialized_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add an initialized fixed size data to the model. <cite>sizes</cite> an
+optional parameter which is either an 
+integer  or a vector dimensions that describes the format of the
+data. By default, the data is considered to b a vector field.
+<cite>name</cite> is the data name and <cite>V</cite> is the value of the data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_initialized_fem_data">
+<tt class="descname">add_initialized_fem_data</tt><big>(</big><em>name</em>, <em>mf</em>, <em>V</em>, <em>sizes=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_initialized_fem_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data to the model linked to a MeshFem. <cite>name</cite> is the data name.
+The data is initiakized with <cite>V</cite>. The data can be a scalar or vector
+field. <cite>sizes</cite> an optional parameter which is either an 
+integer or a vector of suplementary dimensions with respect to <cite>mf</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_integral_contact_between_nonmatching_meshes_brick">
+<tt class="descname">add_integral_contact_between_nonmatching_meshes_brick</tt><big>(</big><em>mim</em>, <em>varname_u1</em>, <em>varname_u2</em>, <em>multname</em>, <em>dataname_r</em>, <em>dataname_friction_coeff=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_integral_contact_between_nonmatching_meshes_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_integral_contact_between_nonmatching_meshes_brick(self,  MeshIm mim, string varname_u1, string varname_u2, string multname, string dataname_r [, string dataname_friction_coeff], int region1, int region2 [, int option [, string dataname_alpha [, string dataname_wt1 , string dataname_wt2]]])</p>
+<p>Add a contact with or without friction condition between nonmatching
+meshes to the model. This brick adds a contact which is defined
+in an integral way. It is the direct approximation of an augmented
+agrangian formulation (see Getfem user documentation) defined at the
+continuous level. The advantage should be a better scalability:
+the number of Newton iterations should be more or less independent
+of the mesh size.
+The condition is applied on the variables <cite>varname_u1</cite> and <cite>varname_u2</cite>
+on the boundaries corresponding to <cite>region1</cite> and <cite>region2</cite>.
+<cite>multname</cite> should be a fem variable representing the contact stress
+for the frictionless case and the contact and friction stress for the
+case with friction. An inf-sup condition between <cite>multname</cite> and
+<cite>varname_u1</cite> and <cite>varname_u2</cite> is required.
+The augmentation parameter <cite>dataname_r</cite> should be chosen in a
+range of acceptable values.
+The optional parameter <cite>dataname_friction_coeff</cite> is the friction
+coefficient which could be constant or defined on a finite element
+method on the same mesh as <cite>varname_u1</cite>.
+Possible values for <cite>option</cite> is 1 for the non-symmetric Alart-Curnier
+augmented Lagrangian method, 2 for the symmetric one, 3 for the
+non-symmetric Alart-Curnier method with an additional augmentation
+and 4 for a new unsymmetric method. The default value is 1.
+In case of contact with friction, <cite>dataname_alpha</cite>, <cite>dataname_wt1</cite> and
+<cite>dataname_wt2</cite> are optional parameters to solve evolutionary friction
+problems.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_integral_contact_with_rigid_obstacle_brick">
+<tt class="descname">add_integral_contact_with_rigid_obstacle_brick</tt><big>(</big><em>mim</em>, <em>varname_u</em>, <em>multname</em>, <em>dataname_obstacle</em>, <em>dataname_r</em>, <em>dataname_friction_coeff=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_integral_contact_with_rigid_obstacle_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_integral_contact_with_rigid_obstacle_brick(self,  MeshIm mim, string varname_u, string multname, string dataname_obstacle, string dataname_r [, string dataname_friction_coeff], int region [, int option [, string dataname_alpha [, string dataname_wt [, string dataname_gamma [, string dataname_vt]]]]])</p>
+<p>Add a contact with or without friction condition with a rigid obstacle
+to the model. This brick adds a contact which is defined
+in an integral way. It is the direct approximation of an augmented
+Lagrangian formulation (see Getfem user documentation) defined at the
+continuous level. The advantage is a better scalability: the number of
+Newton iterations should be more or less independent of the mesh size.
+The contact condition is applied on the variable <cite>varname_u</cite>
+on the boundary corresponding to <cite>region</cite>. The rigid obstacle should
+be described with the data <cite>dataname_obstacle</cite> being a signed distance to
+the obstacle (interpolated on a finite element method).
+<cite>multname</cite> should be a fem variable representing the contact stress.
+An inf-sup condition beetween <cite>multname</cite> and <cite>varname_u</cite> is required.
+The augmentation parameter <cite>dataname_r</cite> should be chosen in a
+range of acceptabe values.
+The optional parameter <cite>dataname_friction_coeff</cite> is the friction
+coefficient which could be constant or defined on a finite element method.
+Possible values for <cite>option</cite> is 1 for the non-symmetric Alart-Curnier
+augmented Lagrangian method, 2 for the symmetric one, 3 for the
+non-symmetric Alart-Curnier method with an additional augmentation
+and 4 for a new unsymmetric method. The default value is 1.
+In case of contact with friction, <cite>dataname_alpha</cite> and <cite>dataname_wt</cite>
+are optional parameters to solve evolutionary friction problems.
+<cite>dataname_gamma</cite> and <cite>dataname_vt</cite> represent optional data for adding
+a parameter-dependent sliding velocity to the friction condition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_integral_large_sliding_contact_brick_raytracing">
+<tt class="descname">add_integral_large_sliding_contact_brick_raytracing</tt><big>(</big><em>dataname_r</em>, <em>release_distance</em>, <em>dataname_fr=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_integral_large_sliding_contact_brick_raytracing" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_integral_large_sliding_contact_brick_raytracing(self, string dataname_r, scalar release_distance, [, string dataname_fr[, string dataname_alpha[, int version]]])</p>
+<p>Adds a large sliding contact with friction brick to the model.
+This brick is able to deal with self-contact, contact between
+several deformable bodies and contact with rigid obstacles.
+It uses the high-level generic assembly. It adds to the model
+a raytracing_interpolate_transformation object.
+For each slave boundary a multiplier variable should be defined.
+The release distance should be determined with care
+(generally a few times a mean element size, and less than the
+thickness of the body). Initially, the brick is added with no contact
+boundaries. The contact boundaries and rigid bodies are added with
+special functions. <cite>version</cite> is 0 (the default value) for the
+non-symmetric version and 1 for the more symmetric one
+(not fully symmetric even without friction).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_interpolate_transformation_from_expression">
+<tt class="descname">add_interpolate_transformation_from_expression</tt><big>(</big><em>transname</em>, <em>source_mesh</em>, <em>target_mesh</em>, <em>expr</em><big>)</big><a class="headerlink" href="#getfem.Model.add_interpolate_transformation_from_expression" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a transformation to the model from mesh <cite>source_mesh</cite> to mesh
+<cite>target_mesh</cite> given by the expression <cite>expr</cite> which corresponds to a
+high-level generic assembly expression which may contains some
+variable of the model. CAUTION: the derivative of the
+transformation with used variable is taken into account in the
+computation of the tangen system. However, order two derivative is not
+implemented, so such tranformation is not allowed in the definition
+of a potential.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_isotropic_linearized_elasticity_brick">
+<tt class="descname">add_isotropic_linearized_elasticity_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataname_lambda</em>, <em>dataname_mu</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_isotropic_linearized_elasticity_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add an isotropic linearized elasticity term to the model relatively to
+the variable <cite>varname</cite>. <cite>dataname_lambda</cite> and <cite>dataname_mu</cite> should
+contain the Lame coefficients. <cite>region</cite> is an optional mesh region
+on which the term is added. If it is not specified, it is added
+on the whole mesh. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_isotropic_linearized_elasticity_brick_pstrain">
+<tt class="descname">add_isotropic_linearized_elasticity_brick_pstrain</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>data_E</em>, <em>data_nu</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_isotropic_linearized_elasticity_brick_pstrain" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add an isotropic linearized elasticity term to the model relatively to
+the variable <cite>varname</cite>. <cite>data_E</cite> and <cite>data_nu</cite> should
+contain the Young modulus and Poisson ratio, respectively.
+<cite>region</cite> is an optional mesh region on which the term is added.
+If it is not specified, it is added
+on the whole mesh.
+On two-dimensional meshes, the term will correpsond to a plain strain
+approximation. On three-dimensional meshes, it will correspond to the
+standard model. 
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_isotropic_linearized_elasticity_brick_pstress">
+<tt class="descname">add_isotropic_linearized_elasticity_brick_pstress</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>data_E</em>, <em>data_nu</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_isotropic_linearized_elasticity_brick_pstress" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add an isotropic linearized elasticity term to the model relatively to
+the variable <cite>varname</cite>. <cite>data_E</cite> and <cite>data_nu</cite> should
+contain the Young modulus and Poisson ratio, respectively.
+<cite>region</cite> is an optional mesh region on which the term is added.
+If it is not specified, it is added
+on the whole mesh.
+On two-dimensional meshes, the term will correpsond to a plain stress
+approximation. On three-dimensional meshes, it will correspond to the
+standard model. 
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_linear_generic_assembly_brick">
+<tt class="descname">add_linear_generic_assembly_brick</tt><big>(</big><em>mim</em>, <em>expression</em>, <em>region=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_linear_generic_assembly_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_linear_generic_assembly_brick(self, MeshIm mim, string expression[, int region[, int is_symmetric[, int is_coercive]]])</p>
+<p>Deprecated. Use Model.add_linear_term() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_linear_incompressibility_brick">
+<tt class="descname">add_linear_incompressibility_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>multname_pressure</em>, <em>region=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_linear_incompressibility_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_linear_incompressibility_brick(self, MeshIm mim, string varname, string multname_pressure[, int region[, string dataexpr_coeff]])</p>
+<p>Add a linear incompressibility condition on <cite>variable</cite>. <cite>multname_pressure</cite>
+is a variable which represent the pressure. Be aware that an inf-sup
+condition between the finite element method describing the pressure and the
+primal variable has to be satisfied. <cite>region</cite> is an optional mesh region on
+which the term is added. If it is not specified, it is added on the whole
+mesh. <cite>dataexpr_coeff</cite> is an optional penalization coefficient for nearly
+incompressible elasticity for instance. In this case, it is the inverse
+of the Lame coefficient <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/>. Return the brick index in the
+model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_linear_term">
+<tt class="descname">add_linear_term</tt><big>(</big><em>mim</em>, <em>expression</em>, <em>region=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_linear_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_linear_term(self, MeshIm mim, string expression[, int region[, int is_symmetric[, int is_coercive]]])</p>
+<p>Adds a matrix term given by the assembly string <cite>expr</cite> which will
+be assembled in region <cite>region</cite> and with the integration method <cite>mim</cite>.
+Only the matrix term will be taken into account, assuming that it is
+linear.
+The advantage of declaring a term linear instead of nonlinear is that
+it will be assembled only once and no assembly is necessary for the
+residual.
+Take care that if the expression contains some variables and if the
+expression is a potential or of first order (i.e. describe the weak
+form, not the derivative of the weak form), the expression will be
+derivated with respect to all variables.
+You can specify if the term is symmetric, coercive or not.
+If you are not sure, the better is to declare the term not symmetric
+and not coercive. But some solvers (conjugate gradient for instance)
+are not allowed for non-coercive problems.
+<cite>brickname</cite> is an otpional name for the brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_macro">
+<tt class="descname">add_macro</tt><big>(</big><em>name</em>, <em>expr</em><big>)</big><a class="headerlink" href="#getfem.Model.add_macro" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Define a new macro for the high generic assembly language.
+The name include the parameters. For instance name=&#8217;sp(a,b)&#8217;, expr=&#8217;a.b&#8217;
+is a valid definition. Macro without parameter can also be defined.
+For instance name=&#8217;x1&#8217;, expr=&#8217;X[1]&#8217; is valid. Teh form name=&#8217;grad(u)&#8217;,
+expr=&#8217;Grad_u&#8217; is also allowed but in that case, the parameter &#8216;u&#8217; will
+only be allowed to be a variable name when using the macro. Note that
+macros can be directly defined inside the assembly strings with the
+keyword &#8216;Def&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_mass_brick">
+<tt class="descname">add_mass_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataexpr_rho=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_mass_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_mass_brick(self, MeshIm mim, string varname[, string dataexpr_rho[, int region]])</p>
+<p>Add mass term to the model relatively to the variable <cite>varname</cite>.
+If specified, the data <cite>dataexpr_rho</cite> is the
+density (1 if omitted). <cite>region</cite> is an optional mesh region on
+which the term is added. If it is not specified, it
+is added on the whole mesh. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_master_contact_boundary_to_biased_Nitsche_large_sliding_contact_brick">
+<tt class="descname">add_master_contact_boundary_to_biased_Nitsche_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>mim</em>, <em>region</em>, <em>dispname</em>, <em>wname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_master_contact_boundary_to_biased_Nitsche_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a master contact boundary to an existing biased Nitsche&#8217;s large sliding contact
+with friction brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_master_contact_boundary_to_large_sliding_contact_brick">
+<tt class="descname">add_master_contact_boundary_to_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>mim</em>, <em>region</em>, <em>dispname</em>, <em>wname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_master_contact_boundary_to_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a master contact boundary to an existing large sliding contact
+with friction brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_master_contact_boundary_to_projection_transformation">
+<tt class="descname">add_master_contact_boundary_to_projection_transformation</tt><big>(</big><em>transname</em>, <em>m</em>, <em>dispname</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_master_contact_boundary_to_projection_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a master contact boundary with corresponding displacement variable
+<cite>dispname</cite> on a specific boundary <cite>region</cite> to an existing projection
+interpolate transformation called <cite>transname</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_master_contact_boundary_to_raytracing_transformation">
+<tt class="descname">add_master_contact_boundary_to_raytracing_transformation</tt><big>(</big><em>transname</em>, <em>m</em>, <em>dispname</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_master_contact_boundary_to_raytracing_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a master contact boundary with corresponding displacement variable
+<cite>dispname</cite> on a specific boundary <cite>region</cite> to an existing raytracing
+interpolate transformation called <cite>transname</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_master_slave_contact_boundary_to_large_sliding_contact_brick">
+<tt class="descname">add_master_slave_contact_boundary_to_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>mim</em>, <em>region</em>, <em>dispname</em>, <em>lambdaname</em>, <em>wname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_master_slave_contact_boundary_to_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a contact boundary to an existing large sliding contact
+with friction brick which is both master and slave
+(allowing the self-contact).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_multiplier">
+<tt class="descname">add_multiplier</tt><big>(</big><em>name</em>, <em>mf</em>, <em>primalname</em>, <em>mim=None</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_multiplier" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a particular variable linked to a fem being a multiplier with
+respect to a primal variable. The dof will be filtered with the
+<tt class="docutils literal"><span class="pre">gmm::range_basis</span></tt> function applied on the terms of the model
+which link the multiplier and the primal variable. This in order to
+retain only linearly independent constraints on the primal variable.
+Optimized for boundary multipliers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_nodal_contact_between_nonmatching_meshes_brick">
+<tt class="descname">add_nodal_contact_between_nonmatching_meshes_brick</tt><big>(</big><em>mim1</em>, <em>mim2=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_nodal_contact_between_nonmatching_meshes_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_nodal_contact_between_nonmatching_meshes_brick(self,  MeshIm mim1[, MeshIm mim2], string varname_u1[, string varname_u2], string multname_n[, string multname_t], string dataname_r[, string dataname_fr], int rg1, int rg2[, int slave1, int slave2,  int augmented_version])</p>
+<p>Add a contact with or without friction condition between two faces of
+one or two elastic bodies. The condition is applied on the variable
+<cite>varname_u1</cite> or the variables <cite>varname_u1</cite> and <cite>varname_u2</cite> depending
+if a single or two distinct displacement fields are given. Integers
+<cite>rg1</cite> and <cite>rg2</cite> represent the regions expected to come in contact with
+each other. In the single displacement variable case the regions defined
+in both <cite>rg1</cite> and <cite>rg2</cite> refer to the variable <cite>varname_u1</cite>. In the case
+of two displacement variables, <cite>rg1</cite> refers to <cite>varname_u1</cite> and <cite>rg2</cite>
+refers to <cite>varname_u2</cite>. <cite>multname_n</cite> should be a fixed size variable
+whose size is the number of degrees of freedom on those regions among
+the ones defined in <cite>rg1</cite> and <cite>rg2</cite> which are characterized as &#8220;slaves&#8221;.
+It represents the contact equivalent nodal normal forces. <cite>multname_t</cite>
+should be a fixed size variable whose size corresponds to the size of
+<cite>multname_n</cite> multiplied by qdim - 1 . It represents the contact
+equivalent nodal tangent (frictional) forces. The augmentation parameter
+<cite>r</cite> should be chosen in a range of acceptabe values (close to the Young
+modulus of the elastic body, see Getfem user documentation). The
+friction coefficient stored in the parameter <cite>fr</cite> is either a single
+value or a vector of the same size as <cite>multname_n</cite>. The optional
+parameters <cite>slave1</cite> and <cite>slave2</cite> declare if the regions defined in <cite>rg1</cite>
+and <cite>rg2</cite> are correspondingly considered as &#8220;slaves&#8221;. By default
+<cite>slave1</cite> is true and <cite>slave2</cite> is false, i.e. <cite>rg1</cite> contains the slave
+surfaces, while &#8216;rg2&#8217; the master surfaces. Preferrably only one of
+<cite>slave1</cite> and <cite>slave2</cite> is set to true.  The parameter <cite>augmented_version</cite>
+indicates the augmentation strategy : 1 for the non-symmetric
+Alart-Curnier augmented Lagrangian, 2 for the symmetric one (except for
+the coupling between contact and Coulomb friction),
+3 for the new unsymmetric method.
+Basically, this brick computes the matrices BN and BT and the vectors
+gap and alpha and calls the basic contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_nodal_contact_with_rigid_obstacle_brick">
+<tt class="descname">add_nodal_contact_with_rigid_obstacle_brick</tt><big>(</big><em>mim</em>, <em>varname_u</em>, <em>multname_n</em>, <em>multname_t=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_nodal_contact_with_rigid_obstacle_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_nodal_contact_with_rigid_obstacle_brick(self,  MeshIm mim, string varname_u, string multname_n[, string multname_t], string dataname_r[, string dataname_friction_coeff], int region, string obstacle[,  int augmented_version])</p>
+<p>Add a contact with or without friction condition with a rigid obstacle
+to the model. The condition is applied on the variable <cite>varname_u</cite>
+on the boundary corresponding to <cite>region</cite>. The rigid obstacle should
+be described with the string <cite>obstacle</cite> being a signed distance to
+the obstacle. This string should be an expression where the coordinates
+are &#8216;x&#8217;, &#8216;y&#8217; in 2D and &#8216;x&#8217;, &#8216;y&#8217;, &#8216;z&#8217; in 3D. For instance, if the rigid
+obstacle correspond to <img class="math" src="../_images/math/2b07223c0a658743f3814bc594df03ba64566a8e.png" alt="z \le 0" style="vertical-align: -3px"/>, the corresponding signed distance
+will be simply &#8220;z&#8221;. <cite>multname_n</cite> should be a fixed size variable whose size
+is the number of degrees of freedom on boundary <cite>region</cite>. It represents the
+contact equivalent nodal forces. In order to add a friction condition
+one has to add the <cite>multname_t</cite> and <cite>dataname_friction_coeff</cite> parameters.
+<cite>multname_t</cite> should be a fixed size variable whose size is
+the number of degrees of freedom on boundary <cite>region</cite> multiplied by
+<img class="math" src="../_images/math/6a9f2f925b6ad9c226b9ad118c60d88d4a8b6bd3.png" alt="d-1" style="vertical-align: -1px"/> where <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" style="vertical-align: 0px"/> is the domain dimension. It represents
+the friction equivalent nodal forces.
+The augmentation parameter <cite>r</cite> should be chosen in a
+range of acceptabe values (close to the Young modulus of the elastic
+body, see Getfem user documentation).  <cite>dataname_friction_coeff</cite> is
+the friction coefficient. It could be a scalar or a vector of values
+representing the friction coefficient on each contact node. 
+The parameter <cite>augmented_version</cite>
+indicates the augmentation strategy : 1 for the non-symmetric
+Alart-Curnier augmented Lagrangian, 2 for the symmetric one (except for
+the coupling between contact and Coulomb friction),
+3 for the new unsymmetric method.
+Basically, this brick compute the matrix BN
+and the vectors gap and alpha and calls the basic contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_nonlinear_elasticity_brick">
+<tt class="descname">add_nonlinear_elasticity_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>constitutive_law</em>, <em>dataname</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_nonlinear_elasticity_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a nonlinear elasticity term to the model relatively to the
+variable <cite>varname</cite> (deprecated brick, use add_finite_strain_elaticity
+instead). <cite>lawname</cite> is the constitutive law which
+could be &#8216;SaintVenant Kirchhoff&#8217;, &#8216;Mooney Rivlin&#8217;, &#8216;neo Hookean&#8217;,
+&#8216;Ciarlet Geymonat&#8217; or &#8216;generalized Blatz Ko&#8217;.
+&#8216;Mooney Rivlin&#8217; and &#8216;neo Hookean&#8217; law names can be preceded with the word
+&#8216;compressible&#8217; or &#8216;incompressible&#8217; to force using the corresponding version.
+The compressible version of these laws requires one additional material
+coefficient. By default, the incompressible version of &#8216;Mooney Rivlin&#8217; law
+and the compressible one of the &#8216;neo Hookean&#8217; law are considered. In
+general, &#8216;neo Hookean&#8217; is a special case of the &#8216;Mooney Rivlin&#8217; law that
+requires one coefficient less.
+IMPORTANT : if the variable is defined on a 2D mesh, the plane strain
+approximation is automatically used.
+<cite>dataname</cite> is a vector of parameters for the constitutive law. Its length
+depends on the law. It could be a short vector of constant values or a
+vector field described on a finite element method for variable
+coefficients. <cite>region</cite> is an optional mesh region on which the term
+is added. If it is not specified, it is added on the whole mesh.
+This brick use the low-level generic assembly.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_nonlinear_generic_assembly_brick">
+<tt class="descname">add_nonlinear_generic_assembly_brick</tt><big>(</big><em>mim</em>, <em>expression</em>, <em>region=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_nonlinear_generic_assembly_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_nonlinear_generic_assembly_brick(self, MeshIm mim, string expression[, int region[, int is_symmetric[, int is_coercive]]])</p>
+<p>Deprecated. Use Model.add_nonlinear_term() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_nonlinear_incompressibility_brick">
+<tt class="descname">add_nonlinear_incompressibility_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>multname_pressure</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_nonlinear_incompressibility_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a nonlinear incompressibility condition on <cite>variable</cite> (for large
+strain elasticity). <cite>multname_pressure</cite>
+is a variable which represent the pressure. Be aware that an inf-sup
+condition between the finite element method describing the pressure and the
+primal variable has to be satisfied. <cite>region</cite> is an optional mesh region on
+which the term is added. If it is not specified, it is added on the
+whole mesh. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_nonlinear_term">
+<tt class="descname">add_nonlinear_term</tt><big>(</big><em>mim</em>, <em>expression</em>, <em>region=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_nonlinear_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_nonlinear_term(self, MeshIm mim, string expression[, int region[, int is_symmetric[, int is_coercive]]])</p>
+<p>Adds a nonlinear term given by the assembly string <cite>expr</cite> which will
+be assembled in region <cite>region</cite> and with the integration method <cite>mim</cite>.
+The expression can describe a potential or a weak form. Second order
+terms (i.e. containing second order test functions, Test2) are not
+allowed.
+You can specify if the term is symmetric, coercive or not.
+If you are not sure, the better is to declare the term not symmetric
+and not coercive. But some solvers (conjugate gradient for instance)
+are not allowed for non-coercive problems.
+<cite>brickname</cite> is an otpional name for the brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_nonmatching_meshes_contact_brick">
+<tt class="descname">add_nonmatching_meshes_contact_brick</tt><big>(</big><em>mim1</em>, <em>mim2=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_nonmatching_meshes_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_nonmatching_meshes_contact_brick(self,  MeshIm mim1[, MeshIm mim2], string varname_u1[, string varname_u2], string multname_n[, string multname_t], string dataname_r[, string dataname_fr], int rg1, int rg2[, int slave1, int slave2,  int augmented_version])</p>
+<p>DEPRECATED FUNCTION. Use &#8216;add nodal contact between nonmatching meshes brick&#8217; instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_normal_Dirichlet_condition_with_Nitsche_method">
+<tt class="descname">add_normal_Dirichlet_condition_with_Nitsche_method</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>Neumannterm</em>, <em>gamma0name</em>, <em>region</em>, <em>theta=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_normal_Dirichlet_condition_with_Nitsche_method" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_normal_Dirichlet_condition_with_Nitsche_method(self, MeshIm mim, string varname, string Neumannterm, string gamma0name, int region[, scalar theta][, string dataname])</p>
+<p>Add a Dirichlet condition to the normal component of the vector
+(or tensor) valued variable <cite>varname</cite> and the mesh region <cite>region</cite>.
+This region should be a boundary. <cite>Neumannterm</cite>
+is the expression of the Neumann term (obtained by the Green formula)
+described as an expression of the high-level
+generic assembly language. This term can be obtained by 
+Model.Neumann_term(varname, region) once all volumic bricks have
+been added to the model. The Dirichlet
+condition is prescribed with Nitsche&#8217;s method. <cite>dataname</cite> is the optional
+right hand side of the Dirichlet condition. It could be constant or
+described on a fem. <cite>gamma0name</cite> is the
+Nitsche&#8217;s method parameter. <cite>theta</cite> is a scalar value which can be
+positive or negative. <cite>theta = 1</cite> corresponds to the standard symmetric
+method which is conditionnaly coercive for  <cite>gamma0</cite> small.
+<cite>theta = -1</cite> corresponds to the skew-symmetric method which is
+inconditionnaly coercive. <cite>theta = 0</cite> is the simplest method
+for which the second derivative of the Neumann term is not necessary
+even for nonlinear problems. 
+Returns the brick index in the model.
+(This brick is not fully tested)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_normal_Dirichlet_condition_with_multipliers">
+<tt class="descname">add_normal_Dirichlet_condition_with_multipliers</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>mult_description</em>, <em>region</em>, <em>dataname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_normal_Dirichlet_condition_with_multipliers" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition to the normal component of the vector
+(or tensor) valued variable <cite>varname</cite> and the mesh
+region <cite>region</cite>. This region should be a boundary. The Dirichlet
+condition is prescribed with a multiplier variable described by
+<cite>mult_description</cite>. If <cite>mult_description</cite> is a string this is assumed
+to be the variable name corresponding to the multiplier (which should be
+first declared as a multiplier variable on the mesh region in the model).
+If it is a finite element method (mesh_fem object) then a multiplier
+variable will be added to the model and build on this finite element
+method (it will be restricted to the mesh region <cite>region</cite> and eventually
+some conflicting dofs with some other multiplier variables will be
+suppressed). If it is an integer, then a  multiplier variable will be
+added to the model and build on a classical finite element of degree
+that integer. <cite>dataname</cite> is the optional right hand side of  the
+Dirichlet condition. It could be constant or described on a fem; scalar
+or vector valued, depending on the variable on which the Dirichlet
+condition is prescribed (scalar if the variable
+is vector valued, vector if the variable is tensor valued).
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_normal_Dirichlet_condition_with_penalization">
+<tt class="descname">add_normal_Dirichlet_condition_with_penalization</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>coeff</em>, <em>region</em>, <em>dataname=None</em>, <em>mf_mult=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_normal_Dirichlet_condition_with_penalization" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition to the normal component of the vector
+(or tensor) valued variable <cite>varname</cite> and the mesh
+region <cite>region</cite>. This region should be a boundary. The Dirichlet
+condition is prescribed with penalization. The penalization coefficient
+is initially <cite>coeff</cite> and will be added to the data of the model.
+<cite>dataname</cite> is the optional right hand side of the Dirichlet condition.
+It could be constant or described on a fem; scalar or vector valued,
+depending on the variable on which the Dirichlet condition is prescribed
+(scalar if the variable
+is vector valued, vector if the variable is tensor valued).
+<cite>mf_mult</cite> is an optional parameter which allows to weaken the
+Dirichlet condition specifying a multiplier space.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_normal_derivative_Dirichlet_condition_with_multipliers">
+<tt class="descname">add_normal_derivative_Dirichlet_condition_with_multipliers</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>mult_description</em>, <em>region</em>, <em>dataname=None</em>, <em>R_must_be_derivated=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_normal_derivative_Dirichlet_condition_with_multipliers" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition on the normal derivative of the variable
+<cite>varname</cite> and on the mesh region <cite>region</cite> (which should be a boundary.
+The general form is
+<img class="math" src="../_images/math/6448a0b72f41f71c672eefe9acf6b6944c41e820.png" alt="\int \partial_n u(x)v(x) = \int r(x)v(x) \forall v" style="vertical-align: -6px"/>
+where <img class="math" src="../_images/math/c05cbeb1cf4b5153e365a9253baefde1c97135e8.png" alt="r(x)" style="vertical-align: -4px"/> is
+the right hand side for the Dirichlet condition (0 for
+homogeneous conditions) and <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> is in a space of multipliers
+defined by <cite>mult_description</cite>.
+If <cite>mult_description</cite> is a string this is assumed
+to be the variable name corresponding to the multiplier (which should be
+first declared as a multiplier variable on the mesh region in the model).
+If it is a finite element method (mesh_fem object) then a multiplier
+variable will be added to the model and build on this finite element
+method (it will be restricted to the mesh region <cite>region</cite> and eventually
+some conflicting dofs with some other multiplier variables will be
+suppressed). If it is an integer, then a  multiplier variable will be
+added to the model and build on a classical finite element of degree
+that integer. <cite>dataname</cite> is an optional parameter which represents
+the right hand side of the Dirichlet condition.
+If <cite>R_must_be_derivated</cite> is set to <cite>true</cite> then the normal
+derivative of <cite>dataname</cite> is considered.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_normal_derivative_Dirichlet_condition_with_penalization">
+<tt class="descname">add_normal_derivative_Dirichlet_condition_with_penalization</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>coeff</em>, <em>region</em>, <em>dataname=None</em>, <em>R_must_be_derivated=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_normal_derivative_Dirichlet_condition_with_penalization" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a Dirichlet condition on the normal derivative of the variable
+<cite>varname</cite> and on the mesh region <cite>region</cite> (which should be a boundary.
+The general form is
+<img class="math" src="../_images/math/6448a0b72f41f71c672eefe9acf6b6944c41e820.png" alt="\int \partial_n u(x)v(x) = \int r(x)v(x) \forall v" style="vertical-align: -6px"/>
+where <img class="math" src="../_images/math/c05cbeb1cf4b5153e365a9253baefde1c97135e8.png" alt="r(x)" style="vertical-align: -4px"/> is
+the right hand side for the Dirichlet condition (0 for
+homogeneous conditions).
+The penalization coefficient
+is initially <cite>coeff</cite> and will be added to the data of the model.
+It can be changed with the command Model.change_penalization_coeff().
+<cite>dataname</cite> is an optional parameter which represents
+the right hand side of the Dirichlet condition.
+If <cite>R_must_be_derivated</cite> is set to <cite>true</cite> then the normal
+derivative of <cite>dataname</cite> is considered.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_normal_derivative_source_term_brick">
+<tt class="descname">add_normal_derivative_source_term_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataname</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_normal_derivative_source_term_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a normal derivative source term brick
+<img class="math" src="../_images/math/4ade589871ce41d3b7211682dc6dc5349bdf6784.png" alt="F = \int b.\partial_n v" style="vertical-align: -6px"/> on the variable <cite>varname</cite> and the
+mesh region <cite>region</cite>.</p>
+<p>Update the right hand side of the linear system.
+<cite>dataname</cite> represents <cite>b</cite> and <cite>varname</cite> represents <cite>v</cite>.
+Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_normal_source_term_brick">
+<tt class="descname">add_normal_source_term_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataname</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_normal_source_term_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a source term on the variable <cite>varname</cite> on a boundary <cite>region</cite>.
+This region should be a boundary. The source term is
+represented by the data <cite>dataepxpr</cite> which could be any regular
+expression of the high-level generic assembly language (except
+for the complex version where it has to be a declared data of
+the model). A scalar
+product with the outward normal unit vector to the boundary is performed.
+The main aim of this brick is to represent a Neumann condition with a
+vector data without performing the scalar product with the normal as a
+pre-processing. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_penalized_contact_between_nonmatching_meshes_brick">
+<tt class="descname">add_penalized_contact_between_nonmatching_meshes_brick</tt><big>(</big><em>mim</em>, <em>varname_u1</em>, <em>varname_u2</em>, <em>dataname_r</em>, <em>dataname_coeff=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_penalized_contact_between_nonmatching_meshes_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_penalized_contact_between_nonmatching_meshes_brick(self,  MeshIm mim, string varname_u1, string varname_u2, string dataname_r [, string dataname_coeff], int region1, int region2 [, int option [, string dataname_lambda, [, string dataname_alpha [, string dataname_wt1, string dataname_wt2]]]])</p>
+<p>Add a penalized contact condition with or without friction between
+nonmatching meshes to the model.
+The condition is applied on the variables <cite>varname_u1</cite> and  <cite>varname_u2</cite>
+on the boundaries corresponding to <cite>region1</cite> and <cite>region2</cite>.
+The penalization parameter <cite>dataname_r</cite> should be chosen
+large enough to prescribe approximate non-penetration and friction
+conditions but not too large not to deteriorate too much the
+conditionning of the tangent system.
+The optional parameter <cite>dataname_friction_coeff</cite> is the friction
+coefficient which could be constant or defined on a finite element
+method on the same mesh as <cite>varname_u1</cite>.
+<cite>dataname_lambda</cite> is an optional parameter used if option
+is 2. In that case, the penalization term is shifted by lambda (this
+allows the use of an Uzawa algorithm on the corresponding augmented
+Lagrangian formulation)
+In case of contact with friction, <cite>dataname_alpha</cite>, <cite>dataname_wt1</cite> and
+<cite>dataname_wt2</cite> are optional parameters to solve evolutionary friction
+problems.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_penalized_contact_with_rigid_obstacle_brick">
+<tt class="descname">add_penalized_contact_with_rigid_obstacle_brick</tt><big>(</big><em>mim</em>, <em>varname_u</em>, <em>dataname_obstacle</em>, <em>dataname_r</em>, <em>dataname_coeff=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_penalized_contact_with_rigid_obstacle_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_penalized_contact_with_rigid_obstacle_brick(self,  MeshIm mim, string varname_u, string dataname_obstacle, string dataname_r [, string dataname_coeff], int region [, int option, string dataname_lambda, [, string dataname_alpha [, string dataname_wt]]])</p>
+<p>Add a penalized contact with or without friction condition with a
+rigid obstacle to the model.
+The condition is applied on the variable <cite>varname_u</cite>
+on the boundary corresponding to <cite>region</cite>. The rigid obstacle should
+be described with the data <cite>dataname_obstacle</cite> being a signed distance to
+the obstacle (interpolated on a finite element method).
+The penalization parameter <cite>dataname_r</cite> should be chosen
+large enough to prescribe approximate non-penetration and friction
+conditions but not too large not to deteriorate too much the
+conditionning of the tangent system.
+<cite>dataname_lambda</cite> is an optional parameter used if option
+is 2. In that case, the penalization term is shifted by lambda (this
+allows the use of an Uzawa algorithm on the corresponding augmented
+Lagrangian formulation)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_pointwise_constraints_with_given_multipliers">
+<tt class="descname">add_pointwise_constraints_with_given_multipliers</tt><big>(</big><em>varname</em>, <em>multname</em>, <em>dataname_pt</em>, <em>dataname_unitv=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_pointwise_constraints_with_given_multipliers" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_pointwise_constraints_with_given_multipliers(self, string varname, string multname, string dataname_pt[, string dataname_unitv] [, string dataname_val])</p>
+<p>Add some pointwise constraints on the variable <cite>varname</cite> using a given
+multiplier <cite>multname</cite>.
+The conditions are prescribed on a set of points given in the data
+<cite>dataname_pt</cite> whose dimension is the number of points times the dimension
+of the mesh.
+The multiplier variable should be a fixed size variable of size the
+number of points.
+If the variable represents a vector field, one has to give the data
+<cite>dataname_unitv</cite> which represents a vector of dimension the number of
+points times the dimension of the vector field which should store some
+unit vectors. In that case the prescribed constraint is the scalar
+product of the variable at the corresponding point with the corresponding
+unit vector.
+The optional data <cite>dataname_val</cite> is the vector of values to be prescribed
+at the different points.
+This brick is specifically designed to kill rigid displacement
+in a Neumann problem.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_pointwise_constraints_with_multipliers">
+<tt class="descname">add_pointwise_constraints_with_multipliers</tt><big>(</big><em>varname</em>, <em>dataname_pt</em>, <em>dataname_unitv=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_pointwise_constraints_with_multipliers" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_pointwise_constraints_with_multipliers(self, string varname, string dataname_pt[, string dataname_unitv] [, string dataname_val])</p>
+<p>Add some pointwise constraints on the variable <cite>varname</cite> using
+multiplier. The multiplier variable is automatically added to the model.
+The conditions are prescribed on a set of points given in the data
+<cite>dataname_pt</cite> whose dimension is the number of points times the dimension
+of the mesh.
+If the variable represents a vector field, one has to give the data
+<cite>dataname_unitv</cite> which represents a vector of dimension the number of
+points times the dimension of the vector field which should store some
+unit vectors. In that case the prescribed constraint is the scalar
+product of the variable at the corresponding point with the corresponding
+unit vector.
+The optional data <cite>dataname_val</cite> is the vector of values to be prescribed
+at the different points.
+This brick is specifically designed to kill rigid displacement
+in a Neumann problem.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_pointwise_constraints_with_penalization">
+<tt class="descname">add_pointwise_constraints_with_penalization</tt><big>(</big><em>varname</em>, <em>coeff</em>, <em>dataname_pt</em>, <em>dataname_unitv=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_pointwise_constraints_with_penalization" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_pointwise_constraints_with_penalization(self, string varname, scalar coeff, string dataname_pt[, string dataname_unitv] [, string dataname_val])</p>
+<p>Add some pointwise constraints on the variable <cite>varname</cite> thanks to
+a penalization. The penalization coefficient is initially
+<cite>penalization_coeff</cite> and will be added to the data of the model.
+The conditions are prescribed on a set of points given in the data
+<cite>dataname_pt</cite> whose dimension is the number of points times the dimension
+of the mesh.
+If the variable represents a vector field, one has to give the data
+<cite>dataname_unitv</cite> which represents a vector of dimension the number of
+points times the dimension of the vector field which should store some
+unit vectors. In that case the prescribed constraint is the scalar
+product of the variable at the corresponding point with the corresponding
+unit vector.
+The optional data <cite>dataname_val</cite> is the vector of values to be prescribed
+at the different points.
+This brick is specifically designed to kill rigid displacement
+in a Neumann problem.
+Returns the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_projection_transformation">
+<tt class="descname">add_projection_transformation</tt><big>(</big><em>transname</em>, <em>release_distance</em><big>)</big><a class="headerlink" href="#getfem.Model.add_projection_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a projection interpolate transformation called <cite>transname</cite> to a model
+to be used by the generic assembly bricks.
+CAUTION: For the moment, the derivative of the
+transformation is not taken into account in the model solve.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_raytracing_transformation">
+<tt class="descname">add_raytracing_transformation</tt><big>(</big><em>transname</em>, <em>release_distance</em><big>)</big><a class="headerlink" href="#getfem.Model.add_raytracing_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a raytracing interpolate transformation called <cite>transname</cite> to a model
+to be used by the generic assembly bricks.
+CAUTION: For the moment, the derivative of the
+transformation is not taken into account in the model solve.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_rigid_obstacle_to_Nitsche_large_sliding_contact_brick">
+<tt class="descname">add_rigid_obstacle_to_Nitsche_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>expr</em>, <em>N</em><big>)</big><a class="headerlink" href="#getfem.Model.add_rigid_obstacle_to_Nitsche_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a rigid obstacle to an existing large sliding contact
+with friction brick. <cite>expr</cite> is an expression using the high-level
+generic assembly language (where <cite>x</cite> is the current point n the mesh)
+which should be a signed distance to the obstacle.
+<cite>N</cite> is the mesh dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_rigid_obstacle_to_large_sliding_contact_brick">
+<tt class="descname">add_rigid_obstacle_to_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>expr</em>, <em>N</em><big>)</big><a class="headerlink" href="#getfem.Model.add_rigid_obstacle_to_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a rigid obstacle to an existing large sliding contact
+with friction brick. <cite>expr</cite> is an expression using the high-level
+generic assembly language (where <cite>x</cite> is the current point n the mesh)
+which should be a signed distance to the obstacle.
+<cite>N</cite> is the mesh dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_rigid_obstacle_to_projection_transformation">
+<tt class="descname">add_rigid_obstacle_to_projection_transformation</tt><big>(</big><em>transname</em>, <em>expr</em>, <em>N</em><big>)</big><a class="headerlink" href="#getfem.Model.add_rigid_obstacle_to_projection_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a rigid obstacle whose geometry corresponds to the zero level-set
+of the high-level generic assembly expression <cite>expr</cite>
+to an existing projection interpolate transformation called <cite>transname</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_rigid_obstacle_to_raytracing_transformation">
+<tt class="descname">add_rigid_obstacle_to_raytracing_transformation</tt><big>(</big><em>transname</em>, <em>expr</em>, <em>N</em><big>)</big><a class="headerlink" href="#getfem.Model.add_rigid_obstacle_to_raytracing_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a rigid obstacle whose geometry corresponds to the zero level-set
+of the high-level generic assembly expression <cite>expr</cite>
+to an existing raytracing interpolate transformation called <cite>transname</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_slave_contact_boundary_to_biased_Nitsche_large_sliding_contact_brick">
+<tt class="descname">add_slave_contact_boundary_to_biased_Nitsche_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>mim</em>, <em>region</em>, <em>dispname</em>, <em>lambdaname</em>, <em>wname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_slave_contact_boundary_to_biased_Nitsche_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a slave contact boundary to an existing biased Nitsche&#8217;s large sliding contact
+with friction brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_slave_contact_boundary_to_large_sliding_contact_brick">
+<tt class="descname">add_slave_contact_boundary_to_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em>, <em>mim</em>, <em>region</em>, <em>dispname</em>, <em>lambdaname</em>, <em>wname=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_slave_contact_boundary_to_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a slave contact boundary to an existing large sliding contact
+with friction brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_slave_contact_boundary_to_projection_transformation">
+<tt class="descname">add_slave_contact_boundary_to_projection_transformation</tt><big>(</big><em>transname</em>, <em>m</em>, <em>dispname</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_slave_contact_boundary_to_projection_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a slave contact boundary with corresponding displacement variable
+<cite>dispname</cite> on a specific boundary <cite>region</cite> to an existing projection
+interpolate transformation called <cite>transname</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_slave_contact_boundary_to_raytracing_transformation">
+<tt class="descname">add_slave_contact_boundary_to_raytracing_transformation</tt><big>(</big><em>transname</em>, <em>m</em>, <em>dispname</em>, <em>region</em><big>)</big><a class="headerlink" href="#getfem.Model.add_slave_contact_boundary_to_raytracing_transformation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a slave contact boundary with corresponding displacement variable
+<cite>dispname</cite> on a specific boundary <cite>region</cite> to an existing raytracing
+interpolate transformation called <cite>transname</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_small_strain_elastoplasticity_brick">
+<tt class="descname">add_small_strain_elastoplasticity_brick</tt><big>(</big><em>mim</em>, <em>lawname</em>, <em>unknowns_type</em>, <em>varnames=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_small_strain_elastoplasticity_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_small_strain_elastoplasticity_brick(self, MeshIm mim,  string lawname, string unknowns_type [, string varnames, ...] [, string params, ...] [, string theta = &#8216;1&#8217; [, string dt = &#8216;timestep&#8217;]] [, int region = -1])</p>
+<p>Adds a small strain plasticity term to the model <cite>M</cite>. This is the
+main GetFEM++ brick for small strain plasticity. <cite>lawname</cite> is the name
+of an implemented plastic law, <cite>unknowns_type</cite> indicates the choice
+between a discretization where the plastic multiplier is an unknown of
+the problem or (return mapping approach) just a data of the model
+stored for the next iteration. Remember that in both cases, a multiplier
+is stored anyway. <cite>varnames</cite> is a set of variable and data names with
+length which may depend on the plastic law (at least the displacement,
+the plastic multiplier and the plastic strain). <cite>params</cite> is a list of
+expressions for the parameters (at least elastic coefficients and the
+yield stress). These expressions can be some data names (or even
+variable names) of the model but can also be any scalar valid expression
+of the high level assembly language (such as &#8216;1/2&#8217;, &#8216;2+sin(X[0])&#8217;,
+&#8216;1+Norm(v)&#8217; ...). The last two parameters optionally provided in
+<cite>params</cite> are the <cite>theta</cite> parameter of the <cite>theta</cite>-scheme (generalized
+trapezoidal rule) used for the plastic strain integration and the
+time-step`dt`. The default value for <cite>theta</cite> if omitted is 1, which
+corresponds to the classical Backward Euler scheme which is first order
+consistent. <cite>theta=1/2</cite> corresponds to the Crank-Nicolson scheme
+(trapezoidal rule) which is second order consistent. Any value
+between 1/2 and 1 should be a valid value. The default value of <cite>dt</cite> is
+&#8216;timestep&#8217; which simply indicates the time step defined in the model
+(by md.set_time_step(dt)). Alternatively it can be any expression
+(data name, constant value ...). The time step can be altered from one
+iteration to the next one. <cite>region</cite> is a mesh region.</p>
+<p>The available plasticity laws are:</p>
+<ul class="simple">
+<li>&#8216;Prandtl Reuss&#8217; (or &#8216;isotropic perfect plasticity&#8217;).
+Isotropic elasto-plasticity with no hardening. The variables are the
+displacement, the plastic multiplier and the plastic strain.
+The displacement should be a variable and have a corresponding data
+having the same name preceded by &#8216;Previous_&#8217; corresponding to the
+displacement at the previous time step (typically &#8216;u&#8217; and &#8216;Previous_u&#8217;).
+The plastic multiplier should also have two versions (typically &#8216;xi&#8217;
+and &#8216;Previous_xi&#8217;) the first one being defined as data if
+<cite>unknowns_type ` is &#8216;DISPLACEMENT_ONLY&#8217; or the integer value 0, or as
+a variable if `unknowns_type</cite> is DISPLACEMENT_AND_PLASTIC_MULTIPLIER
+or the integer value 1.
+The plastic strain should represent a n x n data tensor field stored
+on mesh_fem or (preferably) on an im_data (corresponding to <cite>mim</cite>).
+The data are the first Lame coefficient, the second one (shear modulus)
+and the uniaxial yield stress. A typical call is
+Model.add_small_strain_elastoplasticity_brick(mim, &#8216;Prandtl Reuss&#8217;, 0, &#8216;u&#8217;, &#8216;xi&#8217;, &#8216;Previous_Ep&#8217;, &#8216;lambda&#8217;, &#8216;mu&#8217;, &#8216;sigma_y&#8217;, &#8216;1&#8217;, &#8216;timestep&#8217;);
+IMPORTANT: Note that this law implements
+the 3D expressions. If it is used in 2D, the expressions are just
+transposed to the 2D. For the plane strain approximation, see below.</li>
+<li>&#8220;plane strain Prandtl Reuss&#8221;
+(or &#8220;plane strain isotropic perfect plasticity&#8221;)
+The same law as the previous one but adapted to the plane strain
+approximation. Can only be used in 2D.</li>
+<li>&#8220;Prandtl Reuss linear hardening&#8221;
+(or &#8220;isotropic plasticity linear hardening&#8221;).
+Isotropic elasto-plasticity with linear isotropic and kinematic
+hardening. An additional variable compared to &#8220;Prandtl Reuss&#8221; law:
+the accumulated plastic strain. Similarly to the plastic strain, it
+is only stored at the end of the time step, so a simple data is
+required (preferably on an im_data).
+Two additional parameters: the kinematic hardening modulus and the
+isotropic one. 3D expressions only. A typical call is
+Model.add_small_strain_elastoplasticity_brick(mim, &#8216;Prandtl Reuss linear hardening&#8217;, 0, &#8216;u&#8217;, &#8216;xi&#8217;, &#8216;Previous_Ep&#8217;, &#8216;Previous_alpha&#8217;, &#8216;lambda&#8217;, &#8216;mu&#8217;, &#8216;sigma_y&#8217;, &#8216;H_k&#8217;, H_i&#8217;, &#8216;1&#8217;, &#8216;timestep&#8217;);</li>
+<li>&#8220;plane strain Prandtl Reuss linear hardening&#8221;
+(or &#8220;plane strain isotropic plasticity linear hardening&#8221;).
+The same law as the previous one but adapted to the plane strain
+approximation. Can only be used in 2D.</li>
+</ul>
+<p>See GetFEM++ user documentation for further explanations on the
+discretization of the plastic flow and on the implemented plastic laws.
+See also GetFEM++ user documentation on time integration strategy
+(integration of transient problems).</p>
+<p>IMPORTANT : remember that <cite>small_strain_elastoplasticity_next_iter</cite> has
+to be called at the end of each time step, before the next one
+(and before any post-treatment : this sets the value of the plastic
+strain and plastic multiplier).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_source_term">
+<tt class="descname">add_source_term</tt><big>(</big><em>mim</em>, <em>expression</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_source_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Adds a source term given by the assembly string <cite>expr</cite> which will
+be assembled in region <cite>region</cite> and with the integration method <cite>mim</cite>.
+Only the residual term will be taken into account.
+Take care that if the expression contains some variables and if the
+expression is a potential, the expression will be
+derivated with respect to all variables.
+<cite>brickname</cite> is an optional name for the brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_source_term_brick">
+<tt class="descname">add_source_term_brick</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>dataexpr</em>, <em>region=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.add_source_term_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: ind = Model.add_source_term_brick(self, MeshIm mim, string varname, string dataexpr[, int region[, string directdataname]])</p>
+<p>Add a source term to the model relatively to the variable <cite>varname</cite>.
+The source term is
+represented by <cite>dataexpr</cite> which could be any regular expression of the
+high-level generic assembly language (except for the complex version
+where it has to be a declared data of the model).
+<cite>region</cite> is an optional mesh region
+on which the term is added. An additional optional data <cite>directdataname</cite>
+can be provided. The corresponding data vector will be directly added
+to the right hand side without assembly. Note that when region is a
+boundary, this brick allows to prescribe a nonzero Neumann boundary
+condition. Return the brick index in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_source_term_generic_assembly_brick">
+<tt class="descname">add_source_term_generic_assembly_brick</tt><big>(</big><em>mim</em>, <em>expression</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.add_source_term_generic_assembly_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Deprecated. Use Model.add_source_term() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_theta_method_for_first_order">
+<tt class="descname">add_theta_method_for_first_order</tt><big>(</big><em>varname</em>, <em>theta</em><big>)</big><a class="headerlink" href="#getfem.Model.add_theta_method_for_first_order" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Attach a theta method for the time discretization of the variable
+<cite>varname</cite>. Valid only if there is at most first order time derivative
+of the variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_theta_method_for_second_order">
+<tt class="descname">add_theta_method_for_second_order</tt><big>(</big><em>varname</em>, <em>theta</em><big>)</big><a class="headerlink" href="#getfem.Model.add_theta_method_for_second_order" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Attach a theta method for the time discretization of the variable
+<cite>varname</cite>. Valid only if there is at most second order time derivative
+of the variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.add_variable">
+<tt class="descname">add_variable</tt><big>(</big><em>name</em>, <em>sizes</em><big>)</big><a class="headerlink" href="#getfem.Model.add_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a variable to the model of constant sizes. <cite>sizes</cite> is either a
+integer (for a scalar or vector variable) or a vector of dimensions
+for a tensor variable. <cite>name</cite> is the variable name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.assembly">
+<tt class="descname">assembly</tt><big>(</big><em>option=None</em><big>)</big><a class="headerlink" href="#getfem.Model.assembly" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of the tangent system taking into account the terms
+from all bricks. <cite>option</cite>, if specified, should be &#8216;build_all&#8217;,
+&#8216;build_rhs&#8217;, &#8216;build_matrix&#8217;.
+The default is to build the whole
+tangent linear system (matrix and rhs). This function is useful
+to solve your problem with you own solver.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.brick_list">
+<tt class="descname">brick_list</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.brick_list" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>print to the output the list of bricks of the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.brick_term_rhs">
+<tt class="descname">brick_term_rhs</tt><big>(</big><em>ind_brick</em>, <em>ind_term=None</em>, <em>sym=None</em>, <em>ind_iter=None</em><big>)</big><a class="headerlink" href="#getfem.Model.brick_term_rhs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the access to the part of the right hand side of a term
+of a particular nonlinear brick. Does not account of the eventual
+time dispatcher. An assembly of the rhs has to be done first.
+<cite>ind_brick</cite> is the brick index. <cite>ind_term</cite> is the index of the
+term inside the brick (default value : 0).
+<cite>sym</cite> is to access to the second right hand side of for symmetric
+terms acting on two different variables (default is 0).
+<cite>ind_iter</cite> is the iteration number when time dispatchers are
+used (default is 0).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.change_penalization_coeff">
+<tt class="descname">change_penalization_coeff</tt><big>(</big><em>ind_brick</em>, <em>coeff</em><big>)</big><a class="headerlink" href="#getfem.Model.change_penalization_coeff" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Change the penalization coefficient of a Dirichlet condition with
+penalization brick. If the brick is not of this kind, this
+function has an undefined behavior.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a (unique) string representation of the Model.</p>
+<p>This can be used to perform comparisons between two
+different Model objects.
+This function is to be completed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.clear" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Clear the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.clear_assembly_assignment">
+<tt class="descname">clear_assembly_assignment</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.clear_assembly_assignment" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Delete all added assembly assignments</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_Von_Mises_or_Tresca">
+<tt class="descname">compute_Von_Mises_or_Tresca</tt><big>(</big><em>varname</em>, <em>lawname</em>, <em>dataname</em>, <em>mf_vm</em>, <em>version=None</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_Von_Mises_or_Tresca" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute on <cite>mf_vm</cite> the Von-Mises stress or the Tresca stress of a field
+for nonlinear elasticity in 3D. <cite>lawname</cite> is the constitutive law which
+could be &#8216;SaintVenant Kirchhoff&#8217;, &#8216;Mooney Rivlin&#8217;, &#8216;neo Hookean&#8217; or
+&#8216;Ciarlet Geymonat&#8217;.
+<cite>dataname</cite> is a vector of parameters for the constitutive law. Its length
+depends on the law. It could be a short vector of constant values or a
+vector field described on a finite element method for variable coefficients.
+<cite>version</cite> should be  &#8216;Von_Mises&#8217; or &#8216;Tresca&#8217; (&#8216;Von_Mises&#8217; is the default).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_elastoplasticity_Von_Mises_or_Tresca">
+<tt class="descname">compute_elastoplasticity_Von_Mises_or_Tresca</tt><big>(</big><em>datasigma</em>, <em>mf_vm</em>, <em>version=None</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_elastoplasticity_Von_Mises_or_Tresca" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute on <cite>mf_vm</cite> the Von-Mises or the Tresca stress of a field for plasticity and return it into the vector V.
+<cite>datasigma</cite> is a vector which contains the stress constraints values supported by the mesh.
+<cite>version</cite> should be  &#8216;Von_Mises&#8217; or &#8216;Tresca&#8217; (&#8216;Von_Mises&#8217; is the default).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_finite_strain_elasticity_Von_Mises">
+<tt class="descname">compute_finite_strain_elasticity_Von_Mises</tt><big>(</big><em>lawname</em>, <em>varname</em>, <em>params</em>, <em>mf_vm</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_finite_strain_elasticity_Von_Mises" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute on <cite>mf_vm</cite> the Von-Mises stress of a field <cite>varname</cite>
+for nonlinear elasticity in 3D. <cite>lawname</cite> is the constitutive law which
+should be a valid name. <cite>params</cite> are the parameters law. It could be
+a short vector of constant values or may depend on data or variables
+of the model.
+Uses the high-level generic assembly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_finite_strain_elastoplasticity_Von_Mises">
+<tt class="descname">compute_finite_strain_elastoplasticity_Von_Mises</tt><big>(</big><em>mim</em>, <em>mf_vm</em>, <em>lawname</em>, <em>unknowns_type</em>, <em>varnames=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_finite_strain_elastoplasticity_Von_Mises" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: V = Model.compute_finite_strain_elastoplasticity_Von_Mises(self, MeshIm mim, MeshFem mf_vm, string lawname, string unknowns_type, [, string varnames, ...] [, string params, ...] [, int region = -1])</p>
+<p>Compute on <cite>mf_vm</cite> the Von-Mises or the Tresca stress of a field for plasticity and return it into the vector V.
+The first input parameters ar as in the function &#8216;finite strain elastoplasticity next iter&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_isotropic_linearized_Von_Mises_or_Tresca">
+<tt class="descname">compute_isotropic_linearized_Von_Mises_or_Tresca</tt><big>(</big><em>varname</em>, <em>dataname_lambda</em>, <em>dataname_mu</em>, <em>mf_vm</em>, <em>version=None</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_isotropic_linearized_Von_Mises_or_Tresca" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the Von-Mises stress or the Tresca stress of a field (only
+valid for isotropic linearized elasticity in 3D). <cite>version</cite> should
+be  &#8216;Von_Mises&#8217; or &#8216;Tresca&#8217; (&#8216;Von_Mises&#8217; is the default).
+Parametrized by Lame coefficients.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_isotropic_linearized_Von_Mises_pstrain">
+<tt class="descname">compute_isotropic_linearized_Von_Mises_pstrain</tt><big>(</big><em>varname</em>, <em>data_E</em>, <em>data_nu</em>, <em>mf_vm</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_isotropic_linearized_Von_Mises_pstrain" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the Von-Mises stress  of a displacement field for isotropic
+linearized elasticity in 3D or in 2D with plane strain assumption.
+Parametrized by Young modulus and Poisson ratio.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_isotropic_linearized_Von_Mises_pstress">
+<tt class="descname">compute_isotropic_linearized_Von_Mises_pstress</tt><big>(</big><em>varname</em>, <em>data_E</em>, <em>data_nu</em>, <em>mf_vm</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_isotropic_linearized_Von_Mises_pstress" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute the Von-Mises stress  of a displacement field for isotropic
+linearized elasticity in 3D or in 2D with plane stress assumption.
+Parametrized by Young modulus and Poisson ratio.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_plastic_part">
+<tt class="descname">compute_plastic_part</tt><big>(</big><em>mim</em>, <em>mf_pl</em>, <em>varname</em>, <em>previous_dep_name</em>, <em>projname</em>, <em>datalambda</em>, <em>datamu</em>, <em>datathreshold</em>, <em>datasigma</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_plastic_part" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute on <cite>mf_pl</cite> the plastic part and return it into the vector V.
+<cite>datasigma</cite> is a vector which contains the stress constraints values supported by the mesh.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.compute_second_Piola_Kirchhoff_tensor">
+<tt class="descname">compute_second_Piola_Kirchhoff_tensor</tt><big>(</big><em>varname</em>, <em>lawname</em>, <em>dataname</em>, <em>mf_sigma</em><big>)</big><a class="headerlink" href="#getfem.Model.compute_second_Piola_Kirchhoff_tensor" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compute on <cite>mf_sigma</cite> the second Piola Kirchhoff stress tensor of a field
+for nonlinear elasticity in 3D. <cite>lawname</cite> is the constitutive law which
+could be &#8216;SaintVenant Kirchhoff&#8217;, &#8216;Mooney Rivlin&#8217;, &#8216;neo Hookean&#8217; or
+&#8216;Ciarlet Geymonat&#8217;.
+<cite>dataname</cite> is a vector of parameters for the constitutive law. Its length
+depends on the law. It could be a short vector of constant values or a
+vector field described on a finite element method for variable
+coefficients.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.contact_brick_set_BN">
+<tt class="descname">contact_brick_set_BN</tt><big>(</big><em>indbrick</em>, <em>BN</em><big>)</big><a class="headerlink" href="#getfem.Model.contact_brick_set_BN" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Can be used to set the BN matrix of a basic contact/friction brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.contact_brick_set_BT">
+<tt class="descname">contact_brick_set_BT</tt><big>(</big><em>indbrick</em>, <em>BT</em><big>)</big><a class="headerlink" href="#getfem.Model.contact_brick_set_BT" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Can be used to set the BT matrix of a basic contact with
+friction brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.define_variable_group">
+<tt class="descname">define_variable_group</tt><big>(</big><em>name</em>, <em>varname=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.define_variable_group" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Model.define_variable_group(self, string name[, string varname, ...])</p>
+<p>Defines a group of variables for the interpolation (mainly for the
+raytracing interpolation transformation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.del_macro">
+<tt class="descname">del_macro</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#getfem.Model.del_macro" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Delete a previously defined macro for the high generic assembly language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.delete_brick">
+<tt class="descname">delete_brick</tt><big>(</big><em>ind_brick</em><big>)</big><a class="headerlink" href="#getfem.Model.delete_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Delete a variable or a data from the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.delete_variable">
+<tt class="descname">delete_variable</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#getfem.Model.delete_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Delete a variable or a data from the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.disable_bricks">
+<tt class="descname">disable_bricks</tt><big>(</big><em>bricks_indices</em><big>)</big><a class="headerlink" href="#getfem.Model.disable_bricks" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Disable a brick (the brick will no longer participate to the
+building of the tangent linear system).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.disable_variable">
+<tt class="descname">disable_variable</tt><big>(</big><em>varname</em><big>)</big><a class="headerlink" href="#getfem.Model.disable_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Disable a variable for a solve (and its attached multipliers).
+The next solve will operate only on
+the remaining variables. This allows to solve separately different
+parts of a model. If there is a strong coupling of the variables,
+a fixed point strategy can the be used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.displacement_group_name_of_Nitsche_large_sliding_contact_brick">
+<tt class="descname">displacement_group_name_of_Nitsche_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em><big>)</big><a class="headerlink" href="#getfem.Model.displacement_group_name_of_Nitsche_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the name of the group of variables corresponding to the
+sliding data for an existing large sliding contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.displacement_group_name_of_large_sliding_contact_brick">
+<tt class="descname">displacement_group_name_of_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em><big>)</big><a class="headerlink" href="#getfem.Model.displacement_group_name_of_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the name of the group of variables corresponding to the
+sliding data for an existing large sliding contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a Model object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.elastoplasticity_next_iter">
+<tt class="descname">elastoplasticity_next_iter</tt><big>(</big><em>mim</em>, <em>varname</em>, <em>previous_dep_name</em>, <em>projname</em>, <em>datalambda</em>, <em>datamu</em>, <em>datathreshold</em>, <em>datasigma</em><big>)</big><a class="headerlink" href="#getfem.Model.elastoplasticity_next_iter" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Used with the old (obsolete) elastoplasticity brick to pass from an
+iteration to the next one.
+Compute and save the stress constraints sigma for the next iterations.
+&#8216;mim&#8217; is the integration method to use for the computation.
+&#8216;varname&#8217; is the main variable of the problem.
+&#8216;previous_dep_name&#8217; represents the displacement at the previous time step.
+&#8216;projname&#8217; is the type of projection to use. For the moment it could only be &#8216;Von Mises&#8217; or &#8216;VM&#8217;.
+&#8216;datalambda&#8217; and &#8216;datamu&#8217; are the Lame coefficients of the material.
+&#8216;datasigma&#8217; is a vector which will contain the new stress constraints values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.enable_bricks">
+<tt class="descname">enable_bricks</tt><big>(</big><em>bricks_indices</em><big>)</big><a class="headerlink" href="#getfem.Model.enable_bricks" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Enable a disabled brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.enable_variable">
+<tt class="descname">enable_variable</tt><big>(</big><em>varname</em><big>)</big><a class="headerlink" href="#getfem.Model.enable_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Enable a disabled variable (and its attached multipliers).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.finite_strain_elastoplasticity_next_iter">
+<tt class="descname">finite_strain_elastoplasticity_next_iter</tt><big>(</big><em>mim</em>, <em>lawname</em>, <em>unknowns_type</em>, <em>varnames=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.finite_strain_elastoplasticity_next_iter" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Model.finite_strain_elastoplasticity_next_iter(self, MeshIm mim, string lawname, string unknowns_type, [, string varnames, ...] [, string params, ...] [, int region = -1])</p>
+<p>Function that allows to pass from a time step to another for the
+finite strain plastic brick. The parameters have to be exactly the
+same than the one of <cite>add_finite_strain_elastoplasticity_brick</cite>,
+so see the documentation of this function for the explanations.
+Basically, this brick computes the plastic strain
+and the plastic multiplier and stores them for the next step.
+For the Simo-Miehe law which is currently the only one implemented,
+this function updates the state variables defined in the last two
+entries of <cite>varnames</cite>, and resets the plastic multiplier field given
+as the second entry of <cite>varnames</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.first_iter">
+<tt class="descname">first_iter</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.first_iter" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>To be executed before the first iteration of a time integration
+scheme.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.from_variables">
+<tt class="descname">from_variables</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.from_variables" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the vector of all the degrees of freedom of the model consisting
+of the concatenation of the variables of the model (useful
+to solve your problem with you own solver).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.get_time">
+<tt class="descname">get_time</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.get_time" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Give the value of the data <cite>t</cite> corresponding to the current time.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.get_time_step">
+<tt class="descname">get_time_step</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.get_time_step" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the value of the time step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.interpolation">
+<tt class="descname">interpolation</tt><big>(</big><em>expr</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.interpolation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: V = Model.interpolation(self, string expr, {MeshFem mf | MeshImd mimd | vec pts,  Mesh m}[, int region[, int extrapolation[, int rg_source]]])</p>
+<p>Interpolate a certain expression with respect to the mesh_fem <cite>mf</cite>
+or the mesh_im_data <cite>mimd</cite> or the set of points <cite>pts</cite> on mesh <cite>m</cite>.
+The expression has to be valid according to the high-level generic
+assembly language possibly including references to the variables
+and data of the model.</p>
+<p>The options <cite>extrapolation</cite> and <cite>rg_source</cite> are specific to
+interpolations with respect to a set of points <cite>pts</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.interval_of_variable">
+<tt class="descname">interval_of_variable</tt><big>(</big><em>varname</em><big>)</big><a class="headerlink" href="#getfem.Model.interval_of_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the interval of the variable <cite>varname</cite> in the linear system of
+the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.is_complex">
+<tt class="descname">is_complex</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.is_complex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 0 is the model is real, 1 if it is complex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.list_residuals">
+<tt class="descname">list_residuals</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.list_residuals" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>print to the output the residuals corresponding to all terms
+included in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.local_projection">
+<tt class="descname">local_projection</tt><big>(</big><em>mim</em>, <em>expr</em>, <em>mf</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.Model.local_projection" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Make an elementwise L2 projection of an expression with respect
+to the mesh_fem <cite>mf</cite>. This mesh_fem has to be
+a discontinuous one.
+The expression has to be valid according to the high-level generic
+assembly language possibly including references to the variables
+and data of the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.matrix_term">
+<tt class="descname">matrix_term</tt><big>(</big><em>ind_brick</em>, <em>ind_term</em><big>)</big><a class="headerlink" href="#getfem.Model.matrix_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the matrix term ind_term of the brick ind_brick if it exists</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.memsize">
+<tt class="descname">memsize</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.memsize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a rough approximation of the amount of memory (in bytes) used by
+the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.mesh_fem_of_variable">
+<tt class="descname">mesh_fem_of_variable</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#getfem.Model.mesh_fem_of_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives access to the <cite>mesh_fem</cite> of a variable or data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.mult_varname_Dirichlet">
+<tt class="descname">mult_varname_Dirichlet</tt><big>(</big><em>ind_brick</em><big>)</big><a class="headerlink" href="#getfem.Model.mult_varname_Dirichlet" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the name of the multiplier variable for a Dirichlet brick.
+If the brick is not a Dirichlet condition with multiplier brick,
+this function has an undefined behavior</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.nbdof">
+<tt class="descname">nbdof</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.nbdof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the total number of degrees of freedom of the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.next_iter">
+<tt class="descname">next_iter</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.next_iter" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>To be executed at the end of each iteration of a time
+integration scheme.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.perform_init_time_derivative">
+<tt class="descname">perform_init_time_derivative</tt><big>(</big><em>ddt</em><big>)</big><a class="headerlink" href="#getfem.Model.perform_init_time_derivative" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>By calling this function, indicates that the next solve will compute
+the solution for a (very) small time step <cite>ddt</cite> in order to initalize
+the data corresponding to the derivatives needed by time integration
+schemes (mainly the initial time derivative for order one in time
+problems  and the second order time derivative for second order in time
+problems). The next solve will not change the value of the variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.resize_variable">
+<tt class="descname">resize_variable</tt><big>(</big><em>name</em>, <em>sizes</em><big>)</big><a class="headerlink" href="#getfem.Model.resize_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Resize a  constant size variable of the model.  <cite>sizes</cite> is either a
+integer (for a scalar or vector variable) or a vector of dimensions
+for a tensor variable. <cite>name</cite> is the variable name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.rhs">
+<tt class="descname">rhs</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.rhs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the right hand side of the tangent problem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.set_element_extrapolation_correspondance">
+<tt class="descname">set_element_extrapolation_correspondance</tt><big>(</big><em>transname</em>, <em>elt_corr</em><big>)</big><a class="headerlink" href="#getfem.Model.set_element_extrapolation_correspondance" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Change the correspondance map of an element extrapolation interpolate
+transformation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.set_private_matrix">
+<tt class="descname">set_private_matrix</tt><big>(</big><em>indbrick</em>, <em>B</em><big>)</big><a class="headerlink" href="#getfem.Model.set_private_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>For some specific bricks having an internal sparse matrix
+(explicit bricks: &#8216;constraint brick&#8217; and &#8216;explicit matrix brick&#8217;),
+set this matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.set_private_rhs">
+<tt class="descname">set_private_rhs</tt><big>(</big><em>indbrick</em>, <em>B</em><big>)</big><a class="headerlink" href="#getfem.Model.set_private_rhs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>For some specific bricks having an internal right hand side vector
+(explicit bricks: &#8216;constraint brick&#8217; and &#8216;explicit rhs brick&#8217;),
+set this rhs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.set_time">
+<tt class="descname">set_time</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#getfem.Model.set_time" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the value of the data <cite>t</cite> corresponding to the current time to <cite>t</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.set_time_step">
+<tt class="descname">set_time_step</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#getfem.Model.set_time_step" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the value of the time step to <cite>dt</cite>. This value can be change
+from a step to another for all one-step schemes (i.e for the moment
+to all proposed time integration schemes).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.set_variable">
+<tt class="descname">set_variable</tt><big>(</big><em>name</em>, <em>V</em><big>)</big><a class="headerlink" href="#getfem.Model.set_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the value of a variable or data. <cite>name</cite> is the data name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.shift_variables_for_time_integration">
+<tt class="descname">shift_variables_for_time_integration</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.shift_variables_for_time_integration" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Function used to shift the variables of a model to the data
+corresponding of ther value on the previous time step for time
+integration schemes. For each variable for which a time integration
+scheme has been declared, the scheme is called to perform the shift.
+This function has to be called between two time steps.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.sliding_data_group_name_of_Nitsche_large_sliding_contact_brick">
+<tt class="descname">sliding_data_group_name_of_Nitsche_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em><big>)</big><a class="headerlink" href="#getfem.Model.sliding_data_group_name_of_Nitsche_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the name of the group of variables corresponding to the
+sliding data for an existing large sliding contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.sliding_data_group_name_of_large_sliding_contact_brick">
+<tt class="descname">sliding_data_group_name_of_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em><big>)</big><a class="headerlink" href="#getfem.Model.sliding_data_group_name_of_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the name of the group of variables corresponding to the
+sliding data for an existing large sliding contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.small_strain_elastoplasticity_Von_Mises">
+<tt class="descname">small_strain_elastoplasticity_Von_Mises</tt><big>(</big><em>mim</em>, <em>mf_vm</em>, <em>lawname</em>, <em>unknowns_type</em>, <em>varnames=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.small_strain_elastoplasticity_Von_Mises" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: V = Model.small_strain_elastoplasticity_Von_Mises(self, MeshIm mim, MeshFem mf_vm, string lawname, string unknowns_type [, string varnames, ...] [, string params, ...] [, string theta = &#8216;1&#8217; [, string dt = &#8216;timestep&#8217;]] [, int region])</p>
+<p>This function computes the Von Mises stress field with respect to
+a small strain elastoplasticity term, approximated on <cite>mf_vm</cite>,
+and stores the result into <cite>VM</cite>.  All other parameters have to be
+exactly the same as for <cite>add_small_strain_elastoplasticity_brick</cite>.
+Remember that <cite>small_strain_elastoplasticity_next_iter</cite> has to be called
+before any call of this function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.small_strain_elastoplasticity_next_iter">
+<tt class="descname">small_strain_elastoplasticity_next_iter</tt><big>(</big><em>mim</em>, <em>lawname</em>, <em>unknowns_type</em>, <em>varnames=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.small_strain_elastoplasticity_next_iter" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Model.small_strain_elastoplasticity_next_iter(self, MeshIm mim,  string lawname, string unknowns_type [, string varnames, ...] [, string params, ...] [, string theta = &#8216;1&#8217; [, string dt = &#8216;timestep&#8217;]] [, int region = -1])</p>
+<p>Function that allows to pass from a time step to another for the
+small strain plastic brick. The parameters have to be exactly the
+same than the one of <cite>add_small_strain_elastoplasticity_brick</cite>,
+so see the documentation of this function for the explanations.
+Basically, this brick computes the plastic strain
+and the plastic multiplier and stores them for the next step.
+Additionaly, it copies the computed displacement to the data
+that stores the displacement of the previous time step (typically
+&#8216;u&#8217; to &#8216;Previous_u&#8217;). It has to be called before any use of
+<cite>compute_small_strain_elastoplasticity_Von_Mises</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.solve">
+<tt class="descname">solve</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.solve" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: (nbit, converged) = Model.solve(self[, ...])</p>
+<p>Run the standard getfem solver.</p>
+<p>Note that you should be able to use your own solver if you want
+(it is possible to obtain the tangent matrix and its right hand
+side with the Model.tangent_matrix() etc.).</p>
+<p>Various options can be specified:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>&#8216;noisy&#8217; or &#8216;very_noisy&#8217;</dt>
+<dd><p class="first last">the solver will display some information showing the progress
+(residual values etc.).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>&#8216;max_iter&#8217;, int NIT</dt>
+<dd><p class="first last">set the maximum iterations numbers.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>&#8216;max_res&#8217;, &#64;float RES</dt>
+<dd><p class="first last">set the target residual value.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>&#8216;diverged_res&#8217;, &#64;float RES</dt>
+<dd><p class="first last">set the threshold value of the residual beyond which the iterative
+method is considered to diverge (default is 1e200).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>&#8216;lsolver&#8217;, string SOLVER_NAME</dt>
+<dd><p class="first last">select explicitely the solver used for the linear systems (the
+default value is &#8216;auto&#8217;, which lets getfem choose itself).
+Possible values are &#8216;superlu&#8217;, &#8216;mumps&#8217; (if supported),
+&#8216;cg/ildlt&#8217;, &#8216;gmres/ilu&#8217; and &#8216;gmres/ilut&#8217;.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>&#8216;lsearch&#8217;, string LINE_SEARCH_NAME</dt>
+<dd><p class="first last">select explicitely the line search method used for the linear systems (the
+default value is &#8216;default&#8217;).
+Possible values are &#8216;simplest&#8217;, &#8216;systematic&#8217;, &#8216;quadratic&#8217; or &#8216;basic&#8217;.</p>
+</dd>
+</dl>
+<p>Return the number of iterations, if an iterative method is used.</p>
+<p>Note that it is possible to disable some variables
+(see Model.disable_variable() ) in order to
+solve the problem only with respect to a subset of variables (the
+disabled variables are then considered as data) for instance to
+replace the global Newton strategy with a fixed point one.</p>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.tangent_matrix">
+<tt class="descname">tangent_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.tangent_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the tangent matrix stored in the model .</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.test_tangent_matrix">
+<tt class="descname">test_tangent_matrix</tt><big>(</big><em>EPS=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.test_tangent_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Model.test_tangent_matrix(self[, scalar EPS[, int NB[, scalar scale]]])</p>
+<p>Test the consistency of the tangent matrix in some random positions
+and random directions (useful to test newly created bricks).
+<cite>EPS</cite> is the value of the small parameter for the finite difference
+computation of the derivative is the random direction (default is 1E-6).
+<cite>NN</cite> is the number of tests (default is 100). <cite>scale</cite> is a parameter
+for the random position (default is 1, 0 is an acceptable value) around
+the current position.
+Each dof of the random position is chosen in the range
+[current-scale, current+scale].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.test_tangent_matrix_term">
+<tt class="descname">test_tangent_matrix_term</tt><big>(</big><em>varname1</em>, <em>varname2</em>, <em>EPS=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.Model.test_tangent_matrix_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Model.test_tangent_matrix_term(self, string varname1, string varname2[, scalar EPS[, int NB[, scalar scale]]])</p>
+<p>Test the consistency of a part of the tangent matrix in some
+random positions and random directions
+(useful to test newly created bricks).
+The increment is only made on variable <cite>varname2</cite> and tested on the
+part of the residual corresponding to <cite>varname1</cite>. This means that
+only the term (<cite>varname1</cite>, <cite>varname2</cite>) of the tangent matrix is tested.
+<cite>EPS</cite> is the value of the small parameter for the finite difference
+computation of the derivative is the random direction (default is 1E-6).
+<cite>NN</cite> is the number of tests (default is 100). <cite>scale</cite> is a parameter
+for the random position (default is 1, 0 is an acceptable value)
+around the current position.
+Each dof of the random position is chosen in the range
+[current-scale, current+scale].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.to_variables">
+<tt class="descname">to_variables</tt><big>(</big><em>V</em><big>)</big><a class="headerlink" href="#getfem.Model.to_variables" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the value of the variables of the model with the vector <cite>V</cite>.
+Typically, the vector <cite>V</cite> results of the solve of the tangent
+linear system (useful to solve your problem with you own solver).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.transformation_name_of_Nitsche_large_sliding_contact_brick">
+<tt class="descname">transformation_name_of_Nitsche_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em><big>)</big><a class="headerlink" href="#getfem.Model.transformation_name_of_Nitsche_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the name of the group of variables corresponding to the
+sliding data for an existing large sliding contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.transformation_name_of_large_sliding_contact_brick">
+<tt class="descname">transformation_name_of_large_sliding_contact_brick</tt><big>(</big><em>indbrick</em><big>)</big><a class="headerlink" href="#getfem.Model.transformation_name_of_large_sliding_contact_brick" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the name of the group of variables corresponding to the
+sliding data for an existing large sliding contact brick.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.variable">
+<tt class="descname">variable</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#getfem.Model.variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the value of a variable or data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.Model.variable_list">
+<tt class="descname">variable_list</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.Model.variable_list" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>print to the output the list of variables and constants of the model.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_MesherObject.html"
+                        title="前の章へ">MesherObject</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Precond.html"
+                        title="次の章へ">Precond</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Precond.html" title="Precond"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_MesherObject.html" title="MesherObject"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

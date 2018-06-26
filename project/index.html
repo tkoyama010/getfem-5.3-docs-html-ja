@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Description of the Project &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="next" title="Introduction" href="intro.html" />
+    <link rel="prev" title="Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)" href="../tutorial/wheel.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="../tutorial/wheel.html" title="Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="description-of-the-project">
+<span id="dp"></span><span id="using-index"></span><h1>Description of the Project<a class="headerlink" href="#description-of-the-project" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to contribute / Git repository on Savannah</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#how-to-get-the-sources">How to get the sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#locally-commit-your-changes">Locally commit your changes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#push-you-changes-in-the-savannah-repository">Push you changes in the Savannah repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#ask-for-an-admin-to-merge-your-modifications-to-the-master-branch-of-gf">Ask for an admin to merge your modifications to the master branch of <em>GetFEM++</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#merge-modifications-done-by-other-contributors">Merge modifications done by other contributors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#some-useful-git-commands">Some useful git commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="femdesc.html">The FEM description in <em>GetFEM++</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="femdesc.html#convex-structures">Convex structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="femdesc.html#convexes-of-reference">Convexes of reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="femdesc.html#shape-function-type">Shape function type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="femdesc.html#geometric-transformations">Geometric transformations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="femdesc.html#finite-element-methods-description">Finite element methods description</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc.html">Description of the different parts of the library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_gmm.html">Gmm library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_dal.html">Dal library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_misc.html">Miscellaneous algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_event.html">Events management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mesh.html">Mesh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_fem.html">Fem module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_im.html">Integ module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_meshfem.html">MeshFem module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mim.html">MeshIm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_levelset.html">Level-set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html">The high-level generic assembly module in <em>GetFEM++</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_low_gen_assemb.html">The low-level generic assembly module in <em>GetFEM++</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_model.html">Model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_cont.html">Continuation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html">Interface with scripts languages (Python, Scilab and Matlab)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appendixA.html">Appendix A. Some basic computations between reference and real elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#volume-integral">Volume integral</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#surface-integral">Surface integral</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#derivative-computation">Derivative computation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#second-derivative-computation">Second derivative computation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#example-of-elementary-matrix">Example of elementary matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../biblio.html">References</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="../tutorial/wheel.html"
+                        title="前の章へ">Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="intro.html"
+                        title="次の章へ">Introduction</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="#"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="../tutorial/wheel.html" title="Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>What’s New in GetFEM++ 1.7 &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="What’s New in GetFEM++" href="index.html" />
+    <link rel="next" title="What’s New in GetFEM++ 1.6" href="1.6.html" />
+    <link rel="prev" title="What’s New in GetFEM++ 2.0" href="2.0.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="1.6.html" title="What’s New in GetFEM++ 1.6"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="2.0.html" title="What’s New in GetFEM++ 2.0"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="what-s-new-in-gf-1-7">
+<h1>What&#8217;s New in <em>GetFEM++</em> 1.7<a class="headerlink" href="#what-s-new-in-gf-1-7" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<blockquote>
+<div><p>Released, 2005/01/05:</p>
+<ul class="simple">
+<li>An important number of improvements have been done on <em>GetFEM++</em> 1.7.
+Note that the next release will be <em>GetFEM++</em> 2.0, some of its changes
+won&#8217;t maintain backward compatibility with <em>GetFEM++</em> 1.7:<ul>
+<li>Introduction of the <cite>model brick</cite> system, which provides a
+general framework for the solution of common PDEs. Each brick
+is dedicated to a specific task (i.e. &#8220;handle Dirichlet
+conditions&#8221;, &#8220;assembly of the Stokes Problem&#8221;, &#8220;solve a
+linear system&#8221;, etc.). These bricks are then connected to
+each other. Examples of use can be found in the &#8220;tests/&#8221;
+directory of getfem++.</li>
+<li>New models : Small strain plasticity, large strain
+elasticity, contact and friction conditions, linearized
+plates, incompressibility in small and large strain
+elasticity.</li>
+<li>Simplifications and optimizations in elementary computations.</li>
+<li>A direct sparse solver (<a class="reference external" href="http://crd.lbl.gov/~xiaoye/SuperLU/">SuperLU 3.0</a>) is available &#8220;out of
+the box&#8221;.</li>
+<li>Ability to export results to <a class="reference external" href="http://www.vtk.org">VTK</a> and
+<a class="reference external" href="http://www.opendx.org">OpenDX</a>.</li>
+</ul>
+</li>
+<li>Major changes in Gmm++ 1.7:<ul>
+<li>New preconditionner ILUTP.</li>
+<li>A BFGS algorithm has been developped.</li>
+<li>Gmm++ now handles (valid) operations mixing complex and
+scalars.</li>
+<li>gmm::real_part(V) and gmm::imag_part(V) gives a possibly
+writable reference on the real and imaginary part of a
+complex vector or matrix.</li>
+<li>The SuperLU interface has been updated for SuperLU 3.0.</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<p>getfem-matlab has been renamed &#8220;getfem-interface&#8221; since it now
+provides an interface for Matlab and <a class="reference external" href="http://www.python.org">Python</a> (with the <a class="reference external" href="http://www.stsci.edu/resources/software_hardware/numarray">Numarray</a>
+package). Note that, while it is <a class="reference external" href="http://getfem.org/python/index.html">documented</a> and
+working, the python interface is still considered a <em>work in
+progress</em>. You have to enable it explicitly with <tt class="docutils literal"><span class="pre">./configure</span>
+<span class="pre">--enable-python</span></tt>. An interface to
+the Gmm++ sparse matrices and solvers is also provided.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="2.0.html"
+                        title="前の章へ">What&#8217;s New in <em>GetFEM++</em> 2.0</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="1.6.html"
+                        title="次の章へ">What&#8217;s New in <em>GetFEM++</em> 1.6</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="1.6.html" title="What’s New in GetFEM++ 1.6"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="2.0.html" title="What’s New in GetFEM++ 2.0"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

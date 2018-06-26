@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GeoTrans &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="GlobalFunction" href="cmdref_GlobalFunction.html" />
+    <link rel="prev" title="Fem" href="cmdref_Fem.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_GlobalFunction.html" title="GlobalFunction"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Fem.html" title="Fem"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="geotrans">
+<h1>GeoTrans<a class="headerlink" href="#geotrans" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.GeoTrans">
+<em class="property">class </em><tt class="descname">GeoTrans</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.GeoTrans" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM GeoTrans object</p>
+<p>The geometric transformation must be used when you are building a custom
+mesh convex by convex (see the add_convex() function of Mesh): it also
+defines the kind of convex (triangle, hexahedron, prism, etc..)</p>
+<p>General constructor for GeoTrans objects</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">GT</span> <span class="pre">=</span> <span class="pre">GeoTrans(string</span> <span class="pre">name)</span></tt>
+The name argument contains the specification of the geometric transformation
+as a string, which may be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>GT_PK(n,k) :
+Transformation on simplexes, dim <cite>n</cite>, degree <cite>k</cite>.</li>
+<li>GT_QK(n,k) :
+Transformation on parallelepipeds, dim <cite>n</cite>, degree <cite>k</cite>.</li>
+<li>GT_PRISM(n,k) :
+Transformation on prisms, dim <cite>n</cite>, degree <cite>k</cite>.</li>
+<li>GT_PRODUCT(A,B) :
+Tensorial product of two transformations.</li>
+<li>GT_LINEAR_PRODUCT(GeoTrans gt1,GeoTrans gt2) :
+Linear tensorial product of two transformations</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<dl class="method">
+<dt id="getfem.GeoTrans.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GeoTrans.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a (unique) string representation of the GeoTrans.</p>
+<p>This can be used to perform comparisons between two
+different GeoTrans objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GeoTrans.dim">
+<tt class="descname">dim</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GeoTrans.dim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get the dimension of the GeoTrans.</p>
+<p>This is the dimension of the source space, i.e. the dimension of
+the reference convex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GeoTrans.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GeoTrans.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a GeoTrans object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GeoTrans.is_linear">
+<tt class="descname">is_linear</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GeoTrans.is_linear" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 0 if the GeoTrans is not linear.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GeoTrans.nbpts">
+<tt class="descname">nbpts</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GeoTrans.nbpts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the number of points of the GeoTrans.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GeoTrans.normals">
+<tt class="descname">normals</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GeoTrans.normals" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Get the normals for each face of the reference convex of the GeoTrans.</p>
+<p>The normals are stored in the columns of the output matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GeoTrans.pts">
+<tt class="descname">pts</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GeoTrans.pts" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the reference convex points of the GeoTrans.</p>
+<p>The points are stored in the columns of the output matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GeoTrans.transform">
+<tt class="descname">transform</tt><big>(</big><em>G</em>, <em>Pr</em><big>)</big><a class="headerlink" href="#getfem.GeoTrans.transform" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Apply the GeoTrans to a set of points.</p>
+<p><cite>G</cite> is the set of vertices of the real convex, <cite>Pr</cite> is the set
+of points (in the reference convex) that are to be transformed.
+The corresponding set of points in the real convex is returned.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Fem.html"
+                        title="前の章へ">Fem</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_GlobalFunction.html"
+                        title="次の章へ">GlobalFunction</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_GlobalFunction.html" title="GlobalFunction"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Fem.html" title="Fem"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

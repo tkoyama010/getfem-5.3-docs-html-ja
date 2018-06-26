@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The model description and basic model bricks &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="The model object" href="model_object.html" />
+    <link rel="prev" title="A pure convection method" href="convect.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_object.html" title="The model object"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="convect.html" title="A pure convection method"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-model-description-and-basic-model-bricks">
+<span id="ud-model"></span><span id="index-0"></span><h1>The model description and basic model bricks<a class="headerlink" href="#the-model-description-and-basic-model-bricks" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The model description of <em>GetFEM++</em> allows
+to quickly build some fem applications on complex linear or nonlinear PDE coupled
+models. The principle is to propose predefined bricks which can be assembled to
+describe a complex situation. A brick can describe either an equation (Poisson
+equation, linear elasticity ...) or a boundary condition (Dirichlet, Neumann ...)
+or any relation between two variables. Once a brick is written, it is possible to
+use it in very different situations. This allows a reusability of the produced
+code and the possibility of a growing library of bricks. An effort has been made in
+order to facilitate as much as possible the definition of a new brick. A brick is
+mainly defined by its contribution in the tangent linear system to be solved.</p>
+<p>This model description is an evolution of the model bricks of previous versions of
+<em>GetFEM++</em>. Compared to the old system, it is more flexible, more general, allows the
+coupling of model (multiphysics) in a easier way and facilitates the writing of new
+components. It also facilitate the write of time integration schemes for evolving
+PDEs.</p>
+<p>The kernel of the model description is contained in the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_models.h</span></tt>. The two main objects are the <cite>model</cite> and the <cite>brick</cite>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="model_object.html">The model object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_object.html#the-br-object">The <cite>brick</cite> object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_object.html#how-to-build-a-new-brick">How to build a new brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_object.html#how-to-add-the-brick-to-a-model">How to add the brick to a model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_generic_assembly.html">Generic assembly bricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_generic_elliptic.html">Generic elliptic brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_dirichlet.html">Dirichlet condition brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_dirichlet.html#generalized-dirichlet-condition-brick">Generalized Dirichlet condition brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_dirichlet.html#pointwise-constraints-brick">Pointwise constraints brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_source_term.html">Source term bricks (and Neumann condition)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_solvers.html">Predefined solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_poisson.html">Example of a complete Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_Nitsche.html">Nitsche&#8217;s method for dirichlet and contact boundary conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_Nitsche.html#generic-nitsche-s-method-for-a-dirichlet-condition">Generic Nitsche&#8217;s method for a Dirichlet condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_Nitsche.html#generic-nitsche-s-method-for-contact-with-friction-condition">Generic Nitsche&#8217;s method for contact with friction condition</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_constraint.html">Constraint brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_explicit.html">Other &#8220;explicit&#8221; bricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_helmholtz.html">Helmholtz brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_fourier_robin.html">Fourier-Robin brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_linear_elasticity.html">Isotropic linearized elasticity brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_linear_elasticity.html#linear-incompressibility-or-nearly-incompressibility-brick">Linear incompressibility (or nearly incompressibility) brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_mass.html">Mass brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_bilaplacian.html">Bilaplacian and Kirchhoff-Love plate bricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_Mindlin_plate.html">Mindlin-Reissner plate model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_Mindlin_plate.html#the-mindlin-reissner-plate-model">The Mindlin-Reissner plate model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_Mindlin_plate.html#add-a-mindlin-reissner-plate-model-brick-to-a-model">Add a Mindlin-Reissner plate model brick to a model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_time_integration.html">The model tools for the integration of transient problems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#the-implicit-theta-method-for-first-order-problems">The implicit theta-method for first-order problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#precomputation-of-velocity-acceleration">Precomputation of velocity/acceleration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#the-implicit-theta-method-for-second-order-problems">The implicit theta-method for second-order problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#the-implicit-newmark-scheme-for-second-order-problems">The implicit Newmark scheme for second order problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#transient-terms">Transient terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#computation-on-the-sequence-of-time-steps">Computation on the sequence of time steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#boundary-conditions">Boundary conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#small-example-heat-equation">Small example: heat equation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#implicit-explicit-some-terms">Implicit/explicit some terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#explicit-schemes">Explicit schemes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#time-step-adaptation">Time step adaptation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html#quasi-static-problems">Quasi-static problems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_contact_friction.html">Small sliding contact with friction bricks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#approximation-of-contact">Approximation of contact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#direct-nodal-contact-condition">Direct nodal contact condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#weak-nodal-contact-condition">Weak nodal contact condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#weak-integral-contact-condition">Weak integral contact condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#numerical-continuation">Numerical continuation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#friction-law">Friction law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#add-a-contact-with-or-without-friction-to-a-model">Add a contact with or without friction to a model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#frictionless-basic-contact-brick">Frictionless basic contact brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#basic-contact-brick-with-friction">Basic contact brick with friction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#frictionless-nodal-contact-with-a-rigid-obstacle-brick">Frictionless nodal contact with a rigid obstacle brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#nodal-contact-with-a-rigid-obstacle-brick-with-friction">Nodal contact with a rigid obstacle brick with friction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#frictionless-nodal-contact-between-non-matching-meshes-brick">Frictionless nodal contact between non-matching meshes brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#nodal-contact-between-non-matching-meshes-brick-with-friction">Nodal contact between non-matching meshes brick with friction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#hughes-stabilized-frictionless-contact-condition">Hughes stabilized frictionless contact condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#frictionless-integral-contact-with-a-rigid-obstacle-brick">Frictionless integral contact with a rigid obstacle brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#integral-contact-with-a-rigid-obstacle-brick-with-friction">Integral contact with a rigid obstacle brick with friction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#frictionless-integral-contact-between-non-matching-meshes-brick">Frictionless integral contact between non-matching meshes brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#integral-contact-between-non-matching-meshes-brick-with-friction">Integral contact between non-matching meshes brick with friction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#frictionless-penalized-contact-with-a-rigid-obstacle-brick">Frictionless penalized contact with a rigid obstacle brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#penalized-contact-with-a-rigid-obstacle-brick-with-friction">Penalized contact with a rigid obstacle brick with friction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#frictionless-penalized-contact-between-non-matching-meshes-brick">Frictionless penalized contact between non-matching meshes brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html#penalized-contact-between-non-matching-meshes-brick-with-friction">Penalized contact between non-matching meshes brick with friction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_contact_friction_large_sliding.html">Large sliding/large deformation contact with friction bricks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction_large_sliding.html#raytracing-interpolate-transformation">Raytracing interpolate transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction_large_sliding.html#the-contact-pair-detection-algorithm">The contact pair detection algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction_large_sliding.html#tools-of-the-high-level-generic-assembly-for-contact-with-friction">Tools of the high-level generic assembly for contact with friction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction_large_sliding.html#integral-contact-brick-with-raytrace">Integral contact brick with raytrace</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="convect.html"
+                        title="前の章へ">A pure convection method</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_object.html"
+                        title="次の章へ">The model object</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_object.html" title="The model object"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="convect.html" title="A pure convection method"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

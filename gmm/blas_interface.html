@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Interface with BLAS, LAPACK or ATLAS &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Interface with SuperLU" href="superlu.html" />
+    <link rel="prev" title="Catch errors" href="catch.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="superlu.html" title="Interface with SuperLU"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="interface-with-blas-lapack-or-atlas">
+<span id="gmm-lapack"></span><h1>Interface with BLAS, LAPACK or ATLAS<a class="headerlink" href="#interface-with-blas-lapack-or-atlas" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>For better performance on dense matrices, it is possible to interface some operations of the type <tt class="docutils literal"><span class="pre">gmm::dense_matrix&lt;T&gt;</span></tt> with <tt class="docutils literal"><span class="pre">LAPACK</span></tt> (<a class="reference external" href="http://www.netlib.org/lapack/">http://www.netlib.org/lapack/</a>) or <tt class="docutils literal"><span class="pre">ATLAS</span></tt> (<a class="reference external" href="http://math-atlas.sourceforge.net/">http://math-atlas.sourceforge.net/</a>), for <tt class="docutils literal"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">float,</span> <span class="pre">double,</span> <span class="pre">std::complex&lt;float&gt;</span> <span class="pre">or</span> <span class="pre">std::complex&lt;double&gt;</span></tt>. In fact, concerning <tt class="docutils literal"><span class="pre">ATLAS</span></tt> no specific interface has been made untill now, so the fortran interface of <tt class="docutils literal"><span class="pre">ATLAS</span></tt> should be used.</p>
+<p>to use this interface you have first to define <tt class="docutils literal"><span class="pre">GMM_USES_LAPACK</span></tt> before including <em>Gmm++</em> files:</p>
+<div class="highlight-c++"><pre>\#define GMM_USES_LAPACK
+\#include &lt;gmm/gmm.h&gt;
+
+... your code</pre>
+</div>
+<p>or specify -DGMM_USES_LAPACK on the command line of your compiler. Of course, you have also to link <tt class="docutils literal"><span class="pre">LAPACK</span></tt> or <tt class="docutils literal"><span class="pre">ATLAS</span></tt> libraries. For example on a standard linux configuration and g++ compiler the adding libraries to link <tt class="docutils literal"><span class="pre">LAPACK</span></tt> are:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">g</span><span class="o">++</span> <span class="p">...</span>  <span class="o">-</span><span class="n">llapack</span> <span class="o">-</span><span class="n">lblas</span> <span class="o">-</span><span class="n">lgfortanbegin</span> <span class="o">-</span><span class="n">lgfortran</span>
+</pre></div>
+</div>
+<p>and to link  <tt class="docutils literal"><span class="pre">ATLAS</span></tt>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">g</span><span class="o">++</span> <span class="p">...</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">atlas</span><span class="o">/</span><span class="n">liblapack</span><span class="p">.</span><span class="n">a</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">atlas</span><span class="o">/</span><span class="n">libblas</span><span class="p">.</span><span class="n">a</span> <span class="o">-</span><span class="n">latlas</span> <span class="o">-</span><span class="n">lgfortranbegin</span> <span class="o">-</span><span class="n">lgfortran</span>
+</pre></div>
+</div>
+<p>The library <tt class="docutils literal"><span class="pre">libgfortranbegin</span></tt> and <tt class="docutils literal"><span class="pre">libgfortran</span></tt> are specific to g++ compiler and may vary for other compilers.</p>
+<p>Ask your system administrator if this configuration does not work.</p>
+<p>The following operations are interfaced:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">vect_norm2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">vect_sp</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">vect_sp</span><span class="p">(</span><span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">vect_sp</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">))</span>
+<span class="n">vect_sp</span><span class="p">(</span><span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">))</span>
+
+<span class="n">vect_hp</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">vect_hp</span><span class="p">(</span><span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">vect_hp</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">))</span>
+<span class="n">vect_hp</span><span class="p">(</span><span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">))</span>
+
+<span class="n">add</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">add</span><span class="p">(</span><span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">a</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">mult_add</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult_add</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult_add</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult_add</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult_add</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult_add</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+     <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+     <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">mult</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span>
+     <span class="n">scaled</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">lower_tri_solve</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">upper_tri_solve</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">lower_tri_solve</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">upper_tri_solve</span><span class="p">(</span><span class="n">transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">lower_tri_solve</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">upper_tri_solve</span><span class="p">(</span><span class="n">conjugated</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="n">lu_factor</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">lu_solve</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">lu_solve</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">lu_solve_transposed</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+         <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">lu_inverse</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">lu_inverse</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">qr_factor</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+
+<span class="n">implicit_qr_algorithm</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">implicit_qr_algorithm</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+                      <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">implicit_qr_algorithm</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">complex</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">)</span>
+<span class="n">implicit_qr_algorithm</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">complex</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">,</span>
+                      <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Of course, it is not difficult to interface another operation if needed.</p>
+<p>The following interface does not correspond to an algorithm existing in <em>Gmm++</em>:</p>
+<p>The interface to <tt class="docutils literal"><span class="pre">gesvd</span></tt> (singular value decomposition):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">svd</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">X</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">U</span><span class="p">,</span>
+    <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">Vt</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">);</span>
+<span class="n">svd</span><span class="p">(</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">complex</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">X</span><span class="p">,</span> <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">complex</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">U</span><span class="p">,</span>
+    <span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">complex</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">Vt</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="catch.html"
+                        title="前の章へ">Catch errors</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="superlu.html"
+                        title="次の章へ">Interface with SuperLU</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="superlu.html" title="Interface with SuperLU"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

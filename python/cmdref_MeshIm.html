@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MeshIm &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="MeshImData" href="cmdref_MeshImData.html" />
+    <link rel="prev" title="MeshFem" href="cmdref_MeshFem.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_MeshImData.html" title="MeshImData"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_MeshFem.html" title="MeshFem"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="meshim">
+<h1>MeshIm<a class="headerlink" href="#meshim" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.MeshIm">
+<em class="property">class </em><tt class="descname">MeshIm</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshIm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM MeshIm object</p>
+<p>This object represents an integration method defined on a whole mesh (an 
+potentialy on its boundaries).</p>
+<p>General constructor for MeshIm objects</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MIM</span> <span class="pre">=</span> <span class="pre">MeshIm('load',</span> <span class="pre">string</span> <span class="pre">fname[,</span> <span class="pre">Mesh</span> <span class="pre">m])</span></tt>
+Load a MeshIm from a file.</p>
+<p>If the mesh <cite>m</cite> is not supplied (this kind of file does not store the
+mesh), then it is read from the file and its descriptor is returned as
+the second output argument.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MIM</span> <span class="pre">=</span> <span class="pre">MeshIm('from</span> <span class="pre">string',</span> <span class="pre">string</span> <span class="pre">s[,</span> <span class="pre">Mesh</span> <span class="pre">m])</span></tt>
+Create a MeshIm object from its string description.</p>
+<p>See also <tt class="docutils literal"><span class="pre">MeshIm.char()</span></tt></p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MIM</span> <span class="pre">=</span> <span class="pre">MeshIm('clone',</span> <span class="pre">MeshIm</span> <span class="pre">mim)</span></tt>
+Create a copy of a MeshIm.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MIM</span> <span class="pre">=</span> <span class="pre">MeshIm('levelset',</span> <span class="pre">MeshLevelSet</span> <span class="pre">mls,</span> <span class="pre">string</span> <span class="pre">where,</span> <span class="pre">Integ</span> <span class="pre">im[,</span> <span class="pre">Integ</span> <span class="pre">im_tip[,</span> <span class="pre">Integ</span> <span class="pre">im_set]])</span></tt>
+Build an integration method conformal to a partition defined
+implicitely by a levelset.</p>
+<p>The <cite>where</cite> argument define the domain of integration with respect to
+the levelset, it has to be chosen among &#8216;ALL&#8217;, &#8216;INSIDE&#8217;, &#8216;OUTSIDE&#8217; and
+&#8216;BOUNDARY&#8217;.</p>
+<p>it can be completed by a string defining the boolean operation
+to define the integration domain when there is more than one levelset.</p>
+<p>the syntax is very simple, for example if there are 3 different
+levelset,</p>
+<blockquote>
+<div><p>&#8220;a*b*c&#8221; is the intersection of the domains defined by each
+levelset (this is the default behaviour if this function is not
+called).</p>
+<p>&#8220;a+b+c&#8221; is the union of their domains.</p>
+<p>&#8220;c-(a+b)&#8221; is the domain of the third levelset minus the union of
+the domains of the two others.</p>
+<p>&#8221;!a&#8221; is the complementary of the domain of a (i.e. it is the
+domain where a(x)&gt;0)</p>
+<p>The first levelset is always referred to with &#8220;a&#8221;, the second
+with &#8220;b&#8221;, and so on.</p>
+</div></blockquote>
+<p>for intance INSIDE(a*b*c)</p>
+<p>CAUTION: this integration method will be defined only on the element
+cut by the level-set. For the &#8216;ALL&#8217;, &#8216;INSIDE&#8217; and &#8216;OUTSIDE&#8217; options
+it is mandatory to use the method <tt class="docutils literal"><span class="pre">MeshIm.set_integ()</span></tt> to define
+the integration method on the remaining elements.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">MIM</span> <span class="pre">=</span> <span class="pre">MeshIm(Mesh</span> <span class="pre">m,</span> <span class="pre">[{Integ</span> <span class="pre">im|int</span> <span class="pre">im_degree}])</span></tt>
+Build a new MeshIm object.</p>
+<p>For convenience, optional arguments (<cite>im</cite> or <cite>im_degree</cite>) can be
+provided, in that case a call to <tt class="docutils literal"><span class="pre">MeshIm.integ()</span></tt> is issued
+with these arguments.</p>
+</li>
+</ul>
+<dl class="method">
+<dt id="getfem.MeshIm.adapt">
+<tt class="descname">adapt</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshIm.adapt" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>For a MeshIm levelset object only. Adapt the integration methods to a
+change of the levelset function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshIm.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a string description of the MeshIm.</p>
+<p>By default, it does not include the description of the linked
+Mesh object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.convex_index">
+<tt class="descname">convex_index</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshIm.convex_index" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of convexes who have a integration method.</p>
+<p>Convexes who have the dummy IM_NONE method are not listed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshIm.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a MeshIm object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.eltm">
+<tt class="descname">eltm</tt><big>(</big><em>em</em>, <em>cv</em>, <em>f=None</em><big>)</big><a class="headerlink" href="#getfem.MeshIm.eltm" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the elementary matrix (or tensor) integrated on the convex <cite>cv</cite>.</p>
+<p><strong>WARNING</strong></p>
+<p>Be sure that the fem used for the construction of <cite>em</cite> is compatible
+with the fem assigned to element <cite>cv</cite> ! This is not checked by the
+function ! If the argument <cite>f</cite> is given, then the elementary tensor
+is integrated on the face <cite>f</cite> of <cite>cv</cite> instead of the whole convex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.im_nodes">
+<tt class="descname">im_nodes</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshIm.im_nodes" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the coordinates of the integration points, with their weights.</p>
+<p><cite>CVids</cite> may be a list of convexes, or a list of convex faces, such
+as returned by Mesh.region()</p>
+<p><strong>WARNING</strong></p>
+<p>Convexes which are not part of the mesh, or convexes which
+do not have an approximate integration method do not have
+their corresponding entry (this has no meaning for exact
+integration methods!).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.integ">
+<tt class="descname">integ</tt><big>(</big><em>CVids=None</em><big>)</big><a class="headerlink" href="#getfem.MeshIm.integ" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a list of integration methods used by the MeshIm.</p>
+<p><cite>I</cite> is an array of all Integ objects found in the convexes
+given in <cite>CVids</cite>. If <cite>CV2I</cite> was supplied as an output argument, it
+contains, for each convex listed in <cite>CVids</cite>, the index of its
+correspounding integration method in <cite>I</cite>.</p>
+<p>Convexes which are not part of the mesh, or convexes which do
+not have any integration method have their correspounding entry
+in <cite>CV2I</cite> set to -1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.linked_mesh">
+<tt class="descname">linked_mesh</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshIm.linked_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Returns a reference to the Mesh object linked to <cite>mim</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.memsize">
+<tt class="descname">memsize</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshIm.memsize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the amount of memory (in bytes) used by the MeshIm object.</p>
+<p>The result does not take into account the linked Mesh object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.save">
+<tt class="descname">save</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#getfem.MeshIm.save" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Saves a MeshIm in a text file (and optionaly its linked mesh object).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshIm.set_integ">
+<tt class="descname">set_integ</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshIm.set_integ" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: MeshIm.set_integ(self,{Integ im|int im_degree}[, ivec CVids])</p>
+<p>Set the integration method.</p>
+<p>Assign an integration method to all convexes whose #ids are
+listed in <cite>CVids</cite>. If <cite>CVids</cite> is not given, the integration is
+assigned to all convexes. It is possible to assign a specific
+integration method with an integration method handle <cite>im</cite> obtained
+via Integ(&#8216;IM_SOMETHING&#8217;), or to let getfem choose a suitable
+integration method with <cite>im_degree</cite> (choosen such that polynomials
+of <img class="math" src="../_images/math/f628d051c271da94a53431b1e5ce4cabdc5a69f8.png" alt="\text{degree} \leq \text{im\_degree}" style="vertical-align: -3px"/> are exactly integrated.
+If <cite>im_degree=-1</cite>, then the dummy integration method IM_NONE will 
+be used.)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_MeshFem.html"
+                        title="前の章へ">MeshFem</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_MeshImData.html"
+                        title="次の章へ">MeshImData</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_MeshImData.html" title="MeshImData"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_MeshFem.html" title="MeshFem"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

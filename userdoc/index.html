@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>User Documentation &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="next" title="Introduction" href="intro.html" />
+    <link rel="prev" title="GetFEM++ Documentation contents" href="../contents.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="../contents.html" title="GetFEM++ Documentation contents"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ud">
+<span id="id1"></span><h1>User Documentation<a class="headerlink" href="#ud" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">How to install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linalg.html">Linear algebra procedures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">MPI Parallelization of <em>GetFEM++</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html#state-of-progress-of-gf-mpi-parallelization">State of progress of <em>GetFEM++</em> MPI parallelization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="catch.html">Catch errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bmesh.html">Build a mesh</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#add-an-element-to-a-mesh">Add an element to a mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#remove-an-element-from-a-mesh">Remove an element from a mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#simple-structured-meshes">Simple structured meshes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#mesh-regions">Mesh regions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#methods-of-the-gf-m-object">Methods of the <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt> object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#using-dal-bv">Using <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#face-numbering">Face numbering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bmesh.html#save-and-load-meshes">Save and load meshes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bfem.html">Build a finite element method on a mesh</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bfem.html#first-level-manipulating-fems-on-each-elements">First level: manipulating fems on each elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bfem.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bfem.html#second-level-the-optional-vectorization-tensorization">Second level: the optional &#8220;vectorization/tensorization&#8221;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bfem.html#third-level-the-optional-linear-transformation-or-reduction">Third level: the optional linear transformation (or reduction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bfem.html#obtaining-generic-mf-s">Obtaining generic <cite>mesh_fem</cite>&#8216;s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bfem.html#the-partial-mesh-fem-object">The partial_mesh_fem object</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="binteg.html">Selecting integration methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="binteg.html#methods-of-the-mim-object">Methods of the <cite>mesh_im</cite> object</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rmesh.html">Mesh refinement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gasm_high.html">Compute arbitrary terms - high-level generic assembly procedures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#differences-in-execution-time-between-high-and-low-level-generic-assembly">Differences in execution time between high and low level generic assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#overview-of-the-weak-form-language-syntax">Overview of the weak form language syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#some-basic-examples">Some basic examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#derivation-order-and-symbolic-differentiation">Derivation order and symbolic differentiation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#c-call-of-the-assembly">C++ Call of the assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#c-assembly-examples">C++ assembly examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#the-tensors">The tensors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#the-variables">The variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#the-constants-or-data">The constants or data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#test-functions">Test functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#gradient">Gradient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#hessian">Hessian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#predefined-scalar-functions">Predefined scalar functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#user-defined-scalar-functions">User defined scalar functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#derivatives-of-defined-scalar-functions">Derivatives of defined scalar functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#binary-operations">Binary operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#unary-operators">Unary operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#parentheses">Parentheses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#explicit-vectors">Explicit vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#explicit-matrices">Explicit matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#explicit-tensors">Explicit tensors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#access-to-tensor-components">Access to tensor components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#constant-expressions">Constant expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#special-expressions-linked-to-the-current-position">Special expressions linked to the current position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#print-command">Print command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#reshape-a-tensor">Reshape a tensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#trace-deviator-sym-and-skew-operators">Trace, Deviator, Sym and Skew operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#nonlinear-operators">Nonlinear operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#macro-definition">Macro definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#explicit-differentiation">Explicit Differentiation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#explicit-gradient">Explicit Gradient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#interpolate-transformations">Interpolate transformations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#element-extrapolation-transformation">Element extrapolation transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#evaluating-discontinuities-across-inter-element-edges-faces">Evaluating discontinuities across inter-element edges/faces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#elementary-transformations">Elementary transformations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#xfem-discontinuity-evaluation-with-mesh-fem-level-set">Xfem discontinuity evaluation (with mesh_fem_level_set)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_high.html#storage-of-sub-expressions-in-a-getfem-im-data-object-during-assembly">Storage of sub-expressions in a getfem::im_data object during assembly</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gasm_low.html">Compute arbitrary terms - low-level generic assembly procedures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gasm_low.html#available-operations-inside-the-comp-command">available operations inside the <tt class="docutils literal"><span class="pre">comp</span></tt> command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gasm_low.html#others-operations">others operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="asm.html">Some Standard assembly procedures (low-level generic assembly)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="asm.html#laplacian-poisson-problem">Laplacian (Poisson) problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asm.html#linear-elasticity-problem">Linear Elasticity problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asm.html#stokes-problem-with-mixed-finite-element-method">Stokes Problem with mixed finite element method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asm.html#assembling-a-mass-matrix">Assembling a mass matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interMM.html">Interpolation of arbitary quantities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="interMM.html#basic-interpolation">Basic interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interMM.html#interpolation-based-on-the-high-level-weak-form-language">Interpolation based on the high-level weak form language</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ifem.html">Incorporate new finite element methods in <em>GetFEM++</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="iinteg.html">Incorporate new approximated integration methods in <em>GetFEM++</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="xfem.html">Level-sets, Xfem, fictitious domains, Cut-fem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="xfem.html#representation-of-level-sets">Representation of level-sets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfem.html#mesh-cut-by-level-sets">Mesh cut by level-sets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfem.html#adapted-integration-methods">Adapted integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfem.html#cut-fem">Cut-fem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfem.html#discontinuous-field-across-some-level-sets">Discontinuous field across some level-sets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfem.html#xfem">Xfem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfem.html#post-treatment">Post treatment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interNMM.html">Interpolation of a finite element method on non-matching meshes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="interNMM.html#mixed-methods-with-different-meshes">mixed methods with different meshes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interNMM.html#mortar-methods">mortar methods</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="computeL2H1.html">Compute <img class="math" src="../_images/math/07c3de5211dc08b13546363f8b139700a16dd963.png" alt="L^2" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/ee500eed1910756eedebc53f0079d3aaf7a5753f.png" alt="H^1" style="vertical-align: 0px"/> norms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="computeD.html">Compute derivatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="export.html">Export and view a solution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="export.html#saving-mesh-and-mesh-fem-objects-for-the-matlab-interface">Saving mesh and mesh_fem objects for the Matlab interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="export.html#producing-mesh-slices">Producing mesh slices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="export.html#exporting-m-mf-or-slices-to-vtk">Exporting <cite>mesh</cite>, <cite>mesh_fem</cite> or slices to VTK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="export.html#exporting-m-mf-or-slices-to-opendx">Exporting <cite>mesh</cite>, <cite>mesh_fem</cite> or slices to OpenDX</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="convect.html">A pure convection method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">The model description and basic model bricks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_object.html">The model object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_object.html#the-br-object">The <cite>brick</cite> object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_object.html#how-to-build-a-new-brick">How to build a new brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_object.html#how-to-add-the-brick-to-a-model">How to add the brick to a model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_generic_assembly.html">Generic assembly bricks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_generic_elliptic.html">Generic elliptic brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_dirichlet.html">Dirichlet condition brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_dirichlet.html#generalized-dirichlet-condition-brick">Generalized Dirichlet condition brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_dirichlet.html#pointwise-constraints-brick">Pointwise constraints brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_source_term.html">Source term bricks (and Neumann condition)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_solvers.html">Predefined solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_poisson.html">Example of a complete Poisson problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_Nitsche.html">Nitsche&#8217;s method for dirichlet and contact boundary conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_constraint.html">Constraint brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_explicit.html">Other &#8220;explicit&#8221; bricks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_helmholtz.html">Helmholtz brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_fourier_robin.html">Fourier-Robin brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_linear_elasticity.html">Isotropic linearized elasticity brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_linear_elasticity.html#linear-incompressibility-or-nearly-incompressibility-brick">Linear incompressibility (or nearly incompressibility) brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_mass.html">Mass brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_bilaplacian.html">Bilaplacian and Kirchhoff-Love plate bricks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_Mindlin_plate.html">Mindlin-Reissner plate model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_time_integration.html">The model tools for the integration of transient problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction.html">Small sliding contact with friction bricks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_contact_friction_large_sliding.html">Large sliding/large deformation contact with friction bricks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_continuation.html">Numerical continuation and bifurcation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_continuation.html#numerical-continuation">Numerical continuation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_continuation.html#detection-of-limit-points">Detection of limit points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_continuation.html#numerical-bifurcation">Numerical bifurcation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_continuation.html#approximation-of-solution-curves-of-a-model">Approximation of solution curves of a model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_nonlinear_elasticity.html">Finite strain Elasticity bricks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_nonlinear_elasticity.html#some-recalls-on-finite-strain-elasticity">Some recalls on finite strain elasticity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_nonlinear_elasticity.html#add-an-nonlinear-elasticity-brick-to-a-model">Add an nonlinear elasticity brick to a model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_nonlinear_elasticity.html#add-a-large-strain-incompressibility-brick-to-a-model">Add a large strain incompressibility brick to a model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_nonlinear_elasticity.html#high-level-generic-assembly-versions">High-level generic assembly versions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_plasticity_small_strain.html">Small strain plasticity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_plasticity_small_strain.html#theoretical-background">Theoretical background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_plasticity_small_strain.html#flow-rule-integration">Flow rule integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_plasticity_small_strain.html#some-classical-laws">Some classical laws</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_plasticity_small_strain.html#elasto-plasticity-bricks">Elasto-plasticity bricks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_ALE_rotating.html">ALE Support for object having a large rigid body motion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_ALE_rotating.html#ale-terms-for-rotating-objects">ALE terms for rotating objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_ALE_rotating.html#ale-terms-for-a-uniformly-translated-part-of-an-object">ALE terms for a uniformly translated part of an object</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appendixA.html">Appendix A. Finite element method list</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#classical-lagrange-elements-on-simplices">Classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> Lagrange elements on simplices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#classical-lagrange-elements-on-other-geometries">Classical Lagrange elements on other geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#elements-with-hierarchical-basis">Elements with hierarchical basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#classical-vector-elements">Classical vector elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#specific-elements-in-dimension-1">Specific elements in dimension 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#specific-elements-in-dimension-2">Specific elements in dimension 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixA.html#specific-elements-in-dimension-3">Specific elements in dimension 3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appendixB.html">Appendix B. Cubature method list</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#exact-integration-methods">Exact Integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#newton-cotes-integration-methods">Newton cotes Integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#gauss-integration-methods-on-dimension-1">Gauss Integration methods on dimension 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#gauss-integration-methods-on-dimension-2">Gauss Integration methods on dimension 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#gauss-integration-methods-on-dimension-3">Gauss Integration methods on dimension 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#direct-product-of-integration-methods">Direct product of integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#specific-integration-methods">Specific integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendixB.html#composite-integration-methods">Composite integration methods</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../biblio.html">References</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="../contents.html"
+                        title="前の章へ">GetFEM++ Documentation contents</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="intro.html"
+                        title="次の章へ">Introduction</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="#">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="../contents.html" title="GetFEM++ Documentation contents"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

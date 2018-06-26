@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_cont_struct_get &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_cvstruct_get" href="cmdref_gf_cvstruct_get.html" />
+    <link rel="prev" title="gf_cont_struct" href="cmdref_gf_cont_struct.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_cvstruct_get.html" title="gf_cvstruct_get"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_cont_struct.html" title="gf_cont_struct"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-cont-struct-get">
+<h1>gf_cont_struct_get<a class="headerlink" href="#gf-cont-struct-get" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>h = gf_cont_struct_get(cont_struct CS, &#x27;init step size&#x27;)
+h = gf_cont_struct_get(cont_struct CS, &#x27;min step size&#x27;)
+h = gf_cont_struct_get(cont_struct CS, &#x27;max step size&#x27;)
+h = gf_cont_struct_get(cont_struct CS, &#x27;step size decrement&#x27;)
+h = gf_cont_struct_get(cont_struct CS, &#x27;step size increment&#x27;)
+[vec tangent_sol, scalar tangent_par] = gf_cont_struct_get(cont_struct CS, &#x27;compute tangent&#x27;, vec solution, scalar parameter, vec tangent_sol, scalar tangent_par)
+E = gf_cont_struct_get(cont_struct CS, &#x27;init Moore-Penrose continuation&#x27;, vec solution, scalar parameter, scalar init_dir)
+E = gf_cont_struct_get(cont_struct CS, &#x27;Moore-Penrose continuation&#x27;, vec solution, scalar parameter, vec tangent_sol, scalar tangent_par, scalar h)
+t = gf_cont_struct_get(cont_struct CS, &#x27;non-smooth bifurcation test&#x27;, vec solution1, scalar parameter1, vec tangent_sol1, scalar tangent_par1, vec solution2, scalar parameter2, vec tangent_sol2, scalar tangent_par2)
+t = gf_cont_struct_get(cont_struct CS, &#x27;bifurcation test function&#x27;)
+{X, gamma, T_X, T_gamma} = gf_cont_struct_get(cont_struct CS, &#x27;sing_data&#x27;)
+s = gf_cont_struct_get(cont_struct CS, &#x27;char&#x27;)
+gf_cont_struct_get(cont_struct CS, &#x27;display&#x27;)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function for querying information about cont_struct objects and for
+applying them to numerical continuation.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'init</span> <span class="pre">step</span> <span class="pre">size')</span></tt></p>
+<blockquote>
+<div>Return an initial step size for continuation.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'min</span> <span class="pre">step</span> <span class="pre">size')</span></tt></p>
+<blockquote>
+<div>Return the minimum step size for continuation.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'max</span> <span class="pre">step</span> <span class="pre">size')</span></tt></p>
+<blockquote>
+<div>Return the maximum step size for continuation.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'step</span> <span class="pre">size</span> <span class="pre">decrement')</span></tt></p>
+<blockquote>
+<div>Return the decrement ratio of the step size for continuation.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'step</span> <span class="pre">size</span> <span class="pre">increment')</span></tt></p>
+<blockquote>
+<div>Return the increment ratio of the step size for continuation.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">[vec</span> <span class="pre">tangent_sol,</span> <span class="pre">scalar</span> <span class="pre">tangent_par]</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'compute</span> <span class="pre">tangent',</span> <span class="pre">vec</span> <span class="pre">solution,</span> <span class="pre">scalar</span> <span class="pre">parameter,</span> <span class="pre">vec</span> <span class="pre">tangent_sol,</span> <span class="pre">scalar</span> <span class="pre">tangent_par)</span></tt></p>
+<blockquote>
+<div>Compute and return an updated tangent.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'init</span> <span class="pre">Moore-Penrose</span> <span class="pre">continuation',</span> <span class="pre">vec</span> <span class="pre">solution,</span> <span class="pre">scalar</span> <span class="pre">parameter,</span> <span class="pre">scalar</span> <span class="pre">init_dir)</span></tt></p>
+<blockquote>
+<div>Initialise the Moore-Penrose continuation: Return a unit tangent to
+the solution curve at the point given by <cite>solution</cite> and <cite>parameter</cite>,
+and an initial step size for the continuation. Orientation of the
+computed tangent with respect to the parameter is determined by the
+sign of <cite>init_dir</cite>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'Moore-Penrose</span> <span class="pre">continuation',</span> <span class="pre">vec</span> <span class="pre">solution,</span> <span class="pre">scalar</span> <span class="pre">parameter,</span> <span class="pre">vec</span> <span class="pre">tangent_sol,</span> <span class="pre">scalar</span> <span class="pre">tangent_par,</span> <span class="pre">scalar</span> <span class="pre">h)</span></tt></p>
+<blockquote>
+<div>Compute one step of the Moore-Penrose continuation: Take the point
+given by <cite>solution</cite> and <cite>parameter</cite>, the tangent given by <cite>tangent_sol</cite>
+and <cite>tangent_par</cite>, and the step size <cite>h</cite>. Return a new point on the
+solution curve, the corresponding tangent, a step size for the next
+step and optionally the current step size. If the returned step
+size equals zero, the continuation has failed. Optionally, return
+the type of any detected singular point.
+NOTE: The new point need not to be saved in the model in the end!</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'non-smooth</span> <span class="pre">bifurcation</span> <span class="pre">test',</span> <span class="pre">vec</span> <span class="pre">solution1,</span> <span class="pre">scalar</span> <span class="pre">parameter1,</span> <span class="pre">vec</span> <span class="pre">tangent_sol1,</span> <span class="pre">scalar</span> <span class="pre">tangent_par1,</span> <span class="pre">vec</span> <span class="pre">solution2,</span> <span class="pre">scalar</span> <span class="pre">parameter2,</span> <span class="pre">vec</span> <span class="pre">tangent_sol2,</span> <span class="pre">scalar</span> <span class="pre">tangent_par2)</span></tt></p>
+<blockquote>
+<div>Test for a non-smooth bifurcation point between the point given by
+<cite>solution1</cite> and <cite>parameter1</cite> with the tangent given by <cite>tangent_sol1</cite>
+and <cite>tangent_par1</cite> and the point given by <cite>solution2</cite> and <cite>parameter2</cite>
+with the tangent given by <cite>tangent_sol2</cite> and <cite>tangent_par2</cite>.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'bifurcation</span> <span class="pre">test</span> <span class="pre">function')</span></tt></p>
+<blockquote>
+<div>Return the last value of the bifurcation test function and eventaully
+the whole calculated graph when passing between different sub-domains
+of differentiability.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">{X,</span> <span class="pre">gamma,</span> <span class="pre">T_X,</span> <span class="pre">T_gamma}</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'sing_data')</span></tt></p>
+<blockquote>
+<div>Return a singular point (<cite>X</cite>, <cite>gamma</cite>) stored in the cont_struct object and a
+couple of arrays (<cite>T_X</cite>, <cite>T_gamma</cite>) of tangents to all located solution
+branches that emanate from there.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'char')</span></tt></p>
+<blockquote>
+<div><p>Output a (unique) string representation of the cont_struct.</p>
+<p>This can be used for performing comparisons between two
+different cont_struct objects.
+This function is to be completed.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_cont_struct_get(cont_struct</span> <span class="pre">CS,</span> <span class="pre">'display')</span></tt></p>
+<blockquote>
+<div>Display a short summary for a cont_struct object.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_cont_struct.html"
+                        title="前の章へ">gf_cont_struct</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_cvstruct_get.html"
+                        title="次の章へ">gf_cvstruct_get</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_cvstruct_get.html" title="gf_cvstruct_get"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_cont_struct.html" title="gf_cont_struct"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

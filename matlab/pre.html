@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Preliminary &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="MatLab Interface" href="index.html" />
+    <link rel="next" title="GetFEM++ organization" href="mlabgf.html" />
+    <link rel="prev" title="Installation" href="install.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="mlabgf.html" title="GetFEM++ organization"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="preliminary">
+<span id="mlab-pre"></span><h1>Preliminary<a class="headerlink" href="#preliminary" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This is just a short summary of the terms employed in this manual. If you are not
+familiar with finite elements, this should be useful (but in any case, you should
+definitively read the <a class="reference internal" href="../project/index.html#dp"><em>Description of the Project</em></a>).</p>
+<p>The <span class="target" id="index-0"></span><tt class="xref std std-envvar docutils literal"><span class="pre">mesh</span></tt> is composed of <span class="target" id="index-1"></span><tt class="xref std std-envvar docutils literal"><span class="pre">convexes</span></tt>. What we call convexes can be
+simple line segments, prisms, tetrahedrons, curved triangles, of even something
+which is not convex (in the geometrical sense). They all have an associated
+<span class="target" id="index-2"></span><tt class="xref std std-envvar docutils literal"><span class="pre">reference</span> <span class="pre">convex</span></tt>: for segments, this will be the <img class="math" src="../_images/math/e861e10e1c19918756b9c8b7717684593c63aeb8.png" alt="[0,1]" style="vertical-align: -5px"/> segment,
+for triangles this will be the canonical triangle <img class="math" src="../_images/math/e843f3a35764fe9f3fcbde01304680147458eebe.png" alt="(0,0)-(0,1)-(1,0)" style="vertical-align: -4px"/>, etc.
+All convexes of the mesh are constructed from the reference convex through a
+<span class="target" id="index-3"></span><tt class="xref std std-envvar docutils literal"><span class="pre">geometric</span> <span class="pre">transformation</span></tt>. In simple cases (when the convexes are
+simplices for example), this transformation will be linear (hence it is easily
+inverted, which can be a great advantage). In order to define the geometric
+transformation, one defines <span class="target" id="index-4"></span><tt class="xref std std-envvar docutils literal"><span class="pre">geometrical</span> <span class="pre">nodes</span></tt> on the reference convex.
+The geometrical transformation maps these nodes to the <span class="target" id="index-5"></span><tt class="xref std std-envvar docutils literal"><span class="pre">mesh</span> <span class="pre">nodes</span></tt>.</p>
+<p>On the mesh, one defines a set of basis functions: the <span class="target" id="index-6"></span><tt class="xref std std-envvar docutils literal"><span class="pre">FEM</span></tt>. A FEM is
+associated at each convex. The basis functions are also attached to some
+geometrical points (which can be arbitrarily chosen). These points are similar to
+the mesh nodes, but <strong>they don&#8217;t have to be the same</strong> (this only happens on very
+simple cases, such as a classical <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> fem on a triangular mesh). The set
+of all basis functions on the mesh forms the basis of a vector space, on which the
+PDE will be solved. These basis functions (and their associated geometrical point)
+are the <span class="target" id="index-7"></span><tt class="xref std std-envvar docutils literal"><span class="pre">degrees</span> <span class="pre">of</span> <span class="pre">freedom</span></tt> (contracted to <span class="target" id="index-8"></span><tt class="xref std std-envvar docutils literal"><span class="pre">dof</span></tt>). The FEM is
+said to be <span class="target" id="index-9"></span><tt class="xref std std-envvar docutils literal"><span class="pre">Lagrangian</span></tt> when each of its basis functions is equal to one
+at its attached geometrical point, and is null at the geometrical points of others
+basis functions. This is an important property as it is very easy to
+<span class="target" id="index-10"></span><tt class="xref std std-envvar docutils literal"><span class="pre">interpolate</span></tt> an arbitrary function on the finite elements space.</p>
+<p>The finite elements method involves evaluation of integrals of these basis
+functions (or product of basis functions etc.) on convexes (and faces of
+convexes). In simple cases (polynomial basis functions and linear geometrical
+transformation), one can evaluate analytically these integrals. In other cases,
+one has to approximate it using <span class="target" id="index-11"></span><tt class="xref std std-envvar docutils literal"><span class="pre">quadrature</span> <span class="pre">formulas</span></tt>. Hence, at each
+convex is attached an <span class="target" id="index-12"></span><tt class="xref std std-envvar docutils literal"><span class="pre">integration</span> <span class="pre">method</span></tt> along with the FEM. If you have
+to use an approximate integration method, always choose carefully its order (i.e.
+highest degree of the polynomials who are exactly integrated with the method): the
+degree of the FEM, of the polynomial degree of the geometrical transformation, and
+the nature of the elementary matrix have to be taken into account. If you are
+unsure about the appropriate degree, always prefer a high order integration method
+(which will slow down the assembly) to a low order one which will produce a
+useless linear-system.</p>
+<p>The process of construction of a global linear system from integrals of basis
+functions on each convex is the <span class="target" id="index-13"></span><tt class="xref std std-envvar docutils literal"><span class="pre">assembly</span></tt>.</p>
+<p>A mesh, with a set of FEM attached to its convexes is called a <span class="target" id="index-14"></span><tt class="xref std std-envvar docutils literal"><span class="pre">mesh_fem</span></tt>
+object in <em>GetFEM++</em>.</p>
+<p>A mesh, with a set of integration methods attached to its convexes is called a
+<span class="target" id="index-15"></span><tt class="xref std std-envvar docutils literal"><span class="pre">mesh_im</span></tt> object in <em>GetFEM++</em>.</p>
+<p>A <cite>mesh_fem</cite> can be used to approximate scalar fields (heat, pression, ...), or vector
+fields (displacement, electric field, ...). A <cite>mesh_im</cite> will be used to perform
+numerical integrations on these fields. Most of the finite elements implemented in
+<em>GetFEM++</em> are scalar (however, <img class="math" src="../_images/math/e8be482c22563c1665d2dbad619a80e4db1b7816.png" alt="TR_0" style="vertical-align: -3px"/> and edges elements are also available). Of
+course, these scalar FEMs can be used to approximate each component of a vector
+field. This is done by setting the <img class="math" src="../_images/math/529cdd64ac76518a2e25cbbc61a8cf7e769cbb58.png" alt="Qdim" style="vertical-align: -4px"/> of the <cite>mesh_fem</cite> to the dimension of
+the vector field (i.e. <img class="math" src="../_images/math/eb04669935d1fa97853178e27acd31c31ea52f32.png" alt="Qdim=1" style="vertical-align: -4px"/> <img class="math" src="../_images/math/843622567e12d686e4e2f94ddfcb444e8ecde0d2.png" alt="\Rightarrow" style="vertical-align: -1px"/> scalar field,
+<img class="math" src="../_images/math/ac28eb3c38512e25bb411bad6c2575755df038b0.png" alt="Qdim=2" style="vertical-align: -4px"/> <img class="math" src="../_images/math/843622567e12d686e4e2f94ddfcb444e8ecde0d2.png" alt="\Rightarrow" style="vertical-align: -1px"/> 2D vector field etc.).</p>
+<p>When solving a PDE, one often has to use more than one FEM. The most important one
+will be of course the one on which is defined the solution of the PDE. But most
+PDEs involve various coefficients, for example:</p>
+<div class="math">
+<p><img src="../_images/math/9d7daf4d8156483ad08fbaf1f12649fa98656367.png" alt="\nabla\cdot(\lambda(x)\nabla u) = f(x)."/></p>
+</div><p>Hence one has to define a FEM for the main unknown <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>, but also for the
+data <img class="math" src="../_images/math/1d31c6c4687b003a1d53134dcd40eeeb7c477e17.png" alt="\lambda(x)" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)" style="vertical-align: -4px"/> if they are not constant. In order to
+interpolate easily these coefficients in their finite element space, one often
+choose a Lagrangian FEM.</p>
+<p>The convexes, mesh nodes, and dof are all numbered. We sometimes refer to the
+number associated to a convex as its <span class="target" id="index-16"></span><tt class="xref std std-envvar docutils literal"><span class="pre">convex</span> <span class="pre">id</span></tt> (contracted to
+<span class="target" id="index-17"></span><tt class="xref std std-envvar docutils literal"><span class="pre">cvid</span></tt>). Mesh node numbers are also called <span class="target" id="index-18"></span><tt class="xref std std-envvar docutils literal"><span class="pre">point</span> <span class="pre">id</span></tt> (contracted
+to <span class="target" id="index-19"></span><tt class="xref std std-envvar docutils literal"><span class="pre">pid</span></tt>). Faces of convexes do not have a global numbering, but only a
+local number in each convex. Hence functions which need or return a list of faces
+will always use a two-rows matrix, the first one containing convex ids, and the
+second one containing local face number.</p>
+<p>While the dof are always numbered consecutively, <strong>this is not always the case for
+point ids and convex ids</strong>, especially if you have removed points or convexes from
+the mesh. To ensure that they form a continuous sequence (starting from 1), you
+have to call:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="o">&gt;&gt;</span> <span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;optimize structure&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="install.html"
+                        title="前の章へ">Installation</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="mlabgf.html"
+                        title="次の章へ"><em>GetFEM++</em> organization</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="mlabgf.html" title="GetFEM++ organization"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

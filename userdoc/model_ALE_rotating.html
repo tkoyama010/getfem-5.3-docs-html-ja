@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ALE Support for object having a large rigid body motion &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Appendix A. Finite element method list" href="appendixA.html" />
+    <link rel="prev" title="Small strain plasticity" href="model_plasticity_small_strain.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="appendixA.html" title="Appendix A. Finite element method list"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_plasticity_small_strain.html" title="Small strain plasticity"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ale-support-for-object-having-a-large-rigid-body-motion">
+<span id="ud-model-ale-rotating"></span><span id="index-0"></span><h1>ALE Support for object having a large rigid body motion<a class="headerlink" href="#ale-support-for-object-having-a-large-rigid-body-motion" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="ale-terms-for-rotating-objects">
+<h2>ALE terms for rotating objects<a class="headerlink" href="#ale-terms-for-rotating-objects" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This section present a set of bricks facilitating the use of an ALE formulation for rotating bodies having a rotational symmetry (typically a train wheel).</p>
+<div class="section" id="theoretical-background">
+<h3>Theoretical background<a class="headerlink" href="#theoretical-background" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>This strategy consists in adopting an intermediary description between an Eulerian and a Lagrangian ones for a rotating body having a rotational symmetry. This intermediary description consist in a rotating axes with respect to the reference configuration. See for instance <a class="reference internal" href="../biblio.html#dr-la-ek2014" id="id1">[Dr-La-Ek2014]</a> and <a class="reference internal" href="../biblio.html#nackenhorst2004" id="id2">[Nackenhorst2004]</a>.</p>
+<p>It is supposed that the considered body is submitted approximately to a rigid body motion</p>
+<div class="math">
+<p><img src="../_images/math/f661aa572268e7ca0462163e0b04e5b85c0c1771.png" alt="\tau(X) = R(t)X + Z(t)"/></p>
+</div><p>and may have additonal deformation (exptected smaller) with respect to this rigid motion, where <img class="math" src="../_images/math/de411df2515d28cc6fa045ca3c305d41023eb875.png" alt="R(t)" style="vertical-align: -4px"/> is a rotation matrix</p>
+<div class="math">
+<p><img src="../_images/math/01eed5b460cc8a56f4bd51e239e32a686962ce57.png" alt="R(t) = \left(\begin{array}{ccc}
+\cos(\theta(t)) &amp; \sin(\theta(t)) &amp; 0 \\
+-\sin(\theta(t)) &amp; \cos(\theta(t)) &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{array} \right),"/></p>
+</div><p>and <img class="math" src="../_images/math/d5f653dcc35171cb617829f6ff13f9f44094a405.png" alt="Z(t)" style="vertical-align: -4px"/> is a translation. Note that, in order to be consistent with a positive translation for a positive angle for a rolling contact, the rotation is <strong>clockwise</strong>. This illustrated in the following figure:</p>
+<div class="align-center figure" id="ud-fig-rotating-cylinder">
+<a class="reference internal image-reference" href="../_images/ALE_rotating_body.png"><img alt="alternate text" src="../_images/ALE_rotating_body.png" style="width: 40%;" /></a>
+</div>
+<p>Note that the description is given for a three-dimensional body. For two-dimensional bodies, the third axes is neglected so that <img class="math" src="../_images/math/de411df2515d28cc6fa045ca3c305d41023eb875.png" alt="R(t)" style="vertical-align: -4px"/> is a <img class="math" src="../_images/math/7901356dd65ec4da1b694937cc4ffc663e90d800.png" alt="2\times 2" style="vertical-align: 0px"/> rotation matrix. Let us denote <img class="math" src="../_images/math/0936df714cc1754db6b256f7124c88641fdffa2d.png" alt="r(t)" style="vertical-align: -4px"/> the rotation:</p>
+<div class="math">
+<p><img src="../_images/math/c873f9d45042947362162748c5f9543905c423a2.png" alt="r(t,X) = R(t)X, ~~~~~~~~~ \mbox{ and }
+A = \left(\begin{array}{ccc}
+0 &amp; 1 &amp; 0 \\
+-1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0
+\end{array} \right)."/></p>
+</div><p>We have then</p>
+<div class="math">
+<p><img src="../_images/math/c889b1262f06089329b7c1a895ecca694c8a2ed9.png" alt="\dot{r}(t,X) = \dot{\theta}AR(t)X"/></p>
+</div><p>If <img class="math" src="../_images/math/6b7e14293d2e77a847881ddef55a38af0b106a27.png" alt="\varphi(t, X)" style="vertical-align: -4px"/> is the deformation of the body which maps the reference configuration <img class="math" src="../_images/math/189fed92fbd6b0d71dc3c1347ec5de77e879241c.png" alt="\Omega^0" style="vertical-align: 0px"/> to the deformed configuration <img class="math" src="../_images/math/f71d06d762a6c84475cc4a89a032b5f41fef60b1.png" alt="\Omega_t" style="vertical-align: -3px"/> at time <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" style="vertical-align: 0px"/>, the ALE description consists in the decomposition of the deformation of the cylinder in</p>
+<div class="math">
+<p><img src="../_images/math/82e4cf26a0d1ae307938fa10caf98d846ac513a8.png" alt="\varphi(t, X) = (\tau(t) \circ \bar{\varphi}(t) \circ r(t))(X) = \bar{\varphi}(t, r(t, X)) + Z(t)"/></p>
+</div><p>With <img class="math" src="../_images/math/d76db9263736b9e6cc29ec06c70d6f60b4c87280.png" alt="\bar{X} = R(t)X" style="vertical-align: -4px"/> the new considered deformation is</p>
+<div class="math">
+<p><img src="../_images/math/5c38640acef7f762af7bb69e1e853b61239a1afa.png" alt="\bar{\varphi}(t,\bar{X}) = \varphi(X) - Z(t)"/></p>
+</div><p>Thanks to the rotation symmetry of the reference configuration <img class="math" src="../_images/math/2ccdaffb96e33a373cb3f8b84222855e38174ab5.png" alt="\Omega^0:" style="vertical-align: 0px"/>, we note that <img class="math" src="../_images/math/6cdb45a170bd0663db958c4582b2b28751176702.png" alt="\bar{\Omega}^0 = r(t, \Omega^0)" style="vertical-align: -4px"/> is independant of <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" style="vertical-align: 0px"/> and will serve as the new reference configuration. This is illustrated in the following figure:</p>
+<div class="align-center figure" id="ud-fig-rotating-cylinder-conf">
+<a class="reference internal image-reference" href="../_images/ALE_rotating_conf.png"><img alt="alternate text" src="../_images/ALE_rotating_conf.png" style="width: 80%;" /></a>
+</div>
+<p>The denomination ALE of the method is justified by the fact that <img class="math" src="../_images/math/f4d6adee98f6a1246e08c0ef1071e3b621f57bec.png" alt="\bar{\Omega}^0" style="vertical-align: 0px"/> is an intermediate configuration which is of Euler type for the rigid motion and a Lagrangian one for the additional deformation of the solid. If we denote</p>
+<div class="math">
+<p><img src="../_images/math/9fc28e0458d94660b5c6254039bc44ef68c5b78f.png" alt="\bar{u}(t,\bar{X}) = \bar{\varphi}(t, \bar{X}) - \bar{X}"/></p>
+</div><p>the displacement with respect to this intermediate configuration, the advantage is that if this additional displacement with respect to the rigid body motion is small, it is possible to use a small deformation model (for instance linearized elasticity).</p>
+<p>Due to the objectivity properties of standard consistutive laws, the expression od these laws in the intermediate configuration is most of the time identical to the expression in a standard reference configuration except for the expression of the time derivative which are modified because the change of coordinate is  nonconstant in time :</p>
+<div class="math">
+<p><img src="../_images/math/802964d539c88a46bb7c1b548dcd060814f5d754.png" alt="\Frac{\partial \varphi}{\partial t} = \Frac{\partial \bar{\varphi}}{\partial t} + \dot{\theta} \nabla \bar{\varphi} A \bar{X} + \dot{Z}(t),
+
+\Frac{\partial^2 \varphi}{\partial t^2} = \Frac{\partial^2 \bar{\varphi}}{\partial t^2} + 2\dot{\theta} \nabla\Frac{\partial \bar{\varphi}}{\partial t}A \bar{X} + \dot{\theta}^2\mbox{div}((\nabla\bar{\varphi}A \bar{X}) \otimes (A \bar{X}) )  + \ddot{\theta}\nabla\bar{\varphi}A \bar{X} + \ddot{Z}(t)."/></p>
+</div><p>Note that the term <img class="math" src="../_images/math/94c6fc41d1d4f1927fed46d1787af6f14800c0cb.png" alt="\dot{\theta} A \bar{X} = \left(\hspace*{-0.5em}\begin{array}{c} \dot{\theta}\bar{X}_2 \\ -\dot{\theta}\bar{X}_1 \\ 0 \end{array}\hspace*{-0.5em}\right)" style="vertical-align: -29px"/> is the rigid motion velocity vector. Now, If <img class="math" src="../_images/math/83c4aae78b2d0cc0251277dd0822f1b8b7affa95.png" alt="\Theta(t,X)" style="vertical-align: -4px"/> is a quantity attached to the material points (for instance the temperature), then, with <img class="math" src="../_images/math/dc4e186be5d72e4783d7ff878c2096ebb17d9845.png" alt="\bar{\Theta}(t,\bar{X}) = \Theta(t,X)" style="vertical-align: -4px"/> , one simply has</p>
+<div class="math">
+<p><img src="../_images/math/339497ce1226f30c2b9605193cb898cd4190b6d2.png" alt="\Frac{\partial \Theta}{\partial t} = \Frac{\partial \bar{\Theta}}{\partial t} + \dot{\theta} \nabla \bar{\Theta} A \bar{X}"/></p>
+</div><p>This should not be forgotten that a correction has to be provided for each evolving variable for which the time derivative intervene in the considered model (think for instance to platic flow for plasticity). So that certain model bricks canot be used directly (plastic bricks for instance).</p>
+<p><em>GetFEM++</em> bricks for structural mecanics are mainly considering the displacement as the amin unknown. The expression for the displacement is the following:</p>
+<div class="math">
+<p><img src="../_images/math/50acdb32fdc855a8c9be2edab1c4afd7858d22bd.png" alt="\Frac{\partial u}{\partial t} = \Frac{\partial \bar{u}}{\partial t} + \dot{\theta} (I_d + \nabla \bar{u}) A \bar{X} + \dot{Z}(t),
+
+\Frac{\partial^2 u}{\partial t^2} = \Frac{\partial^2 \bar{u}}{\partial t^2} + 2\dot{\theta} \nabla\Frac{\partial \bar{u}}{\partial t}A \bar{X} +  \dot{\theta}^2\mbox{div}(((I_d + \nabla\bar{u})A \bar{X}) \otimes (A \bar{X}) )  + \ddot{\theta} (I_d + \nabla\bar{u}) A \bar{X}  + \ddot{Z}(t)."/></p>
+</div><div class="section" id="weak-formulation-of-the-transient-terms">
+<h4>Weak formulation of the transient terms<a class="headerlink" href="#weak-formulation-of-the-transient-terms" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>Assuming <img class="math" src="../_images/math/21d611700a85513f5444067a3199a0aa1e4e1d89.png" alt="\rho^0" style="vertical-align: -4px"/> the density in the reference configuration having a rotation symmetry, the term corresponding to acceleration in the weak formulation reads (with <img class="math" src="../_images/math/9c403ce4255e7099ca6f6d6d5c1b7c97840b08be.png" alt="v(X) = \bar{v}(\bar{X})" style="vertical-align: -4px"/> a test function):</p>
+<div class="math">
+<p><img src="../_images/math/26bec020092e79cf6d8b094e61a18ecdba5819c0.png" alt="\int_{\Omega^0} \rho^0 \Frac{\partial^2 u}{\partial t^2}\cdot vdX =
+
+\int_{\bar{\Omega}^0} \rho^0 \left[\Frac{\partial^2 \bar{u}}{\partial t^2} + 2\dot{\theta} \nabla\Frac{\partial \bar{u}}{\partial t}A \bar{X} +  \dot{\theta}^2\mbox{div}(((I_d + \nabla\bar{u})A \bar{X}) \otimes (A \bar{X}) )  + \ddot{\theta} (I_d + \nabla\bar{u}) A \bar{X}  + \ddot{Z}(t) \right] \cdot \bar{v} d\bar{X}."/></p>
+</div><p>The third term in the right hand side can be integrated by part as follows:</p>
+<div class="math">
+<p><img src="../_images/math/9f26a29f9389b91f74c24f09f4040c787de2bad1.png" alt="\begin{array}{rcl}
+ \ds \int_{\bar{\Omega}^0} \rho^0 \dot{\theta}^2\mbox{div}(((I_d + \nabla\bar{u})A \bar{X}) \otimes (A \bar{X}) ) \cdot \bar{v} d\bar{X} &amp;=&amp; - \ds \int_{\bar{\Omega}^0} (\dot{\theta}^2 (I_d + \nabla\bar{u})A \bar{X})) \cdot (\nabla (\rho^0 \bar{v}) A \bar{X}) d\bar{X} \\
+ &amp;&amp;\ds + \int_{\partial \bar{\Omega}^0} \rho^0 \dot{\theta}^2 (((I_d + \nabla\bar{u})A \bar{X}) \otimes (A \bar{X}) ) \bar{N} \cdot \bar{v} d\bar{\Gamma}.
+\end{array}"/></p>
+</div><p>Since <img class="math" src="../_images/math/c296a8b7c86414ed88507cf301be2ea617fbf277.png" alt="\bar{N}" style="vertical-align: 0px"/> the outward unit normal vector on <img class="math" src="../_images/math/e7188b5582c2dd92a653191850f59f8131ffb3a4.png" alt="\partial \bar{\Omega}^0" style="vertical-align: -1px"/> is orthogonal to <img class="math" src="../_images/math/a8f2fa213837d0eb24e03cdfca91f54d460c876f.png" alt="A \bar{X}" style="vertical-align: 0px"/> the boundary term is zero and <img class="math" src="../_images/math/1818c2fc91714faa4f5daaaf3b0824f6f6422187.png" alt="\nabla (\rho^0 \bar{v}) = \bar{v} \otimes \nabla \rho^0   + \rho^0 \nabla \bar{v}" style="vertical-align: -4px"/> and since <img class="math" src="../_images/math/1c06ed19dc7298fd388d11081fa1bfd618ef6dd9.png" alt="\nabla \rho^0.(A\bar{X}) = 0" style="vertical-align: -4px"/> because of the assumption on <img class="math" src="../_images/math/21d611700a85513f5444067a3199a0aa1e4e1d89.png" alt="\rho^0" style="vertical-align: -4px"/> to have a rotation symmetry, we have</p>
+<div class="math">
+<p><img src="../_images/math/02e17997bce57d546d246904d005cc792b94da24.png" alt="\int_{\bar{\Omega}^0} \rho^0 \dot{\theta}^2\mbox{div}(((I_d + \nabla\bar{u})A \bar{X}) \otimes (A \bar{X}) ) \cdot \bar{v} d\bar{X} = - \int_{\bar{\Omega}^0} \rho^0 \dot{\theta}^2(\nabla\bar{u}A \bar{X}) \cdot (\nabla \bar{v} A \bar{X}) d\bar{X} - \int_{\bar{\Omega}^0} \rho^0 \dot{\theta}^2 (A^2 \bar{X})\cdot \bar{v} d\bar{X}."/></p>
+</div><p>Thus globally</p>
+<div class="math">
+<p><img src="../_images/math/91873dc4cc372d07188168cbb5a7155e76a1b032.png" alt="\begin{array}{rcl}
+\ds \int_{\Omega^0} \rho^0 \Frac{\partial^2 u}{\partial t^2}\cdot vdX &amp;=&amp;
+\ds \int_{\bar{\Omega}^0} \rho^0 \left[\Frac{\partial^2 \bar{u}}{\partial t^2} + 2\dot{\theta} \nabla\Frac{\partial \bar{u}}{\partial t}A \bar{X} + \ddot{\theta} \nabla\bar{u} A \bar{X}   \right] \cdot \bar{v} d\bar{X}\\
+&amp;&amp;\ds - \int_{\bar{\Omega}^0} \rho^0 \dot{\theta}^2(\nabla\bar{u}A \bar{X}) \cdot (\nabla \bar{v} A \bar{X}) d\bar{X} - \int_{\bar{\Omega}^0} \rho^0 (\dot{\theta}^2 A^2 \bar{X} + \ddot{\theta} A\bar{X} + \ddot{Z}(t))\cdot \bar{v} d\bar{X}.
+\end{array}"/></p>
+</div><p>Note that two terms can deteriorate the coercivity of the problem and thus its well posedness and the stability of time integration schemes: the second one (convection term) and the fifth one. This may oblige to use additional stabilization techniques for large values of the angular velocity <img class="math" src="../_images/math/b968505d78f325a99a639297b7a081e041f4b007.png" alt="\dot{\theta}" style="vertical-align: 0px"/>.</p>
+</div>
+</div>
+<div class="section" id="the-available-bricks">
+<h3>The available bricks ...<a class="headerlink" href="#the-available-bricks" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>To be adapted</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">brick_name</span><span class="p">(</span><span class="n">parmeters</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">parameters</span></tt> are the parameters ...</p>
+</div>
+</div>
+<div class="section" id="ale-terms-for-a-uniformly-translated-part-of-an-object">
+<h2>ALE terms for a uniformly translated part of an object<a class="headerlink" href="#ale-terms-for-a-uniformly-translated-part-of-an-object" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This section present a set of bricks facilitating the use of an ALE formulation for an object being potentialy infinite in one direction and which whose part of interests (on which the computation is considered) is translated uniformly in that direction (typically a bar).</p>
+<div class="section" id="id3">
+<h3>Theoretical background<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Let us consider an object whose reference configuration <img class="math" src="../_images/math/46805f58e61f7ea97f37b8e496b947bac0fa1a92.png" alt="\Omega^0 \in \R^{d}" style="vertical-align: -1px"/> is infinite in the direction <img class="math" src="../_images/math/459b08d5235f417c69f0cc0c2d473a4739abdb1f.png" alt="E_1" style="vertical-align: -4px"/>, i.e. <img class="math" src="../_images/math/847b7fa2b3ee50d82f9975740f1a0840aef6eba7.png" alt="\Omega^0 = \R \times \omega^0" style="vertical-align: -1px"/> where <img class="math" src="../_images/math/b3a5c7189284fbdb98309367de0b1436392faf9c.png" alt="\omega^0 \in \R^{d-1}" style="vertical-align: -1px"/>. At a time <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" style="vertical-align: 0px"/>, only a &#8220;windows&#8221; of this object is considered</p>
+<div class="math">
+<p><img src="../_images/math/cf4189dd14a254e0ba084420778107bf5a135822.png" alt="\Omega^{0t} = (\alpha + z(t), \beta + z(t)) \times \omega^0"/></p>
+</div><p>where <img class="math" src="../_images/math/b00fc10753d7366a6919ed110df236f9a0b54f64.png" alt="z(t)" style="vertical-align: -4px"/> represents the translation.</p>
+<p>If <img class="math" src="../_images/math/6b7e14293d2e77a847881ddef55a38af0b106a27.png" alt="\varphi(t, X)" style="vertical-align: -4px"/> is the deformation of the body which maps the reference configuration <img class="math" src="../_images/math/189fed92fbd6b0d71dc3c1347ec5de77e879241c.png" alt="\Omega^0" style="vertical-align: 0px"/> to the deformed configuration <img class="math" src="../_images/math/f71d06d762a6c84475cc4a89a032b5f41fef60b1.png" alt="\Omega_t" style="vertical-align: -3px"/> at time <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" style="vertical-align: 0px"/>, the ALE description consists in considering the intermediary reference configuration</p>
+<div class="math">
+<p><img src="../_images/math/8f06bcc19b092f13c242504a0dcbfbbfb679e02b.png" alt="\bar{\Omega}^{0} = (\alpha, \beta) \times \omega^0"/></p>
+</div><p>and <img class="math" src="../_images/math/49e488cb0a066a98440dfc21e598fbd39d704537.png" alt="\bar{\varphi}(t, X) : \R_+ \times \bar{\Omega}^{0} \rightarrow \R^d" style="vertical-align: -5px"/> defined by</p>
+<div class="math">
+<p><img src="../_images/math/f5748ae2ba5ec1e2534c6820ed73f5512327e327.png" alt="\bar{\varphi}(t,\bar{X}) = \varphi(t,X), ~~~\mbox{ with } \bar{X} = X - Z(t),"/></p>
+</div><p>where <img class="math" src="../_images/math/a11c1211cb1e01415d1ea5d271154fd6e1c8ae49.png" alt="Z(t) = z(t)E_1" style="vertical-align: -4px"/>. The interest of <img class="math" src="../_images/math/d7a9c3b85bfe52fe34771de38fa9fc10d8bca0e5.png" alt="\bar{\Omega}^{0}" style="vertical-align: 0px"/> is of course to be time independant. Of course, some special boundary conditions have to be defined on <img class="math" src="../_images/math/69c674e61bd0e95a8ed1a62e2561958b7f2faca4.png" alt="\{\alpha\} \times \omega^0" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/1ea0bbcc85eefbae781e040e69fb4201ad97d0fe.png" alt="\{\beta\} \times \omega^0" style="vertical-align: -5px"/> (absorbing or periodic boundary conditions) in order to approximate the fact that the body is infinite.</p>
+<div class="align-center figure" id="ud-fig-translating-bar">
+<a class="reference internal image-reference" href="../_images/ALE_translation_body.png"><img alt="alternate text" src="../_images/ALE_translation_body.png" style="width: 40%;" /></a>
+</div>
+<p>If we denote</p>
+<div class="math">
+<p><img src="../_images/math/54e4e5366f129859543afeb81ca7a9395afe5976.png" alt="\bar{u}(t,\bar{X}) = \bar{\varphi}(t, \bar{X}) - X = u(t, X),"/></p>
+</div><p>the displacement on the intermediary configuration, then it is easy to check that</p>
+<div class="math">
+<p><img src="../_images/math/7fa9613229d72d3f960ab529f45bf323c0a77851.png" alt="\Frac{\partial \varphi}{\partial t} = \Frac{\partial \bar{u}}{\partial t} - \nabla \bar{u} \dot{Z}
+
+\Frac{\partial^2 \varphi}{\partial t^2} = \Frac{\partial^2 \bar{u}}{\partial t^2} - \nabla\Frac{\partial \bar{u}}{\partial t}\dot{Z} + \Frac{\partial^2 \bar{u}}{\partial \dot{Z}^2} - \nabla\bar{u}\ddot{Z}."/></p>
+</div><div class="section" id="id4">
+<h4>Weak formulation of the transient terms<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>Assuming <img class="math" src="../_images/math/21d611700a85513f5444067a3199a0aa1e4e1d89.png" alt="\rho^0" style="vertical-align: -4px"/> the density in the reference being invariant with the considered translation, the term corresponding to acceleration in the weak formulation reads (with <img class="math" src="../_images/math/9c403ce4255e7099ca6f6d6d5c1b7c97840b08be.png" alt="v(X) = \bar{v}(\bar{X})" style="vertical-align: -4px"/> a test function and after integration by part):</p>
+<div class="math">
+<p><img src="../_images/math/1dc082af058f709906f9045f7ce784d63250601c.png" alt="\int_{\Omega^0} \rho^0 \Frac{\partial^2 u}{\partial t^2}\cdot vdX =
+
+\int_{\bar{\Omega}^{0}} \rho^0 \left[\Frac{\partial^2 \bar{u}}{\partial t^2} - 2\nabla\Frac{\partial \bar{u}}{\partial t}\dot{Z} - \nabla\bar{u}\ddot{Z}\right]\cdot \bar{v}  - \rho^0 (\nabla\bar{u}\dot{Z}).(\nabla\bar{v}\dot{Z}) d\bar{X} + \int_{\partial \bar{\Omega}^0} \rho^0 (\nabla\bar{u}\dot{Z}).\bar{v}(\dot{Z}.\bar{N}) d\bar{\Gamma},"/></p>
+</div><p>where <img class="math" src="../_images/math/c296a8b7c86414ed88507cf301be2ea617fbf277.png" alt="\bar{N}" style="vertical-align: 0px"/> is the outward unit normal vector on <img class="math" src="../_images/math/e7188b5582c2dd92a653191850f59f8131ffb3a4.png" alt="\partial \bar{\Omega}^0" style="vertical-align: -1px"/>. Note that the last term vanishes on <img class="math" src="../_images/math/a1bb1cb344a3f7b6ad40319e3aba9ec33c3472f1.png" alt="(\alpha, \beta) \times \partial \omega^0" style="vertical-align: -4px"/> but not necessarily on <img class="math" src="../_images/math/69c674e61bd0e95a8ed1a62e2561958b7f2faca4.png" alt="\{\alpha\} \times \omega^0" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/1ea0bbcc85eefbae781e040e69fb4201ad97d0fe.png" alt="\{\beta\} \times \omega^0" style="vertical-align: -5px"/>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ALE Support for object having a large rigid body motion</a><ul>
+<li><a class="reference internal" href="#ale-terms-for-rotating-objects">ALE terms for rotating objects</a><ul>
+<li><a class="reference internal" href="#theoretical-background">Theoretical background</a><ul>
+<li><a class="reference internal" href="#weak-formulation-of-the-transient-terms">Weak formulation of the transient terms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-available-bricks">The available bricks ...</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ale-terms-for-a-uniformly-translated-part-of-an-object">ALE terms for a uniformly translated part of an object</a><ul>
+<li><a class="reference internal" href="#id3">Theoretical background</a><ul>
+<li><a class="reference internal" href="#id4">Weak formulation of the transient terms</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_plasticity_small_strain.html"
+                        title="前の章へ">Small strain plasticity</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="appendixA.html"
+                        title="次の章へ">Appendix A. Finite element method list</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="appendixA.html" title="Appendix A. Finite element method list"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_plasticity_small_strain.html" title="Small strain plasticity"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

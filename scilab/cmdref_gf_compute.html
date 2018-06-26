@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_compute &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_cont_struct" href="cmdref_gf_cont_struct.html" />
+    <link rel="prev" title="gf_asm" href="cmdref_gf_asm.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_cont_struct.html" title="gf_cont_struct"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_asm.html" title="gf_asm"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-compute">
+<h1>gf_compute<a class="headerlink" href="#gf-compute" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>n = gf_compute(mesh_fem MF, vec U, &#x27;L2 norm&#x27;, mesh_im mim[, mat CVids])
+n = gf_compute(mesh_fem MF, vec U, &#x27;L2 dist&#x27;, mesh_im mim, mesh_fem mf2, vec U2[, mat CVids])
+n = gf_compute(mesh_fem MF, vec U, &#x27;H1 semi norm&#x27;, mesh_im mim[, mat CVids])
+n = gf_compute(mesh_fem MF, vec U, &#x27;H1 semi dist&#x27;, mesh_im mim, mesh_fem mf2, vec U2[, mat CVids])
+n = gf_compute(mesh_fem MF, vec U, &#x27;H1 norm&#x27;, mesh_im mim[, mat CVids])
+n = gf_compute(mesh_fem MF, vec U, &#x27;H2 semi norm&#x27;, mesh_im mim[, mat CVids])
+n = gf_compute(mesh_fem MF, vec U, &#x27;H2 norm&#x27;, mesh_im mim[, mat CVids])
+DU = gf_compute(mesh_fem MF, vec U, &#x27;gradient&#x27;, mesh_fem mf_du)
+HU = gf_compute(mesh_fem MF, vec U, &#x27;hessian&#x27;, mesh_fem mf_h)
+UP = gf_compute(mesh_fem MF, vec U, &#x27;eval on triangulated surface&#x27;, int Nrefine, [vec CVLIST])
+Ui = gf_compute(mesh_fem MF, vec U, &#x27;interpolate on&#x27;, {mesh_fem mfi | slice sli | vec pts})
+Ue = gf_compute(mesh_fem MF, vec U, &#x27;extrapolate on&#x27;, mesh_fem mfe)
+E = gf_compute(mesh_fem MF, vec U, &#x27;error estimate&#x27;, mesh_im mim)
+E = gf_compute(mesh_fem MF, vec U, &#x27;error estimate nitsche&#x27;, mesh_im mim, int GAMMAC, int GAMMAN, scalar lambda_, scalar mu_, scalar gamma0, scalar f_coeff, scalar vertical_force)
+gf_compute(mesh_fem MF, vec U, &#x27;convect&#x27;, mesh_fem mf_v, vec V, scalar dt, int nt[, string option[, vec per_min, vec per_max]])</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>Various computations involving the solution U to a finite element problem.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'L2</span> <span class="pre">norm',</span> <span class="pre">mesh_im</span> <span class="pre">mim[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Compute the L2 norm of the (real or complex) field &lt;literal&gt;U&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;CVids&lt;/literal&gt; is given, the norm will be computed only on the listed
+elements.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'L2</span> <span class="pre">dist',</span> <span class="pre">mesh_im</span> <span class="pre">mim,</span> <span class="pre">mesh_fem</span> <span class="pre">mf2,</span> <span class="pre">vec</span> <span class="pre">U2[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Compute the L2 distance between &lt;literal&gt;U&lt;/literal&gt; and &lt;literal&gt;U2&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;CVids&lt;/literal&gt; is given, the norm will be computed only on the listed
+elements.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'H1</span> <span class="pre">semi</span> <span class="pre">norm',</span> <span class="pre">mesh_im</span> <span class="pre">mim[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Compute the L2 norm of grad(&lt;literal&gt;U&lt;/literal&gt;).</p>
+<p>If &lt;literal&gt;CVids&lt;/literal&gt; is given, the norm will be computed only on the listed
+elements.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'H1</span> <span class="pre">semi</span> <span class="pre">dist',</span> <span class="pre">mesh_im</span> <span class="pre">mim,</span> <span class="pre">mesh_fem</span> <span class="pre">mf2,</span> <span class="pre">vec</span> <span class="pre">U2[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Compute the semi H1 distance between &lt;literal&gt;U&lt;/literal&gt; and &lt;literal&gt;U2&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;CVids&lt;/literal&gt; is given, the norm will be computed only on the listed
+elements.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'H1</span> <span class="pre">norm',</span> <span class="pre">mesh_im</span> <span class="pre">mim[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Compute the H1 norm of &lt;literal&gt;U&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;CVids&lt;/literal&gt; is given, the norm will be computed only on the listed
+elements.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'H2</span> <span class="pre">semi</span> <span class="pre">norm',</span> <span class="pre">mesh_im</span> <span class="pre">mim[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Compute the L2 norm of D^2(&lt;literal&gt;U&lt;/literal&gt;).</p>
+<p>If &lt;literal&gt;CVids&lt;/literal&gt; is given, the norm will be computed only on the listed
+elements.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'H2</span> <span class="pre">norm',</span> <span class="pre">mesh_im</span> <span class="pre">mim[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Compute the H2 norm of &lt;literal&gt;U&lt;/literal&gt;.</p>
+<p>If &lt;literal&gt;CVids&lt;/literal&gt; is given, the norm will be computed only on the listed
+elements.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">DU</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'gradient',</span> <span class="pre">mesh_fem</span> <span class="pre">mf_du)</span></tt></p>
+<blockquote>
+<div><p>Compute the gradient of the field &lt;literal&gt;U&lt;/literal&gt; defined on mesh_fem &lt;literal&gt;mf_du&lt;/literal&gt;.</p>
+<p>The gradient is interpolated on the mesh_fem &lt;literal&gt;mf_du&lt;/literal&gt;, and returned in
+&lt;literal&gt;DU&lt;/literal&gt;. For example, if &lt;literal&gt;U&lt;/literal&gt; is defined on a P2 mesh_fem, &lt;literal&gt;DU&lt;/literal&gt; should be
+evaluated on a P1-discontinuous mesh_fem. &lt;literal&gt;mf&lt;/literal&gt; and &lt;literal&gt;mf_du&lt;/literal&gt; should
+share the same mesh.</p>
+<p>&lt;literal&gt;U&lt;/literal&gt; may have any number of dimensions (i.e. this function is not
+restricted to the gradient of scalar fields, but may also be used
+for tensor fields). However the last dimension of &lt;literal&gt;U&lt;/literal&gt; has to be
+equal to the number of dof of &lt;literal&gt;mf&lt;/literal&gt;. For example, if &lt;literal&gt;U&lt;/literal&gt; is a
+[3x3xNmf] array (where Nmf is the number of dof of &lt;literal&gt;mf&lt;/literal&gt;), &lt;literal&gt;DU&lt;/literal&gt; will
+be a [Nx3x3[xQ]xNmf_du] array, where N is the dimension of the mesh,
+Nmf_du is the number of dof of &lt;literal&gt;mf_du&lt;/literal&gt;, and the optional Q dimension
+is inserted if &lt;literal&gt;Qdim_mf != Qdim_mf_du&lt;/literal&gt;, where Qdim_mf is the Qdim of
+&lt;literal&gt;mf&lt;/literal&gt; and Qdim_mf_du is the Qdim of &lt;literal&gt;mf_du&lt;/literal&gt;.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">HU</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'hessian',</span> <span class="pre">mesh_fem</span> <span class="pre">mf_h)</span></tt></p>
+<blockquote>
+<div><p>Compute the hessian of the field &lt;literal&gt;U&lt;/literal&gt; defined on mesh_fem &lt;literal&gt;mf_h&lt;/literal&gt;.</p>
+<p>See also gf_compute(&#8216;gradient&#8217;, mesh_fem mf_du).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">UP</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'eval</span> <span class="pre">on</span> <span class="pre">triangulated</span> <span class="pre">surface',</span> <span class="pre">int</span> <span class="pre">Nrefine,</span> <span class="pre">[vec</span> <span class="pre">CVLIST])</span></tt></p>
+<blockquote>
+<div>[OBSOLETE FUNCTION! will be removed in a future release]
+Utility function designed for 2D triangular meshes : returns a list
+of triangles coordinates with interpolated U values. This can be
+used for the accurate visualization of data defined on a
+discontinous high order element. On output, the six first rows of UP
+contains the triangle coordinates, and the others rows contain the
+interpolated values of U (one for each triangle vertex) CVLIST may
+indicate the list of convex number that should be consider, if not
+used then all the mesh convexes will be used. U should be a row
+vector.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Ui</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'interpolate</span> <span class="pre">on',</span> <span class="pre">{mesh_fem</span> <span class="pre">mfi</span> <span class="pre">|</span> <span class="pre">slice</span> <span class="pre">sli</span> <span class="pre">|</span> <span class="pre">vec</span> <span class="pre">pts})</span></tt></p>
+<blockquote>
+<div><p>Interpolate a field on another mesh_fem or a slice or a list of points.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Interpolation on another mesh_fem &lt;literal&gt;mfi&lt;/literal&gt;:</dt>
+<dd><p class="first last">&lt;literal&gt;mfi&lt;/literal&gt; has to be Lagrangian. If &lt;literal&gt;mf&lt;/literal&gt; and &lt;literal&gt;mfi&lt;/literal&gt; share the same
+mesh object, the interpolation will be much faster.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Interpolation on a slice &lt;literal&gt;sli&lt;/literal&gt;:</dt>
+<dd><p class="first last">this is similar to interpolation on a refined P1-discontinuous
+mesh, but it is much faster. This can also be used with
+gf_slice(&#8216;points&#8217;) to obtain field values at a given set of
+points.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Interpolation on a set of points &lt;literal&gt;pts&lt;/literal&gt;</p>
+</li>
+</ul>
+<p>See also gf_asm(&#8216;interpolation matrix&#8217;)</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Ue</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'extrapolate</span> <span class="pre">on',</span> <span class="pre">mesh_fem</span> <span class="pre">mfe)</span></tt></p>
+<blockquote>
+<div><p>Extrapolate a field on another mesh_fem.</p>
+<p>If the mesh of &lt;literal&gt;mfe&lt;/literal&gt; is stricly included in the mesh of &lt;literal&gt;mf&lt;/literal&gt;, this
+function does stricly the same job as gf_compute(&#8216;interpolate_on&#8217;).
+However, if the mesh of &lt;literal&gt;mfe&lt;/literal&gt; is not exactly included in &lt;literal&gt;mf&lt;/literal&gt;
+(imagine interpolation between a curved refined mesh and a coarse
+mesh), then values which are outside &lt;literal&gt;mf&lt;/literal&gt; will be
+extrapolated.</p>
+<p>See also gf_asm(&#8216;extrapolation matrix&#8217;)</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'error</span> <span class="pre">estimate',</span> <span class="pre">mesh_im</span> <span class="pre">mim)</span></tt></p>
+<blockquote>
+<div><p>Compute an a posteriori error estimate.</p>
+<p>Currently there is only one which is available: for each convex,
+the jump of the normal derivative is integrated on its faces.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'error</span> <span class="pre">estimate</span> <span class="pre">nitsche',</span> <span class="pre">mesh_im</span> <span class="pre">mim,</span> <span class="pre">int</span> <span class="pre">GAMMAC,</span> <span class="pre">int</span> <span class="pre">GAMMAN,</span> <span class="pre">scalar</span> <span class="pre">lambda_,</span> <span class="pre">scalar</span> <span class="pre">mu_,</span> <span class="pre">scalar</span> <span class="pre">gamma0,</span> <span class="pre">scalar</span> <span class="pre">f_coeff,</span> <span class="pre">scalar</span> <span class="pre">vertical_force)</span></tt></p>
+<blockquote>
+<div><p>Compute an a posteriori error estimate in the case of Nitsche method.</p>
+<p>Currently there is only one which is available: for each convex,
+the jump of the normal derivative is integrated on its faces.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_compute(mesh_fem</span> <span class="pre">MF,</span> <span class="pre">vec</span> <span class="pre">U,</span> <span class="pre">'convect',</span> <span class="pre">mesh_fem</span> <span class="pre">mf_v,</span> <span class="pre">vec</span> <span class="pre">V,</span> <span class="pre">scalar</span> <span class="pre">dt,</span> <span class="pre">int</span> <span class="pre">nt[,</span> <span class="pre">string</span> <span class="pre">option[,</span> <span class="pre">vec</span> <span class="pre">per_min,</span> <span class="pre">vec</span> <span class="pre">per_max]])</span></tt></p>
+<blockquote>
+<div>Compute a convection of &lt;literal&gt;U&lt;/literal&gt; with regards to a steady state velocity
+field &lt;literal&gt;V&lt;/literal&gt; with a Characteristic-Galerkin method. The result is returned
+in-place in &lt;literal&gt;U&lt;/literal&gt;.
+This method is restricted to pure Lagrange fems for U. &lt;literal&gt;mf_v&lt;/literal&gt; should
+represent a continuous finite element method. &lt;literal&gt;dt&lt;/literal&gt; is the integration time
+and &lt;literal&gt;nt&lt;/literal&gt; is the number of integration step on the caracteristics. &lt;literal&gt;option&lt;/literal&gt;
+is an option for the part of the boundary where there is a re-entrant
+convection.
+&lt;literal&gt;option = &#8216;extrapolation&#8217;&lt;/literal&gt; for an extrapolation on the nearest element,
+&lt;literal&gt;option = &#8216;unchanged&#8217;&lt;/literal&gt; for a constant value on that boundary or
+&lt;literal&gt;option = &#8216;periodicity&#8217;&lt;/literal&gt; for a peridiodic boundary. For this latter option
+the two vectors per_min, per_max has to be given and represent the limits
+of the periodic domain (on components where per_max[k] &lt; per_min[k]
+no operation is done).
+This method is rather dissipative, but stable.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_asm.html"
+                        title="前の章へ">gf_asm</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_cont_struct.html"
+                        title="次の章へ">gf_cont_struct</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_cont_struct.html" title="gf_cont_struct"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_asm.html" title="gf_asm"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

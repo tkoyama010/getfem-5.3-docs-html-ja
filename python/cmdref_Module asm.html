@@ -1,0 +1,477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Module asm &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="Module compute" href="cmdref_Module compute.html" />
+    <link rel="prev" title="Spmat" href="cmdref_Spmat.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Module compute.html" title="Module compute"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Spmat.html" title="Spmat"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-asm">
+<h1>Module asm<a class="headerlink" href="#module-asm" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="function">
+<dt id="getfem.asm_generic">
+<tt class="descname">asm_generic</tt><big>(</big><em>mim</em>, <em>order</em>, <em>expression</em>, <em>region</em>, <em>model=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_generic" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: (...) = asm_generic(MeshIm mim, int order, string expression, int region, [Model model,] [string varname, int is_variable[, {MeshFem mf, MeshImd mimd}], value], ...)</p>
+<p>High-level generic assembly procedure for volumic or boundary assembly.</p>
+<p>Performs the generic assembly of <cite>expression</cite> with the integration
+method <cite>mim</cite> on the mesh region of index <cite>region</cite> (-1 means all
+the element of the mesh). The same mesh should be shared by
+the integration method and all the finite element methods or
+mesh_im_data corresponding to the variables.</p>
+<p><cite>order</cite> indicates either that the (scalar) potential
+(order = 0) or the (vector) residual (order = 1) or the
+tangent (matrix) (order = 2) is to be computed.</p>
+<p><cite>model</cite> is an optional parameter allowing to take into account
+all variables and data of a model.</p>
+<p>The variables and constant (data) are listed after the
+region number (or optionally the model).
+For each variable/constant, first the variable/constant
+name should be given (as it is referred in the assembly string), then
+1 if it is a variable or 0 for a constant, then the finite element
+method if it is a fem variable/constant or the mesh_im_data if it is
+data defined on integration points, and the vector representing
+the value of the variable/constant. It is possible to give an arbitrary
+number of variable/constant. The difference between a variable and a
+constant is that automatic differentiation is done with respect to
+variables only (see GetFEM++ user documentation). Test functions are
+only available for variables, not for constants.</p>
+<p>Note that if several variables are given, the assembly of the
+tangent matrix/residual vector will be done considering the order
+in the call of the function (the degrees of freedom of the first
+variable, then of the second, and so on). If a model is provided,
+all degrees of freedom of the model will be counted first.</p>
+<p>For example, the L2 norm of a vector field &#8220;u&#8221; can be computed with:</p>
+<div class="highlight-python"><pre>gf_compute(&#x27;L2 norm&#x27;) or with the square root of:
+
+gf_asm(&#x27;generic&#x27;, mim, 0, &#x27;u.u&#x27;, -1, &#x27;u&#x27;, 1, mf, U);</pre>
+</div>
+<p>The nonhomogeneous Laplacian stiffness matrix of a scalar field can be evaluated with:</p>
+<div class="highlight-python"><pre>gf_asm(&#x27;laplacian&#x27;, mim, mf, mf_data, A) or equivalently with:
+
+gf_asm(&#x27;generic&#x27;, mim, 2, &#x27;A*Grad_Test2_u.Grad_Test_u&#x27;, -1, &#x27;u&#x27;, 1, mf, U, &#x27;A&#x27;, 0, mf_data, A);</pre>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_mass_matrix">
+<tt class="descname">asm_mass_matrix</tt><big>(</big><em>mim</em>, <em>mf1</em>, <em>mf2=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_mass_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: M = asm_mass_matrix(MeshIm mim, MeshFem mf1[, MeshFem mf2[, int region]])</p>
+<p>Assembly of a mass matrix.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_laplacian">
+<tt class="descname">asm_laplacian</tt><big>(</big><em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>a</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_laplacian" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of the matrix for the Laplacian problem.</p>
+<p><img class="math" src="../_images/math/b5f2cbe198c2cbd39f0bcb7ca3d610065c57565d.png" alt="\nabla\cdot(a(x)\nabla u)" style="vertical-align: -4px"/>  with <cite>a</cite> a scalar.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_linear_elasticity">
+<tt class="descname">asm_linear_elasticity</tt><big>(</big><em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>lambda_d</em>, <em>mu_d</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_linear_elasticity" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembles of the matrix for the linear (isotropic) elasticity problem.</p>
+<p><img class="math" src="../_images/math/b40e879a34af1f500e7ee30da40d5c1533716e3b.png" alt="\nabla\cdot(C(x):\nabla u)" style="vertical-align: -4px"/>
+with <img class="math" src="../_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C" style="vertical-align: 0px"/> defined via <cite>lambda_d</cite> and <cite>mu_d</cite>.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_nonlinear_elasticity">
+<tt class="descname">asm_nonlinear_elasticity</tt><big>(</big><em>mim</em>, <em>mf_u</em>, <em>U</em>, <em>law</em>, <em>mf_d</em>, <em>params</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_nonlinear_elasticity" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: TRHS = asm_nonlinear_elasticity(MeshIm mim, MeshFem mf_u, vec U, string law, MeshFem mf_d, mat params, {&#8216;tangent matrix&#8217;|&#8217;rhs&#8217;|&#8217;incompressible tangent matrix&#8217;, MeshFem mf_p, vec P|&#8217;incompressible rhs&#8217;, MeshFem mf_p, vec P})</p>
+<p>Assembles terms (tangent matrix and right hand side) for nonlinear elasticity.</p>
+<p>The solution <cite>U</cite> is required at the current time-step. The <cite>law</cite>
+may be choosen among:</p>
+<ul class="simple">
+<li>&#8216;SaintVenant Kirchhoff&#8217;:
+Linearized law, should be avoided). This law has the two usual
+Lame coefficients as parameters, called lambda and mu.</li>
+<li>&#8216;Mooney Rivlin&#8217;:
+This law has three parameters, called C1, C2 and D1.
+Can be preceded with the words &#8216;compressible&#8217; or &#8216;incompressible&#8217; to force
+a specific version. By default, the incompressible version is considered
+which requires only the first two material coefficients.</li>
+<li>&#8216;neo Hookean&#8217;:
+A special case of the &#8216;Mooney Rivlin&#8217; law that requires one material
+coefficient less (C2 = 0). By default, its compressible version is used.</li>
+<li>&#8216;Ciarlet Geymonat&#8217;:
+This law has 3 parameters, called lambda, mu and gamma, with
+gamma chosen such that gamma is in ]-lambda/2-mu, -mu[.</li>
+</ul>
+<p>The parameters of the material law are described on the MeshFem <cite>mf_d</cite>.
+The matrix <cite>params</cite> should have <cite>nbdof(mf_d)</cite> columns, each row
+correspounds to a parameter.</p>
+<p>The last argument selects what is to be built: either the tangent
+matrix, or the right hand side. If the incompressibility is
+considered, it should be followed by a MeshFem <cite>mf_p</cite>, for the
+pression.</p>
+<p>Return a SpMat object (tangent matrix), vec object (right hand
+side), tuple of SpMat objects (incompressible tangent matrix), or
+tuple of vec objects (incompressible right hand side).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_helmholtz">
+<tt class="descname">asm_helmholtz</tt><big>(</big><em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>k</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_helmholtz" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of the matrix for the Helmholtz problem.</p>
+<p><img class="math" src="../_images/math/a176210d2b2d9faefa1c60db7a9b47904487fc58.png" alt="\Delta u + k^2 u" style="vertical-align: -2px"/> = 0,  with <cite>k</cite> complex scalar.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_bilaplacian">
+<tt class="descname">asm_bilaplacian</tt><big>(</big><em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>a</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_bilaplacian" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of the matrix for the Bilaplacian problem.</p>
+<p><img class="math" src="../_images/math/91ef8f562d808b007c74b534e7cbece491400cac.png" alt="\Delta(a(x)\Delta u) = 0" style="vertical-align: -4px"/>   with <cite>a</cite> scalar.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_bilaplacian_KL">
+<tt class="descname">asm_bilaplacian_KL</tt><big>(</big><em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>a</em>, <em>nu</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_bilaplacian_KL" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of the matrix for the Bilaplacian problem with Kirchhoff-Love formulation.</p>
+<p><img class="math" src="../_images/math/91ef8f562d808b007c74b534e7cbece491400cac.png" alt="\Delta(a(x)\Delta u) = 0" style="vertical-align: -4px"/>   with <cite>a</cite> scalar.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_volumic_source">
+<tt class="descname">asm_volumic_source</tt><big>(</big><em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>fd</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_volumic_source" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of a volumic source term.</p>
+<p>Output a vector <cite>V</cite>, assembled on the MeshFem <cite>mf_u</cite>, using the data
+vector <cite>fd</cite> defined on the data MeshFem <cite>mf_d</cite>. <cite>fd</cite> may be real or
+complex-valued.</p>
+<p>Return a vec object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_boundary_source">
+<tt class="descname">asm_boundary_source</tt><big>(</big><em>bnum</em>, <em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>G</em><big>)</big><a class="headerlink" href="#getfem.asm_boundary_source" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of a boundary source term.</p>
+<p><cite>G</cite> should be a [Qdim x N] matrix, where N is the number of dof
+of <cite>mf_d</cite>, and Qdim is the dimension of the unkown u (that is set
+when creating the MeshFem).</p>
+<p>Return a vec object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_dirichlet">
+<tt class="descname">asm_dirichlet</tt><big>(</big><em>bnum</em>, <em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>H</em>, <em>R</em>, <em>threshold=None</em><big>)</big><a class="headerlink" href="#getfem.asm_dirichlet" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of Dirichlet conditions of type <cite>h.u = r</cite>.</p>
+<p>Handle <cite>h.u = r</cite> where h is a square matrix (of any rank) whose
+size is equal to the dimension of the unkown u. This matrix is
+stored in <cite>H</cite>, one column per dof in <cite>mf_d</cite>, each column containing
+the values of the matrix h stored in fortran order:</p>
+<div class="math">
+<p><img src="../_images/math/4b318d684994e7bb9054f42749587e69e757851c.png" alt="`H(:,j) = [h11(x_j) h21(x_j) h12(x_j) h22(x_j)]`"/></p>
+</div><p>if u is a 2D vector field.</p>
+<p>Of course, if the unknown is a scalar field, you just have to set
+<cite>H = ones(1, N)</cite>, where N is the number of dof of <cite>mf_d</cite>.</p>
+<p>This is basically the same than calling gf_asm(&#8216;boundary qu term&#8217;)
+for <cite>H</cite> and calling gf_asm(&#8216;neumann&#8217;) for <cite>R</cite>, except that this
+function tries to produce a &#8216;better&#8217; (more diagonal) constraints
+matrix (when possible).</p>
+<p>See also Spmat.Dirichlet_nullspace().</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_boundary_qu_term">
+<tt class="descname">asm_boundary_qu_term</tt><big>(</big><em>boundary_num</em>, <em>mim</em>, <em>mf_u</em>, <em>mf_d</em>, <em>q</em><big>)</big><a class="headerlink" href="#getfem.asm_boundary_qu_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of a boundary qu term.</p>
+<p><cite>q</cite> should be be a [Qdim x Qdim x N] array, where N is the number
+of dof of <cite>mf_d</cite>, and Qdim is the dimension of the unkown u (that
+is set when creating the MeshFem).</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_define_function">
+<tt class="descname">asm_define_function</tt><big>(</big><em>name</em>, <em>nb_args</em>, <em>expression</em>, <em>expression_derivative_t=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_define_function" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: asm_define_function(string name, int nb_args, string expression[, string expression_derivative_t[, string expression_derivative_u]])</p>
+<p>Define a new function <cite>name</cite> which can be used in high level
+generic assembly. The function can have one or two parameters.
+In <cite>expression</cite> all available predefined function or operation
+of the generic assembly can be used. However, no reference to
+some variables or data can be specified. The argument of the
+function is <cite>t</cite> for a one parameter function and <cite>t</cite> and <cite>u</cite>
+for a two parameter function. For instance &#8216;sin(pi*t)+2*t*t&#8217;
+is a valid expression for a one parameter function and
+&#8216;sin(max(t,u)*pi)&#8217; is a valid expression for a two parameters
+function. <cite>expression_derivative_t</cite> and <cite>expression_derivative_u</cite>
+are optional expressions for the derivatives with respect
+to <cite>t</cite> and <cite>u</cite>. If they are not furnished, a symbolic derivation
+is used.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_undefine_function">
+<tt class="descname">asm_undefine_function</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#getfem.asm_undefine_function" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Cancel the definition of a previously defined function <cite>name</cite>
+for the high level generic assembly.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_define_linear_hardening_function">
+<tt class="descname">asm_define_linear_hardening_function</tt><big>(</big><em>name</em>, <em>sigma_y0</em>, <em>H</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_define_linear_hardening_function" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: asm_define_linear_hardening_function(string name, scalar sigma_y0, scalar H, ... [string &#8216;Frobenius&#8217;])</p>
+<p>Define a new linear hardening function under the name <cite>name</cite>, with
+initial yield stress <cite>sigma_y0</cite> and hardening modulus H.
+If an extra string argument with the value &#8216;Frobenius&#8217; is provided,
+the hardening function is expressed in terms of Frobenius norms of its
+input strain and output stress, instead of their Von-Mises equivalents.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_define_Ramberg_Osgood_hardening_function">
+<tt class="descname">asm_define_Ramberg_Osgood_hardening_function</tt><big>(</big><em>name</em>, <em>sigma_ref</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_define_Ramberg_Osgood_hardening_function" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: asm_define_Ramberg_Osgood_hardening_function(string name, scalar sigma_ref, {scalar eps_ref | scalar E, scalar alpha}, scalar n[, string &#8216;Frobenius&#8217;])</p>
+<p>Define a new Ramberg Osgood hardening function under the name <cite>name</cite>,
+with initial yield stress <cite>sigma_y0</cite> and hardening modulus H.
+If an extra string argument with the value &#8216;Frobenius&#8217; is provided,
+the hardening function is expressed in terms of Frobenius norms of its
+input strain and output stress, instead of their Von-Mises equivalents.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_expression_analysis">
+<tt class="descname">asm_expression_analysis</tt><big>(</big><em>expression</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_expression_analysis" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: asm_expression_analysis(string expression [, <a class="reference external" href="mailto:{&#37;&#52;&#48;tm">{<span>&#64;</span>tm</a> mesh | MeshIm mim}] [, der_order] [, Model model] [, string varname, int is_variable[, {MeshFem mf | MeshImd mimd}], ...])</p>
+<p>Analyse a high-level generic assembly expression and print
+information about the provided expression.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_volumic">
+<tt class="descname">asm_volumic</tt><big>(</big><em>CVLST=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_volumic" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: (...) = asm_volumic(,CVLST], expr [, mesh_ims, mesh_fems, data...])</p>
+<p>Low-level generic assembly procedure for volumic assembly.</p>
+<p>The expression <cite>expr</cite> is evaluated over the MeshFem&#8217;s listed in the
+arguments (with optional data) and assigned to the output arguments.
+For details about the syntax of assembly expressions, please refer
+to the getfem user manual (or look at the file getfem_assembling.h
+in the getfem++ sources).</p>
+<p>For example, the L2 norm of a field can be computed with:</p>
+<div class="highlight-python"><pre>gf_compute(&#x27;L2 norm&#x27;) or with the square root of:
+
+gf_asm(&#x27;volumic&#x27;,&#x27;u=data(#1); V()+=u(i).u(j).comp(Base(#1).Base(#1))(i,j)&#x27;,mim,mf,U)</pre>
+</div>
+<p>The Laplacian stiffness matrix can be evaluated with:</p>
+<div class="highlight-python"><pre>gf_asm(&#x27;laplacian&#x27;,mim, mf, mf_data, A) or equivalently with:
+
+gf_asm(&#x27;volumic&#x27;,&#x27;a=data(#2);M(#1,#1)+=sym(comp(Grad(#1).Grad(#1).Base(#2))(:,i,:,i,j).a(j))&#x27;, mim,mf,mf_data,A);</pre>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_boundary">
+<tt class="descname">asm_boundary</tt><big>(</big><em>bnum</em>, <em>expr</em>, <em>mim=None</em>, <em>mf=None</em>, <em>data=None</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_boundary" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: (...) = asm_boundary(int bnum, string expr [, MeshIm mim, MeshFem mf, data...])</p>
+<p>Low-level generic boundary assembly.</p>
+<p>See the help for gf_asm(&#8216;volumic&#8217;).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_interpolation_matrix">
+<tt class="descname">asm_interpolation_matrix</tt><big>(</big><em>mf</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_interpolation_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Mi = asm_interpolation_matrix(MeshFem mf, {MeshFem mfi | vec pts})</p>
+<p>Build the interpolation matrix from a MeshFem onto another MeshFem or a set of points.</p>
+<p>Return a matrix <cite>Mi</cite>, such that <cite>V = Mi.U</cite> is equal to
+gf_compute(&#8216;interpolate_on&#8217;,mfi). Useful for repeated interpolations.
+Note that this is just interpolation, no elementary integrations
+are involved here, and <cite>mfi</cite> has to be lagrangian. In the more
+general case, you would have to do a L2 projection via the mass
+matrix.</p>
+<p><cite>Mi</cite> is a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_extrapolation_matrix">
+<tt class="descname">asm_extrapolation_matrix</tt><big>(</big><em>mf</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_extrapolation_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: Me = asm_extrapolation_matrix(MeshFem mf,  {MeshFem mfe | vec pts})</p>
+<p>Build the extrapolation matrix from a MeshFem onto another MeshFem or a set of points.</p>
+<p>Return a matrix <cite>Me</cite>, such that <cite>V = Me.U</cite> is equal to
+gf_compute(&#8216;extrapolate_on&#8217;,mfe). Useful for repeated
+extrapolations.</p>
+<p><cite>Me</cite> is a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_integral_contact_Uzawa_projection">
+<tt class="descname">asm_integral_contact_Uzawa_projection</tt><big>(</big><em>bnum</em>, <em>mim</em>, <em>mf_u</em>, <em>U</em>, <em>mf_lambda</em>, <em>vec_lambda</em>, <em>mf_obstacle</em>, <em>obstacle</em>, <em>r</em>, <em>*args</em><big>)</big><a class="headerlink" href="#getfem.asm_integral_contact_Uzawa_projection" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Synopsis: B = asm_integral_contact_Uzawa_projection(int bnum, MeshIm mim, MeshFem mf_u, vec U, MeshFem mf_lambda, vec vec_lambda, MeshFem mf_obstacle, vec obstacle, scalar r [, {scalar coeff | MeshFem mf_coeff, vec coeff} [, int option[, scalar alpha, vec W]]])</p>
+<dl class="docutils">
+<dt>Specific assembly procedure for the use of an Uzawa algorithm to solve</dt>
+<dd>contact problems. Projects the term $-(lambda - r (u_N-g))_-$ on the
+finite element space of $lambda$.</dd>
+</dl>
+<p>Return a vec object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_level_set_normal_source_term">
+<tt class="descname">asm_level_set_normal_source_term</tt><big>(</big><em>bnum</em>, <em>mim</em>, <em>mf_u</em>, <em>mf_lambda</em>, <em>vec_lambda</em>, <em>mf_levelset</em>, <em>levelset</em><big>)</big><a class="headerlink" href="#getfem.asm_level_set_normal_source_term" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Performs an assembly of the source term represented by <cite>vec_lambda</cite>
+on <cite>mf_lambda</cite> considered to be a component in the direction of the
+gradient of a levelset function (normal to the levelset) of a vector
+field defined on <cite>mf_u</cite> on the boundary <cite>bnum</cite>.</p>
+<p>Return a vec object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_lsneuman_matrix">
+<tt class="descname">asm_lsneuman_matrix</tt><big>(</big><em>mim</em>, <em>mf1</em>, <em>mf2</em>, <em>ls</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_lsneuman_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of a level set Neuman  matrix.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_nlsgrad_matrix">
+<tt class="descname">asm_nlsgrad_matrix</tt><big>(</big><em>mim</em>, <em>mf1</em>, <em>mf2</em>, <em>ls</em>, <em>region=None</em><big>)</big><a class="headerlink" href="#getfem.asm_nlsgrad_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of a nlsgrad matrix.</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="getfem.asm_stabilization_patch_matrix">
+<tt class="descname">asm_stabilization_patch_matrix</tt><big>(</big><em>mesh</em>, <em>mf</em>, <em>mim</em>, <em>ratio</em>, <em>h</em><big>)</big><a class="headerlink" href="#getfem.asm_stabilization_patch_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Assembly of stabilization patch matrix .</p>
+<p>Return a SpMat object.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Spmat.html"
+                        title="前の章へ">Spmat</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Module compute.html"
+                        title="次の章へ">Module compute</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Module compute.html" title="Module compute"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_Spmat.html" title="Spmat"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

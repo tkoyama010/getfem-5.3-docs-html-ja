@@ -1,0 +1,635 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Small strain plasticity &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="ALE Support for object having a large rigid body motion" href="model_ALE_rotating.html" />
+    <link rel="prev" title="Finite strain Elasticity bricks" href="model_nonlinear_elasticity.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_ALE_rotating.html" title="ALE Support for object having a large rigid body motion"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_nonlinear_elasticity.html" title="Finite strain Elasticity bricks"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="small-strain-plasticity">
+<span id="ud-model-plasticity-small-strain"></span><span id="index-0"></span><h1>Small strain plasticity<a class="headerlink" href="#small-strain-plasticity" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>A framework for the approximation of plasticity models in <em>GetFEM++</em>. See in <tt class="file docutils literal"><span class="pre">src/getfem_plasticity.cc</span></tt> and <tt class="file docutils literal"><span class="pre">interface/src/gf_model_set.cc</span></tt> for the brick implementation and to extend the implementation to new plasticity models.</p>
+<div class="section" id="theoretical-background">
+<h2>Theoretical background<a class="headerlink" href="#theoretical-background" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>We present a short introduction to small strain plasticity. We refer mainly to <a class="reference internal" href="../biblio.html#si-hu1998" id="id1">[SI-HU1998]</a> and <a class="reference internal" href="../biblio.html#so-pe-ow2008" id="id2">[SO-PE-OW2008]</a> for a more detailed presentation.</p>
+<div class="section" id="additive-decomposition-of-the-small-strain-tensor">
+<h3>Additive decomposition of the small strain tensor<a class="headerlink" href="#additive-decomposition-of-the-small-strain-tensor" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Let <img class="math" src="../_images/math/8fd717e0510c17316304b0cb0f5e54846ec9c781.png" alt="\Omega \subset \R^3" style="vertical-align: -1px"/> be the reference configuration of a deformable body and <img class="math" src="../_images/math/a141185ca8aaf736ef7517af25579492b101a749.png" alt="u : \Omega \rightarrow \R^3" style="vertical-align: -1px"/> be the displacement field. Small strain plasticity is based on the additive decomposition of the small strain tensor <img class="math" src="../_images/math/215459a4a74ab26582f319599b607a611fa8f38f.png" alt="\varepsilon(u) = \Frac{\nabla u + \nabla u^T}{2}" style="vertical-align: -13px"/> in</p>
+<div class="math">
+<p><img src="../_images/math/7f83b39b257ec60ec191ecac7aba7fc848638085.png" alt="\varepsilon(u) = \varepsilon^e + \varepsilon^p"/></p>
+</div><p>where <img class="math" src="../_images/math/7feb9c82e383570324066bbf76b4713b7162310c.png" alt="\varepsilon^e" style="vertical-align: 0px"/> is the elastic part of the strain tensor and <img class="math" src="../_images/math/66aff5a6578ebb94bbef84468ad78a49f00e7bc2.png" alt="\varepsilon^p" style="vertical-align: 0px"/> the plastic one.</p>
+</div>
+<div class="section" id="internal-variables-free-energy-potential-and-elastic-law">
+<h3>Internal variables, free energy potential and elastic law<a class="headerlink" href="#internal-variables-free-energy-potential-and-elastic-law" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We consider</p>
+<div class="math">
+<p><img src="../_images/math/3e540f8c0945bc6748a14890d26535809d67b111.png" alt="\alpha : \Omega \rightarrow \R^{d_{\alpha}},"/></p>
+</div><p>a vector field of <img class="math" src="../_images/math/6e39f583240b4464fc4012d8c93ce633fcc8f18e.png" alt="d_{\alpha}" style="vertical-align: -3px"/> strain type internal variables (<img class="math" src="../_images/math/ee8275d8ea63b3807d35be1e5a9cabeba25f4caf.png" alt="d_{\alpha} = 0" style="vertical-align: -3px"/> if no internal variables are considered). We consider also a free energy potential</p>
+<div class="math">
+<p><img src="../_images/math/0f01897c8a60d81c2f5318725c422bcadd122876.png" alt="\psi(\varepsilon^e, \alpha),"/></p>
+</div><p>such that corresponding stress type variables are determined by</p>
+<div class="math">
+<p><img src="../_images/math/97c5327dac97b7e4835de860c768caeb22ba9b4d.png" alt="\sigma = \Frac{\partial \psi}{\partial \varepsilon^e}(\varepsilon^e, \alpha), ~~~~ A =  \Frac{\partial \psi}{\partial \alpha}(\varepsilon^e, \alpha),"/></p>
+</div><p>where <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> is the Cauchy stress tensor and <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" style="vertical-align: 0px"/> the stress type internal variables. The plastic dissipation is given by</p>
+<div class="math">
+<p><img src="../_images/math/ab5513e0d67007d7c41c8d590c020d93c528f7d4.png" alt="\sigma:\dot{\varepsilon}^p - A.\dot{\alpha} \ge 0."/></p>
+</div><p>In the standard cases, <img class="math" src="../_images/math/45825c7042e3fc69a58430ff7ea94a10a35e9252.png" alt="\psi(\varepsilon^e, \alpha)" style="vertical-align: -4px"/> is decomposed into</p>
+<div class="math">
+<p><img src="../_images/math/57bb12bf5e54ccf2a5c2a7fa7eb7ce3a7bc3f409.png" alt="\psi(\varepsilon^e, \alpha) = \psi^e(\varepsilon^e) + \psi^p(\alpha)."/></p>
+</div><p>In the case of linearized elasticity, one has <img class="math" src="../_images/math/d6ce0cd0c16cee79ac3cad972a3bbbfabc31d99d.png" alt="\psi^e(\varepsilon^e) = \frac{1}{2} ({\cal A}\varepsilon^e) :\varepsilon^e" style="vertical-align: -6px"/> where <img class="math" src="../_images/math/0d1e7b080f04403f9c9687b8bfa0c61ac04e3dc3.png" alt="{\cal A}" style="vertical-align: -1px"/> is the fourth order elasticity tensor. For isotropic linearized elasticity this expression reduces to <img class="math" src="../_images/math/0289b2b4d04688fdc5de9e2b32a0de62758adfa4.png" alt="\psi^e(\varepsilon^e) = \mu \mbox{dev}(\varepsilon^e) : \mbox{dev}(\varepsilon^e) + \frac{1}{2} K (\mbox{tr}(\varepsilon^e))^2" style="vertical-align: -6px"/> where <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu" style="vertical-align: -4px"/> is the shear modulus and <img class="math" src="../_images/math/957699818cf3be9cb1b867c081d26d834d0fa3eb.png" alt="K = \lambda + 2\mu/3" style="vertical-align: -5px"/> is the bulk modulus.</p>
+</div>
+<div class="section" id="plastic-potential-yield-function-and-plastic-flow-rule">
+<h3>Plastic potential, yield function and plastic flow rule<a class="headerlink" href="#plastic-potential-yield-function-and-plastic-flow-rule" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Plastic yielding is supposed to occur when the stress attains a critical value. This limit is determined by a yield function <img class="math" src="../_images/math/d21cbde12ddc9c81016c3ed877d7dcb9a8cc91db.png" alt="f(\sigma, A)" style="vertical-align: -4px"/> and the condition</p>
+<div class="math">
+<p><img src="../_images/math/45117f3bf6100431583be956b533cfbbfe859db4.png" alt="f(\sigma, A) \le 0."/></p>
+</div><p>The surface <img class="math" src="../_images/math/16eba01a89ae3351675733709215eae3a2dd0298.png" alt="f(\sigma, A) = 0" style="vertical-align: -4px"/> is the yield surface where the plastic deformation may occur.</p>
+<p>Let us also consider the plastic potential <img class="math" src="../_images/math/d189f9acc51d583be8451f71b506e97b19ad312e.png" alt="\Psi(\sigma, A)" style="vertical-align: -4px"/>, (convex with respect to its both variables) which determines the plastic flow direction in the sense that the flow rule is defined as</p>
+<div class="math">
+<p><img src="../_images/math/999ecc4ac9723e7f3f96bb41c175778d4a5e065e.png" alt="\dot{\varepsilon}^p = \gamma \Frac{\partial \Psi}{\partial \sigma}(\sigma, A), ~~~~~~ \dot{\alpha} = -\gamma \Frac{\partial \Psi}{\partial A}(\sigma, A),"/></p>
+</div><p>with the additional complementarity condition</p>
+<div class="math">
+<p><img src="../_images/math/c12964f368291dd8f281492bc147f1b327040a5e.png" alt="f(\sigma, A) \le 0, ~~~ \gamma \ge 0, ~~~ f(\sigma, A) \gamma = 0."/></p>
+</div><p>The variable <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" style="vertical-align: -4px"/> is called the plastic multiplier. Note that when <img class="math" src="../_images/math/1a2f83df5ef59353b8cd6273810b91a1bde20df4.png" alt="\psi(\varepsilon^e, \alpha), f(\sigma, A) \mbox{ or } \Psi(\sigma, A)" style="vertical-align: -4px"/> are not differentiable, subdifferentials have to be used. Associated plasticity corresponds to the choice <img class="math" src="../_images/math/3fbb38b4901df20ec9a4f9ad6fc7a98198aefe5d.png" alt="\Psi(\sigma, A) = f(\sigma, A)" style="vertical-align: -4px"/>.</p>
+</div>
+<div class="section" id="initial-boundary-value-problem">
+<h3>Initial boundary value problem<a class="headerlink" href="#initial-boundary-value-problem" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The weak formulation of a dynamic elastoplastic problem can be written, for an arbitrary kinematically admissible test function <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/>, as follows:</p>
+<div class="math">
+<p><img src="../_images/math/ccfc2b7ab85fa3ed74a509b8b6f390f01ee01f7c.png" alt="\left| \begin{array}{l}
+\ds \int_{\Omega} \rho \ddot{u}\cdot v + \sigma : \nabla v dx =  \int_{\Omega} f\dot v dx + \int_{\Gamma_N} g\dot v dx, \\
+u(0,x) = u_0(x), ~~~\dot{u}(0) = \mathrm{v}_0(x), \\
+\varepsilon^p(0,x) = \varepsilon^p_0, ~~~ \alpha(0,x) = \alpha_0,
+\end{array} \right."/></p>
+</div><p>for <img class="math" src="../_images/math/3c74348c558ef08cfd0f80d675e49c3c94935619.png" alt="u_0, \mathrm{v}_0, \varepsilon^p_0, \alpha_0" style="vertical-align: -4px"/> being initial values and <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/311cabda3a9b09f0dde217303ca9d1cd9201dcf6.png" alt="g" style="vertical-align: -4px"/> being prescribed forces in the interior of domain <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> and on the part of the boundary <img class="math" src="../_images/math/0b983602095bda2a85dd1b0c177f154eaffbecbd.png" alt="\Gamma_N" style="vertical-align: -3px"/>.</p>
+<p>Note that plasticity models are often applied on quasi-static problems which correspond to the term <img class="math" src="../_images/math/976853811932b1e8372fc94482174cb463b4d336.png" alt="\rho \ddot{u}" style="vertical-align: -4px"/> being neglected.</p>
+<p>Given a time step <img class="math" src="../_images/math/7cfbbfe87774f067988b84cd7362a3cdbc0b6c6e.png" alt="\Delta t = t_{n+1} -t_n" style="vertical-align: -5px"/>, from time <img class="math" src="../_images/math/2e9bb94664d3e2d8c57a28afbd35f239ab99ef27.png" alt="t_n" style="vertical-align: -3px"/> to <img class="math" src="../_images/math/1b9dd954ceaf76bff220ad646427c943137b3bd4.png" alt="t_{n+1}" style="vertical-align: -5px"/>, we will denote in the sequel <img class="math" src="../_images/math/420915488802965edb68ef971f8bf8100881755f.png" alt="u_n, \varepsilon^p_n  \mbox{ and } \alpha_n" style="vertical-align: -5px"/> the approximations at time <img class="math" src="../_images/math/2e9bb94664d3e2d8c57a28afbd35f239ab99ef27.png" alt="t_n" style="vertical-align: -3px"/> of <img class="math" src="../_images/math/161f4b7f0126b6001e399ddfe67d41f67f95931c.png" alt="u(t_n), \varepsilon^p_n(t_n) \mbox{ and } \alpha(t_n)" style="vertical-align: -5px"/> respectively. These approximations correspond to the chosen time integration scheme (for instance one of the proposed schemes in <a class="reference internal" href="model_time_integration.html#ud-model-time-integration"><em>The model tools for the integration of transient problems</em></a>) which can be different than the time integration scheme used for the integration of the flow rule (see below).</p>
+</div>
+</div>
+<div class="section" id="flow-rule-integration">
+<h2>Flow rule integration<a class="headerlink" href="#flow-rule-integration" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The plastic flow rule has to be integrated with its own time integration scheme. Among standards schemes, the backward Euler scheme, the <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/>-scheme (or generalized trapezoidal rule) and the generalized mid-point scheme are the most commonly used in that context. We make here the choice of the <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/>-scheme (<img class="math" src="../_images/math/72ad431cc263034d8221a41fe80cc1bcf0164959.png" alt="\theta = 1" style="vertical-align: -1px"/> corresponds to the backward Euler scheme as a special case).</p>
+<p>Let <img class="math" src="../_images/math/2527fa77391babb15b45bb43138b36681fc40fc7.png" alt="u_{n+1}" style="vertical-align: -5px"/> be the displacement at the considered time step and  <img class="math" src="../_images/math/3ea0fb113e45cc0d113022534aa991a28dd7b1d5.png" alt="u_{n}" style="vertical-align: -3px"/> at the previous one.</p>
+<p>The <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/>-scheme for the integration of the plastic flow rules reads as</p>
+<div class="math" id="equation-thetascheme1">
+<p><span class="eqno">(1)</span><img src="../_images/math/ad314a38f919ebe7ad8641d6e03f82f0c602f861.png" alt="\varepsilon^p_{n+1} - \varepsilon^p_{n} = (1-\theta)\Delta t \gamma_n \Frac{\partial \Psi}{\partial \sigma}(\sigma_{n}, A_{n}) + \theta \Delta t \gamma_{n+1} \Frac{\partial \Psi}{\partial \sigma}(\sigma_{n+1}, A_{n+1}),"/></p>
+</div><div class="math" id="equation-thetascheme2">
+<p><span class="eqno">(2)</span><img src="../_images/math/8709db24895fb9816b3b2d2a2790470749af7473.png" alt="\alpha_{n+1} - \alpha_n = -(1-\theta)\Delta t \gamma_n \Frac{\partial \Psi}{\partial A}(\sigma_{n}, A_{n}) - \theta\Delta t \gamma_{n+1} \Frac{\partial \Psi}{\partial A}(\sigma_{n+1}, A_{n+1}),"/></p>
+</div><p>with the complementary condition</p>
+<div class="math">
+<p><img src="../_images/math/22d96ec027ca16239383276c11050e2261f9f710.png" alt="f(\sigma_{n+1}, A_{n+1}) \le 0, ~~~ \gamma_{n+1} \ge 0, ~~~ f(\sigma_{n+1}, A_{n+1}) \gamma_{n+1} = 0."/></p>
+</div><p>where <img class="math" src="../_images/math/8654725100f96a90d0b46a11028e09bc45bd4f67.png" alt="0 &lt; \theta \le 1" style="vertical-align: -3px"/> is the parameter of the <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/>-scheme. We exclude <img class="math" src="../_images/math/8656595bf44ec840dac700925abe3bcbccab0b46.png" alt="\theta = 0" style="vertical-align: 0px"/> because we will not consider explicit integration of plasticity. Let us recall that <img class="math" src="../_images/math/72ad431cc263034d8221a41fe80cc1bcf0164959.png" alt="\theta = 1" style="vertical-align: -1px"/> corresponds to the backward Euler scheme and <img class="math" src="../_images/math/4260c84580aacab7b48e8f69168d2b50cbbe5a05.png" alt="\theta = 1/2" style="vertical-align: -5px"/> to the Crank-Nicolson scheme (or trapezoidal rule) which is a second order consistent scheme. Note that the complementarity condition for the quantities at time step <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> is prescribed at the previous time step (<img class="math" src="../_images/math/cc95cb833fd86cb19bd80adcca058c51477a581e.png" alt="\sigma_{n}, \alpha_n, \mbox{and } \gamma_n" style="vertical-align: -4px"/> are supposed to be already determined).</p>
+<p>A solution would be to solve the whole problem with all the unknows, that is <img class="math" src="../_images/math/30e09e7a93e861c4d3fcf11a6529d78e0e10cb0e.png" alt="u_{n+1},  \gamma_{n+1}, \varepsilon^p_{n+1} \mbox{ and } A_{n+1}" style="vertical-align: -6px"/>. This is of course possible but would be a rather expensive strategy because of the resulting high number of degrees of freedom. A classical strategy (the return mapping one for instance, see <a class="reference internal" href="../biblio.html#so-pe-ow2008" id="id3">[SO-PE-OW2008]</a> or the closest point projection one) consist in integrating locally the plastic flow on each Gauss point of the considered integration method separately, or more precisely to consider on each Gauss point the maps</p>
+<div class="math">
+<p><img src="../_images/math/4015decf64c4d64081cea0e70fc7a0490f780962.png" alt="{\mathscr E}^p : (u_{n+1}, \zeta_n, \eta_n) \mapsto \varepsilon^p_{n+1}
+
+{\mathscr A} : (u_{n+1}, \zeta_{n}, \eta_n) \mapsto \alpha_{n+1}"/></p>
+</div><p>with <img class="math" src="../_images/math/8e9ff33cde9b5c8a9ea23ade5e78860a28281187.png" alt="\eta_n, \zeta_{n}" style="vertical-align: -4px"/> the right hand side of equations <a href="#equation-thetascheme1">(1)</a>, <a href="#equation-thetascheme2">(2)</a>, i.e.</p>
+<div class="math">
+<p><img src="../_images/math/b648e25408c018375a871a70a35c6ce4e4344b70.png" alt="\zeta_n = \varepsilon^p_{n} + (1-\theta)\Delta t \gamma_n \Frac{\partial \Psi}{\partial \sigma}(\sigma_{n}, A_{n}) ,
+
+\eta_n = \alpha_n - (1-\theta)\Delta t \gamma_n \Frac{\partial \Psi}{\partial A}(\sigma_{n}, A_{n})"/></p>
+</div><p>This means in particular that <img class="math" src="../_images/math/99f9b9cae8a7e0511774b31b398ef3ef7d11e04c.png" alt="(\varepsilon^p_{n+1}, \alpha_{n+1}) = ({\mathscr E}^p(u_{n+1},  \zeta_n, \eta_n), {\mathscr A}(u_{n+1}, \zeta_{n}, \eta_n))" style="vertical-align: -6px"/> is the solution to equations <a href="#equation-thetascheme1">(1)</a> and <a href="#equation-thetascheme2">(2)</a>. Both these maps and their tangent moduli (usually called consistent tangent moduli) are then used in the global solve of the problem with a Newton method and for <img class="math" src="../_images/math/2527fa77391babb15b45bb43138b36681fc40fc7.png" alt="u_{n+1}" style="vertical-align: -5px"/> the unique remaining variable. The advantage of the return mapping strategy is that the unique variable of the global solve is the displacement <img class="math" src="../_images/math/2527fa77391babb15b45bb43138b36681fc40fc7.png" alt="u_{n+1}" style="vertical-align: -5px"/>. A nonlinear solve on each Gauss point is often necessary which is usualy performed with a local Newton method.</p>
+<p>In <em>GetFEM++</em> we propose both the return mapping strategy and also an alternative strategy developped below which is mainly inspired from  <a class="reference internal" href="../biblio.html#po-ni2016" id="id4">[PO-NI2016]</a>,  <a class="reference internal" href="../biblio.html#se-po-wo2015" id="id5">[SE-PO-WO2015]</a> and <a class="reference internal" href="../biblio.html#ha-wo2009" id="id6">[HA-WO2009]</a> and allow more simple tangent moduli. It consists in keeping (a multiple of) <img class="math" src="../_images/math/183d6dd55c3979e97bb56aa6afb0692eb4a6d35b.png" alt="\gamma_{n+1}" style="vertical-align: -5px"/> as an additional unknown with respect to <img class="math" src="../_images/math/2527fa77391babb15b45bb43138b36681fc40fc7.png" alt="u_{n+1}" style="vertical-align: -5px"/>. As we will see, this will allow a more generic treatment of the yield functions, the price for the simplicity being this additional unknown scalar field.</p>
+<p>First, we consider an additional (and optional) given function <img class="math" src="../_images/math/f9e69d72eb815a073234d1e81ae1dcbbd9121df6.png" alt="\alpha(\sigma_{n+1}, A_{n+1}) &gt; 0" style="vertical-align: -5px"/> whose interest will appear later on (it will allow simple local inverses) and the new unknown scalar field</p>
+<div class="math">
+<p><img src="../_images/math/6b95c160cb08de318822588950132d5260d30bd8.png" alt="\xi_{n+1} = \Frac{\gamma_{n+1}}{\alpha(\sigma_{n+1}, A_{n+1})} ,"/></p>
+</div><p>so that our two main unknows are now <img class="math" src="../_images/math/f5a6d2756a336a03e3ead2c16b2e91d9d6be2a64.png" alt="u_{n+1} \mbox{ and } \xi_{n+1}" style="vertical-align: -5px"/>. The discretized plastic flow rule integration now reads:</p>
+<div class="math" id="equation-flowrule1">
+<p><span class="eqno">(3)</span><img src="../_images/math/83d6d83825741c246eaead5da4ac2aceaed22570.png" alt="\varepsilon^p_{n+1} - \varepsilon^p_{n} = (1-\theta)\alpha(\sigma_n,A_n)\Delta t \xi_n \Frac{\partial \Psi}{\partial \sigma}(\sigma_{n}, A_{n}) + \theta \alpha(\sigma_{n+1},A_{n+1}) \Delta t \xi_{n+1} \Frac{\partial \Psi}{\partial \sigma}(\sigma_{n+1}, A_{n+1}),"/></p>
+</div><div class="math" id="equation-flowrule2">
+<p><span class="eqno">(4)</span><img src="../_images/math/b4d03f457a4a31b01b80631170f0f33cac452575.png" alt="\alpha_{n+1} - \alpha_n = (1-\theta) \alpha(\sigma_n,A_n)\Delta t \xi_n \Frac{\partial \Psi}{\partial A}(\sigma_{n}, A_{n}) + \theta \alpha(\sigma_{n+1},A_{n+1}) \Delta t \xi_{n+1} \Frac{\partial \Psi}{\partial A}(\sigma_{n+1}, A_{n+1}),"/></p>
+</div><div class="math" id="equation-flowrule3">
+<p><span class="eqno">(5)</span><img src="../_images/math/b2601f235496d401e532120079b4d26cc56cc3b6.png" alt="f(\sigma_{n+1}, A_{n+1}) \le 0, ~~~ \xi_{n+1} \ge 0, ~~~ f(\sigma_{n+1}, A_{n+1}) \xi_{n+1} = 0."/></p>
+</div><p>For <img class="math" src="../_images/math/f5a6d2756a336a03e3ead2c16b2e91d9d6be2a64.png" alt="u_{n+1} \mbox{ and } \xi_{n+1}" style="vertical-align: -5px"/> be given, we define the two maps</p>
+<div class="math">
+<p><img src="../_images/math/135c0ba03ea4d8930442434f2b3be282f74e4eca.png" alt="\tilde{\mathscr E}^p : (u_{n+1}, \theta \Delta t \xi_{n+1}, \zeta_{n}, \eta_n) \mapsto \varepsilon^p_{n+1}
+
+\tilde{\mathscr A} : (u_{n+1}, \theta \Delta t \xi_{n+1}, \zeta_{n}, \eta_n) \mapsto \alpha_{n+1}"/></p>
+</div><p>where the pair <img class="math" src="../_images/math/e54bc0586c18ffc726dd1f7e1971a787c708257f.png" alt="(\varepsilon^p_{n+1}, \alpha_{n+1}) = (\tilde{\mathscr E}^p(u_{n+1}, \theta \xi_{n+1}, \zeta_{n}, \eta_n), \tilde{\mathscr A}(u_{n+1}, \theta \xi_{n+1}, \zeta_{n}, \eta_n))" style="vertical-align: -6px"/> is the solution to equations <a href="#equation-flowrule1">(3)</a>, <a href="#equation-flowrule2">(4)</a> (without the consideration of  <a href="#equation-flowrule3">(5)</a>). We will see later, that, at least for simple isotropic plastic flow rules, these maps have a simple expression, even sometimes a linear one with respect to <img class="math" src="../_images/math/2527fa77391babb15b45bb43138b36681fc40fc7.png" alt="u_{n+1}" style="vertical-align: -5px"/>.</p>
+<p>Still <img class="math" src="../_images/math/f5a6d2756a336a03e3ead2c16b2e91d9d6be2a64.png" alt="u_{n+1} \mbox{ and } \xi_{n+1}" style="vertical-align: -5px"/> be given the stress <img class="math" src="../_images/math/68ac28a5bbe01bf309a82fa48996110e79f30df4.png" alt="\sigma_{n+1}" style="vertical-align: -5px"/> reads</p>
+<div class="math">
+<p><img src="../_images/math/c415295cb5eec1848b9ae0c4c363fef77f716d5b.png" alt="\sigma_{n+1} = \Frac{\partial \psi^e}{\partial \varepsilon^e}(\varepsilon(u_{n+1}) -\varepsilon^p_{n+1})."/></p>
+</div><div class="math">
+<p><img src="../_images/math/8f61203a4a1bcf642064d69289683f589a438122.png" alt="A_{n+1} = \Frac{\partial \psi^p}{\partial \alpha}(\alpha_{n+1})."/></p>
+</div><p>The complementarity equation <a href="#equation-flowrule3">(5)</a> is then prescribed with the use of a well chosen complementarity function, as in <a class="reference internal" href="../biblio.html#ha-wo2009" id="id7">[HA-WO2009]</a> for <img class="math" src="../_images/math/22ff7db3e755a8164f2344e0d3d84ea3a0fe93b3.png" alt="r &gt; 0" style="vertical-align: 0px"/> such as:</p>
+<div class="math">
+<p><img src="../_images/math/c13968ec50dca06e307e86dce48fa887e9d6b1c9.png" alt="\ds \int_{\Omega} (\xi_{n+1} - (\xi_{n+1} + r f(\sigma_{n+1}, A_{n+1}))_+) \lambda dx = 0,   \forall \lambda"/></p>
+</div><p>or</p>
+<div class="math">
+<p><img src="../_images/math/4f01d8489c235ed1929e4d3b31fd7b269bbf47cd.png" alt="\ds \int_{\Omega} (f(\sigma_{n+1} + (-f(\sigma_{n+1}, A_{n+1}) - \xi_{n+1}/r)_+ , A_{n+1}) ) \lambda dx = 0,   \forall \lambda"/></p>
+</div><p>NOTE : The notation <img class="math" src="../_images/math/294198b0dd9abcbf8e2c1a4eaf50d49a6bfb66ca.png" alt="\Delta \xi_{n+1} = \Delta t \xi_{n+1}" style="vertical-align: -5px"/> is often used in the litterature. The choice here is to preserve the distinction between the two quantities, mainly because ot the possible use of adaptative time step : when the time step is changing, the value <img class="math" src="../_images/math/ceb487c6541117992a263c6364c25c067de6e436.png" alt="\xi_n" style="vertical-align: -4px"/> has to be multiplied by the new time step, so that it is preferable to store <img class="math" src="../_images/math/ceb487c6541117992a263c6364c25c067de6e436.png" alt="\xi_n" style="vertical-align: -4px"/> instead of <img class="math" src="../_images/math/31a633f020dedd9e35c6beafc8c77937ff75bccf.png" alt="\Delta \xi_{n}" style="vertical-align: -4px"/> when using the <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/>-scheme.</p>
+<div class="section" id="plane-strain-approximation">
+<h3>Plane strain approximation<a class="headerlink" href="#plane-strain-approximation" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>A plane strain approximation is a 2D problem which corresponds to the deformation of a long cylindrical object where the strain in the length direction (assumed to be along the <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" style="vertical-align: 0px"/> axis) is considered small compared to the ones in the other directions and is neglected. It result in a plane strain tensor of the form</p>
+<div class="math">
+<p><img src="../_images/math/3c400c95fa9981b85c6408f383cf4851dd42acdd.png" alt="\varepsilon(u) = \left(\hspace{-0.5em}\begin{array}{ccc} \varepsilon_{1,1} &amp; \varepsilon_{1,2} &amp; 0 \\ \varepsilon_{1,2} &amp; \varepsilon_{2,2} &amp; 0 \\ 0 &amp; 0 &amp; 0 \end{array}\hspace{-0.5em}\right)."/></p>
+</div><p>We denote</p>
+<div class="math">
+<p><img src="../_images/math/52d83be4c88ab1f3b00fb6b3e4be0c360c064eec.png" alt="\bar{\varepsilon}(u) =  \left(\hspace{-0.5em}\begin{array}{cc} \varepsilon_{1,1} &amp; \varepsilon_{1,2} \\ \varepsilon_{1,2} &amp; \varepsilon_{2,2} \end{array}\hspace{-0.5em}\right)"/></p>
+</div><p>the non neglected components of the strain tensor.
+In the decomposition of plastic and elastic part of the strain tensor, we assume</p>
+<div class="math">
+<p><img src="../_images/math/956355f26424de1de1b32e39b133f63fe8c93590.png" alt="\varepsilon^p_{1,3} = \varepsilon^p_{2,3} = \varepsilon^e_{1,3} = \varepsilon^e_{2,3} = 0"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="../_images/math/cf736d7e5c209e68af7696d5246312f6cb46ba0a.png" alt="\varepsilon^e_{3,3} + \varepsilon^p_{3,3} = \varepsilon_{3,3} = 0."/></p>
+</div><p>The adaptation to the plane strain approximation to plastic model is most of the time an  easy task. An isotropic linearized elastic response reads</p>
+<div class="math">
+<p><img src="../_images/math/e60b274599f4ddad5d700e731a7ba080625b5b8f.png" alt="\sigma = \lambda \mbox{tr}(\varepsilon(u)) I + 2\mu(\varepsilon(u) - \varepsilon^p),"/></p>
+</div><p>and thus</p>
+<div class="math">
+<p><img src="../_images/math/e07c91024f1efb456e23988314ee72acf1976448.png" alt="\bar{\sigma} = \lambda \mbox{tr}(\bar{\varepsilon}(u)) \bar{I} + 2\mu(\bar{\varepsilon}(u) -\bar{\varepsilon}^p),"/></p>
+</div><p>The nonzero <img class="math" src="../_images/math/383a487d1bc7ebf768b688dd29eba48fd714e925.png" alt="\sigma_{3,3}" style="vertical-align: -6px"/> component of the stress tensor is given by</p>
+<div class="math">
+<p><img src="../_images/math/a4410a6bed5ee3a4b24c5d78cf87eabcc746a6cc.png" alt="\sigma_{3,3} = \lambda \mbox{tr}(\bar{\varepsilon}(u)) - 2\mu \varepsilon^p_{3,3}"/></p>
+</div><p>Note that in the common case where isochoric plastic strain is assumed, one has</p>
+<div class="math">
+<p><img src="../_images/math/7cefc951b0b425d9aaa1b8d11fd0275bf3bd29ae.png" alt="\mbox{ tr}(\varepsilon^p) = 0 ~~~~ \Rightarrow  ~~~ \varepsilon^p_{3,3} = - (\varepsilon^p_{1,1} + \varepsilon^p_{2,2})."/></p>
+</div></div>
+<div class="section" id="plane-stress-approximation">
+<h3>Plane stress approximation<a class="headerlink" href="#plane-stress-approximation" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The plane stress approximation describe generally the 2D membrane deformation of a thin plate. It consist in prescribing the stress tensor to have only in-plane nonzero components, i.e.</p>
+<div class="math">
+<p><img src="../_images/math/dac6708ca2d0f549a4770b5c15a2f855922e20c0.png" alt="\sigma = \left(\hspace{-0.5em}\begin{array}{ccc} \sigma_{1,1} &amp; \sigma_{1,2} &amp; 0 \\ \sigma_{1,2} &amp; \sigma_{2,2} &amp; 0 \\ 0 &amp; 0 &amp; 0 \end{array}\hspace{-0.5em}\right)."/></p>
+</div><p>We will still denote</p>
+<div class="math">
+<p><img src="../_images/math/4d3fbe05f250c74775afca142acfb12622d8a3a1.png" alt="\bar{\sigma} =  \left(\hspace{-0.5em}\begin{array}{cc} \sigma_{1,1} &amp; \sigma_{1,2} \\ \sigma_{1,2} &amp; \sigma_{2,2} \end{array}\hspace{-0.5em}\right)"/></p>
+</div><p>the in-plane components of the stress tensor. For elastoplasticity, it consists generally to apply the 2D plastic flow rule, prescribing the out-plane components of the stress tensor to be zero with the additionnal variables <img class="math" src="../_images/math/adbcae655c0273b10529aae0dcc5520df66908b9.png" alt="\varepsilon^e_{1,3}" style="vertical-align: -8px"/>, <img class="math" src="../_images/math/db2c003a051b25584fb3f2129a675e3d4277a329.png" alt="\varepsilon^e_{2,3}" style="vertical-align: -8px"/>, <img class="math" src="../_images/math/93bc81808a177f858429feac0324269583e32ac6.png" alt="\varepsilon^e_{3,3}" style="vertical-align: -8px"/> being unknown (see for instance <a class="reference internal" href="../biblio.html#so-pe-ow2008" id="id8">[SO-PE-OW2008]</a>).</p>
+<p>For an isotropic linearized elastic response, one has <img class="math" src="../_images/math/19af56abcec2a24582f87455d68817d6360b33f2.png" alt="\sigma = \lambda \mbox{tr}(\varepsilon^e) + 2\mu\varepsilon^e" style="vertical-align: -4px"/> such that</p>
+<div class="math">
+<p><img src="../_images/math/9d90ca8a71e9c173359aecddc5af498673ea22c1.png" alt="\varepsilon^e = \left(\hspace{-0.5em}\begin{array}{ccc} \varepsilon^e_{1,1} &amp; \varepsilon^e_{1,2} &amp; 0 \\ \varepsilon^e_{1,2} &amp; \varepsilon^e_{2,2} &amp; 0 \\ 0 &amp; 0 &amp; \varepsilon^e_{3,3} \end{array}\hspace{-0.5em}\right)."/></p>
+</div><p>with</p>
+<div class="math">
+<p><img src="../_images/math/6bf5478a829bba31982937269d02ad328d2c0a99.png" alt="\varepsilon^e_{3,3} = -\Frac{\lambda}{\lambda+2\mu}(\varepsilon^e_{1,1} + \varepsilon^e_{2,2})"/></p>
+</div><p>so that</p>
+<div class="math" id="equation-plane_stress_iso">
+<p><span class="eqno">(6)</span><img src="../_images/math/1fac4de40c1c4783a15128da28b47ed32c1beff6.png" alt="\bar{\sigma} = \lambda^* \mbox{tr}(\bar{\varepsilon}^e) + 2\mu\bar{\varepsilon}^e ~~~\mbox{ with } \lambda^* = \Frac{2\mu\lambda}{\lambda+2\mu}"/></p>
+</div><p>Moreover</p>
+<div class="math" id="equation-plane_stress_dev">
+<p><span class="eqno">(7)</span><img src="../_images/math/14e8581f6e1d74b6c25bdb7a3df9e1c3988ca9b2.png" alt="\|\mbox{Dev}(\sigma)\| = \left(\|\bar{\sigma}\|^2 - \Frac{1}{3}(\mbox{tr}(\bar{\sigma}))^2\right)^{1/2}."/></p>
+</div><p>Note that in the case where isochoric plastic strain is assumed, one still has</p>
+<div class="math">
+<p><img src="../_images/math/7cefc951b0b425d9aaa1b8d11fd0275bf3bd29ae.png" alt="\mbox{ tr}(\varepsilon^p) = 0 ~~~~ \Rightarrow  ~~~ \varepsilon^p_{3,3} = - (\varepsilon^p_{1,1} + \varepsilon^p_{2,2})."/></p>
+</div></div>
+</div>
+<div class="section" id="some-classical-laws">
+<h2>Some classical laws<a class="headerlink" href="#some-classical-laws" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Tresca : <img class="math" src="../_images/math/df044f0b58fe425144f45a928ce2e62b158148b0.png" alt="\rho(\sigma) \le \sigma_y" style="vertical-align: -6px"/> where <img class="math" src="../_images/math/6bb53190d5070c4e4026d1b2c0a2abcb8207a8bd.png" alt="\rho(\sigma)" style="vertical-align: -4px"/> spectral radius of the Cauchy stress tensor and <img class="math" src="../_images/math/2409322e14bd3cbf9b678cfa12452196779d78da.png" alt="\sigma_y" style="vertical-align: -6px"/> the uniaxial yield stress (which may depend on some hardening internal variables).</p>
+<p>Von Mises :  <img class="math" src="../_images/math/235617fbf0ed75092e989859d3ad728741c1f809.png" alt="\|\mbox{Dev}(\sigma)\| \le \sqrt{\frac{2}{3}}\sigma_y" style="vertical-align: -12px"/> where
+<img class="math" src="../_images/math/5f18e7fdd97d1df45ba2742a736f392065db048f.png" alt="\mbox{Dev}(\sigma) = \sigma - \frac{1}{3}\mbox{tr}(\sigma)I" style="vertical-align: -6px"/> the deviatoric part of <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/452880b553aab385b333b10fcc45bd2acb8bfef4.png" alt="\|\sigma\| = \sqrt{\sigma:\sigma}" style="vertical-align: -5px"/>.</p>
+<div class="section" id="perfect-isotropic-associated-elastoplasticity-with-von-mises-criterion-prandl-reuss-model">
+<h3>Perfect isotropic associated elastoplasticity with Von-Mises criterion (Prandl-Reuss model)<a class="headerlink" href="#perfect-isotropic-associated-elastoplasticity-with-von-mises-criterion-prandl-reuss-model" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>There is no internal variables and we consider an isotropic elastic response. The flow rule reads</p>
+<div class="math">
+<p><img src="../_images/math/f36ac046e3133ce5bcd9b85e6966afcd1d23d8e3.png" alt="\dot{\varepsilon}^p = \gamma \Frac{\mbox{Dev}(\sigma)}{\|\mbox{Dev}(\sigma)\|}"/></p>
+</div><p>This corresponds to <img class="math" src="../_images/math/9867eeac23884390538e979f23cd7d5c40e341fe.png" alt="\Psi(\sigma) = f(\sigma) = \|\mbox{Dev}(\sigma)\| - \sqrt{\frac{2}{3}}\sigma_y" style="vertical-align: -12px"/>.</p>
+<p>The <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/>-scheme for the integration of the plastic flow rule reads:</p>
+<div class="math">
+<p><img src="../_images/math/4bb91ff9454e82536f7c8c8daa6a648cb7917fff.png" alt="\varepsilon^p_{n+1} - \varepsilon^p_{n} = (1-\theta)\alpha(\sigma_{n}) \Delta t \xi_n \Frac{\mbox{Dev}(\sigma_{n})}{\|\mbox{Dev}(\sigma_{n})\|} + \theta\alpha(\sigma_{n+1}) \Delta t \xi_{n+1} \Frac{\mbox{Dev}(\sigma_{n+1})}{\|\mbox{Dev}(\sigma_{n+1})\|}."/></p>
+</div><p>Choosing the factor <img class="math" src="../_images/math/758bf9151fe3382a9815110cd1236ee9c5d3cb7f.png" alt="\alpha(\sigma_{n}) = \|\mbox{Dev}(\sigma_{n})\|" style="vertical-align: -5px"/> and still with <img class="math" src="../_images/math/bc365ea307bf94ef8c52d8b286a46c45e02dfd36.png" alt="\xi_n = \Frac{\gamma_n}{\alpha(\sigma_{n})}" style="vertical-align: -17px"/> this gives the equation</p>
+<div class="math">
+<p><img src="../_images/math/a46bab6ca8b2f0e46433542e85238b4cd3535fb0.png" alt="\varepsilon^p_{n+1} - \varepsilon^p_{n} = (1-\theta)\Delta t \xi_n \mbox{Dev}(\sigma_{n}) + \theta \Delta t \xi_{n+1} \mbox{Dev}(\sigma_{n+1})."/></p>
+</div><p>Since <img class="math" src="../_images/math/a0ca6ec29a8f02715538520d399b781f844bd383.png" alt="\mbox{Dev}(\sigma_{n+1}) = 2\mu\mbox{Dev}(\varepsilon(u_{n+1})) - 2\mu\varepsilon^p_{n+1}" style="vertical-align: -6px"/> this directly gives:</p>
+<div class="math">
+<p><img src="../_images/math/27b404876ba9390b0d9efc7cfba9008aefc61cc0.png" alt="\tilde{\mathscr E}^p(u_{n+1}, \theta \Delta t \xi_{n+1}, \zeta_{n}) = \zeta_n + \left(1-\Frac{1}{1+2\mu\theta\Delta t\xi_{n+1}}\right)(\mbox{Dev}(\varepsilon(u_{n+1})) - \zeta_n),"/></p>
+</div><p>which is a linear expression with respect to <img class="math" src="../_images/math/2527fa77391babb15b45bb43138b36681fc40fc7.png" alt="u_{n+1}" style="vertical-align: -5px"/> (but not with respect to <img class="math" src="../_images/math/d9d4f9907735be80f0950437bc0ba20226c7423a.png" alt="\xi_{n+1}" style="vertical-align: -5px"/>).</p>
+<p>Moreover, <img class="math" src="../_images/math/762976ebb910157823e89c62aebbff7be29870c9.png" alt="\zeta_n" style="vertical-align: -4px"/> is defined by</p>
+<div class="math">
+<p><img src="../_images/math/9d0e92dcf6a099777b9d699cd1b94455b9d8b823.png" alt="\zeta_n = \varepsilon^p_n+(1-\theta)\Delta t \xi_n (\mbox{Dev}(\sigma_n)) = \varepsilon^p_n+(1-\theta)\Delta t \xi_n 2\mu \left(\mbox{Dev}(\varepsilon(u_{n}))-\varepsilon^p_n\right)."/></p>
+</div><p><strong>Elimination of the multiplier (for the return mapping approach)</strong></p>
+<p>One has</p>
+<div class="math">
+<p><img src="../_images/math/dbbcbfa2d4d8379625c3e23dfcfbd65842781b0d.png" alt="\|\mbox{Dev}(\sigma_{n+1})\| = 2\mu\|\mbox{Dev}(\varepsilon(u_{n+1})) -\varepsilon^p_{n+1}\| = \Frac{2\mu}{1+2\mu\theta\Delta t \xi_{n+1}}\|\mbox{Dev}(\varepsilon(u_{n+1})) - \zeta_n\|,"/></p>
+</div><p>Thus, denoting <img class="math" src="../_images/math/6e7cb1a13381c795e0f28f5b5b4eacaa2c0bcb9c.png" alt="B = \mbox{Dev}(\varepsilon(u_{n+1})) - \zeta_n" style="vertical-align: -5px"/>, either</p>
+<div class="math">
+<p><img src="../_images/math/dd723c3de6e613616c939197510d89455f77f91c.png" alt="2\mu\|B\| \le \sqrt{\frac{2}{3}}\sigma_y,"/></p>
+</div><p>and <img class="math" src="../_images/math/016aa0e182c0a854e742c6382dad39475612e0e1.png" alt="\xi_{n+1} = 0" style="vertical-align: -5px"/>, i.e. we are in the elastic case, or  <img class="math" src="../_images/math/40933a272e2546784a3ab6a2231a9fe58fac4be8.png" alt="\|\mbox{Dev}(\sigma_{n+1})\| =  \sqrt{\frac{2}{3}}" style="vertical-align: -12px"/> and one obtains</p>
+<div class="math">
+<p><img src="../_images/math/fdef3ae28514fd36f27e30dcfc3e0d07c62d32fb.png" alt="1+2\mu\theta\Delta t \xi_{n+1} = \Frac{2\mu\|B\|}{\sqrt{\frac{2}{3}}\sigma_y},"/></p>
+</div><p>and thus</p>
+<div class="math">
+<p><img src="../_images/math/19809b50b4cc117284c1cbf39249bef8eddb226a.png" alt="\varepsilon^p_{n+1} = \zeta_n + \left( 1 - \sqrt{\frac{2}{3}}\Frac{\sigma_y}{2\mu\|B\|}\right) B."/></p>
+</div><p>The two options can be summarized by</p>
+<div class="math">
+<p><img src="../_images/math/99dc79fc11129fd125c89ce33e37ef06281f9ebf.png" alt="\varepsilon^p_{n+1} = {\mathscr E}^p(u_{n+1}, \zeta_{n}) = \zeta_n + \left( 1 - \sqrt{\frac{2}{3}}\Frac{\sigma_y}{2\mu\|B\|}\right)_+ B."/></p>
+</div><p>The multiplier <img class="math" src="../_images/math/d9d4f9907735be80f0950437bc0ba20226c7423a.png" alt="\xi_{n+1}" style="vertical-align: -5px"/> (needed for the <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/>-scheme for <img class="math" src="../_images/math/6d16c5af8f0711f330a0f0965701772863dcf44e.png" alt="\theta \ne 1" style="vertical-align: -4px"/>) is given by</p>
+<div class="math">
+<p><img src="../_images/math/83384aa295f5542d463e3e0b0ee3e822b1639b2f.png" alt="\xi_{n+1} = \Frac{1}{\theta\Delta t}\left(\sqrt{\frac{3}{2}}\Frac{\|B\|}{\sigma_y} - \Frac{1}{2\mu}\right)_+."/></p>
+</div><p><strong>Plane strain approximation</strong></p>
+<p>The plane strain approximation has the same expression replacing the 3D strain tensors by the in-plane ones <img class="math" src="../_images/math/2360b453089c0a59a41421a97f81adcfd7d1b086.png" alt="\bar{\varepsilon}^p" style="vertical-align: 0px"/> and  <img class="math" src="../_images/math/528f914f370d693c73dceb48fb122191a071fd14.png" alt="\bar{\varepsilon}(u_{n+1})" style="vertical-align: -5px"/>.</p>
+<div class="math">
+<p><img src="../_images/math/3a39c9967bde0f52c265ce9e94e57800c4ae6c49.png" alt="\bar{\tilde{\mathscr E}}^p(u_{n+1}, \theta \Delta t \xi_{n+1}, \bar{\zeta}_{n}) = \bar{\zeta}_n + \left(1-\Frac{1}{1+2\mu\theta\Delta t\xi_{n+1}}\right)(\overline{\mbox{Dev}}(\bar{\varepsilon}(u_{n+1})) - \bar{\zeta}_n),"/></p>
+</div><p>where <img class="math" src="../_images/math/b2c4771f5f4aa5f5330f535486bd1dda4dab66cc.png" alt="\overline{\mbox{Dev}}(\bar{\varepsilon}) = \bar{\varepsilon} - \Frac{\mbox{tr}(\bar{\varepsilon})}{3} \bar{I}" style="vertical-align: -13px"/> is the 2D restriction of the 3D deviator.</p>
+<p>Moreover, for the yield condition,</p>
+<div class="math">
+<p><img src="../_images/math/8cfbc3c1caad8aa633080fdfb2656024258519a5.png" alt="\|\mbox{Dev}(\sigma)\|^2 = 4\mu^2\left(\|\overline{\mbox{Dev}}\bar{\varepsilon}(u) - \bar{\varepsilon}^p\|^2 + \left(\Frac{\mbox{tr}(\bar{\varepsilon}(u))}{3} -\mbox{tr}(\bar{\varepsilon}^p) \right)^2\right)."/></p>
+</div><p>And for the elimination of the multiplier,</p>
+<div class="math">
+<p><img src="../_images/math/9d8e0dba9f6039b6979d3bfb2509e1e2a8a94dd0.png" alt="\bar{\mathscr E}^p(\bar{u}_{n+1}, \bar{\varepsilon}^p_{n}) = \bar{\zeta}^p_{n} + \left( 1 - \sqrt{\frac{2}{3}}\Frac{\sigma_y}{2\mu\|B\|}\right)_+ \bar{B}"/></p>
+</div><p>with <img class="math" src="../_images/math/b3ce565ff29da8e0a192f068d1483e491ab1f5ac.png" alt="\bar{B} = \overline{\mbox{Dev}}(\bar{\varepsilon}(u_{n+1}))-\bar{\zeta}_{n}" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/69913de39036eee76f61286e16ccb96123f51771.png" alt="\|B\|^2 = \|\overline{\mbox{Dev}}(\bar{\varepsilon}(u_{n+1})) - \bar{\zeta}_n\|^2 + \left(\Frac{\mbox{tr}(\bar{\varepsilon}(u_{n+1}))}{3} -\mbox{tr}(\bar{\zeta}_n) \right)^2" style="vertical-align: -18px"/>.</p>
+<p><strong>Plane stress approximation</strong></p>
+<p>For plane stress approximation, using <a href="#equation-plane_stress_iso">(6)</a> we deduce from the expression of the 3D case</p>
+<div class="math">
+<p><img src="../_images/math/b664091474c775e1d34b212c79da908024e88014.png" alt="\bar{\varepsilon}^p_{n+1} = \Frac{1}{1+2\mu\theta\Delta \xi}\left(\bar{\zeta}_{n} +2\mu\theta\Delta \xi\left(\bar{\varepsilon}(u_{n+1}) - \Frac{2\mu}{3(\lambda+2\mu)}(\mbox{tr}(\bar{\varepsilon}(u_{n+1})) - \mbox{tr}(\bar{\varepsilon}_{n+1}^p))\bar{I}\right) \right),"/></p>
+</div><p>since <img class="math" src="../_images/math/a4cbdb4915820e805006379e7a8ba7afdafe5cca.png" alt="\mbox{Dev}(\varepsilon(u)) = \varepsilon(u) - \Frac{2\mu}{3(\lambda+2\mu)}(\mbox{tr}(\bar{\varepsilon}(u)) - \mbox{tr}(\bar{\varepsilon}^p))" style="vertical-align: -17px"/>. Of course, this relation still has to be inverted. Denoting <img class="math" src="../_images/math/51e30f8d2bd84cdb921bb5e3df6fadd9d3f0b134.png" alt="\alpha = 1+2\mu\theta\Delta \xi" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/7da4095645b5be4697b1c1fa54187fd177a4fff4.png" alt="\beta = \Frac{4\mu^2\theta\Delta \xi}{3\lambda+6\mu}" style="vertical-align: -17px"/> and <img class="math" src="../_images/math/5baa8c284fcc8e7beffb41fb1fc2521f3f73fab1.png" alt="C = \bar{\zeta}_{n} +2\mu\theta\Delta \xi\left(\bar{\varepsilon}(u_{n+1}) - \Frac{2\mu}{3(\lambda+2\mu)}(\mbox{tr}(\bar{\varepsilon}(u_{n+1}))))\bar{I}\right)" style="vertical-align: -18px"/> one obtains</p>
+<div class="math">
+<p><img src="../_images/math/23b7ddba7f2a6e0ce92c2d22aabebe67ef22e571.png" alt="\bar{\varepsilon}^p_{n+1} = \Frac{\beta \mbox{tr}(C)}{\alpha(\alpha-2\beta)}\bar{I} + \Frac{1}{\alpha}C."/></p>
+</div><p>Moreover, for the yield condition, expression <a href="#equation-plane_stress_dev">(7)</a> can be used.</p>
+</div>
+<div class="section" id="isotropic-elastoplasticity-with-linear-isotropic-and-kinematic-hardening-and-von-mises-criterion">
+<h3>Isotropic elastoplasticity with linear isotropic and kinematic hardening and Von-Mises criterion<a class="headerlink" href="#isotropic-elastoplasticity-with-linear-isotropic-and-kinematic-hardening-and-von-mises-criterion" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We consider an isotropic elastic reponse and the internal variable <img class="math" src="../_images/math/0ef53f55e9eb08b185214243cc90620a4e3e1449.png" alt="\alpha : \Omega \rightarrow \R" style="vertical-align: -1px"/> being the accumulated plastic strain which satisfies</p>
+<div class="math">
+<p><img src="../_images/math/214edc85a84445b7d5672582652a6baa1b94329b.png" alt="\dot{\alpha} = \sqrt{\Frac{2}{3}}\gamma"/></p>
+</div><p>For <img class="math" src="../_images/math/f6b8031f33441a44e13d20863b7af434336499e6.png" alt="H_i" style="vertical-align: -3px"/> the isotropic hardening modulus, the linear hardening consists in</p>
+<div class="math">
+<p><img src="../_images/math/5fed64e807b0905db173cce6b91de3b1dded5947.png" alt="\psi^p(\alpha) = \frac{1}{2}H_i\alpha^2"/></p>
+</div><p>i.e. <img class="math" src="../_images/math/b0e8e62c30e8c6963ce8154b9064f7fae58b4653.png" alt="A = H_i\alpha" style="vertical-align: -3px"/> and a uniaxial yield stress defined by</p>
+<div class="math">
+<p><img src="../_images/math/6fdad141795c7de6d9060f663adf4313f646576d.png" alt="\sigma_y(a) = \sigma_{y0} + A = \sigma_{y0} + H_i\alpha,"/></p>
+</div><p>for <img class="math" src="../_images/math/26dbb617ea44c3df47f87cc728dc2646275d612d.png" alt="\sigma_{y0}" style="vertical-align: -6px"/> the initial uniaxial yield stress. The yield function (and plastic potential since this is an associated plastic model) can be defined by</p>
+<div class="math">
+<p><img src="../_images/math/2747b10a6286fc747406419023620817629f5027.png" alt="\Psi(\sigma, A) = f(\sigma, A) = \|\mbox{Dev}(\sigma - \frac{2}{3}H_k\varepsilon^p)\| - \sqrt{\frac{2}{3}}(\sigma_{y0} + A),"/></p>
+</div><p>where <img class="math" src="../_images/math/23ad30f8d99bc21f1ff1332aeaf71cc8d355854b.png" alt="H_k" style="vertical-align: -3px"/> is the kinematic hardening modulus. The same computation as in the previous section leads to</p>
+<div class="math">
+<p><img src="../_images/math/7b7ddfe4d3ee3415b0be036a3943e2e348b56142.png" alt="\tilde{\mathscr E}^p(u_{n+1}, \theta\Delta t \xi_{n+1}, \zeta_n) = \zeta_n + \Frac{1}{2(\mu+H_k/3)}\left(1 - \Frac{1}{1+2(\mu+H_k/3)\theta\Delta t\xi_{n+1}}\right)(2\mu\mbox{Dev}(\varepsilon(u_{n+1}))-2(\mu+H_k/3)\zeta_n)"/></p>
+</div><div class="math">
+<p><img src="../_images/math/e7e3e961d447c0700b379a5667b25d6769b1eb3a.png" alt="\begin{array}{rcl} \tilde{\mathscr A}(u_{n+1}, \theta \Delta t \xi_{n+1}, \zeta_{n}, \eta_n) &amp;=&amp; \eta_n + \sqrt{\Frac{2}{3}} \theta \Delta t \xi_{n+1}\|\mbox{Dev}(\sigma_{n+1} - \frac{2}{3}H_k\varepsilon^p_{n+1})\| \\ &amp;=&amp; \eta_n + \sqrt{\Frac{2}{3}} \theta \Delta t \xi_{n+1}\|2\mu\mbox{Dev}(\varepsilon(u_{n+1})) - 2(\mu+H_k/3)\varepsilon^p_{n+1}\| \\ &amp;=&amp;  \eta_n + \sqrt{\Frac{2}{3}} \Frac{\theta \Delta t \xi_{n+1}}{1+2(\mu+H_k/3)\theta\Delta t\xi_{n+1}}\|2\mu\mbox{Dev}(\varepsilon(u_{n+1})) - 2(\mu+H_k/3)\zeta_{n}\| \\ &amp;=&amp; \eta_n + \sqrt{\Frac{2}{3}}\Frac{1}{2(\mu+H_k/3)}\left(1 - \Frac{1}{1+2(\mu+H_k/3)\theta\Delta t\xi_{n+1}}\right) \|2\mu\mbox{Dev}(\varepsilon(u_{n+1})) - 2(\mu+H_k/3)\zeta_{n}\|\end{array}"/></p>
+</div><p>where <img class="math" src="../_images/math/762976ebb910157823e89c62aebbff7be29870c9.png" alt="\zeta_n" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/7da7b39ee07d1829909364c8b7ba934e85546998.png" alt="\eta_n" style="vertical-align: -4px"/> are defined by</p>
+<div class="math">
+<p><img src="../_images/math/d8c18992f8773f1ef43f01d5fbf55924323741ac.png" alt="\zeta_n = \varepsilon^p_n+(1-\theta)\Delta t \xi_n (\mbox{Dev}(\sigma_n)-\frac{2}{3}H_k\varepsilon^n_p) = \varepsilon^p_n+(1-\theta)\Delta t \xi_n \left(2\mu\mbox{Dev}(\varepsilon(u_{n}))-2(\mu+H_k/3)\varepsilon^n_p\right),"/></p>
+</div><div class="math">
+<p><img src="../_images/math/03f778fa683bfd0f1e517ebc0277759c041316e1.png" alt="\eta_n  = \alpha_n+(1-\theta)\sqrt{\Frac{2}{3}}\Delta t \xi_n \|\mbox{Dev}(\sigma_n)-\frac{2}{3}H_k\varepsilon^n_p\| =  \alpha_n+(1-\theta)\sqrt{\Frac{2}{3}}\Delta t \xi_n \|2\mu\mbox{Dev}(\varepsilon(u_{n}))-2(\mu+H_k/3)\varepsilon^n_p\|."/></p>
+</div><p>Note that the isotropic hardening modulus do not intervene in <img class="math" src="../_images/math/f26f58ea5c9d6c0789166a5433aa23ee9cd74815.png" alt="\tilde{\mathscr E}^p(u_{n+1}, \theta \Delta \xi, \varepsilon^p_{n})" style="vertical-align: -5px"/> but only in <img class="math" src="../_images/math/d21cbde12ddc9c81016c3ed877d7dcb9a8cc91db.png" alt="f(\sigma, A)" style="vertical-align: -4px"/>.</p>
+<p><strong>Elimination of the multiplier (for the return mapping approach)</strong></p>
+<p>Denoting <img class="math" src="../_images/math/69cbb9d89a0eddc21e2118d99daaa885d151625b.png" alt="\delta = \Frac{1}{1+2(\mu+H_k/3)\theta\Delta t\xi_{n+1}}" style="vertical-align: -18px"/>, <img class="math" src="../_images/math/87a7bebd501b587b2e217e4f82a4d0a357f6a8fa.png" alt="\beta = \Frac{1-\delta}{2(\mu+H_k/3)}" style="vertical-align: -18px"/> and <img class="math" src="../_images/math/ac39dd06c51503c100de54f2f1f7511980869db1.png" alt="B = 2\mu\mbox{Dev}(\varepsilon(u_{n+1}))-2(\mu+H_k/3)\zeta_n" style="vertical-align: -5px"/> the expression for <img class="math" src="../_images/math/de9149b0709c112eee0a581c1fc9b3aeaf312215.png" alt="\varepsilon^p_{n+1}" style="vertical-align: -6px"/> and <img class="math" src="../_images/math/d36cf546ab6cb404ec5fdcda067a8deef5432e2e.png" alt="\alpha_{n+1}" style="vertical-align: -5px"/> becomes</p>
+<div class="math" id="equation-hardeningepsalp">
+<p><span class="eqno">(8)</span><img src="../_images/math/d489c0796faef7ee8303063a8411dac270c64b18.png" alt="\varepsilon^p_{n+1} = \zeta_n+\beta B, ~~~ \alpha_{n+1} = \eta_n + \sqrt{\Frac{2}{3}}\beta \|B\|,"/></p>
+</div><p>and the plastic constraint</p>
+<div class="math">
+<p><img src="../_images/math/80856742664874388f8dc3afbb82bae213a2a321.png" alt="\delta \|B\| \le \sqrt{\Frac{2}{3}}(\sigma_{y0}+H_i \alpha_{n+1})."/></p>
+</div><p>Thus, either we are in the elastic case, i.e. <img class="math" src="../_images/math/8f5bbdb0ebbad910b5c108cfde57e286d1e4489f.png" alt="\xi_{n+1} = 0, \delta = 1" style="vertical-align: -5px"/> and</p>
+<div class="math">
+<p><img src="../_images/math/2014852ae9527ebde6355fdc84a2b1d3f9d1abd1.png" alt="\|B\| \le \sqrt{\Frac{2}{3}}(\sigma_{y0}+H_i \eta_n),"/></p>
+</div><p>or we are in the plastic case and <img class="math" src="../_images/math/475e325254cf5318de8ba06aaab864255c29a881.png" alt="\xi_{n+1} &gt; 0, \delta &lt; 1" style="vertical-align: -5px"/>, <img class="math" src="../_images/math/179355f352ebe6c75e32588e8472126ab81e413f.png" alt="\delta \|B\| = \sqrt{\Frac{2}{3}}(\sigma_{y0}+H_i \alpha_{n+1})" style="vertical-align: -16px"/> and <img class="math" src="../_images/math/4dfc920bc4e9df69fef5d8533fef4441249e4f63.png" alt="(1-\delta)" style="vertical-align: -4px"/> solves the equation</p>
+<div class="math">
+<p><img src="../_images/math/bb5f324ceea8acbdcea5936f723df30dc708758f.png" alt="\|B\| - (1-\delta)\|B\| = \sqrt{\Frac{2}{3}}\left(\sigma_{y0}+H_i \eta_n + \sqrt{\Frac{2}{3}} \Frac{H_i}{2(\mu+H_k/3)}(1-\delta)\|B\|\right),"/></p>
+</div><p>which leads to</p>
+<div class="math">
+<p><img src="../_images/math/44307486d2dc388ed463095ba3a02c904e46cd63.png" alt="1-\delta = \Frac{2(\mu+H_k/3)}{\|B\|(2\mu+\frac{2}{3}(H_k+H_i))}\left(\|B\|-\sqrt{\Frac{2}{3}}(\sigma_{y0}+H_i \eta_n) \right)"/></p>
+</div><p>The two cases can be summarized by</p>
+<div class="math">
+<p><img src="../_images/math/90376dab2338b6c6544c0ba144399749f45f58ee.png" alt="\beta = \Frac{1}{\|B\|(2\mu+\frac{2}{3}(H_k+H_i))}\left(\|B\|-\sqrt{\Frac{2}{3}}(\sigma_{y0}+H_i \eta_n) \right)_+"/></p>
+</div><p>which directly gives <img class="math" src="../_images/math/e017309e39f063ffe09548f7ad0dcc725bcefc58.png" alt="{\mathscr E}^p(u_{n+1}, \zeta_n, \eta_n)" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/14cba5d8b1227d4cb37bb7fcdc90ffe8e795e502.png" alt="{\mathscr A}(u_{n+1}, \zeta_n, \eta_n)" style="vertical-align: -5px"/> thanks to <a href="#equation-hardeningepsalp">(8)</a>. The multiplier <img class="math" src="../_images/math/d9d4f9907735be80f0950437bc0ba20226c7423a.png" alt="\xi_{n+1}" style="vertical-align: -5px"/> being given by</p>
+<div class="math">
+<p><img src="../_images/math/871fc1fd282659c1c38ebaff9267559e48863e8f.png" alt="\xi_{n+1} = \Frac{1}{(2(\mu+H_k/3))\theta\Delta t}(\Frac{1}{\delta}-1) = \Frac{1}{\theta\Delta t}~\Frac{\beta}{1-2(\mu+H_k/3)\beta}."/></p>
+</div><p><strong>Plane strain approximation</strong></p>
+<p>Still denoting  <img class="math" src="../_images/math/69cbb9d89a0eddc21e2118d99daaa885d151625b.png" alt="\delta = \Frac{1}{1+2(\mu+H_k/3)\theta\Delta t\xi_{n+1}}" style="vertical-align: -18px"/>, <img class="math" src="../_images/math/87a7bebd501b587b2e217e4f82a4d0a357f6a8fa.png" alt="\beta = \Frac{1-\delta}{2(\mu+H_k/3)}" style="vertical-align: -18px"/>, <img class="math" src="../_images/math/ac39dd06c51503c100de54f2f1f7511980869db1.png" alt="B = 2\mu\mbox{Dev}(\varepsilon(u_{n+1}))-2(\mu+H_k/3)\zeta_n" style="vertical-align: -5px"/> and <img class="math" src="../_images/math/e33b94fdcfd7d14edc6e4d543f148af517b2f1de.png" alt="\overline{B} = 2\mu\overline{Dev}(\bar{\varepsilon}(u_{n+1}))-2(\mu+H_k/3)\bar{\zeta}_n" style="vertical-align: -5px"/> its in-plane part, one has</p>
+<div class="math">
+<p><img src="../_images/math/235a699dc654239274388a9e8b407cce3e1ef448.png" alt="\bar{\tilde{\mathscr E}}^p(u_{n+1}, \theta\Delta t \xi_{n+1}, \bar{\zeta}_n) = \bar{\zeta}_n + \beta \overline{B},"/></p>
+</div><div class="math">
+<p><img src="../_images/math/1c0293512387259b9256533ed5d3dfac9a8d5443.png" alt="\tilde{\mathscr A}(u_{n+1}, \theta \Delta t \xi_{n+1}, \zeta_{n}, \eta_n) = \eta_n + \sqrt{\Frac{2}{3}}\beta\|B\|,"/></p>
+</div><p>with</p>
+<div class="math">
+<p><img src="../_images/math/f706a3091bd926a5810836ac663dd8319c6aa57e.png" alt="\|B\|^2 = \|2\mu\overline{\mbox{Dev}}(\bar{\varepsilon}(u_{n+1})) - 2(\mu+H_k/3)\bar{\zeta}_n\|^2 + \left(2\mu\Frac{\mbox{tr}(\bar{\varepsilon}(u_{n+1}))}{3} -2(\mu+H_k/3)\mbox{tr}(\bar{\zeta}_n) \right)^2."/></p>
+</div><p>The yield condition still reads</p>
+<div class="math">
+<p><img src="../_images/math/80856742664874388f8dc3afbb82bae213a2a321.png" alt="\delta \|B\| \le \sqrt{\Frac{2}{3}}(\sigma_{y0}+H_i \alpha_{n+1})."/></p>
+</div><p>and for the elimination of the multiplier, <img class="math" src="../_images/math/fdb63b9e51abe6bbb16acfb5d7b773ddbb5bf4a8.png" alt="\beta" style="vertical-align: -4px"/> has the same expression as in the previous section adapting the value of <img class="math" src="../_images/math/d0cee804311a18382dcca1df84191231087a79b7.png" alt="\|B\|" style="vertical-align: -5px"/>. The expressions of <img class="math" src="../_images/math/55340ee412a4b0faac1adbdd4f5b35f30d9a0b98.png" alt="\bar{\zeta}_n" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/7da7b39ee07d1829909364c8b7ba934e85546998.png" alt="\eta_n" style="vertical-align: -4px"/> have to be adpated accoringly.</p>
+</div>
+<div class="section" id="souza-auricchio-elastoplasticity-law-for-shape-memory-alloys">
+<h3>Souza-Auricchio elastoplasticity law (for shape memory alloys)<a class="headerlink" href="#souza-auricchio-elastoplasticity-law-for-shape-memory-alloys" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>See for instance <a class="reference internal" href="../biblio.html#gr-st2015" id="id9">[GR-ST2015]</a> for the justification of the construction of this flow rule. A Von-Mises stress criterion together with an isotropic elastic response, no internal variables and a special type of kinematic hardening is considered with a constraint <img class="math" src="../_images/math/1afce3d5fdd2c03566b026b345a266aaa978c4d7.png" alt="\|\varepsilon^p\| \le c_3" style="vertical-align: -5px"/>. The plastic potential and yield function have the form</p>
+<div class="math">
+<p><img src="../_images/math/acf084b2828494dec9ae8d9119f4652e2162ea18.png" alt="\Psi(\sigma) = f(\sigma)  = \left\|\mbox{Dev}\left(\sigma - c_1\Frac{\varepsilon^p}{\|\varepsilon^p\|} - c_2\varepsilon^p - \delta \Frac{\varepsilon^p}{\|\varepsilon^p\|}\right)\right\| - \sqrt{\frac{2}{3}}\sigma_{y},"/></p>
+</div><p>with the complementarity condition</p>
+<div class="math">
+<p><img src="../_images/math/56a077b7f2d8c8622a4849b865f90552fac56e22.png" alt="\delta \ge 0, \|\varepsilon^p\| \le c_3,  \delta (\|\varepsilon^p\|-c_3) = 0,"/></p>
+</div><p>where <img class="math" src="../_images/math/275bb0b189ef7ae79f437cdda86296463870a450.png" alt="c_1, c_2 \mbox{ and } c_3" style="vertical-align: -4px"/> are some physical parameters. Note that <img class="math" src="../_images/math/f4776bafc98d5d7605a0eb5723841ae3a3ce289d.png" alt="\Frac{\varepsilon^p}{\|\varepsilon^p\|}" style="vertical-align: -18px"/> has to be understood to be the whole unit ball for <img class="math" src="../_images/math/cf0db9c3802197f5f690db5f1aaaf196dbf0f2d2.png" alt="\varepsilon^p = 0" style="vertical-align: 0px"/>.</p>
+<p>to be done ...</p>
+</div>
+</div>
+<div class="section" id="elasto-plasticity-bricks">
+<h2>Elasto-plasticity bricks<a class="headerlink" href="#elasto-plasticity-bricks" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>See the test programs <tt class="file docutils literal"><span class="pre">tests/plasticity.cc</span></tt>, <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_plasticity.m</span></tt>, <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_plasticity.py</span></tt> and in <tt class="file docutils literal"><span class="pre">contrib/test_plasticity</span></tt>.</p>
+<div class="section" id="generic-brick">
+<h3>Generic brick<a class="headerlink" href="#generic-brick" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>There are two versions of the generic brick. A first one when the plastic multiplier is kept as a variable of the problem where the added term is of the form:</p>
+<div class="math">
+<p><img src="../_images/math/67155506a34622e2caa939f6c0ed46cc761fa4e4.png" alt="\int_{\Omega} \sigma_{n+1} : \nabla \delta u dx +  \ds \int_{\Omega} (\xi_{n+1} - (\xi_{n+1} + r f(\sigma_{n+1}, A_{n+1}))_+) \delta\xi dx = 0,"/></p>
+</div><p>with <img class="math" src="../_images/math/22ff7db3e755a8164f2344e0d3d84ea3a0fe93b3.png" alt="r &gt; 0" style="vertical-align: 0px"/> having a specific value chosen by the brick (in terms of the elasticity coefficients), and when the return mapping strategy is selected (plastic multiplier is just a data), just the added term:</p>
+<div class="math">
+<p><img src="../_images/math/b4051dcb5dc751575367e1cacc34aea70c16c328.png" alt="\int_{\Omega} \sigma_{n+1} : \nabla v dx."/></p>
+</div><p>The function which adds the brick to a model <cite>md</cite> is</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_small_strain_elastoplasticity_brick</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">lawname</span><span class="p">,</span> <span class="n">unknowns_type</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">varnames</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">params</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>where <cite>lawname</cite> is the name of an implemented plastic law, <cite>unknowns_type</cite>
+indicates the choice between a discretization where the plastic multiplier
+is an unknown of the problem or (return mapping approach) just a data of
+the model stored for the next iteration. Remember that in both cases, a
+multiplier is stored anyway. <cite>varnames</cite> is a set of variable and data
+names with length which may depend on the plastic law (at least the
+displacement, the plastic multiplier and the plastic strain).
+<cite>params</cite> is a list of expressions for the parameters (at least elastic
+coefficients and the yield stress). These expressions can be some data
+names (or even variable names) of the model but can also be any scalar
+valid expression of the weak form language (such as &#8220;1/2&#8221;,
+&#8220;2+sin(X[0])&#8221;, &#8220;1+Norm(v)&#8221; ...). The last two parameters optionally
+provided in <cite>params</cite> are the <cite>theta</cite> parameter of the <cite>theta</cite>-scheme
+(generalized trapezoidal rule) used for the plastic strain integration
+and the time-step`dt`. The default value for <cite>theta</cite> if omitted is 1,
+which corresponds to the classical Backward Euler scheme which is first
+order consistent. <cite>theta=1/2</cite> corresponds to the Crank-Nicolson scheme
+(trapezoidal rule) which is second order consistent. Any value
+between 1/2 and 1 should be a valid value. The default value of <cite>dt</cite> is
+&#8216;timestep&#8217; which simply indicates the time step defined in the model
+(by md.set_time_step(dt)). Alternatively it can be any expression
+(data name, constant value ...). The time step can be altered from one
+iteration to the next one. <cite>region</cite> is a mesh region.</p>
+<p>The available plasticity laws are:</p>
+<ul class="simple">
+<li>&#8220;Prandtl Reuss&#8221; (or &#8220;isotropic perfect plasticity&#8221;).
+Isotropic elasto-plasticity with no hardening. The variables are the
+displacement, the plastic multiplier and the plastic strain.
+The displacement should be a variable and have a corresponding data
+having the same name preceded by &#8220;Previous_&#8221; corresponding to the
+displacement at the previous time step (typically &#8220;u&#8221; and &#8220;Previous_u&#8221;).
+The plastic multiplier should also have two versions (typically &#8220;xi&#8221;
+and &#8220;Previous_xi&#8221;) the first one being defined as data if
+<cite>unknowns_type = DISPLACEMENT_ONLY</cite> or as a variable if
+<cite>unknowns_type = DISPLACEMENT_AND_PLASTIC_MULTIPLIER</cite>.
+The plastic strain should represent a n x n data tensor field stored
+on mesh_fem or (preferably) on an im_data (corresponding to <cite>mim</cite>).
+The data are the first Lame coefficient, the second one (shear modulus)
+and the uniaxial yield stress. IMPORTANT: Note that this law implements
+the 3D expressions. If it is used in 2D, the expressions are just
+transposed to the 2D. For the plane strain approximation, see below.</li>
+<li>&#8220;plane strain Prandtl Reuss&#8221;
+(or &#8220;plane strain isotropic perfect plasticity&#8221;)
+The same law as the previous one but adapted to the plane strain
+approximation. Can only be used in 2D.</li>
+<li>&#8220;Prandtl Reuss linear hardening&#8221;
+(or &#8220;isotropic plasticity linear hardening&#8221;).
+Isotropic elasto-plasticity with linear isotropic and kinematic
+hardening. An additional variable compared to &#8220;Prandtl Reuss&#8221; law:
+the accumulated plastic strain. Similarly to the plastic strain, it
+is only stored at the end of the time step, so a simple data is
+required (preferably on an im_data).
+Two additional parameters: the kinematic hardening modulus and the
+isotropic one. 3D expressions only.</li>
+<li>&#8220;plane strain Prandtl Reuss linear hardening&#8221;
+(or &#8220;plane strain isotropic plasticity linear hardening&#8221;).
+The same law as the previous one but adapted to the plane strain
+approximation. Can only be used in 2D.</li>
+</ul>
+<p>IMPORTANT : remember that <cite>small_strain_elastoplasticity_next_iter</cite> has
+to be called at the end of each time step, before the next one
+(and before any post-treatment : this sets the value of the plastic
+strain and plastic multiplier).</p>
+<p>Additionaly, the following function allow to pass from a time step to another for the small strain plastic brick:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">small_strain_elastoplasticity_next_iter</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">lawname</span><span class="p">,</span> <span class="n">unknowns_type</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">varnames</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">params</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The parameters have to be exactly the same as the ones of the
+<cite>add_small_strain_elastoplasticity_brick</cite>,  so see the documentation of
+this function for any explanations.
+Basically, this brick computes the plastic strain and the plastic
+multiplier and stores them for the next step. Additionaly, it copies
+the computed displacement to the data that stores the displacement
+of the previous time step (typically &#8220;u&#8221; to &#8220;Previous_u&#8221;).
+It has to be called before any use of
+<cite>compute_small_strain_elastoplasticity_Von_Mises</cite>.</p>
+<p>The function</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">compute_small_strain_elastoplasticity_Von_Mises</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">lawname</span><span class="p">,</span> <span class="n">unknowns_type</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">varnames</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">params</span><span class="p">,</span>
+   <span class="k">const</span> <span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">mf_vm</span><span class="p">,</span> <span class="n">model_real_plain_vector</span> <span class="o">&amp;</span><span class="n">VM</span><span class="p">,</span>
+   <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>computes the Von Mises stress field with respect to
+a small strain elastoplasticity term, approximated on <cite>mf_vm</cite>,
+and stores the result into <cite>VM</cite>.  All other parameters have to be
+exactly the same as for <cite>add_small_strain_elastoplasticity_brick</cite>.
+Remember that <cite>small_strain_elastoplasticity_next_iter</cite> has to be called
+before any call of this function.</p>
+</div>
+<div class="section" id="a-specific-brick-based-on-the-low-level-generic-assembly-for-perfect-plasticity">
+<h3>A specific brick based on the low-level generic assembly for perfect plasticity<a class="headerlink" href="#a-specific-brick-based-on-the-low-level-generic-assembly-for-perfect-plasticity" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>This is an previous version of a elastoplasticity brick which is restricted to  isotropic perfect plasticity and is based on the low-level generic assembly. Its specificity which could be interesting for testing is that the flow rule is integrated on  finite element nodes (not on Gauss points).</p>
+<p>The function adding this brick to a model is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">add_elastoplasticity_brick</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">ACP</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">previous_varname</span><span class="p">,</span> <span class="n">datalambda</span><span class="p">,</span> <span class="n">datamu</span><span class="p">,</span> <span class="n">datathreshold</span><span class="p">,</span> <span class="n">datasigma</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>where:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">varname</span></tt> represents the main displacement unknown on which the brick is added (u).</li>
+<li><tt class="docutils literal"><span class="pre">previous_varname</span></tt> is the displacement at the previous time step.</li>
+<li><tt class="docutils literal"><span class="pre">datalambda</span></tt> and <tt class="docutils literal"><span class="pre">datamu</span></tt> are the data corresponding to the Lame coefficients.</li>
+<li><tt class="docutils literal"><span class="pre">datathreshold</span></tt> represents the plastic threshold of the studied material.</li>
+<li><tt class="docutils literal"><span class="pre">datasigma</span></tt> represents the stress constraint values supported by the material. It should be composed of 2 iterates for the time scheme needed for the Newton algorithm used. Note that the finite element method on which <tt class="docutils literal"><span class="pre">datasigma</span></tt> is defined should be able to represent the derivative of <tt class="docutils literal"><span class="pre">varname</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">ACP</span></tt> corresponds to the type of projection to be used. It has an <cite>abstract_constraints_projection</cite> type and for the moment, only exists the <cite>VM_projection</cite> corresponding to the Von Mises one.</li>
+</ul>
+</dd>
+</dl>
+<p>Be careful: <tt class="docutils literal"><span class="pre">datalambda</span></tt>, <tt class="docutils literal"><span class="pre">datamu</span></tt> and <tt class="docutils literal"><span class="pre">datathreshold</span></tt> could be constants or described on the same finite element method.</p>
+<p>This function assembles the tangent matrix and the right hand side vector which will be solved using a Newton algorithm.</p>
+<p>Additionaly, The function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">elastoplasticity_next_iter</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">previous_varname</span><span class="p">,</span> <span class="n">ACP</span><span class="p">,</span> <span class="n">datalambda</span><span class="p">,</span> <span class="n">datamu</span><span class="p">,</span> <span class="n">datathreshold</span><span class="p">,</span> <span class="n">datasigma</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>computes the new stress constraint values supported by the material after a load or an unload (once a solve has been done earlier) and upload the variables <tt class="docutils literal"><span class="pre">varname</span></tt> and <tt class="docutils literal"><span class="pre">datasigma</span></tt> as follows:</p>
+<div class="math">
+<p><img src="../_images/math/a580e8c759b8e8e17d25850746b9aac4452e0d09.png" alt="u^{n+1} \Rightarrow u^n \ \ \ \ \ \textrm{ and } \ \ \ \ \ \sigma^{n+1} \Rightarrow \sigma^n"/></p>
+</div><p>Then, <img class="math" src="../_images/math/292a206403c44be137a56e14cfc01788c0ee895a.png" alt="u^n" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/298bfa17b21080be1d1e607e3d982a0dcfa0ea30.png" alt="\sigma^n" style="vertical-align: 0px"/> contains the new values computed and one can restart the process.</p>
+<p>The function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">compute_elastoplasticity_Von_Mises_or_Tresca</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">datasigma</span><span class="p">,</span> <span class="n">mf_vm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="n">tresca</span><span class="o">=</span><span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>computes the Von Mises (or Tresca if <tt class="docutils literal"><span class="pre">tresca</span></tt> = true) criterion on the stress tensor stored in <tt class="docutils literal"><span class="pre">datasigma</span></tt> . The stress is evaluated on the <cite>mesh_fem</cite> <tt class="docutils literal"><span class="pre">mf_vm</span></tt> and stored into the vector <tt class="docutils literal"><span class="pre">VM</span></tt>.
+Of course, this function can be used if and only if the previous function <tt class="docutils literal"><span class="pre">elastoplasticity_next_iter</span></tt> has been called earlier.</p>
+<p>The function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">compute_plastic_part</span>
+    <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_pl</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">previous_varname</span><span class="p">,</span> <span class="n">ACP</span><span class="p">,</span> <span class="n">datalambda</span><span class="p">,</span> <span class="n">datamu</span><span class="p">,</span> <span class="n">datathreshold</span><span class="p">,</span> <span class="n">datasigma</span><span class="p">,</span> <span class="n">Plast</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>computes on <tt class="docutils literal"><span class="pre">mf_pl</span></tt> the plastic part of the material, that could appear after a load and an unload, into the vector <tt class="docutils literal"><span class="pre">Plast</span></tt>.</p>
+<p>Note that <tt class="docutils literal"><span class="pre">datasigma</span></tt> should be the vector containing the new stress constraint values, i.e. after a load or an unload of the material.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Small strain plasticity</a><ul>
+<li><a class="reference internal" href="#theoretical-background">Theoretical background</a><ul>
+<li><a class="reference internal" href="#additive-decomposition-of-the-small-strain-tensor">Additive decomposition of the small strain tensor</a></li>
+<li><a class="reference internal" href="#internal-variables-free-energy-potential-and-elastic-law">Internal variables, free energy potential and elastic law</a></li>
+<li><a class="reference internal" href="#plastic-potential-yield-function-and-plastic-flow-rule">Plastic potential, yield function and plastic flow rule</a></li>
+<li><a class="reference internal" href="#initial-boundary-value-problem">Initial boundary value problem</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flow-rule-integration">Flow rule integration</a><ul>
+<li><a class="reference internal" href="#plane-strain-approximation">Plane strain approximation</a></li>
+<li><a class="reference internal" href="#plane-stress-approximation">Plane stress approximation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#some-classical-laws">Some classical laws</a><ul>
+<li><a class="reference internal" href="#perfect-isotropic-associated-elastoplasticity-with-von-mises-criterion-prandl-reuss-model">Perfect isotropic associated elastoplasticity with Von-Mises criterion (Prandl-Reuss model)</a></li>
+<li><a class="reference internal" href="#isotropic-elastoplasticity-with-linear-isotropic-and-kinematic-hardening-and-von-mises-criterion">Isotropic elastoplasticity with linear isotropic and kinematic hardening and Von-Mises criterion</a></li>
+<li><a class="reference internal" href="#souza-auricchio-elastoplasticity-law-for-shape-memory-alloys">Souza-Auricchio elastoplasticity law (for shape memory alloys)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#elasto-plasticity-bricks">Elasto-plasticity bricks</a><ul>
+<li><a class="reference internal" href="#generic-brick">Generic brick</a></li>
+<li><a class="reference internal" href="#a-specific-brick-based-on-the-low-level-generic-assembly-for-perfect-plasticity">A specific brick based on the low-level generic assembly for perfect plasticity</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_nonlinear_elasticity.html"
+                        title="前の章へ">Finite strain Elasticity bricks</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_ALE_rotating.html"
+                        title="次の章へ">ALE Support for object having a large rigid body motion</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_ALE_rotating.html" title="ALE Support for object having a large rigid body motion"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_nonlinear_elasticity.html" title="Finite strain Elasticity bricks"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

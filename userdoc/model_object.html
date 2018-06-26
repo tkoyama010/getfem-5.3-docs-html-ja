@@ -1,0 +1,644 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The model object &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Generic assembly bricks" href="model_generic_assembly.html" />
+    <link rel="prev" title="The model description and basic model bricks" href="model.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_generic_assembly.html" title="Generic assembly bricks"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="The model description and basic model bricks"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-model-object">
+<span id="ud-model-object"></span><span id="index-0"></span><h1>The model object<a class="headerlink" href="#the-model-object" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The aim of the <cite>model</cite> object, defined in file <tt class="file docutils literal"><span class="pre">getfem/getfem_models.h</span></tt>, is to
+globally describe a PDE model. It mainly contains two lists: a list of variables
+(related or not to the <cite>mesh_fem</cite> objects) and data (also related or not to the <cite>mesh_fem</cite>
+objects) and a list of bricks. The role of the <cite>model</cite> object is to coordinate the
+module and make them produce a linear system of equations. If the model is
+linear, this will simply be the linear system of equation on the corresponding
+dofs. If the model is nonlinear, this will be the tangent linear system. There are two versions of the <cite>model</cite> object: a real one and complex one.</p>
+<p>The declaration of a model object is done by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">model</span> <span class="n">md</span><span class="p">(</span><span class="n">complex_version</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The parameter of the constructor is a boolean which determines whether the model deals with
+complex number or real numbers. The default is false for a model dealing with real
+numbers.</p>
+<div class="figure align-center" id="ud-fig-syslin">
+<img alt="../_images/getfemuserlinearsys.png" src="../_images/getfemuserlinearsys.png" />
+<p class="caption">The (tangent) linear system</p>
+</div>
+<p>There are different kinds of variables/data in the model. The variables are the
+unknown of the model. They will be (generally) computed by solving the (tangent)
+linear system built by the model. Generally, the model will have several
+variables. Each variable has a certain size (number of degrees of freedom) and the
+different variables are sorted in alphanumeric order to form the global unknown
+(<img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> in Fig. <a class="reference internal" href="#ud-fig-syslin"><em>The (tangent) linear system</em></a>). Each variable will be associated to an
+interval <img class="math" src="../_images/math/95876ba30e85990efbf432dd4acce472e5ed85d5.png" alt="I = [n_1, n_2]" style="vertical-align: -5px"/> which will represent the degrees of freedom
+indices corresponding to this variable in the global system. The model stores also
+some data (in the same format as the variables). The difference between data
+and variables is that data is not an unknown of the model. The value of the
+data should be provided. In some cases (nonlinear models) some variables can be
+considered as some data for certain terms. Variables and data are of two kinds.
+They can have a fixed size, or they can depend on a finite element method (be the
+d.o.f. of a finite element method).</p>
+<p>For instance, in the situation described in Fig. <a class="reference internal" href="#ud-fig-syslin"><em>The (tangent) linear system</em></a>, there are four variables in the model, namely <img class="math" src="../_images/math/cea8ffbc94d641e6d087b7af3d0930d00ad86fa9.png" alt="X, Y, V" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/10cb764f88509fb1c8012366993fdbee98f31bc5.png" alt="W" style="vertical-align: 0px"/>. The role of
+the model object will be to assemble the linear system, i.e. to fill the sub
+matrices corresponding to each variable (<img class="math" src="../_images/math/1625382e7a9f674c0d784e6f6ee1416173cdb36a.png" alt="R_{X,X}, R_{Y,Y}, R_{V,V}" style="vertical-align: -6px"/>, and
+<img class="math" src="../_images/math/33987c4d1de4952f9d8f30169b776381f2648740.png" alt="R_{W,W}" style="vertical-align: -6px"/>) and the coupling terms between two variables (<img class="math" src="../_images/math/cbfb0803eb85cce07162f4e0a769dce030c0e425.png" alt="R_{X,Y},
+R_{X,V}, R_{W,V}, \cdots" style="vertical-align: -6px"/>). This different contributions will be given by the
+different bricks added to the model.</p>
+<p>The main useful methods on a <cite>model</cite> object are</p>
+<dl class="function">
+<dt id="m.is_complex">
+<tt class="descname">m.is_complex</tt><big>(</big><big>)</big><a class="headerlink" href="#m.is_complex" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>A boolean which says if the model deals with real or complex unknowns and data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_fixed_size_variable">
+<tt class="descname">add_fixed_size_variable</tt><big>(</big>name, size, niter=1<big>)</big><a class="headerlink" href="#add_fixed_size_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a variable of fixed size. <tt class="docutils literal"><span class="pre">name</span></tt> is a string which designate the
+variable. <tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">add_fixed_size_variable</tt><big>(</big>name, sizes, niter=1<big>)</big></dt>
+<dd><p>Add a variable of fixed size. <tt class="docutils literal"><span class="pre">name</span></tt> is a string which designate the
+variable. <tt class="docutils literal"><span class="pre">sizes</span></tt> is a vector of dimension for matrix or tensor fixed
+size variables. <tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_fixed_size_data">
+<tt class="descname">add_fixed_size_data</tt><big>(</big>name, size, niter=1<big>)</big><a class="headerlink" href="#add_fixed_size_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data of fixed size. <tt class="docutils literal"><span class="pre">name</span></tt> is a string which designate the data.
+<tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">add_fixed_size_data</tt><big>(</big>name, sizes, niter=1<big>)</big></dt>
+<dd><p>Add a data of fixed size. <tt class="docutils literal"><span class="pre">name</span></tt> is a string which designate the data.
+<tt class="docutils literal"><span class="pre">sizes</span></tt> is a vector of dimension for matrix or tensor fixed
+size variables. <tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_initialized_fixed_size_data">
+<tt class="descname">add_initialized_fixed_size_data</tt><big>(</big>name, V<big>)</big><a class="headerlink" href="#add_initialized_fixed_size_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data of fixed size initialized with the given vector <tt class="docutils literal"><span class="pre">V</span></tt>. <tt class="docutils literal"><span class="pre">name</span></tt> is a
+string which designate the data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_initialized_scalar_data">
+<tt class="descname">add_initialized_scalar_data</tt><big>(</big>name, e<big>)</big><a class="headerlink" href="#add_initialized_scalar_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data of size 1 initialized with the given scalar value <tt class="docutils literal"><span class="pre">e</span></tt>. <tt class="docutils literal"><span class="pre">name</span></tt> is
+a string which designate the data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_fem_variable">
+<tt class="descname">add_fem_variable</tt><big>(</big>name, mf, niter=1<big>)</big><a class="headerlink" href="#add_fem_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a variable being the dofs of a finite element method <tt class="docutils literal"><span class="pre">mf</span></tt>. <tt class="docutils literal"><span class="pre">name</span></tt> is a
+string which designate the variable. <tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the
+variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_fem_data">
+<tt class="descname">add_fem_data</tt><big>(</big>name, mf, niter=1<big>)</big><a class="headerlink" href="#add_fem_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data being the dofs of a finite element method <tt class="docutils literal"><span class="pre">mf</span></tt>. <tt class="docutils literal"><span class="pre">name</span></tt> is a
+string which designate the data. <tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_initialized_fem_data">
+<tt class="descname">add_initialized_fem_data</tt><big>(</big>name, mf, V, niter=1<big>)</big><a class="headerlink" href="#add_initialized_fem_data" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a data being the dofs of a finite element method <tt class="docutils literal"><span class="pre">mf</span></tt> initialized with
+the given vector <tt class="docutils literal"><span class="pre">V</span></tt>. <tt class="docutils literal"><span class="pre">name</span></tt> is a string which designate the data.
+<tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="add_multiplier">
+<tt class="descname">add_multiplier</tt><big>(</big>name, mf, primal_name, niter=1<big>)</big><a class="headerlink" href="#add_multiplier" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a special variable linked to the finite element method <tt class="docutils literal"><span class="pre">mf</span></tt> and being a
+multiplier for certain constraints (Dirichlet condition for instance) on a
+primal variable <tt class="docutils literal"><span class="pre">primal_name</span></tt>. The most important is that the degrees of
+freedom will be filtered thanks to a <tt class="docutils literal"><span class="pre">partial_mesh_fem</span></tt> object in order to
+retain only a set of linearly independent constraints. To ensure this, a call
+to the bricks having a term linking the multiplier and the primal variable is
+done and a special algorithm is called to extract independent constraints. This
+algorithm is optimized for boundary multipliers (see gmm::range_basis). Use it
+with care for volumic multipliers. <tt class="docutils literal"><span class="pre">niter</span></tt> is the number of copy of the
+variable. Note that for complex terms, only
+the real part is considered to filter the multiplier.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="real_variable">
+<tt class="descname">real_variable</tt><big>(</big>name, niter=1<big>)</big><a class="headerlink" href="#real_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the access to the vector value of a variable or data. Real version.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="complex_variable">
+<tt class="descname">complex_variable</tt><big>(</big>name, niter=1<big>)</big><a class="headerlink" href="#complex_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the access to the vector value of a variable or data. Complex version.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mesh_fem_of_variable">
+<tt class="descname">mesh_fem_of_variable</tt><big>(</big>name<big>)</big><a class="headerlink" href="#mesh_fem_of_variable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives a reference on the <cite>mesh_fem</cite> on which the variable is defined. Throw an
+exception if this is not a fem variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="real_tangent_matrix">
+<tt class="descname">real_tangent_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#real_tangent_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the access to tangent matrix. Real version. A computation of the tangent
+system have to be done first.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="complex_tangent_matrix">
+<tt class="descname">complex_tangent_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#complex_tangent_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the access to tangent matrix. Complex version. A computation of the
+tangent system have to be done first.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="real_rhs">
+<tt class="descname">real_rhs</tt><big>(</big><big>)</big><a class="headerlink" href="#real_rhs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the access to right hand side vector of the linear system. real version.
+A computation of the tangent system have to be done first.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="complex_rhs">
+<tt class="descname">complex_rhs</tt><big>(</big><big>)</big><a class="headerlink" href="#complex_rhs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Gives the access to right hand side vector of the linear system. Complex
+version. A computation of the tangent system have to be done first.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="the-br-object">
+<h1>The <cite>brick</cite> object<a class="headerlink" href="#the-br-object" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>A model brick is an object that is supposed to represent a part of a model. It
+aims to represent some integral terms in a weak formulation of a PDE model. The
+model object will contain a list of bricks. All the terms described by the brick
+will be finally assembled to build the linear system to be solved (the tangent
+linear system for a nonlinear problem). For instance if a term <img class="math" src="../_images/math/ac517564187407fe83e4d6f7c980030ac8aef437.png" alt="\Delta u" style="vertical-align: 0px"/> is
+present on the pde model (Laplacian of <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>) then the weak formulation will
+contain the term <img class="math" src="../_images/math/b5e8582c9f05668061f189df8979ab4eaf6bc420.png" alt="\int_{\Omega}\nabla u\cdot\nabla v\ dx" style="vertical-align: -6px"/>, where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/>
+is the test function corresponding to <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>. Then the role of the
+corresponding brick is to assemble the term <img class="math" src="../_images/math/32cdca9f89509da0f7301971b1595bdd099b3835.png" alt="\int_{\Omega}\nabla\varphi_i
+\cdot\nabla\varphi_j\ dx" style="vertical-align: -6px"/>, where <img class="math" src="../_images/math/87686aa0f5136421c8415c7169adcb308e36c7a8.png" alt="\varphi_i" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/d41fca1e2de11eadb57f7dbbcf8bb44ab85d088d.png" alt="\varphi_j" style="vertical-align: -6px"/> are the
+shape functions of the finite element method describing <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>. This term will
+be added by the model object to the global linear system on a diagonal block
+corresponding to the variable <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/>. The only role of the brick is thus to
+call the corresponding assembly procedure when the model object asks for it. The
+construction of a brick for such a linear term is thus very simple.</p>
+<p>Basically, the brick object will derive from the object <tt class="docutils literal"><span class="pre">virtual_brick</span></tt> defined
+in <tt class="file docutils literal"><span class="pre">getfem/getfem_models.h</span></tt> and should redefine the method
+<tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt> or <tt class="docutils literal"><span class="pre">asm_complex_tangent_terms</span></tt> depending on whether
+it is a real term or an intrinsic complex term.</p>
+</div>
+<div class="section" id="how-to-build-a-new-brick">
+<h1>How to build a new brick<a class="headerlink" href="#how-to-build-a-new-brick" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Note first that the design of a new brick is only necessary for special terms
+not covered by existing bricks and not covered by the wide range of accessible
+terms (including complex coupling terms) of the generic assembly brick
+(see <a class="reference internal" href="model_generic_assembly.html#ud-model-generic-assembly"><em>Generic assembly bricks</em></a>).</p>
+<p>According to the spirit in which the brick has been designed, a brick should avoid
+as much as possible to store additional data. The parameters of a brick should be
+contained in the variable and data of the model. For instance, the parameters of a
+linear elasticity brick are the elasticity coefficient. This coefficients have to
+be some data of the model. When the brick is called by the model object, a list of
+variables and data is given to the brick. The great majority of the predefined
+bricks do not store any data. This allows to instantiate such a bricks only once.</p>
+<p>An example of a brick corresponding to the laplacian term is the following (other
+examples can be found in the file <tt class="file docutils literal"><span class="pre">getfem_models.cc</span></tt> which contains the
+very standard bricks):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">my_Laplacian_brick</span><span class="o">:</span> <span class="k">public</span> <span class="n">getfem</span><span class="o">::</span><span class="n">virtual_brick</span> <span class="p">{</span>
+
+  <span class="kt">void</span> <span class="n">asm_real_tangent_terms</span><span class="p">(</span><span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">ib</span><span class="p">,</span>
+                              <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="o">&amp;</span><span class="n">varl</span><span class="p">,</span>
+                              <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="o">&amp;</span><span class="n">datal</span><span class="p">,</span>
+                              <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">mimlist</span> <span class="o">&amp;</span><span class="n">mims</span><span class="p">,</span>
+                              <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">real_matlist</span> <span class="o">&amp;</span><span class="n">matl</span><span class="p">,</span>
+                              <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">real_veclist</span> <span class="o">&amp;</span><span class="n">vecl</span><span class="p">,</span>
+                              <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">real_veclist</span> <span class="o">&amp;</span><span class="n">vecl_sym</span><span class="p">,</span>
+                              <span class="n">size_type</span> <span class="n">region</span><span class="p">,</span> <span class="n">build_version</span> <span class="n">nl</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+    <span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">matl</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;My Laplacian brick has one and only one term&quot;</span><span class="p">);</span>
+    <span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">mims</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;My Laplacian brick need one and only one mesh_im&quot;</span><span class="p">);</span>
+    <span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">varl</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">datal</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s">&quot;Wrong number of variables for my Laplacian brick&quot;</span><span class="p">);</span>
+
+    <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">mf_u</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">mesh_fem_of_variable</span><span class="p">(</span><span class="n">varl</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_im</span> <span class="o">&amp;</span><span class="n">mim</span> <span class="o">=</span> <span class="o">*</span><span class="n">mims</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+
+    <span class="n">gmm</span><span class="o">::</span><span class="n">clear</span><span class="p">(</span><span class="n">matl</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="n">getfem</span><span class="o">::</span><span class="n">asm_stiffness_matrix_for_homogeneous_laplacian</span>
+    <span class="p">(</span><span class="n">matl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="n">my_Laplacian_brick</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+  <span class="p">{</span> <span class="n">set_flags</span><span class="p">(</span><span class="s">&quot;My Laplacian brick&quot;</span><span class="p">,</span> <span class="nb">true</span> <span class="cm">/* linear */</span><span class="p">,</span>
+                                    <span class="nb">true</span> <span class="cm">/* symmetric */</span><span class="p">,</span>
+                                    <span class="nb">true</span> <span class="cm">/* coercivity */</span><span class="p">,</span>
+                                    <span class="nb">true</span> <span class="cm">/* real version defined */</span><span class="p">,</span>
+                                    <span class="nb">false</span> <span class="cm">/* no complex version*/</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The constructor of a brick should call the method <tt class="docutils literal"><span class="pre">set_flags</span></tt>. The first
+parameter of this method is a name for the brick (this allows to list the bricks
+of a model and facilitate their identification). The other parameters are some
+flags, respectively:</p>
+<ul class="simple">
+<li>if the brick terms are all linear or not.</li>
+<li>if the brick terms are globally symmetric (conjugated in the complex version) or
+at least do not affect the symmetry. The terms corresponding to two different
+variables and declared symmetric are added twice in the global linear system
+(the term and the transpose of the term).</li>
+<li>if the terms do not affect the coercivity.</li>
+<li>if the terms have a real version or not. If yes, the method
+<tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt> should be redefined.</li>
+<li>if the terms have a complex version or not. If yes, the method
+<tt class="docutils literal"><span class="pre">asm_complex_tangent_terms</span></tt> should be redefined.</li>
+</ul>
+<p>The method <tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt> will be called by the model object for the
+assembly of the tangent system. The model object gives the whole framework to the
+brick to build its terms. The parameter <tt class="docutils literal"><span class="pre">md</span></tt> of the <tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt>
+method is the model that called the brick, <tt class="docutils literal"><span class="pre">ib</span></tt> being the brick number in the
+model. The parameter <tt class="docutils literal"><span class="pre">varl</span></tt> is an array of variable/data names defined in this
+model and needed in the brick. <tt class="docutils literal"><span class="pre">mims</span></tt> is an array of <cite>mesh_im</cite> pointers. It
+corresponds to the integration methods needed to assemble the terms. <tt class="docutils literal"><span class="pre">matl</span></tt> is
+an array of matrices to be computed. <tt class="docutils literal"><span class="pre">vecl</span></tt> is an array of vectors to be
+computed (rhs or residual vectors).  <tt class="docutils literal"><span class="pre">vecl_sym</span></tt> is an array of vectors to be
+computed only for symmetric terms and corresponding to the rhs of the second
+variable. A brick can have an arbitrary number of terms. For each term, at least
+the corresponding matrix or the corresponding vector has to be filled (or both the
+two, but only in the nonlinear case, see the description of the terms below, next
+section). <tt class="docutils literal"><span class="pre">region</span></tt> is a mesh region number indicated that the terms have to be
+assembled on a certain region. <tt class="docutils literal"><span class="pre">nl</span></tt> is for nonlinear bricks only. It says if the
+tangent matrix or the residual or both the two are to be computed (for linear
+bricks, all is to be computed at each call).</p>
+<p>For the very simple Laplacian brick defined above, only one variable is used and
+no data and there is only one term. The lines:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">matl</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s">&quot;My Laplacian brick has one and only one term&quot;</span><span class="p">);</span>
+<span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">mims</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s">&quot;My Laplacian brick need one and only one mesh_im&quot;</span><span class="p">);</span>
+<span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">varl</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">datal</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s">&quot;Wrong number of variables for my Laplacian brick&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>are not mandatory and just verify that the good number of terms (1), integration
+methods (1), variables(1), data(0) are passed to the <tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt>
+method.</p>
+<p>The lines:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">mf_u</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">mesh_fem_of_variable</span><span class="p">(</span><span class="n">varl</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_im</span> <span class="o">&amp;</span><span class="n">mim</span> <span class="o">=</span> <span class="o">*</span><span class="n">mims</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>takes the <cite>mesh_fem</cite> object from the variable on which the Laplacian term will be added
+and the <cite>mesh_im</cite> object in the list of integrations methods. Finally, the lines:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">clear</span><span class="p">(</span><span class="n">matl</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">asm_stiffness_matrix_for_homogeneous_laplacian</span>
+<span class="p">(</span><span class="n">matl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>call a standard assembly procedure for the Laplacian term defined in the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_assembling.h</span></tt>. The clear method is necessary because
+although it is guaranteed that the matrices in <tt class="docutils literal"><span class="pre">matl</span></tt> have good sizes they
+maybe not cleared before the call of <tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt>.</p>
+<p>Note that this simple brick has only one term and is linear. In the case of a
+linear birck, either the matrix or the right hand side vector have to be filled
+but not both the two. Depending on the declaration of the term. See below the
+integration of the brick to the model.</p>
+<p>Let us see now a second example of a simple brick which prescribes a Dirichlet
+condition thanks to the use of a Lagrange multiplier. The Dirichlet condition is
+of the form</p>
+<div class="math">
+<p><img src="../_images/math/7a47716f1abe5f52c8709969c545855b15eba370.png" alt="u = u_D \text{ on } \Gamma,"/></p>
+</div><p>where <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is the variable, <img class="math" src="../_images/math/64f650be582a1056128d1394c1bc9141f7e2d839.png" alt="u_D" style="vertical-align: -3px"/> is a given value and <img class="math" src="../_images/math/913e49ea63c6c130bb8d9d1c3556b052ecc404f8.png" alt="\Gamma" style="vertical-align: -1px"/>
+is a part on the boundary of the considered domain. The weak terms corresponding
+to this condition prescribed with a Lagrange multiplier are</p>
+<div class="math">
+<p><img src="../_images/math/c84c280611629635cd6d7b8cec131e21269845a9.png" alt="\int_{\Gamma} u \mu\ d\Gamma = \int_{\Gamma} u_D \mu\ d\Gamma, \forall \mu \in M,"/></p>
+</div><p>where <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> is an appropriate multiplier space. The contributions to the
+global linear system can be viewed in Fig. <a class="reference internal" href="#ud-fig-syslindir"><em>Contributions of the simple Dirichlet brick</em></a>. The matrix
+<img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" style="vertical-align: 0px"/> is the &#8220;mass matrix&#8221; between the finite element space of the variable
+<img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> and the finite element space of the multiplier <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu" style="vertical-align: -4px"/>.
+<img class="math" src="../_images/math/637e8f50a7c1c2b086bc912e5a4ed9248dd17304.png" alt="L_{u}" style="vertical-align: -3px"/> is the right hand side corresponding to the data <img class="math" src="../_images/math/64f650be582a1056128d1394c1bc9141f7e2d839.png" alt="u_D" style="vertical-align: -3px"/>.</p>
+<div class="figure align-center" id="ud-fig-syslindir">
+<a class="reference internal image-reference" href="../_images/getfemuserlinsysDir.png"><img alt="../_images/getfemuserlinsysDir.png" src="../_images/getfemuserlinsysDir.png" style="width: 7cm;" /></a>
+<p class="caption">Contributions of the simple Dirichlet brick</p>
+</div>
+<p>The brick can be defined as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">my_Dirichlet_brick</span><span class="o">:</span> <span class="k">public</span> <span class="n">getfem</span><span class="o">::</span><span class="n">virtual_brick</span> <span class="p">{</span>
+
+  <span class="kt">void</span> <span class="n">asm_real_tangent_terms</span><span class="p">(</span><span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">ib</span><span class="p">,</span>
+                              <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="o">&amp;</span><span class="n">varl</span><span class="p">,</span>
+                              <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="o">&amp;</span><span class="n">datal</span><span class="p">,</span>
+                              <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">mimlist</span> <span class="o">&amp;</span><span class="n">mims</span><span class="p">,</span>
+                              <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">real_matlist</span> <span class="o">&amp;</span><span class="n">matl</span><span class="p">,</span>
+                              <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">real_veclist</span> <span class="o">&amp;</span><span class="n">vecl</span><span class="p">,</span>
+                              <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">real_veclist</span> <span class="o">&amp;</span><span class="n">vecl_sym</span><span class="p">,</span>
+                              <span class="n">size_type</span> <span class="n">region</span><span class="p">,</span> <span class="n">build_version</span> <span class="n">nl</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+    <span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">matl</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;My Dirichlet brick has one and only one term&quot;</span><span class="p">);</span>
+    <span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">mims</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;My Dirichlet brick need one and only one mesh_im&quot;</span><span class="p">);</span>
+    <span class="n">GMM_ASSERT1</span><span class="p">(</span><span class="n">varl</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">datal</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;Wrong number of variables for my Laplacian brick&quot;</span><span class="p">);</span>
+
+    <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">mf_u</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">mesh_fem_of_variable</span><span class="p">(</span><span class="n">varl</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">mf_mult</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">mesh_fem_of_variable</span><span class="p">(</span><span class="n">varl</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_im</span> <span class="o">&amp;</span><span class="n">mim</span> <span class="o">=</span> <span class="o">*</span><span class="n">mims</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model_real_plain_vector</span> <span class="o">&amp;</span><span class="n">A</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">real_variable</span><span class="p">(</span><span class="n">datal</span><span class="p">[</span><span class="n">ind</span><span class="p">]);</span>
+    <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="o">*</span><span class="n">mf_data</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">pmesh_fem_of_variable</span><span class="p">(</span><span class="n">datal</span><span class="p">[</span><span class="n">ind</span><span class="p">]);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">mf_data</span><span class="p">)</span>
+      <span class="n">getfem</span><span class="o">::</span><span class="n">asm_source_term</span><span class="p">(</span><span class="n">vecl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_mult</span><span class="p">,</span> <span class="o">*</span><span class="n">mf_data</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+    <span class="k">else</span>
+      <span class="n">getfem</span><span class="o">::</span><span class="n">asm_homogeneous_source_term</span><span class="p">(</span><span class="n">vecl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_mult</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+
+    <span class="n">gmm</span><span class="o">::</span><span class="n">clear</span><span class="p">(</span><span class="n">matl</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="n">getfem</span><span class="o">::</span><span class="n">asm_mass_matrix</span><span class="p">(</span><span class="n">matl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_mult</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="n">my_Dirichlet_brick</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+  <span class="p">{</span> <span class="n">set_flags</span><span class="p">(</span><span class="s">&quot;My Dirichlet brick&quot;</span><span class="p">,</span> <span class="nb">true</span> <span class="cm">/* linear */</span><span class="p">,</span>
+                                    <span class="nb">true</span> <span class="cm">/* symmetric */</span><span class="p">,</span>
+                                    <span class="nb">false</span> <span class="cm">/* coercivity */</span><span class="p">,</span>
+                                    <span class="nb">true</span> <span class="cm">/* real version defined */</span><span class="p">,</span>
+                                    <span class="nb">false</span> <span class="cm">/* no complex version */</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>This brick has again only one term but defines both the matrix and the right hand
+side parts. Two variables are concerned, the primal variable on which the
+Dirichlet condition is prescribed, and the multiplier variable which should be
+defined on a mesh region corresponding to a boundary (it should be added to the
+model with the method <tt class="docutils literal"><span class="pre">add_multiplier</span></tt>). The term of the brick will be declared
+symmetric (see the next section).</p>
+<p>The lines:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model_real_plain_vector</span> <span class="o">&amp;</span><span class="n">A</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">real_variable</span><span class="p">(</span><span class="n">datal</span><span class="p">[</span><span class="n">ind</span><span class="p">]);</span>
+<span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="o">*</span><span class="n">mf_data</span> <span class="o">=</span> <span class="n">md</span><span class="p">.</span><span class="n">pmesh_fem_of_variable</span><span class="p">(</span><span class="n">datal</span><span class="p">[</span><span class="n">ind</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>allow to have the access to the value of the data corresponding to the right hand
+side of the Dirichlet condition and to the <cite>mesh_fem</cite> on which this data is defined. If
+the data is constant (not described on a fem) then <tt class="docutils literal"><span class="pre">mf_data</span></tt> is a null pointer.</p>
+<p>The lines:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">mf_data</span><span class="p">)</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">asm_source_term</span><span class="p">(</span><span class="n">vecl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_mult</span><span class="p">,</span> <span class="o">*</span><span class="n">mf_data</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+<span class="k">else</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">asm_homogeneous_source_term</span><span class="p">(</span><span class="n">vecl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mim</span><span class="p">,</span> <span class="n">mf_mult</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>make the assembly of the right hand side. The two versions correspond to a data
+defined on a finite element method or constant size data.</p>
+<p>( + some example with a nonlinear term ... )</p>
+</div>
+<div class="section" id="how-to-add-the-brick-to-a-model">
+<h1>How to add the brick to a model<a class="headerlink" href="#how-to-add-the-brick-to-a-model" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>In order to add a brick to a model, a certain information have to be passed to the
+model:</p>
+<ul class="simple">
+<li>A pointer to the brick itself.</li>
+<li>The set of variable names concerned with the terms of the brick.</li>
+<li>The set of data names concerned with the terms of the brick.</li>
+<li>A list of terms description.</li>
+<li>A list of integration methods.</li>
+<li>Eventually the concerned mesh region.</li>
+</ul>
+<p>This is done by the call of the <cite>model</cite> object method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">md</span><span class="p">.</span><span class="n">add_brick</span><span class="p">(</span><span class="n">pbr</span><span class="p">,</span> <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="o">&amp;</span><span class="n">varnames</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="o">&amp;</span><span class="n">datanames</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">termlist</span> <span class="o">&amp;</span><span class="n">terms</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">mimlist</span> <span class="o">&amp;</span><span class="n">mims</span><span class="p">,</span>
+                  <span class="kt">size_t</span> <span class="n">region</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The method returns the index of the brick in the model. The call of this method is
+rather complex because it can be adapted to many situations. The construction of a
+new brick should be accompagned to the definition of a function that adds the new
+brick to the model calling this method and more simple to use.</p>
+<p>For instance, for the simple Laplacian brick described above, this function can be
+defined as folows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">size_t</span> <span class="nf">add_my_Laplacian_brick</span><span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span> <span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_im</span> <span class="o">&amp;</span><span class="n">mim</span><span class="p">,</span>
+                              <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">varname</span><span class="p">,</span>
+                              <span class="kt">size_t</span> <span class="n">region</span> <span class="o">=</span> <span class="kt">size_t</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">pbrick</span> <span class="n">pbr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">my_Laplacian_brick</span><span class="p">;</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">termlist</span> <span class="n">tl</span><span class="p">;</span>
+
+  <span class="n">tl</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">term_description</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="nb">true</span><span class="p">));</span>
+  <span class="k">return</span> <span class="n">md</span><span class="p">.</span><span class="n">add_brick</span><span class="p">(</span><span class="n">pbr</span><span class="p">,</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">varname</span><span class="p">),</span>
+                      <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span><span class="p">(),</span> <span class="n">tl</span><span class="p">,</span>
+                      <span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">mimlist</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mim</span><span class="p">),</span> <span class="n">region</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This function will be called by the user of your brick. The type
+<tt class="docutils literal"><span class="pre">getfem::model::varnamelist</span></tt> is a <tt class="docutils literal"><span class="pre">std::vector&lt;std::string&gt;</span></tt> and represent an
+array of variable names. The type <tt class="docutils literal"><span class="pre">getfem::model::mimlist</span></tt> is a
+<tt class="docutils literal"><span class="pre">std::vector&lt;const</span> <span class="pre">getfem::mesh_im</span> <span class="pre">*&gt;</span></tt> and represent an array of pointers to
+integration methods. The type <tt class="docutils literal"><span class="pre">getfem::model::termlist</span></tt> is an array of terms
+description. There is two kind of terms. The terms adding only a right hand side
+to the linear (tangent) system which have to be added to the list by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">tl</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">term_description</span><span class="p">(</span><span class="n">varname</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>and the terms having a contribution to the matrix of the linear system which have
+to be added to the list by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">tl</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">term_description</span><span class="p">(</span><span class="n">varname1</span><span class="p">,</span> <span class="n">varname2</span><span class="p">,</span> <span class="nb">true</span><span class="o">/</span><span class="nb">false</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>In this case, the matrix term is added in the rows corresponding to the variable
+<tt class="docutils literal"><span class="pre">varname1</span></tt> and the columns corresponding to the variable <tt class="docutils literal"><span class="pre">varname2</span></tt>. The
+boolean being the third parameter is to declare whether the term is symmetric or not.
+If it is symmetric and if the two variables are different then the assembly
+procedure adds the corresponding term AND its transpose. The number of terms is
+arbitrary. For each term declared, the brick has to fill the corresponding right
+hand side vector (parameter <tt class="docutils literal"><span class="pre">vecl</span></tt> of <tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt> above) or/and
+the matrix term (parameter <tt class="docutils literal"><span class="pre">matl</span></tt> of <tt class="docutils literal"><span class="pre">asm_real_tangent_terms</span></tt>) depending on
+the declaration of the term. Note that for nonlinear bricks, both the matrix and
+the right hand side vectors have to be filled. For linear bricks, if the right
+hand side is filled for a term declared to be a matrix term, it is IGNORED.</p>
+<p>The variable names and the data names are given in two separate arrays because the
+dependence of the brick is not the same in both cases. A linear term has to be
+recomputed if the value of a data is changed but not if the value of a variable is
+changed.</p>
+<p>The function allowing to add the simple Dirichlet brick described above can be
+defined as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">size_t</span> <span class="nf">add_my_Dirichlet_condition_brick</span><span class="p">(</span><span class="n">model</span> <span class="o">&amp;</span><span class="n">md</span><span class="p">,</span> <span class="k">const</span> <span class="n">mesh_im</span> <span class="o">&amp;</span><span class="n">mim</span><span class="p">,</span>
+                                        <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">varname</span><span class="p">,</span>
+                                        <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">multname</span><span class="p">,</span>
+                                        <span class="kt">size_t</span> <span class="n">region</span><span class="p">,</span>
+                                        <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">dataname</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">pbrick</span> <span class="n">pbr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">my_Dirichlet_brick</span><span class="p">;</span>
+  <span class="n">model</span><span class="o">::</span><span class="n">termlist</span> <span class="n">tl</span><span class="p">;</span>
+  <span class="n">tl</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">model</span><span class="o">::</span><span class="n">term_description</span><span class="p">(</span><span class="n">multname</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="nb">true</span><span class="p">));</span>
+  <span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="n">vl</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">varname</span><span class="p">);</span>
+  <span class="n">vl</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">multname</span><span class="p">);</span>
+  <span class="n">model</span><span class="o">::</span><span class="n">varnamelist</span> <span class="n">dl</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">dataname</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="n">dl</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">dataname</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">md</span><span class="p">.</span><span class="n">add_brick</span><span class="p">(</span><span class="n">pbr</span><span class="p">,</span> <span class="n">vl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">tl</span><span class="p">,</span> <span class="n">model</span><span class="o">::</span><span class="n">mimlist</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mim</span><span class="p">),</span> <span class="n">region</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Again, here, the term is declared symmetric and then the matrix term and its
+transpose will be added.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The model object</a></li>
+<li><a class="reference internal" href="#the-br-object">The <cite>brick</cite> object</a></li>
+<li><a class="reference internal" href="#how-to-build-a-new-brick">How to build a new brick</a></li>
+<li><a class="reference internal" href="#how-to-add-the-brick-to-a-model">How to add the brick to a model</a></li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model.html"
+                        title="前の章へ">The model description and basic model bricks</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_generic_assembly.html"
+                        title="次の章へ">Generic assembly bricks</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_generic_assembly.html" title="Generic assembly bricks"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="The model description and basic model bricks"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

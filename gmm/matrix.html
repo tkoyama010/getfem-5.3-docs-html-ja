@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Matrix and Vector type provided by Gmm++ &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Input and output with Harwell-Boeing and Matrix Market formats" href="export.html" />
+    <link rel="prev" title="Installation" href="install.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="export.html" title="Input and output with Harwell-Boeing and Matrix Market formats"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="matrix-and-vector-type-provided-by-gmm">
+<span id="gmm-matrix"></span><h1>Matrix and Vector type provided by <em>Gmm++</em><a class="headerlink" href="#matrix-and-vector-type-provided-by-gmm" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The convention is that any vector or matrix type (except if it is a  reference)
+can be instantiated with the constructors:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Vector</span> <span class="nf">V</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>        <span class="c1">// build a vector of size n.</span>
+<span class="n">Matrix</span> <span class="nf">M</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">);</span>     <span class="c1">// build a matrix with n rows and m columns.</span>
+</pre></div>
+</div>
+<p>No other constructor is used inside <em>Gmm++</em> and you should not use any other if you want your code
+to be compatible with any matrix and vector type.</p>
+<p>It is assumed that each vector type interfaced with <em>Gmm++</em> allows to
+access to a component with the following syntax:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>    <span class="c1">// read the ith component of V.</span>
+<span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>    <span class="c1">// write the ith component of V.</span>
+</pre></div>
+</div>
+<p>The write access being available if the vector is not a constant reference. For a matrix:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span> <span class="c1">// read the component at row i and column j of M.</span>
+<span class="n">M</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span> <span class="c1">//  write the component at row i and column j of M.</span>
+</pre></div>
+</div>
+<p>Again the write access is available if the matrix is not a const reference. Generally, especially for sparse matrices, this access is not very efficient. Linear algebra procedures access to the components of the vectors and matrices via iterators. (see section  <a class="reference internal" href="inside.html#gmm-inside"><em>Deeper inside Gmm++</em></a>)</p>
+<p>It is also not recommended (at all) to use the original copy operator for vectors or matrices. Generally, it will not do the appropriate job. instead, you have to use the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">W</span><span class="p">);</span>  <span class="c1">//  W &lt;-- V</span>
+</pre></div>
+</div>
+<p>which works for all correctly interfaced matrix and vector type, even if <tt class="docutils literal"><span class="pre">V</span></tt> is not of the same type as <tt class="docutils literal"><span class="pre">W</span></tt> (<tt class="docutils literal"><span class="pre">V</span></tt> could be sparse and <tt class="docutils literal"><span class="pre">W</span></tt> dense for instance).</p>
+<p>in <em>Gmm++</em>, a vector is not a (n by 1) matrix, it is a one dimensional object. If you need to use a vector as a (n by 1) column matrix or a (1 by n) row matrix, you can do it with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">row_vector</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="c1">// gives a reference on V considered as</span>
+                   <span class="c1">// a (1 by n) row matrix</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">col_vector</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="c1">// gives a reference on V considered as</span>
+                   <span class="c1">// a (n by 1) col matrix</span>
+</pre></div>
+</div>
+<p>In the following, the template parameter <tt class="docutils literal"><span class="pre">T</span></tt> will represent a scalar type like <tt class="docutils literal"><span class="pre">double</span></tt> or <tt class="docutils literal"><span class="pre">std::complex&lt;double&gt;</span></tt>.</p>
+<div class="section" id="dense-vectors">
+<h2>dense vectors<a class="headerlink" href="#dense-vectors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><em>Gmm++</em> interfaces <tt class="docutils literal"><span class="pre">std::vector&lt;T&gt;</span></tt> so you can use it as your basic dense vector type.
+If you need to interface another type of dense vector you can see in <tt class="docutils literal"><span class="pre">gmm/gmm_interface.h</span></tt>
+some examples.</p>
+</div>
+<div class="section" id="sparse-vectors">
+<h2>sparse vectors<a class="headerlink" href="#sparse-vectors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><em>Gmm++</em> provides two types of sparse vectors: <tt class="docutils literal"><span class="pre">gmm::wsvector&lt;T&gt;</span></tt> and <tt class="docutils literal"><span class="pre">gmm::rsvector&lt;T&gt;</span></tt>. <tt class="docutils literal"><span class="pre">gmm::wsvector&lt;T&gt;</span></tt> is optimized for write operations and <tt class="docutils literal"><span class="pre">gmm::rsvector&lt;T&gt;</span></tt> is optimized for read operations. It should be appropriate to use <tt class="docutils literal"><span class="pre">gmm::wsvector&lt;T&gt;</span></tt> for assembling procedures and then to copy the vector in a <tt class="docutils literal"><span class="pre">gmm::rsvector&lt;T&gt;</span></tt> for the solvers. Those two vector types can be used to create row major or column major matrices (see section  <a class="reference internal" href="#gmmracmat"><em>generic row and column matrices</em></a>).</p>
+</div>
+<div class="section" id="skyline-vectors">
+<h2>skyline vectors<a class="headerlink" href="#skyline-vectors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The type <tt class="docutils literal"><span class="pre">gmm::slvector&lt;T&gt;</span></tt> defines a skyline vector, in the sense that only an interval of this vector is stored. With this type of vector you can build skyline matrices as <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;</span> <span class="pre">gmm::slvector&lt;T&gt;</span> <span class="pre">&gt;</span></tt> (see next section <a class="reference internal" href="#gmmracmat"><em>generic row and column matrices</em></a>).</p>
+</div>
+<div class="section" id="generic-row-and-column-matrices">
+<span id="gmmracmat"></span><h2>generic row and column matrices<a class="headerlink" href="#generic-row-and-column-matrices" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><em>Gmm++</em> provides the two following types of matrices: <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;VECT&gt;</span></tt> and <tt class="docutils literal"><span class="pre">gmm::col_matrix&lt;VECT&gt;</span></tt> where <tt class="docutils literal"><span class="pre">VECT</span></tt> should be a valid (i.e. interfaced) vector type.
+Those two type of matrices store an array of <tt class="docutils literal"><span class="pre">VECT</span></tt> so the memory is not contiguous. Initializations are:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">row_matrix</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">M1</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>  <span class="c1">// dense row matrix</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">col_matrix</span><span class="o">&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">wsvector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">M2</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span> <span class="c1">// sparse column matrix</span>
+</pre></div>
+</div>
+<p>Of course <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;VECT&gt;</span></tt> is a row matrix and it is impossible to access to a particular column of this matrix.</p>
+<p><tt class="docutils literal"><span class="pre">gmm::mat_nrows(M)</span></tt> gives the number of rows of a matrix and <tt class="docutils literal"><span class="pre">gmm::mat_ncols(M)</span></tt> the number of columns.</p>
+</div>
+<div class="section" id="dense-matrices">
+<h2>dense matrices<a class="headerlink" href="#dense-matrices" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is recommended to use the type:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">dense_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>to represent a dense matrix type because it is compatible with the Fortran format (column major) and some operations are interfaced with blas and Lapack (see section  <a class="reference internal" href="blas_interface.html#gmm-lapack"><em>Interface with BLAS, LAPACK or ATLAS</em></a>). It is considered as a column and row matrix (column preferred) which means that you can access both to the columns and rows.</p>
+<p>However, matrix types as <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;</span> <span class="pre">std::vector&lt;double&gt;</span> <span class="pre">&gt;</span></tt> or <tt class="docutils literal"><span class="pre">gmm::col_matrix&lt;</span> <span class="pre">std::vector&lt;double&gt;</span> <span class="pre">&gt;</span></tt> represent also some dense matrices.</p>
+</div>
+<div class="section" id="sparse-matrices">
+<h2>sparse matrices<a class="headerlink" href="#sparse-matrices" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Similarly, <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;</span> <span class="pre">gmm::wsvector&lt;double&gt;</span> <span class="pre">&gt;</span></tt> or <tt class="docutils literal"><span class="pre">gmm::col_matrix&lt;</span> <span class="pre">gmm::rsvector&lt;double&gt;</span> <span class="pre">&gt;</span></tt> represents some sparse matrices, but <em>Gmm++</em> provides also two types of classical sparse matrix types:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">csr_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">csc_matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The type <tt class="docutils literal"><span class="pre">gmm::csr_matrix&lt;T&gt;</span></tt> represents a compressed sparse row matrix and <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;T&gt;</span></tt> a compressed sparse column matrix. The particularity of these two types of matrices is to be read only, in the sense that it is not possible to access at a particular component to write on it (the operation is too expansive). The only write operation permitted is <tt class="docutils literal"><span class="pre">gmm::copy</span></tt>. The right way to use these matrices is first to execute the write operations on another type of matrix like <tt class="docutils literal"><span class="pre">gmm::row_matrix&lt;</span> <span class="pre">gmm::wsvector&lt;double&gt;</span> <span class="pre">&gt;</span></tt> then to do a copy:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">row_matrix</span><span class="o">&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">wsvector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">M1</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">assembly</span> <span class="n">operation</span> <span class="n">on</span> <span class="n">M1</span>
+<span class="p">...</span>
+<span class="n">M1</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">csc_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">M2</span><span class="p">;</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">clean</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="mf">1E-12</span><span class="p">);</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Matrices <tt class="docutils literal"><span class="pre">gmm::csr_matrix&lt;T&gt;</span></tt> and <tt class="docutils literal"><span class="pre">gmm::csc_matrix&lt;T&gt;</span></tt> have the advantage to have a standard format (interfacable with Fortran code) and to have a compact format (contiguous in memory). To be able to be compatible with Fortran programs a second template parameter exists on these type, you can declare:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">csc_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="n">M1</span><span class="p">;</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">csr_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="n">M2</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">1</span></tt> means that a shift will be done on all the indices.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Matrix and Vector type provided by <em>Gmm++</em></a><ul>
+<li><a class="reference internal" href="#dense-vectors">dense vectors</a></li>
+<li><a class="reference internal" href="#sparse-vectors">sparse vectors</a></li>
+<li><a class="reference internal" href="#skyline-vectors">skyline vectors</a></li>
+<li><a class="reference internal" href="#generic-row-and-column-matrices">generic row and column matrices</a></li>
+<li><a class="reference internal" href="#dense-matrices">dense matrices</a></li>
+<li><a class="reference internal" href="#sparse-matrices">sparse matrices</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="install.html"
+                        title="前の章へ">Installation</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="export.html"
+                        title="次の章へ">Input and output with Harwell-Boeing and Matrix Market formats</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="export.html" title="Input and output with Harwell-Boeing and Matrix Market formats"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>What’s New in GetFEM++ 1.6 &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="What’s New in GetFEM++" href="index.html" />
+    <link rel="next" title="What’s New in GetFEM++ 1.5" href="1.5.html" />
+    <link rel="prev" title="What’s New in GetFEM++ 1.7" href="1.7.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="1.5.html" title="What’s New in GetFEM++ 1.5"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="1.7.html" title="What’s New in GetFEM++ 1.7"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="what-s-new-in-gf-1-6">
+<h1>What&#8217;s New in <em>GetFEM++</em> 1.6<a class="headerlink" href="#what-s-new-in-gf-1-6" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<blockquote>
+<div><p>Released, 2004/01/23:</p>
+<ul class="simple">
+<li><em>GetFEM++</em> 1.6 is mostly a bugfix and performance improvements release:<ul>
+<li>Some new integration methods were added (high order methods for
+triangles such as <tt class="docutils literal"><span class="pre">IM_TRIANGLE(19)</span></tt> from P. Solin, K. Segeth
+and I. Dolezel: <em>Higher-Order &amp; Finite Element Methods</em>,
+Chapman &amp; Hall/CRC Press, 2003).</li>
+<li>Performance of interpolation and geometric transformation inversion
+was much improved.</li>
+<li>Support for emc2 meshes.</li>
+</ul>
+</li>
+<li>The Gmm++ library has been much improved version 1.6 and version 1.5.
+We have especially focused on its robustness:<ul>
+<li>Many bugs were fixed, especially for complex matrices.</li>
+<li>QR algorithms were introduced for dense matrices.</li>
+<li>A <cite>LAPACK/ATLAS</cite> interface is available.</li>
+<li><cite>SuperLU 2.0</cite> interface.</li>
+<li>Small simplification in <tt class="docutils literal"><span class="pre">linalg_traits</span></tt> structure.</li>
+<li>Generic resize procedures for vector and matrices were introduced.</li>
+<li>It is possible to use a column or row matrix view of a vector with
+<tt class="docutils literal"><span class="pre">gmm::row_vector</span></tt> and <tt class="docutils literal"><span class="pre">gmm::col_vector</span></tt>.</li>
+<li>Generic <tt class="docutils literal"><span class="pre">gmm::reshape</span></tt> and <tt class="docutils literal"><span class="pre">gmm::conjugated</span></tt> functions.</li>
+<li>Intensive tests with random type of matrices and vectors.</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="1.7.html"
+                        title="前の章へ">What&#8217;s New in <em>GetFEM++</em> 1.7</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="1.5.html"
+                        title="次の章へ">What&#8217;s New in <em>GetFEM++</em> 1.5</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="1.5.html" title="What’s New in GetFEM++ 1.5"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="1.7.html" title="What’s New in GetFEM++ 1.7"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >What&#8217;s New in GetFEM++</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

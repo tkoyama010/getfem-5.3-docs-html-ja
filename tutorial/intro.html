@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="GetFEM++ Tutorial" href="index.html" />
+    <link rel="next" title="How to install" href="install.html" />
+    <link rel="prev" title="GetFEM++ Tutorial" href="index.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="install.html" title="How to install"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="GetFEM++ Tutorial"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>GetFEM++</em> Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<span id="ud-intro-tut"></span><h1>Introduction<a class="headerlink" href="#introduction" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This tutorial is intended to present the main aspects of the <em>GetFEM++</em> library  on commented simple examples. <em>GetFEM++</em> allows numerical modeling of complex problems including coupled ones. It is relatively simple to add arbitrary coupling terms thanks to a weak form description language. Expressions in weak form are then compiled in the form of a list of optimized instructions that are executed during assembly.</p>
+<p>The main presented functionalities are the following</p>
+<blockquote>
+<div><ul class="simple">
+<li>Approximation of multiphysics problems and the use of the generic assembly.</li>
+<li>The use of fixed-size variables.</li>
+<li>Contact problems.</li>
+<li>Fictitious domain fonctionalities and transformations allowing inter-mesh or inter-region assembly.</li>
+<li>Continuation / bifurcation problems.</li>
+</ul>
+</div></blockquote>
+<p>This tutorial does not of course takes the place of the various documentations. The user documentation (that of the C++ library) is the reference one concerning the description of implemented methods. Interfaces documentations describe the use of the different functionalities from interfaces but do not repeat the description of methods. &#8216;Developpers&#8217;s guide&#8217; documentation describes more internal concerning the organization of the library.</p>
+<div class="line-block">
+<div class="line">Gf | is a free collaborative project hosted by the <a class="reference external" href="http://savannah.gnu.org">Savannah</a> site (see <a class="reference external" href="https://savannah.nongnu.org/projects/getfem">https://savannah.nongnu.org/projects/getfem</a>). New contributors are welcome to all aspects of the project.</div>
+</div>
+<div class="section" id="c-python-scilab-or-matlab">
+<h2>C++, Python, Scilab or Matlab ?<a class="headerlink" href="#c-python-scilab-or-matlab" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><em>GetFEM++</em> is basically a library written in C++. However, it has an interface that is available in Python, Scilab and Matlab  versions and allows to use all the advanced features. It is recommended to start by using the interface with scripting languages, which makes programming easier. The three versions of the interface differ only by small syntax elements, except for the graphics post-processing (Scilab and Matlab interfaces offer the possibility of integrated post-processing while it is necessary to use dedicated software such as Paraview, Mayavi or gmsh when using the Python interface or directly the library in C++). The Python interface is compiled by default along with the C++ library.</p>
+<p>Use <em>GetFEM++</em> interface is a good strategy even for complex applications, the performance is comparable to the direct use of the C++ library and it is more flexible to use. However, only the Python interface allows for the parallelization (with MPI). The possible addition of functionality to the interface being a relatively simple operation.</p>
+<p>The first example of the tutorial (thermo-electric coupling elastico) allows to see the difference in the use of the C++ library and one of the versions of the interface.</p>
+</div>
+<div class="section" id="where-are-demo-files">
+<h2>Where are demo files ?<a class="headerlink" href="#where-are-demo-files" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A large number of demonstration programs can be found</p>
+<ul>
+<li><p class="first">for the C++ examples in directory:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">tests</span><span class="o">/</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">for the Python interface in the directory:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">interface</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">python</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">for the Scilab interface in the directory:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">interface</span><span class="o">/</span><span class="n">scr</span><span class="o">/</span><span class="n">scilab</span><span class="o">/</span><span class="n">demos</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">and for the Matlab interface in the directory:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">interface</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">matlab</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#c-python-scilab-or-matlab">C++, Python, Scilab or Matlab ?</a></li>
+<li><a class="reference internal" href="#where-are-demo-files">Where are demo files ?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="index.html"
+                        title="前の章へ"><em>GetFEM++</em> Tutorial</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="install.html"
+                        title="次の章へ">How to install</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="install.html" title="How to install"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="GetFEM++ Tutorial"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>GetFEM++</em> Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

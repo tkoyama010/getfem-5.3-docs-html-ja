@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Build a finite element method on a mesh &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Selecting integration methods" href="binteg.html" />
+    <link rel="prev" title="Build a mesh" href="bmesh.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="binteg.html" title="Selecting integration methods"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="bmesh.html" title="Build a mesh"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="build-a-finite-element-method-on-a-mesh">
+<span id="ud-bfem"></span><span id="index-0"></span><h1>Build a finite element method on a mesh<a class="headerlink" href="#build-a-finite-element-method-on-a-mesh" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The object <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> defined in <tt class="file docutils literal"><span class="pre">getfem/getfem_mesh_fem.h</span></tt> is designed to
+describe a finite element method on a whole mesh, i.e. to describe the finite
+element space on which some variables will be described. This is a rather complex
+object which is central in <em>GetFEM++</em>. Basically, this structure describes the finite
+element method on each element of the mesh and some additional optional
+transformations. It is possible to have an arbitrary number of finite element
+descriptions for a single mesh. This is particularly necessary for mixed methods,
+but also to describe different data on the same mesh. One can instantiate a
+<tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="n">mf</span><span class="p">(</span><span class="n">mymesh</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mymesh</span></tt> is an already existing mesh. The structure will be linked to this
+mesh and will react when modifications will be done on it.</p>
+<p>It is possible to specify element by element the finite element method, so that
+element of mixed types can be treated, even if the dimensions are different. For
+usual elements, the connection between two elements is done when the two elements
+are compatibles (same degrees of freedom on the common face). A numeration of the
+degrees of freedom is automatically done with a Cuthill Mc Kee like algorithm. You
+have to keep in mind that there is absolutely no connection between the numeration
+of vertices of the mesh and the numeration of the degrees of freedom. Every
+<tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object has its own numeration.</p>
+<p>There are three levels in the <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object:</p>
+<ul class="simple">
+<li>The element level: one finite element method per element. It is possible to mix
+the dimensions of the elements and the property to be vectorial or scalar.</li>
+<li>The optional vectorization/tensorization (the qdim in getfem jargon,
+see <a class="reference external" href="http://getfem.org/getfem_reference/index.html">vocabulary</a>). For instance to represent a displacement or a
+tensor field in continuum mechanics. Scalar
+elements are used componentwise. Note that you can mix some
+intrinsic vectorial elements (Raviart-Thomas element for instance)
+which will not be vectorized and
+scalar elements which will be.</li>
+<li>(<em>GetFEM++</em> version 4.0) The optional additional linear transformation (reduction) of
+the degrees of freedom. It will consist in giving two matrices, the reduction
+matrix and the extension matrix. The reduction matrix should transform the basic
+dofs into the reduced dofs (the number of reduced dofs should be less or equal
+than the number of basic dofs). The extension matrix should describe the inverse
+transformation. The product of the reduction matrix with the extension matrix
+should be the identity matrix (ensuring in particular that the two matrices are
+of maximal rank). This optional transformation can be used to reduce the finite
+element space to a certain region (tipically a boundary) or to prescribe some
+matching conditions between non naturally compatible fems (for instance fems
+with different degrees).</li>
+</ul>
+<p>One has to keep in mind this construction manipulating the degrees of freedom of a
+<tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object.</p>
+<div class="section" id="first-level-manipulating-fems-on-each-elements">
+<h2>First level: manipulating fems on each elements<a class="headerlink" href="#first-level-manipulating-fems-on-each-elements" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>To select a particular finite element method on a given element, use the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mf</span><span class="p">.</span><span class="n">set_finite_element</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">pf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">i</span></tt> is the index of the element and <tt class="docutils literal"><span class="pre">pf</span></tt> is the descriptor (of type
+<tt class="docutils literal"><span class="pre">getfem::pfem</span></tt>, basically a pointer to an object which inherits from <tt class="docutils literal"><span class="pre">getfem::virtual_fem</span></tt>) of the
+finite element method. Alternative forms of this member function are:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">mesh_fem</span><span class="o">::</span><span class="n">set_finite_element</span><span class="p">(</span><span class="k">const</span> <span class="n">dal</span><span class="o">::</span><span class="n">bit_vector</span> <span class="o">&amp;</span><span class="n">cvs</span><span class="p">,</span>
+                                  <span class="n">getfem</span><span class="o">::</span><span class="n">pfem</span> <span class="n">pf</span><span class="p">);</span>
+<span class="kt">void</span> <span class="n">mesh_fem</span><span class="o">::</span><span class="n">set_finite_element</span><span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">pfem</span> <span class="n">pf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>which set the finite elements for either the convexes listed in the <tt class="docutils literal"><span class="pre">bit_vector</span>
+<span class="pre">cvs</span></tt>, or all the convexes of the mesh. Note that the last method makes a call to
+the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">mesh_fem</span><span class="o">::</span><span class="n">set_auto_add</span><span class="p">(</span><span class="n">pfem</span> <span class="n">pf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>which defines the default finite element method which will be automatically added
+on new elements of the mesh (this is very useful, for instance, when a refinement
+of the mesh is performed).</p>
+<p>Descriptors for finite element methods and integration methods are available
+thanks to the following function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">pfem</span> <span class="n">pf</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">fem_descriptor</span><span class="p">(</span><span class="s">&quot;name of method&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">&quot;name</span> <span class="pre">of</span> <span class="pre">method&quot;</span></tt> is to be chosen among the existing methods. A name of a
+method can be retrieved thanks to the following functions:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">femname</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">name_of_fem</span><span class="p">(</span><span class="n">pf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>A non exhaustive list (see <a class="reference internal" href="appendixA.html#ud-appendixa"><em>Appendix A. Finite element method list</em></a> or <tt class="file docutils literal"><span class="pre">getfem/getfem_fem.h</span></tt> for
+exhaustive lists) of finite element methods is given by:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&quot;FEM_PK(n,k)&quot;</span></tt>: Classical <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> methods on simplexes of dimension <tt class="docutils literal"><span class="pre">n</span></tt>
+with degree <tt class="docutils literal"><span class="pre">k</span></tt> polynomials.</li>
+<li><tt class="docutils literal"><span class="pre">&quot;FEM_QK(n,k)&quot;</span></tt>: Classical <img class="math" src="../_images/math/4ca81821dd88dc67ea4df97840e93fa7710af178.png" alt="Q_K" style="vertical-align: -4px"/> methods on parallelepiped of dimension
+<tt class="docutils literal"><span class="pre">n</span></tt>. Tensorial product of degree <tt class="docutils literal"><span class="pre">k</span></tt> <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> method on the segment.</li>
+<li><tt class="docutils literal"><span class="pre">&quot;FEM_PK_PRISM(n,k)&quot;</span></tt>: Classical methods on prism of dimension <tt class="docutils literal"><span class="pre">n</span></tt>.
+Tensorial product of two degree <tt class="docutils literal"><span class="pre">k</span></tt> <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> method.</li>
+<li><tt class="docutils literal"><span class="pre">&quot;FEM_PRODUCT(a,b)&quot;</span></tt>: Tensorial product of the two polynomial finite element
+method <tt class="docutils literal"><span class="pre">a</span></tt> and <tt class="docutils literal"><span class="pre">b</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">&quot;FEM_PK_DISCONTINUOUS(n,k)&quot;</span></tt>: discontinuous <img class="math" src="../_images/math/e162923f93315ac368d1fdf32c621cb03fbe4f0e.png" alt="P_K" style="vertical-align: -3px"/> methods on simplexes
+of dimension <tt class="docutils literal"><span class="pre">n</span></tt> with degree <tt class="docutils literal"><span class="pre">k</span></tt> polynomials.</li>
+</ul>
+<p>An alternative way to obtain a Lagrange polynomial fem suitable for a given
+geometric transformation is to use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">pfem</span> <span class="n">getfem</span><span class="o">::</span><span class="n">classical_fem</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">pgeometric_trans</span> <span class="n">pg</span><span class="p">,</span>
+                                   <span class="n">short_type</span> <span class="n">degree</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">pfem</span> <span class="n">getfem</span><span class="o">::</span><span class="n">classical_discontinuous_fem</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">pgeometric_trans</span> <span class="n">pg</span><span class="p">,</span>
+                                                 <span class="n">short_type</span> <span class="n">degree</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The <cite>mesh_fem</cite> can call directly these functions via:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">mesh_fem</span><span class="o">::</span><span class="n">set_classical_finite_element</span><span class="p">(</span><span class="k">const</span> <span class="n">dal</span><span class="o">::</span><span class="n">bit_vector</span> <span class="o">&amp;</span><span class="n">cvs</span><span class="p">,</span>
+                                            <span class="n">dim_type</span> <span class="n">fem_degree</span><span class="p">);</span>
+<span class="kt">void</span> <span class="n">mesh_fem</span><span class="o">::</span><span class="n">set_classical_discontinuous_finite_element</span><span class="p">(</span><span class="k">const</span> <span class="n">dal</span><span class="o">::</span><span class="n">bit_vector</span> <span class="o">&amp;</span><span class="n">cvs</span><span class="p">,</span>
+                                                          <span class="n">dim_type</span> <span class="n">fem_degree</span><span class="p">);</span>
+<span class="kt">void</span> <span class="n">mesh_fem</span><span class="o">::</span><span class="n">set_classical_finite_element</span><span class="p">(</span><span class="n">dim_type</span> <span class="n">fem_degree</span><span class="p">);</span>
+<span class="kt">void</span> <span class="n">mesh_fem</span><span class="o">::</span><span class="n">set_classical_discontinuous_finite_element</span><span class="p">(</span><span class="n">dim_type</span> <span class="n">fem_degree</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Some other methods:</p>
+<dl class="function">
+<dt id="mf.convex_index">
+<tt class="descclassname">mf.</tt><tt class="descname">convex_index</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.convex_index" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set of indexes (a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt>) on which a finite element method is defined.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.linked_mesh">
+<tt class="descclassname">mf.</tt><tt class="descname">linked_mesh</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.linked_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a reference to the linked mesh.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.fem_of_element">
+<tt class="descclassname">mf.</tt><tt class="descname">fem_of_element</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mf.fem_of_element" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a descriptor on the finite element method defined on element of index
+<tt class="docutils literal"><span class="pre">i</span></tt> (does not take into account the qdim nor the optional reduction).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.clear">
+<tt class="descclassname">mf.</tt><tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.clear" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Clears the structure, no finite element method is still defined.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For instance if one needs to have a description of a <img class="math" src="../_images/math/a5b0256a78d58b6d5f7a53400b19e7747d2983fa.png" alt="P_1" style="vertical-align: -4px"/> finite element
+method on a triangle, the way to set it is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mf</span><span class="p">.</span><span class="n">set_finite_element</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">getfem</span><span class="o">::</span><span class="n">fem_descriptor</span><span class="p">(</span><span class="s">&quot;FEM_PK(2, 1)&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">i</span></tt> is still the index of the triangle. It is also possible to select a
+particular method directly on a set of element, passing to
+<tt class="docutils literal"><span class="pre">mf.set_finite_element</span></tt> a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> instead of a single index. For instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mf</span><span class="p">.</span><span class="n">set_finite_element</span><span class="p">(</span><span class="n">mymesh</span><span class="p">.</span><span class="n">convex_index</span><span class="p">(),</span>
+                      <span class="n">getfem</span><span class="o">::</span><span class="n">fem_descriptor</span><span class="p">(</span><span class="s">&quot;FEM_PK(2, 1)&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>selects the method on all the elements of the mesh.</p>
+</div>
+<div class="section" id="second-level-the-optional-vectorization-tensorization">
+<h2>Second level: the optional &#8220;vectorization/tensorization&#8221;<a class="headerlink" href="#second-level-the-optional-vectorization-tensorization" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>If the finite element represents an unknown which is a vector field, the method <tt class="docutils literal"><span class="pre">mf.set_qdim(Q)</span></tt> allows set the target dimension for the definition of the
+target dimension <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q" style="vertical-align: -4px"/>.</p>
+<p>If the target dimension <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q" style="vertical-align: -4px"/> is set to a value different of <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/>, the
+scalar FEMs (such as <img class="math" src="../_images/math/76ebaba4ae3d5c911d6e31ad855d502ad88d48a6.png" alt="P_k" style="vertical-align: -3px"/> fems etc.) are automatically &#8220;vectorized&#8221; from
+the <cite>mesh_fem</cite> object point of view, i.e. each scalar degree of freedom appears <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q" style="vertical-align: -4px"/>
+times in order to represent the <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q" style="vertical-align: -4px"/> components of the vector field. If an
+intrinsically vectorial element is used, the target dimension of the <tt class="docutils literal"><span class="pre">fem</span></tt> and
+the one of the <cite>mesh_fem</cite> object have to match. To sum it up,</p>
+<ul>
+<li><p class="first">if the fem of the <img class="math" src="../_images/math/efc66c8b3a3779f27f0927b47a901b0b1c6d5315.png" alt="ith" style="vertical-align: 0px"/> element is intrinsically a vector FEM, then:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mf</span><span class="p">.</span><span class="n">get_qdim</span><span class="p">()</span> <span class="o">==</span> <span class="n">mf</span><span class="p">.</span><span class="n">fem_of_element</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">target_dim</span><span class="p">()</span>
+<span class="o">&amp;&amp;</span>
+<span class="n">mf</span><span class="p">.</span><span class="n">nb_dof_of_element</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">mf</span><span class="p">.</span><span class="n">fem_of_element</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">nb_dof</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">if the fem has a <tt class="docutils literal"><span class="pre">target_dim</span></tt> equal to <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/>, then:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mf</span><span class="p">.</span><span class="n">nb_dof_of_element</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">mf</span><span class="p">.</span><span class="n">get_qdim</span><span class="p">()</span><span class="o">*</span><span class="n">mf</span><span class="p">.</span><span class="n">fem_of_element</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">nb_dof</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Additionally, if the field to be represented is a tensor field instead of a vector field (for instance the stress or strain tensor field in elasticity), it is possible to specify the tensor dimensions with the methods:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mf</span><span class="p">.</span><span class="n">set_qdim</span><span class="p">(</span><span class="n">dim_type</span> <span class="n">M</span><span class="p">,</span> <span class="n">dim_type</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">mf</span><span class="p">.</span><span class="n">set_qdim</span><span class="p">(</span><span class="n">dim_type</span> <span class="n">M</span><span class="p">,</span> <span class="n">dim_type</span> <span class="n">N</span><span class="p">,</span> <span class="n">dim_type</span> <span class="n">O</span><span class="p">,</span> <span class="n">dim_type</span> <span class="n">P</span><span class="p">)</span>
+<span class="n">mf</span><span class="p">.</span><span class="n">set_qdim</span><span class="p">(</span><span class="k">const</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">multi_index</span> <span class="o">&amp;</span><span class="n">mii</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>respectively for a tensor field of order two, four and arbitrary (but limited to 6). For most of the operations, this is equivalent to declare a vector field of the size the product of the dimensions. However, the declared tensor dimensions are taken into account into the high level generic assembly. Remember that the components inside a tensor are stored in Fortran order.</p>
+<p>At this level are defined the basic degrees of freedom. Some methods of the
+<tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> allows to obtain information on the basic dofs:</p>
+<dl class="function">
+<dt id="mf.nb_basic_dof_of_element">
+<tt class="descclassname">mf.</tt><tt class="descname">nb_basic_dof_of_element</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mf.nb_basic_dof_of_element" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives the number of basic degrees of freedom on the element of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.ind_basic_dof_of_element">
+<tt class="descclassname">mf.</tt><tt class="descname">ind_basic_dof_of_element</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mf.ind_basic_dof_of_element" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a container (an array) with all the global indexes of the basic degrees
+of freedom of element of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.point_of_basic_dof">
+<tt class="descclassname">mf.</tt><tt class="descname">point_of_basic_dof</tt><big>(</big><em>i</em>, <em>j</em><big>)</big><a class="headerlink" href="#mf.point_of_basic_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a <tt class="docutils literal"><span class="pre">bgeot::base_node</span></tt> which represents the point associated with the
+basic dof of local index <tt class="docutils literal"><span class="pre">j</span></tt> on element of index <tt class="docutils literal"><span class="pre">i</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">mf.</tt><tt class="descname">point_of_basic_dof</tt><big>(</big><em>j</em><big>)</big></dt>
+<dd><p>gives a <tt class="docutils literal"><span class="pre">bgeot::base_node</span></tt> which represents the point associated with the
+basic dof of global index <tt class="docutils literal"><span class="pre">j</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.reference_point_of_basic_dof">
+<tt class="descclassname">mf.</tt><tt class="descname">reference_point_of_basic_dof</tt><big>(</big><em>i</em>, <em>j</em><big>)</big><a class="headerlink" href="#mf.reference_point_of_basic_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives a <tt class="docutils literal"><span class="pre">bgeot::base_node</span></tt> which represents the point associated with the
+basic dof of local index <tt class="docutils literal"><span class="pre">j</span></tt> on element of index <tt class="docutils literal"><span class="pre">i</span></tt> in the coordinates of
+the reference element.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.first_convex_of_basic_dof">
+<tt class="descclassname">mf.</tt><tt class="descname">first_convex_of_basic_dof</tt><big>(</big><em>j</em><big>)</big><a class="headerlink" href="#mf.first_convex_of_basic_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives the index of the first element on which the basic degree of freedom of
+global index <tt class="docutils literal"><span class="pre">j</span></tt> is defined.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.nb_basic_dof">
+<tt class="descclassname">mf.</tt><tt class="descname">nb_basic_dof</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.nb_basic_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives the total number of different basic degrees of freedom.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.get_qdim">
+<tt class="descclassname">mf.</tt><tt class="descname">get_qdim</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.get_qdim" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives the target dimension <tt class="docutils literal"><span class="pre">Q</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.basic_dof_on_region">
+<tt class="descclassname">mf.</tt><tt class="descname">basic_dof_on_region</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mf.basic_dof_on_region" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> which represents the indices of basic dof which are in the
+set of convexes or the set of faces of index <tt class="docutils literal"><span class="pre">i</span></tt> (see the <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt> object).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.dof_on_region">
+<tt class="descclassname">mf.</tt><tt class="descname">dof_on_region</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#mf.dof_on_region" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> which represents the indices of dof which are in the set of
+convexes or the set of faces of index <tt class="docutils literal"><span class="pre">i</span></tt> (see the <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt> object). For a
+reduced mesh_fem, a dof is lying on a region if its potential corresponding
+shape function is nonzero on this region. The extension matrix is used to make
+the correspondence between basic and reduced dofs.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="third-level-the-optional-linear-transformation-or-reduction">
+<h2>Third level: the optional linear transformation (or reduction)<a class="headerlink" href="#third-level-the-optional-linear-transformation-or-reduction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>As described above, it is possible to provide two matrices, a reduction matrix
+<img class="math" src="../_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R" style="vertical-align: 0px"/> and an extension matrix <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> which will describe a linear
+transformation of the degrees of freedom. If <img class="math" src="../_images/math/12d58aa29201da09d8e620f8698e3a37547f6b4a.png" alt="V" style="vertical-align: 0px"/> is the vector of basic
+degrees of freedom, then <img class="math" src="../_images/math/3197502f6ef4e156633670cbaee70126f5583377.png" alt="U=RV" style="vertical-align: 0px"/> will be the vector of reduced degrees of
+freedom. Contrarily, given a vector <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" style="vertical-align: 0px"/> of reduced dof, <img class="math" src="../_images/math/8134be80f5a2d7944e4e2e3acb9d86d00978e4b2.png" alt="V=EU" style="vertical-align: 0px"/> will
+correspond to a vector of basic dof. In simle cases, <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> will be simply the
+transpose of <img class="math" src="../_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R" style="vertical-align: 0px"/>. NOTE that every line of the extension matrix should be
+sparse. Otherwise, each assembled matrix will be plain !</p>
+<p>A natural condition is that <img class="math" src="../_images/math/13214624f5d40113208f77bbd9eebeefc1933aab.png" alt="RE = I" style="vertical-align: 0px"/> where <img class="math" src="../_images/math/027f4a11d6090f9eac0ce2488df6384dad1263ea.png" alt="I" style="vertical-align: 0px"/> is the identity matrix.</p>
+<dl class="function">
+<dt id="mf.nb_dof">
+<tt class="descclassname">mf.</tt><tt class="descname">nb_dof</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.nb_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>gives the total number of different degrees of freedom. If the optional
+reduction is used, this will be the number of columns of the reduction matrix.
+Otherwise it will return the number of basic degrees of freedom.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.is_reduced">
+<tt class="descclassname">mf.</tt><tt class="descname">is_reduced</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.is_reduced" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return a boolean. True if the reduction is used.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.reduction_matrix">
+<tt class="descclassname">mf.</tt><tt class="descname">reduction_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.reduction_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return a const reference to the reduction matrix <img class="math" src="../_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R" style="vertical-align: 0px"/>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.extension_matrix">
+<tt class="descclassname">mf.</tt><tt class="descname">extension_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#mf.extension_matrix" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>return a const reference to the extension matrix <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.set_reduction_matrices">
+<tt class="descclassname">mf.</tt><tt class="descname">set_reduction_matrices</tt><big>(</big><em>R</em>, <em>E</em><big>)</big><a class="headerlink" href="#mf.set_reduction_matrices" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the reduction and extension matrices to <tt class="docutils literal"><span class="pre">R</span></tt> and <tt class="docutils literal"><span class="pre">E</span></tt> and validate their
+use.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.set_reduction">
+<tt class="descclassname">mf.</tt><tt class="descname">set_reduction</tt><big>(</big><em>b</em><big>)</big><a class="headerlink" href="#mf.set_reduction" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Where <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" style="vertical-align: 0px"/> is a boolean. Cancel the reduction if <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" style="vertical-align: 0px"/> is false and
+validate it if <tt class="docutils literal"><span class="pre">b</span></tt> is true. If <tt class="docutils literal"><span class="pre">b</span></tt> is true, the extension and reduction
+matrices have to be set previously.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mf.reduce_to_basic_dof">
+<tt class="descclassname">mf.</tt><tt class="descname">reduce_to_basic_dof</tt><big>(</big><em>idof</em><big>)</big><a class="headerlink" href="#mf.reduce_to_basic_dof" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set the reduction and extension matrices corresponding to keep only the basic
+dofs present in <tt class="docutils literal"><span class="pre">idof</span></tt>. The parameter <tt class="docutils literal"><span class="pre">idof</span></tt> is either a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> or a
+<tt class="docutils literal"><span class="pre">std::set&lt;size_type&gt;</span></tt>. This is equivalent to the use of a
+<tt class="docutils literal"><span class="pre">getfem::partial_mesh_fem</span></tt> object.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="obtaining-generic-mf-s">
+<h2>Obtaining generic <cite>mesh_fem</cite>&#8216;s<a class="headerlink" href="#obtaining-generic-mf-s" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is possible to use the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">const</span> <span class="n">mesh_fem</span> <span class="o">&amp;</span><span class="n">getfem</span><span class="o">::</span><span class="n">classical_mesh_fem</span><span class="p">(</span><span class="k">const</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh</span> <span class="o">&amp;</span><span class="n">mymesh</span><span class="p">,</span> <span class="n">dim_type</span> <span class="n">K</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>to get a classical polynomial <cite>mesh_fem</cite> of order <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/> on the given <tt class="docutils literal"><span class="pre">mymesh</span></tt>.
+The returned <cite>mesh_fem</cite> will be destroyed automatically when its linked mesh is
+destroyed. All the <cite>mesh_fem</cite> built by this function are stored in a cache, which means
+that calling this function twice with the same arguments will return the same <cite>mesh_fem</cite>
+object. A consequence is that you should NEVER modify this <cite>mesh_fem</cite>!</p>
+</div>
+<div class="section" id="the-partial-mesh-fem-object">
+<h2>The partial_mesh_fem object<a class="headerlink" href="#the-partial-mesh-fem-object" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">getfem::partial_mesh_fem</span></tt> object defined in the file
+<tt class="docutils literal"><span class="pre">getfem_partial_mesh_fem.h</span></tt> allows to reduce a <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object to a set of dofs.
+The interest is this is not a complete description of a finite element method, it
+refers to the original <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> and just add reduction and extension matrices. For
+instance, you can reduce a <cite>mesh_fem</cite> obtained by the function
+<tt class="docutils literal"><span class="pre">getfem::classical_mesh_fem(mesh,</span> <span class="pre">K)</span></tt> to obtain a finite element method on a
+mesh region (which can be a boundary). The <tt class="docutils literal"><span class="pre">getfem::partial_mesh_fem</span></tt> is in
+particular used to obtain multiplier description to prescribed boundary
+conditions.</p>
+<p>The declaration of a <tt class="docutils literal"><span class="pre">getfem::partial_mesh_fem</span></tt> object is the following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">partial_mesh_fem</span> <span class="n">partial_mf</span><span class="p">(</span><span class="n">mf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Then, one has to call the adapt method as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">partial_mf</span><span class="p">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">kept_dof</span><span class="p">,</span> <span class="n">rejected_elt</span> <span class="o">=</span> <span class="n">dal</span><span class="o">::</span><span class="n">bit_vector</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">kept_dof</span></tt> and <tt class="docutils literal"><span class="pre">rejected_elt</span></tt> are some <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt>. <tt class="docutils literal"><span class="pre">kept_dof</span></tt> is the
+list of dof indices of the original <cite>mesh_fem</cite> <tt class="docutils literal"><span class="pre">mf</span></tt> to be kept. <tt class="docutils literal"><span class="pre">rejected_elt</span></tt> is an
+optional parameter that contains a list of element indices on which the
+<tt class="docutils literal"><span class="pre">getfem::partial_mesh_fem</span></tt> states that there is no finite element method. This
+is to avoid unnecessary computations during assembly procedures.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Build a finite element method on a mesh</a><ul>
+<li><a class="reference internal" href="#first-level-manipulating-fems-on-each-elements">First level: manipulating fems on each elements</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#second-level-the-optional-vectorization-tensorization">Second level: the optional &#8220;vectorization/tensorization&#8221;</a></li>
+<li><a class="reference internal" href="#third-level-the-optional-linear-transformation-or-reduction">Third level: the optional linear transformation (or reduction)</a></li>
+<li><a class="reference internal" href="#obtaining-generic-mf-s">Obtaining generic <cite>mesh_fem</cite>&#8216;s</a></li>
+<li><a class="reference internal" href="#the-partial-mesh-fem-object">The partial_mesh_fem object</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="bmesh.html"
+                        title="前の章へ">Build a mesh</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="binteg.html"
+                        title="次の章へ">Selecting integration methods</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="binteg.html" title="Selecting integration methods"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="bmesh.html" title="Build a mesh"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

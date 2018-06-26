@@ -1,0 +1,937 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Compute arbitrary terms - high-level generic assembly procedures &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Compute arbitrary terms - low-level generic assembly procedures" href="gasm_low.html" />
+    <link rel="prev" title="Mesh refinement" href="rmesh.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="gasm_low.html" title="Compute arbitrary terms - low-level generic assembly procedures"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="rmesh.html" title="Mesh refinement"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="compute-arbitrary-terms-high-level-generic-assembly-procedures">
+<span id="ud-gasm-high"></span><span id="index-0"></span><h1>Compute arbitrary terms - high-level generic assembly procedures<a class="headerlink" href="#compute-arbitrary-terms-high-level-generic-assembly-procedures" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This section presents what is now the main generic assembly of <em>GetFEM++</em>. It is a high-level generic assembly in the sense that it is based on a weak form language to describe the weak formulation of boundary value problems of partial differential equations. It mainly has been developed to circumvent the difficulties with the previous low-level generic assembly (see  <a class="reference internal" href="gasm_low.html#ud-gasm-low"><em>Compute arbitrary terms - low-level generic assembly procedures</em></a>) for which nonlinear terms were quite difficult to describe. Conversely, a symbolic differentiation algorithm is used with this version. It simplifies a lot the approximation of nonlinear coupled problems since only the weak form is necessary to be described, the tangent system being automatically computed. Moreover, the weak form language is compiled into optimized instructions before the evaluation on each integration point in order to obtain a an optimal computational cost.</p>
+<p>The header file to be included to use the high-level generic assembly procedures in C++ is <tt class="file docutils literal"><span class="pre">getfem/generic_assembly.h</span></tt>.</p>
+<div class="section" id="differences-in-execution-time-between-high-and-low-level-generic-assembly">
+<h2>Differences in execution time between high and low level generic assembly<a class="headerlink" href="#differences-in-execution-time-between-high-and-low-level-generic-assembly" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For basic linear assembly terms, the high level generic assembly is most of the time faster than the low-level one. This is due to the fact that the high-level generic assembly incorporates a compilation in basic optimized instructions and operates simplifications. On complexe terms it can be really faster due to the simplifications on repeated terms. On the other hand, the fact that the low-level generic assembly incorporates a mechanism to pre-compute on the reference element the linear term for elements with a linear transformation makes that it can be faster on a few simple linear terms. Of course, a possibility would be to incorporate the ability to pre-compute on the reference element the linear term for linear transformations in the high level generic assembly. However, it would be rather complicated due to the high genericity of the language. A consequence also is that exact integration is not allowed in the high level generic assembly.</p>
+</div>
+<div class="section" id="overview-of-the-weak-form-language-syntax">
+<h2>Overview of the weak form language syntax<a class="headerlink" href="#overview-of-the-weak-form-language-syntax" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A specific weak form language has been developed to describe the weak formulation of boundary value problems. It is intended to be close to the structure of a standard weak formulation and it incorporates the following components:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Variable names: A list of variables should be given. The variables are described on a finite element method or can be a simple vector of unknowns. For instance <tt class="docutils literal"><span class="pre">u</span></tt>, <tt class="docutils literal"><span class="pre">v</span></tt>, <tt class="docutils literal"><span class="pre">p</span></tt>, <tt class="docutils literal"><span class="pre">pressure</span></tt>, <tt class="docutils literal"><span class="pre">electric_field</span></tt> are valid variable names.</li>
+<li>Constant names: A list of constants could be given. The rules are the same as for the variables but no test functions can be associated to constants.</li>
+<li>Test functions: Can be used with respect to any of the variables. They are identified by the prefix <tt class="docutils literal"><span class="pre">Test_</span></tt> followed by the corresponding variable name. For instance  <tt class="docutils literal"><span class="pre">Test_u</span></tt>, <tt class="docutils literal"><span class="pre">Test_v</span></tt>, <tt class="docutils literal"><span class="pre">Test_p</span></tt>, <tt class="docutils literal"><span class="pre">Test_pressure</span></tt>, <tt class="docutils literal"><span class="pre">Test_electric_field</span></tt>. For the tangent system, second order test functions are denoted <tt class="docutils literal"><span class="pre">Test2_</span></tt> followed by the variable name.</li>
+<li>Gradients: Spatial gradients of variables or test functions are identified by the prefix <tt class="docutils literal"><span class="pre">Grad_</span></tt> followed by the variable name or by <tt class="docutils literal"><span class="pre">Test_</span></tt> or <tt class="docutils literal"><span class="pre">Test2_</span></tt> followed itself by the variable name. This is available for FEM variables only. For instance <tt class="docutils literal"><span class="pre">Grad_u</span></tt>, <tt class="docutils literal"><span class="pre">Grad_pressure</span></tt>, <tt class="docutils literal"><span class="pre">Grad_electric_field</span></tt> and <tt class="docutils literal"><span class="pre">Grad_Test_u</span></tt>, <tt class="docutils literal"><span class="pre">Grad_Test2_v</span></tt>. For vector fields, <tt class="docutils literal"><span class="pre">Div_u</span></tt> and <tt class="docutils literal"><span class="pre">Div_Test_u</span></tt> are some shortcuts for <tt class="docutils literal"><span class="pre">Trace(Grad_u)</span></tt> and <tt class="docutils literal"><span class="pre">Trace(Grad_Test_u)</span></tt>, respectively.</li>
+<li>Hessians: The Hessian of a variable or test function is identified by the prefix <tt class="docutils literal"><span class="pre">Hess_</span></tt> followed by the variable name or by <tt class="docutils literal"><span class="pre">Test_</span></tt> or <tt class="docutils literal"><span class="pre">Test2_</span></tt> followed itself by the variable name. This is available for FEM variables only. For instance <tt class="docutils literal"><span class="pre">Hess_u</span></tt>, <tt class="docutils literal"><span class="pre">Hess_v</span></tt>, <tt class="docutils literal"><span class="pre">Hess_p</span></tt>, <tt class="docutils literal"><span class="pre">Hess_Test2_v</span></tt>, <tt class="docutils literal"><span class="pre">Hess_Test_p</span></tt>, <tt class="docutils literal"><span class="pre">Hess_Test_pressure</span></tt>.</li>
+<li>A certain number of predefined scalar functions (<tt class="docutils literal"><span class="pre">sin(t)</span></tt>, <tt class="docutils literal"><span class="pre">cos(t)</span></tt>, <tt class="docutils literal"><span class="pre">pow(t,u)</span></tt>, <tt class="docutils literal"><span class="pre">sqrt(t)</span></tt>, <tt class="docutils literal"><span class="pre">sqr(t)</span></tt>, <tt class="docutils literal"><span class="pre">Heaviside(t)</span></tt>, ...). A scalar function can be applied to scalar or vector/matrix/tensor expressions. It applies componentwise. For functions having two arguments (<tt class="docutils literal"><span class="pre">pow(t,u)</span></tt>, <tt class="docutils literal"><span class="pre">min(t,u)</span></tt> ...) if two non-scalar arguments are passed, the dimension have to be the same. For instance &#8220;max([1;2],[0;3])&#8221; will return &#8220;[1;3]&#8221;.</li>
+<li>A certain number of operators: <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">/</span></tt>, <tt class="docutils literal"><span class="pre">:</span></tt>, <tt class="docutils literal"><span class="pre">.</span></tt>, <tt class="docutils literal"><span class="pre">.*</span></tt>, <tt class="docutils literal"><span class="pre">./</span></tt>, <tt class="docutils literal"><span class="pre">&#64;</span></tt>, <tt class="docutils literal"><span class="pre">'</span></tt>.</li>
+<li>Some constants: <tt class="docutils literal"><span class="pre">pi</span></tt>, <tt class="docutils literal"><span class="pre">meshdim</span></tt> (the dimension of the current mesh), <tt class="docutils literal"><span class="pre">qdim(u)</span></tt> and <tt class="docutils literal"><span class="pre">qdims(u)</span></tt> the dimensions of the variable <tt class="docutils literal"><span class="pre">u</span></tt> (the size for fixed size variables and the dimension of the vector field for FEM variables), <tt class="docutils literal"><span class="pre">Id(n)</span></tt> the identity <img class="math" src="../_images/math/93f761f7fc79f2bec21a2f31c896840d6f36cdc0.png" alt="n\times n" style="vertical-align: 0px"/> matrix.</li>
+<li>Parentheses can be used to change the operations order in a standard way. For instance <tt class="docutils literal"><span class="pre">(1+2)*4</span></tt> or <tt class="docutils literal"><span class="pre">(u+v)*Test_u</span></tt> are valid expressions.</li>
+<li>The access to a component of a vector/matrix/tensor can be done by following a term by a left parenthesis, the list of components and a right parenthesis. For instance <tt class="docutils literal"><span class="pre">[1,1,2](3)</span></tt> is correct and will return <tt class="docutils literal"><span class="pre">2</span></tt>. Note that indices are assumed to begin by 1 (even in C++ and with the python interface). A colon can replace the value of an index in a Matlab like syntax.</li>
+<li>Explicit vectors: For instance <tt class="docutils literal"><span class="pre">[1;2;3;4]</span></tt> is an explicit vector of size four. Each component can be an expression.</li>
+<li>Explicit matrices: For instance <tt class="docutils literal"><span class="pre">[1,3;2,4]</span></tt> and <tt class="docutils literal"><span class="pre">[[1,2],[3,4]]</span></tt> denote the same 2x2 matrix. Each component can be an expression.</li>
+<li>Explicit fourth order tensors: example of explicit 3x2x2x2 fourth order tensor in the nested format: <tt class="docutils literal"><span class="pre">[[[[1,2,3],[1,2,3]],[[1,2,3],[1,2,3]]],[[[1,2,3],[1,2,3]],[[1,2,3],[1,2,3]]]]</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">X</span></tt> is the current coordinate on the real element, <tt class="docutils literal"><span class="pre">X(i)</span></tt> is its i-th component.</li>
+<li><tt class="docutils literal"><span class="pre">Normal</span></tt> is the outward unit normal vector to a boundary, when integrating on a domain boundary, or the unit normal vector to a level-set when integrating on a level-set with a <tt class="docutils literal"><span class="pre">mesh_im_level_set</span></tt> method. In the latter case, the normal vector is in the direction of the level-set function gradient.</li>
+<li><tt class="docutils literal"><span class="pre">Reshape(t,</span> <span class="pre">i,</span> <span class="pre">j,</span> <span class="pre">...)</span></tt>: Reshape a vector/matrix/tensor. Note that all tensors in <em>GetFEM++</em> are stored in the Fortran order.</li>
+<li>A certain number of linear and nonlinear operators (<tt class="docutils literal"><span class="pre">Trace</span></tt>, <tt class="docutils literal"><span class="pre">Norm</span></tt>, <tt class="docutils literal"><span class="pre">Det</span></tt>, <tt class="docutils literal"><span class="pre">Deviator</span></tt>, <tt class="docutils literal"><span class="pre">Contract</span></tt>, ...). The nonlinear operators cannot be applied to test functions.</li>
+<li><tt class="docutils literal"><span class="pre">Diff(expression,</span> <span class="pre">variable)</span></tt>: The possibility to explicit differentiate an expression with respect to a variable (symbolic differentiation).</li>
+<li><tt class="docutils literal"><span class="pre">Diff(expression,</span> <span class="pre">variable,</span> <span class="pre">direction)</span></tt>: computes the derivative of <tt class="docutils literal"><span class="pre">expression</span></tt> with respect to <tt class="docutils literal"><span class="pre">variable</span></tt> in the direction <tt class="docutils literal"><span class="pre">direction</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Grad(expression)</span></tt>: When possible, symbolically derive the gradient of the given expression.</li>
+<li>Possiblility of macro definition (in the model, the ga_workspace object or directly in the assembly string). The macros should be some valid expressions that are expanded inline at the lexical analysis phase (if they are used several times, the computation is automatically factorized at the compilation stage).</li>
+<li><tt class="docutils literal"><span class="pre">Interpolate(variable,</span> <span class="pre">transformation)</span></tt>: Powerful operation which allows to interpolate the variables, or test functions either on the same mesh on other elements or on another mesh. <tt class="docutils literal"><span class="pre">transformation</span></tt> is an object stored by the workspace or model object which describes the map from the current point to the point where to perform the interpolation. This functionality can be used for instance to prescribe periodic conditions or to compute mortar matrices for two finite element spaces defined on different meshes or more generally for fictitious domain methods such as fluid-structure interaction.</li>
+<li><tt class="docutils literal"><span class="pre">Elementary_transformation(variable,</span> <span class="pre">transformation)</span></tt>: Allow a linear tranformation defined at the element level (i.e. not possible to define at the gauss point level). This feature has been added mostly for defining a reduction for plate elements (projection onto low-level vector element such as rotated RT0). <tt class="docutils literal"><span class="pre">transformation</span></tt> is an object stored by the workspace or model object which describes the trasformation for a particular element.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="some-basic-examples">
+<h2>Some basic examples<a class="headerlink" href="#some-basic-examples" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The weak formulation for the Poisson problem on a domain <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/></p>
+<div class="math">
+<p><img src="../_images/math/c69e02bd0cfefd5bce759e6b63fc5179d30116d5.png" alt="-\mbox{div } \nabla u = f, \mbox{ in } \Omega,"/></p>
+</div><p>with Dirichlet boundary conditions <img class="math" src="../_images/math/7d43eae6892d884f8e8f4345b93c83fcf7db3481.png" alt="u = 0" style="vertical-align: 0px"/> on <img class="math" src="../_images/math/6720af89712e36d5af405fb7adf80ec1f04b211a.png" alt="\partial\Omega" style="vertical-align: -1px"/> is classically</p>
+<div class="math">
+<p><img src="../_images/math/e079a30851f34cce3d3a0aad36ad8f81263e3b66.png" alt="\int_{\Omega} \nabla u\cdot \nabla v dx = \int_{\Omega} f v dx,"/></p>
+</div><p>for all test functions <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> vanishing on  <img class="math" src="../_images/math/6720af89712e36d5af405fb7adf80ec1f04b211a.png" alt="\partial\Omega" style="vertical-align: -1px"/>.
+The corresponding expression on the assembly string is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Grad_u</span><span class="p">.</span><span class="n">Grad_Test_u</span> <span class="o">-</span> <span class="n">my_f</span><span class="o">*</span><span class="n">Test_u</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">my_f</span></tt> is the expression of the source term. If now the equation is</p>
+<div class="math">
+<p><img src="../_images/math/b095e77c2d964b6902422a435901d6d8abc1b869.png" alt="-\mbox{div } a\nabla u = f, \mbox{ in } \Omega,"/></p>
+</div><p>for <tt class="docutils literal"><span class="pre">a</span></tt> a scalar coefficient, the corresponding assembly string is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">a</span><span class="o">*</span><span class="n">Grad_u</span><span class="p">.</span><span class="n">Grad_Test_u</span> <span class="o">-</span> <span class="n">my_f</span><span class="o">*</span><span class="n">Test_u</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">a</span></tt> has to be declared as a scalar constant or a scalar field. Not that is is also possible to describe it explicitly. For instance the problem</p>
+<div class="math">
+<p><img src="../_images/math/5ffbdab90bb325b0c95363f1c58f59d98907eea8.png" alt="-\mbox{div } \sin(x_1+x_2)\nabla u = f, \mbox{ in } \Omega,"/></p>
+</div><p>where <img class="math" src="../_images/math/495ec646b2b1cfe91eb7fd0b408ed572aa011828.png" alt="x_1, x_2" style="vertical-align: -4px"/> are the coordinates on the mesh, can be expressed:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">X</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">Grad_u</span><span class="p">.</span><span class="n">Grad_Test_u</span> <span class="o">-</span> <span class="n">my_f</span><span class="o">*</span><span class="n">Test_u</span>
+</pre></div>
+</div>
+<p>Another classical equation is linear elasticity:</p>
+<div class="math">
+<p><img src="../_images/math/d0fd930f89710672af61587bb3203789b1a8c3ff.png" alt="-\mbox{div } \sigma(u) = f, \mbox{ in } \Omega,"/></p>
+</div><p>for <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> a vector field and <img class="math" src="../_images/math/f6441ba16f1e778b63716920d7793e69859a6dcd.png" alt="\sigma(u) = \lambda \mbox{div } u + \mu (\nabla u + (\nabla u)^T)" style="vertical-align: -4px"/> when isotropic linear elasticity is considered. The corresponding assembly string to describe the weak formulation can be written:</p>
+<div class="highlight-c++"><pre>(lambda*Trace(Grad_u)*Id(qdim(u)) + mu*(Grad_u+Grad_u&#x27;)):Grad_Test_u - my_f.Test_u</pre>
+</div>
+<p>or:</p>
+<div class="highlight-c++"><pre>lambda*Div_u*Div_Test_u + mu*(Grad_u + Grad_u&#x27;):Grad_Test_u - my_f.Test_u</pre>
+</div>
+<p>Here again, the coefficients <tt class="docutils literal"><span class="pre">lambda</span></tt> and <tt class="docutils literal"><span class="pre">mu</span></tt> can be given constants, or scalar field or explicit expression or even expression coming from some other variables in order to couples some problems. For instance, if the coefficients depends on a temperature field one can write:</p>
+<div class="highlight-c++"><pre>my_f1(theta)*Div_u*Div_Test_u
++ my_f2(theta)*(Grad_u + Grad_u&#x27;):Grad_Test_u - my_f.Grad_Test_u</pre>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">theta</span></tt> is the temperature which can be the solution to a Poisson equation:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Grad_theta</span><span class="p">.</span><span class="n">Grad_Test_theta</span> <span class="o">-</span> <span class="n">my_f</span><span class="o">*</span><span class="n">Grad_Test_theta</span>
+</pre></div>
+</div>
+<p>and <tt class="docutils literal"><span class="pre">my_f1</span></tt> and <tt class="docutils literal"><span class="pre">my_f2</span></tt> are some given functions. Note that in that case, the problem is nonlinear due to the coupling, even if the two functions  <tt class="docutils literal"><span class="pre">my_f1</span></tt> and <tt class="docutils literal"><span class="pre">my_f2</span></tt> are linear.</p>
+</div>
+<div class="section" id="derivation-order-and-symbolic-differentiation">
+<h2>Derivation order and symbolic differentiation<a class="headerlink" href="#derivation-order-and-symbolic-differentiation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The derivation order of the assembly string is automatically detected. This means that if no test functions are found, the order will be considered to be 0 (potential energy), if first order test functions are found, the order will be considered to be 1 (weak formulation) and if both first and second order test functions are found, the order will be considered to be 2 (tangent system).</p>
+<p>In order to perform an assembly (see next section), one should specify the order (0, 1 or 2). If an order 1 string is furnished and an order 2 assembly is required, a symbolic differentiation of the expression is performed. The same if an order 0 string is furnished and if an order 1 or 2 assembly is required. Of course, the converse is not true. If an order 1 expression is given and an order 0 assembly is expected, no integration is performed. This should not be generally not possible since an arbitrary weak formulation do not necessary derive from a potential energy.</p>
+<p>The standard way to use the generic assembly is to furnish order 1 expressions (i.e. a weak formulation). If a potential energy exists, one may furnish it. However, it will be derived twice to obtain the tangent system which could result in complicated expressions. For nonlinear problems, it is not allowed to furnish order 2 expressions directly. The reason is that the weak formulation is necessary to obtain the residual. So nothing could be done with a tangent term without having the corresponding order 1 term.</p>
+<p>IMPORTANT REMARK: Note that for coupled problems, a global potential frequently do not exists. So that the part of problems directly defined with a potential may be difficult to couple. To illustrate this, if you defined a potential with some parameters (elasticity coefficients for instance), and the couplingconsists in a variation of these coefficients with respect to another variable, then the weak formulation do not consist of course in the derivative of the potential with respect to the coefficients which has generally no sense. This is the reason why the definition through a potential should be the exception.</p>
+</div>
+<div class="section" id="c-call-of-the-assembly">
+<h2>C++ Call of the assembly<a class="headerlink" href="#c-call-of-the-assembly" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Note that the most natural way to use the generic assembly is by the use of the generic assembly bricks of the model object, see Section <a class="reference internal" href="model_generic_assembly.html#ud-model-generic-assembly"><em>Generic assembly bricks</em></a>. It is however also possible to use the high level generic assembly on its own.</p>
+<p>The generic assembly is driven by the object <tt class="docutils literal"><span class="pre">getfem::ga_workspace</span></tt> defined in <tt class="file docutils literal"><span class="pre">getfem/getfem_generic_assembly.h</span></tt>.</p>
+<p>There is two ways to define a <tt class="docutils literal"><span class="pre">getfem::ga_workspace</span></tt> object. It can depend on a model (see <a class="reference internal" href="model.html#ud-model"><em>The model description and basic model bricks</em></a>) and should be declared as:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">(</span><span class="n">md</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>with <tt class="docutils literal"><span class="pre">md</span></tt> a previously define <tt class="docutils literal"><span class="pre">getfem::model</span></tt> object. In that case the variable and constant considered are the one of the model. The second way it to define an independent <tt class="docutils literal"><span class="pre">getfem::ga_workspace</span></tt> object by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>In that case, the variable and constant have to be added to the workspace. This can be done thanks to the following methods:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fixed_size_variable</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_constant</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fixed_size_constant</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_im_data</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">imd</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">name</span></tt> is the variable/constant name (see in the next sections the restriction on possible names), <tt class="docutils literal"><span class="pre">mf</span></tt> is the <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object describing the finite element method, <tt class="docutils literal"><span class="pre">I</span></tt> is an object of class <tt class="docutils literal"><span class="pre">gmm::sub_interval</span></tt> indicating the interval of the variable on the assembled vector/matrix and <tt class="docutils literal"><span class="pre">V</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::base_vector</span></tt> being the value of the variable/constant. The last method add a constant defined on an <tt class="docutils literal"><span class="pre">im_data</span></tt> object <tt class="docutils literal"><span class="pre">imd</span></tt> which allows to store scalar/vector/tensor field informations on the integration points of an <tt class="docutils literal"><span class="pre">mesh_im</span></tt> object.</p>
+<p>Once it is declared and once the variables and constant are declared, it is possible to add assembly string to the workspace with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;my expression&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">rg</span> <span class="o">=</span> <span class="n">all_convexes</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">&quot;my</span> <span class="pre">expression&quot;</span></tt> is the assembly string, <tt class="docutils literal"><span class="pre">mim</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> object and <tt class="docutils literal"><span class="pre">rg</span></tt> if an optional valid region of the mesh corresponding to <tt class="docutils literal"><span class="pre">mim</span></tt>.</p>
+<p>As it is explained in the previous section, the order of the string will be automatically detected and a symbolic differentiation will be performed to obtain the corresponding tangent term.</p>
+<p>Once assembly strings are added to the workspace, is is possible to call:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="n">order</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">order</span></tt> should be equal to 0 (potential energy), 1 (residual vector) or 2 (tangent term, or stiffness matrix for linear problems). The result of the assembly is available as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">assembled_potential</span><span class="p">()</span> <span class="c1">// For order = 0</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembled_vector</span><span class="p">()</span>    <span class="c1">// For order = 1</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembled_matrix</span><span class="p">()</span>    <span class="c1">// For order = 2</span>
+</pre></div>
+</div>
+<p>By default, the assembled potential, vector and matrix is initialized to zero at the beginning of the assembly. It is however possible (and recommended) to set the assembly vector and matrix to external ones to perform an incremental assembly. The two methods:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_vector</span><span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="o">&amp;</span><span class="n">V</span><span class="p">);</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_matrix</span><span class="p">(</span><span class="n">getfem</span><span class="o">::</span><span class="n">model_real_sparse_matrix</span> <span class="o">&amp;</span><span class="n">K</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>allows to do so. Be aware to give a vector and a matrix of the right dimension.</p>
+<p>Note also that the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">clear_expressions</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>allows to cancel all furnished expressions and allows to re-use the same workspace for another assembly.</p>
+<p>It is also possible to call the generic assembly from the Python/Scilab/Matlab interface. See <tt class="docutils literal"><span class="pre">gf_asm</span></tt> command of the interface for more details.</p>
+</div>
+<div class="section" id="c-assembly-examples">
+<h2>C++ assembly examples<a class="headerlink" href="#c-assembly-examples" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>As a first example, if one needs to perform the assembly of a Poisson problem</p>
+<div class="math">
+<p><img src="../_images/math/c69e02bd0cfefd5bce759e6b63fc5179d30116d5.png" alt="-\mbox{div } \nabla u = f, \mbox{ in } \Omega,"/></p>
+</div><p>the stiffness matrix is given</p>
+<div class="math">
+<p><img src="../_images/math/34dd8e7987f5e7d7da51410542875ea140893157.png" alt="K_{i,j} = \int_{\Omega} \nabla \varphi_i \cdot \nabla \varphi_j dx,"/></p>
+</div><p>and will be assembled by the following code:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span> <span class="n">nbdof</span> <span class="o">=</span> <span class="n">mf</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">U</span><span class="p">(</span><span class="n">nbdof</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">sub_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;Grad_u.Grad_Test_u&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">model_real_sparse_matrix</span> <span class="n">K</span><span class="p">(</span><span class="n">nbdof</span><span class="p">,</span> <span class="n">nbdof</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where of course, <tt class="docutils literal"><span class="pre">mf</span></tt> is supposed to be an already declared <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object and <tt class="docutils literal"><span class="pre">mim</span></tt> a already declared <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> object on the same mesh. Note that the value of the variable do not really intervene because of the linearity of the problem. This allows to pass <tt class="docutils literal"><span class="pre">getfem::base_vector(nbdof)</span></tt> as the value of the variable which will not be used. Note also that two other possible expressions for exactly the same result for the assembly string are <tt class="docutils literal"><span class="pre">&quot;Grad_Test2_u.Grad_Test_u&quot;</span></tt> (i.e. an order 2 expression) or <tt class="docutils literal"><span class="pre">&quot;Norm_sqr(Grad_u)/2&quot;</span></tt> (i.e. a potential). In fact other possible assembly string will give the same result such as <tt class="docutils literal"><span class="pre">&quot;Grad_u.Grad_u/2&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;[Grad_u(1),</span> <span class="pre">Grad_u(2)].[Grad_Test_u(1),</span> <span class="pre">Grad_Test_u(2)]&quot;</span></tt> for two-dimensional problems. However, the recommendation is preferably to give an order 1 expression (weak formulation) if there is no particular reason to prefer an order 0 or an order 2 expression.</p>
+<p>As a second example, let us consider a coupled problem, for instance the mixed problem of incompressible elasticity given by the equations</p>
+<div class="math">
+<p><img src="../_images/math/91af0d98ebc00651a4d843ca8d069de6554300a2.png" alt="-\mbox{div}(\mu(\nabla u + (\nabla u)^T - p I_d)  = f, \mbox{ in } \Omega,
+
+\mbox{div } u = 0."/></p>
+</div><p>where <tt class="docutils literal"><span class="pre">u</span></tt> is the vector valued displacement and <tt class="docutils literal"><span class="pre">p</span></tt> the pressure. The assembly of the matrix for the whole coupled system can be performed as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span> <span class="n">nbdofu</span> <span class="o">=</span> <span class="n">mf_u</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span> <span class="n">nbdofp</span> <span class="o">=</span> <span class="n">mf_p</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">U</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">P</span><span class="p">(</span><span class="n">nbdofp</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">vmu</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="n">vmu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu</span><span class="p">;</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">sub_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbdofu</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span> <span class="n">mf_p</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">sub_interval</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">,</span> <span class="n">nbdofp</span><span class="p">),</span> <span class="n">P</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fixed_size_constant</span><span class="p">(</span><span class="s">&quot;mu&quot;</span><span class="p">,</span> <span class="n">vmu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;2*mu*Sym(Grad_u):Grad_Test_u&quot;</span>
+                      <span class="s">&quot;- p*Trace(Grad_Test_u) - Test_p*Trace(Grad_u)&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">model_real_sparse_matrix</span> <span class="n">K</span><span class="p">(</span><span class="n">nbdofu</span><span class="o">+</span><span class="n">nbdofp</span><span class="p">,</span> <span class="n">nbdofu</span><span class="o">+</span><span class="n">nbdofp</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where, here, <tt class="docutils literal"><span class="pre">mf_u</span></tt> and <tt class="docutils literal"><span class="pre">mf_p</span></tt> are supposed to be some already declared <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> objects defined on the same mesh, <tt class="docutils literal"><span class="pre">mim</span></tt> a already declared <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> object and <tt class="docutils literal"><span class="pre">mu</span></tt> is the Lame coefficient. It is also possible to perform the assembly of the sub-matrix of this system separately.</p>
+<p>Let us see now how to perform the assembly of a source term. The weak formulation of a volumic source term is</p>
+<div class="math">
+<p><img src="../_images/math/a396db161a14675475d3d2c6a2eb3ee167ad8755.png" alt="\int_{\Omega} fv dx"/></p>
+</div><p>where <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" style="vertical-align: -4px"/> is the source term and <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> the test function. The corresponding assembly can be written:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span> <span class="n">nbdofu</span> <span class="o">=</span> <span class="n">mf_u</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">U</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">sub_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbdofu</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_constant</span><span class="p">(</span><span class="s">&quot;f&quot;</span><span class="p">,</span> <span class="n">mf_data</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;f*Test_u&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">L</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_vector</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>if the source term is describe on a finite element <tt class="docutils literal"><span class="pre">mf_data</span></tt> and the corresponding vector of degrees of freedom <tt class="docutils literal"><span class="pre">F</span></tt>. Explicit source terms are also possible. For instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span> <span class="n">nbdofu</span> <span class="o">=</span> <span class="n">mf_u</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">U</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">sub_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbdofu</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;sin(X(1)+X(2))*Test_u&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">L</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_vector</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>is also valid. If the source term is a boundary term (in case of a Neumann condition) the only difference is that the mesh region corresponding to the boundary have to be given as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;sin(X(1)+X(2))*Test_u&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">region</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">region</span></tt> is the mesh region number.</p>
+<p>As another example, let us describe a simple nonlinear elasticity problem. Assume that we consider a Saint-Venant Kirchhoff constitutive law which means that we consider the following elastic energy on a body of reference configuration <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/>:</p>
+<div class="math">
+<p><img src="../_images/math/161e1f8957cc317aea14d2f72600c90e167d7130.png" alt="\int_{\Omega} \Frac{\lambda}{2} (\mbox{tr}(E))^2 + \mu \mbox{tr}(E^2) dx"/></p>
+</div><p>where <img class="math" src="../_images/math/9a15a07f3bbe7e6adf0fea5f58e4559bcfb45037.png" alt="\lambda, \mu" style="vertical-align: -4px"/> are the Lamé coefficients and  <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> is the strain tensor given by <img class="math" src="../_images/math/3345b40f15d097162bb002fb1472f8b54f962819.png" alt="E = (\nabla u + (\nabla u)^T + (\nabla u)^T\nabla u)/2" style="vertical-align: -5px"/>.</p>
+<p>This is possible to perform the assembly of the corresponding tangent problem as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span> <span class="n">nbdofu</span> <span class="o">=</span> <span class="n">mf_u</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">vlambda</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="n">vlambda</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">lambda</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">vmu</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="n">vmu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu</span><span class="p">;</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">sub_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbdofu</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fixed_size_constant</span><span class="p">(</span><span class="s">&quot;lambda&quot;</span><span class="p">,</span> <span class="n">vlambda</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fixed_size_constant</span><span class="p">(</span><span class="s">&quot;mu&quot;</span><span class="p">,</span> <span class="n">vmu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;lambda*sqr(Trace(Grad_u+Grad_u&#39;+Grad_u&#39;*Grad_u))&quot;</span>
+                         <span class="s">&quot;+ mu*Trace((Grad_u+Grad_u&#39;+Grad_u&#39;*Grad_u)&quot;</span>
+                         <span class="s">&quot;*(Grad_u+Grad_u&#39;+Grad_u&#39;*Grad_u))&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">L</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_vector</span><span class="p">(</span><span class="n">V</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">model_real_sparse_matrix</span> <span class="n">K</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">,</span> <span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>and to adapt a Newton-Raphson algorithm to solve that nonlinear problem. Of course the expression is rather repetitive and it would be preferable to define some intermediate nonlinear operators. However, note that repeated expressions are automatically detected and computed only once in the assembly.</p>
+<p>The last example is the assembly of the stiffness matrix of an order four problem, the Kirchhoff-Love plate problem:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">ga_workspace</span> <span class="n">workspace</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">size_type</span> <span class="n">nbdofu</span> <span class="o">=</span> <span class="n">mf_u</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">vD</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="n">vD</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">base_vector</span> <span class="n">vnu</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="n">vnu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">nu</span><span class="p">;</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">gmm</span><span class="o">::</span><span class="n">sub_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbdofu</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fixed_size_constant</span><span class="p">(</span><span class="s">&quot;D&quot;</span><span class="p">,</span> <span class="n">vD</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_fixed_size_constant</span><span class="p">(</span><span class="s">&quot;nu&quot;</span><span class="p">,</span> <span class="n">vnu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_expression</span><span class="p">(</span><span class="s">&quot;D*(1-nu)*(Hess_u:Hess_Test_u) -&quot;</span>
+                         <span class="s">&quot;D*nu*Trace(Hess_u)*Trace(Hess_Test_u)&quot;</span><span class="p">,</span> <span class="n">mim</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">model_real_sparse_matrix</span> <span class="n">K</span><span class="p">(</span><span class="n">nbdofu</span><span class="p">,</span> <span class="n">nbdofu</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">set_assembled_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">);</span>
+<span class="n">workspace</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>with <tt class="docutils literal"><span class="pre">D</span></tt> the flexion modulus and <tt class="docutils literal"><span class="pre">nu</span></tt> the Poisson ratio.</p>
+</div>
+<div class="section" id="the-tensors">
+<h2>The tensors<a class="headerlink" href="#the-tensors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Basically, what is manipulated in the weak form language are tensors. This can be order 0 tensors in scalar expressions (for instance in <tt class="docutils literal"><span class="pre">3+sin(pi/2)</span></tt>), order 1 tensors in vector expressions (such as <tt class="docutils literal"><span class="pre">X.X</span></tt> or <tt class="docutils literal"><span class="pre">Grad_u</span></tt> if u is a scalar variable), order 2 tensors for matrix expressions and so on. For efficiency reasons, the language manipulates tensors up to order six. The language could be easily extended to support tensors of order greater than six but it may lead to inefficient computations. When an expression contains test functions (as in <tt class="docutils literal"><span class="pre">Trace(Grad_Test_u)</span></tt> for a vector field <tt class="docutils literal"><span class="pre">u</span></tt>), the computation is done for each test functions, which means that the tensor implicitly have a supplementary component. This means that, implicitly, the maximal order of manipulated tensors are in fact six (in <tt class="docutils literal"><span class="pre">Grad_Test_u:Grad_Test2_u</span></tt> there are two components implicitly added for first and second order test functions).</p>
+<p>Order four tensors are necessary for instance to express elasticity tensors or in general to obtain the tangent term for vector valued unknowns.</p>
+</div>
+<div class="section" id="the-variables">
+<h2>The variables<a class="headerlink" href="#the-variables" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A list of variables should be given to the <tt class="docutils literal"><span class="pre">ga_worspace</span></tt> object (directly or through a model object). The variables are described on a finite element method or can be a simple vector of unknowns. This means that it is possible also to couple algebraic equations to pde ones on a model. A variable name should begin by a letter (case sensitive) or an underscore followed by a letter, a number or an underscore. Some name are reserved, this is the case of operators names (<tt class="docutils literal"><span class="pre">Det</span></tt>, <tt class="docutils literal"><span class="pre">Norm</span></tt>, <tt class="docutils literal"><span class="pre">Trace</span></tt>, <tt class="docutils literal"><span class="pre">Deviator</span></tt>, ...) and thus cannot be used as variable names. The name should not begin by <tt class="docutils literal"><span class="pre">Test_</span></tt>, <tt class="docutils literal"><span class="pre">Test2_</span></tt>, <tt class="docutils literal"><span class="pre">Grad_</span></tt>, <tt class="docutils literal"><span class="pre">Div_</span></tt> or <tt class="docutils literal"><span class="pre">Hess_</span></tt>. The variable name should not correspond to a predefined function (<tt class="docutils literal"><span class="pre">sin</span></tt>, <tt class="docutils literal"><span class="pre">cos</span></tt>, <tt class="docutils literal"><span class="pre">acos</span></tt> ...) and to constants (<tt class="docutils literal"><span class="pre">pi</span></tt>, <tt class="docutils literal"><span class="pre">Normal</span></tt>, <tt class="docutils literal"><span class="pre">X</span></tt>, <tt class="docutils literal"><span class="pre">Id</span></tt> ...).</p>
+</div>
+<div class="section" id="the-constants-or-data">
+<h2>The constants or data<a class="headerlink" href="#the-constants-or-data" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A list of constants could also be given to the <tt class="docutils literal"><span class="pre">ga_worspace</span></tt> object. The rule are the same as for the variables but no test function can be associated to constants and there is no symbolic differentiation with respect to constants. Scalar constants are often defined to represent the coefficients which intervene in constitutive laws. Additionally, constants can be some scalar/vector/tensor fields defined on integration points via a <tt class="docutils literal"><span class="pre">im_data</span></tt> object (for instance for some implementation of the approximation of constitutive laws such as plasticity).</p>
+</div>
+<div class="section" id="test-functions">
+<h2>Test functions<a class="headerlink" href="#test-functions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Each variable is associated with first order and second order test functions.
+The first order test function are used in the weak formulation (which derive form the potential equation if it exists) and the second order test functions are used in the tangent system. For a variable <tt class="docutils literal"><span class="pre">u</span></tt> the associated test functions are <tt class="docutils literal"><span class="pre">Test_u</span></tt> and <tt class="docutils literal"><span class="pre">Test2_u</span></tt>. The assembly string have to be linear with respect to test functions. As a result of the presence of the term <tt class="docutils literal"><span class="pre">Test_u</span></tt> on a assembly string, the expression will be evaluated for each shape function of the finite element corresponding to the variable <tt class="docutils literal"><span class="pre">u</span></tt>. On a given element, if the finite element have <tt class="docutils literal"><span class="pre">N</span></tt> shape functions ans if <tt class="docutils literal"><span class="pre">u</span></tt> is a scalar field, the value of <tt class="docutils literal"><span class="pre">Test_u</span></tt> will be the value of each shape function on the current point. So <tt class="docutils literal"><span class="pre">Test_u</span></tt> return if face a vector of <tt class="docutils literal"><span class="pre">N</span></tt> values. But of course, this is implicit in the language. So one do not have to care about this.</p>
+</div>
+<div class="section" id="gradient">
+<h2>Gradient<a class="headerlink" href="#gradient" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The gradient of a variable or of test functions are identified by <tt class="docutils literal"><span class="pre">Grad_</span></tt> followed by the variable name or by <tt class="docutils literal"><span class="pre">Test_</span></tt> followed itself by the variable name. This is available for FEM variables (or constants) only. For instance <tt class="docutils literal"><span class="pre">Grad_u</span></tt>, <tt class="docutils literal"><span class="pre">Grad_v</span></tt>, <tt class="docutils literal"><span class="pre">Grad_p</span></tt>, <tt class="docutils literal"><span class="pre">Grad_pressure</span></tt>, <tt class="docutils literal"><span class="pre">Grad_electric_field</span></tt> and <tt class="docutils literal"><span class="pre">Grad_Test_u</span></tt>, <tt class="docutils literal"><span class="pre">Grad_Test_v</span></tt>, <tt class="docutils literal"><span class="pre">Grad_Test_p</span></tt>, <tt class="docutils literal"><span class="pre">Grad_Test_pressure</span></tt>, <tt class="docutils literal"><span class="pre">Grad_Test_electric_field</span></tt>. The gradient is either a vector for scalar variables or a matrix for vector field variables. In the latter case, the first index corresponds to the vector field dimension and the second one to the index of the partial derivative.  <tt class="docutils literal"><span class="pre">Div_u</span></tt> and <tt class="docutils literal"><span class="pre">Div_Test_u</span></tt> are some optimized shortcuts for <tt class="docutils literal"><span class="pre">Trace(Grad_u)</span></tt> and <tt class="docutils literal"><span class="pre">Trace(Grad_Test_u)</span></tt>, respectively.</p>
+</div>
+<div class="section" id="hessian">
+<h2>Hessian<a class="headerlink" href="#hessian" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Similarly, the Hessian of a variable or of test functions are identified by <tt class="docutils literal"><span class="pre">Hess_</span></tt> followed by the variable name or by <tt class="docutils literal"><span class="pre">Test_</span></tt> followed itself by the variable name. This is available for FEM variables only. For instance <tt class="docutils literal"><span class="pre">Hess_u</span></tt>, <tt class="docutils literal"><span class="pre">Hess_v</span></tt>, <tt class="docutils literal"><span class="pre">Hess_p</span></tt>, <tt class="docutils literal"><span class="pre">Hess_pressure</span></tt>, <tt class="docutils literal"><span class="pre">Hess_electric_field</span></tt> and <tt class="docutils literal"><span class="pre">Hess_Test_u</span></tt>, <tt class="docutils literal"><span class="pre">Hess_Test_v</span></tt>, <tt class="docutils literal"><span class="pre">Hess_Test_p</span></tt>, <tt class="docutils literal"><span class="pre">Hess_Test_pressure</span></tt>, <tt class="docutils literal"><span class="pre">Hess_Test_electric_field</span></tt>. The Hessian is either a matrix for scalar variables or a third order tensor for vector field variables. In the latter case, the first index corresponds to the vector field dimension and the two remaining to the indices of partial derivatives.</p>
+</div>
+<div class="section" id="predefined-scalar-functions">
+<h2>Predefined scalar functions<a class="headerlink" href="#predefined-scalar-functions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A certain number of predefined scalar functions can be used. The exhaustive list is the following and for most of them are equivalent to the corresponding C function:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">sqr(t)</span></tt> (the square of t, equivalent to t*t), <tt class="docutils literal"><span class="pre">pow(t,</span> <span class="pre">u)</span></tt> (t to the power u),
+<tt class="docutils literal"><span class="pre">sqrt(t)</span></tt> (square root of t), <tt class="docutils literal"><span class="pre">exp(t)</span></tt>, <tt class="docutils literal"><span class="pre">log(t)</span></tt>, <tt class="docutils literal"><span class="pre">log10(t)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">sin(t)</span></tt>, <tt class="docutils literal"><span class="pre">cos(t)</span></tt>, <tt class="docutils literal"><span class="pre">tan(t)</span></tt>, <tt class="docutils literal"><span class="pre">asin(t)</span></tt>, <tt class="docutils literal"><span class="pre">acos(t)</span></tt>, <tt class="docutils literal"><span class="pre">atan(t)</span></tt>, <tt class="docutils literal"><span class="pre">atan2(t,</span> <span class="pre">u)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">sinh(t)</span></tt>, <tt class="docutils literal"><span class="pre">cosh(t)</span></tt>, <tt class="docutils literal"><span class="pre">tanh(t)</span></tt>, <tt class="docutils literal"><span class="pre">asinh(t)</span></tt>, <tt class="docutils literal"><span class="pre">acosh(t)</span></tt>, <tt class="docutils literal"><span class="pre">atanh(t)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">erf(t)</span></tt>, <tt class="docutils literal"><span class="pre">erfc(t)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">sinc(t)</span></tt> (the cardinal sine function sin(t)/t)</li>
+<li><tt class="docutils literal"><span class="pre">Heaviside(t)</span></tt> (<img class="math" src="../_images/math/4d155867a4929320a23d140a760b7b0d28455ce9.png" alt="0 \mbox{ for } t &lt; 0, 1 \mbox{ for } t \ge 0" style="vertical-align: -4px"/>)</li>
+<li><tt class="docutils literal"><span class="pre">sign(t)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">abs(t)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">pos_part(t)</span></tt> (<img class="math" src="../_images/math/d60fc05f9dfede6101e141e240c13112ad9c6d4c.png" alt="tH(t)" style="vertical-align: -4px"/>)</li>
+<li><tt class="docutils literal"><span class="pre">reg_pos_part(t,</span> <span class="pre">eps)</span></tt> (<img class="math" src="../_images/math/d0d1cafcde92f0bb408244a470e7e223637bbf6a.png" alt="(t-eps/2-t^2/(2eps))H(t-eps) + t^2H(t)/(2eps)" style="vertical-align: -5px"/>)</li>
+<li><tt class="docutils literal"><span class="pre">neg_part(t)</span></tt> (<img class="math" src="../_images/math/c8b5866ceff9804b3891ffbe42e0cc9c89f5f264.png" alt="-tH(-t)" style="vertical-align: -4px"/>), <tt class="docutils literal"><span class="pre">max(t,</span> <span class="pre">u)</span></tt>, <tt class="docutils literal"><span class="pre">min(t,</span> <span class="pre">u)</span></tt></li>
+</ul>
+</div></blockquote>
+<p>A scalar function can be applied to a scalar expression, but also to a tensor one. If is is applied to a tensor expression, is is applied componentwise and the result is a tensor with the same dimensions. For functions having two arguments (pow(t,u), min(t,u) ...) if two non-scalar arguments are passed, the dimension have to be the same. For instance &#8220;max([1;2],[0;3])&#8221; will return &#8220;[0;3]&#8221;.</p>
+</div>
+<div class="section" id="user-defined-scalar-functions">
+<h2>User defined scalar functions<a class="headerlink" href="#user-defined-scalar-functions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is possible to add a scalar function to the already predefined ones. Note that the generic assembly consider only scalar function with one or two parameters. In order to add a scalar function to the generic assembly, one has to call:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ga_define_function</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">nb_args</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">der1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">der2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+
+<span class="n">ga_define_function</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">getfem</span><span class="o">::</span><span class="n">pscalar_func_onearg</span> <span class="n">f1</span><span class="p">,</span> <span class="n">der1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+
+<span class="n">ga_define_function</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">getfem</span><span class="o">::</span><span class="n">pscalar_func_twoargs</span> <span class="n">f2</span><span class="p">,</span> <span class="n">der1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">der2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">name</span></tt> is the name of the function to be defined, <tt class="docutils literal"><span class="pre">nb_args</span></tt> is equal to 1 or 2. In the first call, <tt class="docutils literal"><span class="pre">expr</span></tt> is a string describing the function in the generic weak form language and using <tt class="docutils literal"><span class="pre">t</span></tt> as the first variable and <tt class="docutils literal"><span class="pre">u</span></tt> as the second one (if <tt class="docutils literal"><span class="pre">nb_args</span></tt> is equal to 2). For instance, <tt class="docutils literal"><span class="pre">sin(2*t)+sqr(t)</span></tt> is a valid expression. Note that it is not possible to refer to constant or data defined in a <tt class="docutils literal"><span class="pre">ga_workspace</span></tt> object. <tt class="docutils literal"><span class="pre">der1</span></tt> and <tt class="docutils literal"><span class="pre">der2</span></tt> are the expression of the derivatives with respect to <tt class="docutils literal"><span class="pre">t</span></tt> and <tt class="docutils literal"><span class="pre">u</span></tt>. They are optional. If they are not furnished, a symbolic differentiation is used if the derivative is needed. If <tt class="docutils literal"><span class="pre">der1</span></tt> and <tt class="docutils literal"><span class="pre">der2</span></tt> are defined to be only a function name, it will be understand that the derivative is the corresponding function. In the second call, <tt class="docutils literal"><span class="pre">f1</span></tt> should be a C pointer on a scalar C function having one scalar parameter and in the third call, <tt class="docutils literal"><span class="pre">f2</span></tt>  should be a C pointer on a scalar C function having two scalar parameters.</p>
+<p>Additionally,:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">bool</span> <span class="n">ga_function_exists</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>return true is a function <tt class="docutils literal"><span class="pre">name</span></tt> is already defined and:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ga_undefine_function</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>cancel the definition of an already define function (it has no action if the function does not exist) which allow to redefine a function.</p>
+</div>
+<div class="section" id="derivatives-of-defined-scalar-functions">
+<h2>Derivatives of defined scalar functions<a class="headerlink" href="#derivatives-of-defined-scalar-functions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is possible to refer directly to the derivative of defined functions by adding the prefix <tt class="docutils literal"><span class="pre">Derivative_</span></tt> to the function name. For instance, <tt class="docutils literal"><span class="pre">Derivative_sin(t)</span></tt> will be equivalent to <tt class="docutils literal"><span class="pre">cos(t)</span></tt>. For two arguments functions like <tt class="docutils literal"><span class="pre">pow(t,u)</span></tt> one can refer to the derivative with respect to the second argument with the prefix  <tt class="docutils literal"><span class="pre">Derivative_2_</span></tt> before the function name.</p>
+</div>
+<div class="section" id="binary-operations">
+<h2>Binary operations<a class="headerlink" href="#binary-operations" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A certain number of binary operations between tensors are available:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">+</span></tt> and <tt class="docutils literal"><span class="pre">-</span></tt> are the standard addition and subtraction of scalar, vector, matrix or tensors.</li>
+<li><tt class="docutils literal"><span class="pre">*</span></tt> stands for the scalar, matrix-vector, matrix-matrix or (fourth order tensor)-matrix multiplication.</li>
+<li><tt class="docutils literal"><span class="pre">/</span></tt> stands for the division by a scalar.</li>
+<li><tt class="docutils literal"><span class="pre">.</span></tt> stands for the scalar product of vectors, or more generally to the contraction of a tensor with respect to its last index with a vector or with the first index of another tensor. Note that <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">.</span></tt> are equivalent for matrix-vector or matrix-matrix multiplication.</li>
+<li><tt class="docutils literal"><span class="pre">:</span></tt> stands for the Frobenius product of matrices or more generally to the contraction of a tensor with respect to the two last indices with a matrix. Note that <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">:</span></tt> are equivalent for (fourth order tensor)-matrix multiplication.</li>
+<li><tt class="docutils literal"><span class="pre">.*</span></tt> stands for the multiplication of two vectors/matrix/tensor componentwise.</li>
+<li><tt class="docutils literal"><span class="pre">./</span></tt> stands for the division of two vectors/matrix/tensor componentwise.</li>
+<li><tt class="docutils literal"><span class="pre">&#64;</span></tt> stands for the tensor product.</li>
+<li><tt class="docutils literal"><span class="pre">Contract(A,</span> <span class="pre">i,</span> <span class="pre">B,</span> <span class="pre">j)</span></tt> stands for the contraction of tensors A and B with respect to the ith index of A and jth index of B. The first index is numbered 1. For instance <tt class="docutils literal"><span class="pre">Contract(V,1,W,1)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">V.W</span></tt> for two vectors <tt class="docutils literal"><span class="pre">V</span></tt> and <tt class="docutils literal"><span class="pre">W</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Contract(A,</span> <span class="pre">i,</span> <span class="pre">j,</span> <span class="pre">B,</span> <span class="pre">k,</span> <span class="pre">l)</span></tt> stands for the double contraction of tensors A and B with respect to indices i,j of A and indices k,l of B. The first index is numbered 1. For instance <tt class="docutils literal"><span class="pre">Contract(A,1,2,B,1,2)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">A:B</span></tt> for two matrices <tt class="docutils literal"><span class="pre">A</span></tt> and <tt class="docutils literal"><span class="pre">B</span></tt>.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="unary-operators">
+<h2>Unary operators<a class="headerlink" href="#unary-operators" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">-</span></tt> the unary minus operator: change the sign of an expression.</li>
+<li><tt class="docutils literal"><span class="pre">'</span></tt> stands for the transpose of a matrix or line view of a vector. It a tensor <tt class="docutils literal"><span class="pre">A</span></tt> is of order greater than two,``A&#8217;`` denotes the inversion of the two first indices.</li>
+<li><tt class="docutils literal"><span class="pre">Contract(A,</span> <span class="pre">i,</span> <span class="pre">j)</span></tt> stands for the contraction of tensor A with respect to its ith and jth indices. The first index is numbered 1. For instance, <tt class="docutils literal"><span class="pre">Contract(A,</span> <span class="pre">1,</span> <span class="pre">2)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">Trace(A)</span></tt> for a matrix <tt class="docutils literal"><span class="pre">A</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Swap_indices(A,</span> <span class="pre">i,</span> <span class="pre">j)</span></tt> exchange indices number i and j. The first index is numbered 1. For instance <tt class="docutils literal"><span class="pre">Swap_indices(A,</span> <span class="pre">1,</span> <span class="pre">2)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">A'</span></tt> for a matrix <tt class="docutils literal"><span class="pre">A</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Index_move_last(A,</span> <span class="pre">i)</span></tt> move the index number i in order to be the ast one. For instance, if <tt class="docutils literal"><span class="pre">A</span></tt> is a fourth order tensor <img class="math" src="../_images/math/94214b9ae278ebd4c7817a2f6ec6f4f265a6b376.png" alt="A_{i_1i_2i_3i_4}" style="vertical-align: -5px"/>, then the result of <tt class="docutils literal"><span class="pre">Index_move_last(A,</span> <span class="pre">2)</span></tt> will be the tensor <img class="math" src="../_images/math/ab4fd6724aaa857499e172203480e89d694d6f97.png" alt="B_{i_1i_3i_4i_2} = A_{i_1i_2i_3i_4}" style="vertical-align: -5px"/>. For a matrix, <tt class="docutils literal"><span class="pre">Index_move_last(A,</span> <span class="pre">1)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">A'</span></tt>.</li>
+</ul>
+<p>exchange indices number i and j. The first index is numbered 1. For instance <tt class="docutils literal"><span class="pre">Swap_indices(A,</span> <span class="pre">1,</span> <span class="pre">2)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">A'</span></tt> for a matrix <tt class="docutils literal"><span class="pre">A</span></tt>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="parentheses">
+<h2>Parentheses<a class="headerlink" href="#parentheses" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Parentheses can be used in a standard way to change the operation order. If no parentheses are indicated, the usually priority order are used. The operations <tt class="docutils literal"><span class="pre">+</span></tt>  and <tt class="docutils literal"><span class="pre">-</span></tt> have the lower priority (with no distinction), then <tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">/</span></tt>, <tt class="docutils literal"><span class="pre">:</span></tt>, <tt class="docutils literal"><span class="pre">.</span></tt>, <tt class="docutils literal"><span class="pre">.*</span></tt>, <tt class="docutils literal"><span class="pre">./</span></tt>, <tt class="docutils literal"><span class="pre">&#64;</span></tt> with no distinction and the higher priority is reserved for the unary operators <tt class="docutils literal"><span class="pre">-</span></tt> and <tt class="docutils literal"><span class="pre">'</span></tt>.</p>
+</div>
+<div class="section" id="explicit-vectors">
+<h2>Explicit vectors<a class="headerlink" href="#explicit-vectors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The weak form language allows to define explicit vectors (i.e. order 1 tensors) with the notation <tt class="docutils literal"><span class="pre">[a,b,c,d,e]</span></tt>, i.e. an arbitrary number of components separated by a comma (note the separation with a semicolon <tt class="docutils literal"><span class="pre">[a;b;c;d;e]</span></tt> is also permitted), the whole vector beginning with a right bracket and ended by a left bracket. The components can be some numeric constants, some valid expressions and may also contain test functions. In the latter case, the vector has to be homogeneous with respect to the test functions. This means that a construction of the type <tt class="docutils literal"><span class="pre">[Test_u;</span> <span class="pre">Test_v]</span></tt> is not allowed. A valid example, with <tt class="docutils literal"><span class="pre">u</span></tt> as a scalar field variable is <tt class="docutils literal"><span class="pre">[5*Grad_Test_u(2),</span> <span class="pre">2*Grad_Test_u(1)]</span></tt>. Note also that using the quite opertor (transpose), an expression <tt class="docutils literal"><span class="pre">[a,b,c,d,e]'</span></tt> stands for &#8216;row vector`, i.e. a 1x5 matrix.</p>
+</div>
+<div class="section" id="explicit-matrices">
+<h2>Explicit matrices<a class="headerlink" href="#explicit-matrices" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Similarly to explicit vectors, it is possible to define explicit matrices (i.e. order 2 tensors) with the notation <tt class="docutils literal"><span class="pre">[[a,b],[c,d]]</span></tt>, i.e. an arbitrary number of columns vectors separated by a comma (the syntax <tt class="docutils literal"><span class="pre">[a,c;b,d]</span></tt> of lines separated by a semicolon is also permitted). For instance <tt class="docutils literal"><span class="pre">[[11,21],[12,22],[13,23]]</span></tt> and <tt class="docutils literal"><span class="pre">[11,12,13;21,22,23]</span></tt> both represent the same 2x3 matrix. The components can be some numeric constants, some valid expressions and may also contain test functions.</p>
+</div>
+<div class="section" id="explicit-tensors">
+<h2>Explicit tensors<a class="headerlink" href="#explicit-tensors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Explicit tensors of any order are permitted with the nested format. A tensor of order <tt class="docutils literal"><span class="pre">n</span></tt> is written as a succession of tensor of order <tt class="docutils literal"><span class="pre">n-1</span></tt> of equal dimensions and separated by a comma. For instance <tt class="docutils literal"><span class="pre">[[[[1,2,3],[1,2,3]],[[1,2,3],[1,2,3]]],[[[1,2,3],[1,2,3]],[[1,2,3],[1,2,3]]]]</span></tt> is a fourth order tensor. Another possibility is to use the syntax <tt class="docutils literal"><span class="pre">Reshape([1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3],</span> <span class="pre">3,</span> <span class="pre">2,</span> <span class="pre">2,</span> <span class="pre">2)</span></tt> where the components have to be given in Fortran order.</p>
+</div>
+<div class="section" id="access-to-tensor-components">
+<h2>Access to tensor components<a class="headerlink" href="#access-to-tensor-components" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The access to a component of a vector/matrix/tensor can be done by following a term by a left parenthesis, the list of components and a right parenthesis. For instance <tt class="docutils literal"><span class="pre">[1,1,2](3)</span></tt> is correct and is returning <tt class="docutils literal"><span class="pre">2</span></tt> as expected. Note that indices are assumed to begin by 1 (even in C++ and with the python interface). The expressions <tt class="docutils literal"><span class="pre">[1,1;2,3](2,2)</span></tt> and <tt class="docutils literal"><span class="pre">Grad_u(2,2)</span></tt> are also correct provided that <tt class="docutils literal"><span class="pre">u</span></tt> is a vector valued declared variable. Note that the components can be the result of a constant computation. For instance <tt class="docutils literal"><span class="pre">[1,1;2,3](1+1,a)</span></tt> is correct provided that <tt class="docutils literal"><span class="pre">a</span></tt> is a declared constant but not if it is declared as a variable. A colon can replace the value of an index in a Matlab like syntax for instance to access to a line or a column of a matrix. <tt class="docutils literal"><span class="pre">[1,1;2,3](1,:)</span></tt> denotes the first line of the matrix <tt class="docutils literal"><span class="pre">[1,1;2,3]</span></tt>. It can also be used for a fourth order tensor.</p>
+</div>
+<div class="section" id="constant-expressions">
+<h2>Constant expressions<a class="headerlink" href="#constant-expressions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Floating points with standards notations (for instance <tt class="docutils literal"><span class="pre">3</span></tt>, <tt class="docutils literal"><span class="pre">1.456</span></tt>, <tt class="docutils literal"><span class="pre">1E-6</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">pi</span></tt>: the constant Pi.</li>
+<li><tt class="docutils literal"><span class="pre">meshdim</span></tt>: the dimension of the current mesh (i.e. size of geometrical nodes)</li>
+<li><tt class="docutils literal"><span class="pre">timestep</span></tt>: the main time step of the model on which this assembly string is evaluated (defined by <tt class="docutils literal"><span class="pre">md.set_time_step(dt)</span></tt>). Do not work on pure workspaces.</li>
+<li><tt class="docutils literal"><span class="pre">Id(n)</span></tt>: the identity matrix of size <img class="math" src="../_images/math/93f761f7fc79f2bec21a2f31c896840d6f36cdc0.png" alt="n\times n" style="vertical-align: 0px"/>. <cite>n</cite> should be an integer expression. For instance <tt class="docutils literal"><span class="pre">Id(meshdim)</span></tt> is allowed.</li>
+<li><tt class="docutils literal"><span class="pre">qdim(u)</span></tt>: the total dimension of the variable <tt class="docutils literal"><span class="pre">u</span></tt> (i.e. the  size for fixed size variables and the total dimension of the vector/tensor field for FEM variables)</li>
+<li><tt class="docutils literal"><span class="pre">qdims(u)</span></tt>: the dimensions of the variable <tt class="docutils literal"><span class="pre">u</span></tt> (i.e. the size for fixed size variables and the vector of dimensions of the vector/tensor field for FEM variables)</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="special-expressions-linked-to-the-current-position">
+<h2>Special expressions linked to the current position<a class="headerlink" href="#special-expressions-linked-to-the-current-position" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">X</span></tt> is the current coordinate on the real element (i.e. the position on the mesh of the current Gauss point on which the expression is evaluated), <tt class="docutils literal"><span class="pre">X(i)</span></tt> is its i-th component. For instance <tt class="docutils literal"><span class="pre">sin(X(1)+X(2))</span></tt> is a valid expression on a mesh of dimension greater or equal to two.</li>
+<li><tt class="docutils literal"><span class="pre">Normal</span></tt> the outward unit normal vector to a boundary when integration on a boundary is performed.</li>
+<li><tt class="docutils literal"><span class="pre">element_size</span></tt> gives an estimate of the current element diameter (using getfem::convex_radius_estimate).</li>
+<li><tt class="docutils literal"><span class="pre">element_K</span></tt> gives the gradient of the geometric transformation (see <a class="reference internal" href="../project/femdesc.html#dp-transgeo"><em>Geometric transformations</em></a>) from the reference (parent) element. Could be used only if the mesh do not contain elements of mixed dimensions.</li>
+<li><tt class="docutils literal"><span class="pre">element_B</span></tt> gives the transpose of the pseudo-inverse of the gradient of the geometric transformation (see <a class="reference internal" href="../project/femdesc.html#dp-transgeo"><em>Geometric transformations</em></a>) from the reference (parent) element. Could be used only if the mesh do not contain elements of mixed dimensions.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="print-command">
+<h2>Print command<a class="headerlink" href="#print-command" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For debugging purpose, the command <tt class="docutils literal"><span class="pre">Print(a)</span></tt> is printing the tensor <tt class="docutils literal"><span class="pre">a</span></tt> and pass it unchanged. For instance  <tt class="docutils literal"><span class="pre">Grad_u.Print(Grad_Test_u)</span></tt> will have the same effect as <tt class="docutils literal"><span class="pre">Grad_u.Grad_Test_u</span></tt> but printing the tensor <tt class="docutils literal"><span class="pre">Grad_Test_u</span></tt> for each Gauss point of each element. Note that constant terms are printed only once at the beginning of the assembly. Note also that the expression could be derived so that the derivative of the term may be printed instead of the term itself.</p>
+</div>
+<div class="section" id="reshape-a-tensor">
+<h2>Reshape a tensor<a class="headerlink" href="#reshape-a-tensor" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The command <tt class="docutils literal"><span class="pre">Reshape(t,</span> <span class="pre">i,</span> <span class="pre">j,</span> <span class="pre">...)</span></tt> reshapes the tensor <tt class="docutils literal"><span class="pre">t</span></tt> (which could be an expression). The only constraint is that the number of components should be compatible. For instance  <tt class="docutils literal"><span class="pre">Reshape(Grad_u,</span> <span class="pre">1,</span> <span class="pre">meshdim)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">Grad_u'</span></tt> for u a scalar variable. Note that the order of the components remain unchanged and are classically stored in Fortran order for compatibility with Blas/Lapack.</p>
+</div>
+<div class="section" id="trace-deviator-sym-and-skew-operators">
+<h2>Trace, Deviator, Sym and Skew operators<a class="headerlink" href="#trace-deviator-sym-and-skew-operators" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Trace, Deviator, Sym and Skew operators are linear operators acting on square matrices:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">Trace(m)</span></tt> gives the trace (sum of diagonal components) of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Deviator(m)</span></tt> gives the deviator of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>. It is equivalent to <tt class="docutils literal"><span class="pre">m</span> <span class="pre">-</span> <span class="pre">Trace(m)*Id(m_dim)/m_dim</span></tt>, where <tt class="docutils literal"><span class="pre">m_dim</span></tt> is the dimension of <tt class="docutils literal"><span class="pre">m</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Sym(m)</span></tt> gives the symmetric part of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>, i.e. <tt class="docutils literal"><span class="pre">(m</span> <span class="pre">+</span> <span class="pre">m')/2</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Skew(m)</span></tt> gives the skew-symmetric part of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>, i.e. <tt class="docutils literal"><span class="pre">(m</span> <span class="pre">-</span> <span class="pre">m')/2</span></tt>.</li>
+</ul>
+</div></blockquote>
+<p>The four operators can be applied on test functions. Which means that for instance both <tt class="docutils literal"><span class="pre">Trace(Grad_u)</span></tt> and  <tt class="docutils literal"><span class="pre">Trace(Grad_Test_u)</span></tt> are valid when <tt class="docutils literal"><span class="pre">Grad_u</span></tt> is a square matrix (i.e. <tt class="docutils literal"><span class="pre">u</span></tt> a vector field of the same dimension as the mesh).</p>
+</div>
+<div class="section" id="nonlinear-operators">
+<h2>Nonlinear operators<a class="headerlink" href="#nonlinear-operators" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The weak form language provide some predefined nonlinear operator. Each nonlinear operator is available together with its first and second derivatives. Nonlinear operator can be applied to an expression as long as this expression do not contain some test functions.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">Norm(v)</span></tt> for <tt class="docutils literal"><span class="pre">v</span></tt> a vector or a matrix gives the euclidean norm of a vector or a Frobenius norm of a matrix.</li>
+<li><tt class="docutils literal"><span class="pre">Norm_sqr(v)</span></tt> for <tt class="docutils literal"><span class="pre">v</span></tt> a vector or a matrix gives the square of the euclidean norm of a vector or of the Frobenius norm of a matrix. For a vector this is equivalent to <tt class="docutils literal"><span class="pre">v.v</span></tt> and for a matrix to <tt class="docutils literal"><span class="pre">m:m</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Normalized(v)</span></tt> for <tt class="docutils literal"><span class="pre">v</span></tt> a vector or a matrix gives <tt class="docutils literal"><span class="pre">v</span></tt> divided by its euclidean (for vectors) or Frobenius (for matrices) norm. In order to avoid problems when <tt class="docutils literal"><span class="pre">v</span></tt> is close to 0, it is implemented as <tt class="docutils literal"><span class="pre">Normalized_reg(v,</span> <span class="pre">1E-25)</span></tt>. Use with care. Think that the derivative at the origin of <tt class="docutils literal"><span class="pre">Normalized(v)*Norm(v)</span></tt> is wrong (it vanishes) and very different from the derivative of <tt class="docutils literal"><span class="pre">v</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Normalized_reg(v,</span> <span class="pre">eps)</span></tt> for <tt class="docutils literal"><span class="pre">v</span></tt> a vector or a matrix gives a regularized version of <tt class="docutils literal"><span class="pre">Normalized(v)</span></tt> : <tt class="docutils literal"><span class="pre">v/sqrt(|v|*|v|+eps*eps)</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Ball_projection(v,</span> <span class="pre">r)</span></tt> for <tt class="docutils literal"><span class="pre">v</span></tt> a vector or a matrix and <tt class="docutils literal"><span class="pre">r</span></tt> a scalar, gives the projection of <tt class="docutils literal"><span class="pre">v</span></tt> on the ball of radius <tt class="docutils literal"><span class="pre">r</span></tt> and center the origin.</li>
+<li><tt class="docutils literal"><span class="pre">Det(m)</span></tt> gives the determinant of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Inv(m)</span></tt> gives the inverse of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>. The second derivative is not available since it is an order 6 tensor. This means that <tt class="docutils literal"><span class="pre">Inv(m)</span></tt> cannot be used in the description of a potential energy.</li>
+<li><tt class="docutils literal"><span class="pre">Expm(m)</span></tt> gives the exponential of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Logm(m)</span></tt> gives the logarithm of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Matrix_I2(m)</span></tt> gives the second invariants of a square matrix <tt class="docutils literal"><span class="pre">m</span></tt> which is defined by <tt class="docutils literal"><span class="pre">(sqr(Trace(m))</span> <span class="pre">-</span> <span class="pre">Trace(m*m))/2</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Matrix_J1(m)</span></tt> gives the modified first invariant of a square matrix defined by <tt class="docutils literal"><span class="pre">Trace(m)pow(Det(m),-1/3)</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Matrix_J2(m)</span></tt> gives the modified first invariant of a square matrix defined by <tt class="docutils literal"><span class="pre">Matrix_I2(m)*pow(Det(m),-2/3)</span></tt>.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="macro-definition">
+<span id="ud-gasm-high-macros"></span><h2>Macro definition<a class="headerlink" href="#macro-definition" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The weak form language allows the use of macros that are either predefined in the model or ga_workspace object or directly defined at the begining of an assembly string. The definition into a ga_workspace or model object is done as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">add_macro</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">model</span><span class="p">.</span><span class="n">add_macro</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The definition of a macro into an assembly string is inserted before any regular expression, separated by a semicolon with the following syntax:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="s">&quot;Def name:=expr; regular_expression&quot;</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">name</span></tt> is he macro name which then can be used in the weak form language and contains also the macro parameters, <tt class="docutils literal"><span class="pre">expr</span></tt> is a valid expression of the weak form language (which may itself contain some macro definitions). For instance, a valid macro with no parameter is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">model</span><span class="p">.</span><span class="n">add_macro</span><span class="p">(</span><span class="s">&quot;my_transformation&quot;</span><span class="p">,</span> <span class="s">&quot;[cos(alpha)*X(1);sin(alpha)*X(2)]&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">alpha</span></tt> should be a valid declared variable or data. A valid macro with two parameters is for instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">model</span><span class="p">.</span><span class="n">add_macro</span><span class="p">(</span><span class="s">&quot;ps(a,b)&quot;</span><span class="p">,</span> <span class="s">&quot;a.b&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The following assembly string is then valid (if <tt class="docutils literal"><span class="pre">u</span></tt> is a valid variable):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="s">&quot;Def ps(a,b):=a.b; ps(Grad_u, Grad_Test_u)&quot;</span>
+</pre></div>
+</div>
+<p>Parameter are allowed to be post-fixed to <tt class="docutils literal"><span class="pre">Grad_</span></tt>, <tt class="docutils literal"><span class="pre">Hess_</span></tt>, <tt class="docutils literal"><span class="pre">Test_</span></tt> and <tt class="docutils literal"><span class="pre">Test2_</span></tt> prefixes, so that the following assembly string is valid:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="s">&quot;Def psgrad(a,b):=Grad_a.Grad_b; psgrad(u, Test_u)&quot;</span>
+</pre></div>
+</div>
+<p>or with an imbrication of two macros:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="s">&quot;Def ps(a,b):=a.b; Def psgrad(a,b):=ps(Grad_a,Grad_b); psgrad(u, Test_u)&quot;</span>
+</pre></div>
+</div>
+<p>A macro can be deleted from a ga_workspace or model object as follows:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">workspace</span><span class="p">.</span><span class="n">del_macro</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="n">del_macro</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that a macro defined at the begining of an assembly string is only defined in the assembly string and cannot be used later without being added in a model or ga_workspace object.</p>
+<p>The macros are expanded inline at the lexical analysis phase. Note that a the compilation phase, the repeated expressions are automatically factorized and computed only once.</p>
+</div>
+<div class="section" id="explicit-differentiation">
+<h2>Explicit Differentiation<a class="headerlink" href="#explicit-differentiation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The workspace object automatically differentiate terms that are of lower deriation order. However, it is also allowed to explicitely differentiate an expression with respect to a variable. One interest is that the automatic differentiation performs a derivative with respect to all the declared variables of model/workspace but this is not necessarily the expected behavior when using a potential energy, for instance. The syntax is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Diff</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For instance, the following expression:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Diff</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">u</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will result in:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">Test_u</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So that:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="nl">Grad_u:</span><span class="n">Grad_test_u</span> <span class="o">+</span> <span class="n">Diff</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">u</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is a valid expression. A third argument can be added to the <tt class="docutils literal"><span class="pre">Diff</span></tt> command to specify the direction:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Diff</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>in that case, it replaces the <tt class="docutils literal"><span class="pre">Test_variable</span></tt> by the expression <tt class="docutils literal"><span class="pre">direction</span></tt> which has to be of the same dimension as <tt class="docutils literal"><span class="pre">variable</span></tt>. It computes the derivative of <tt class="docutils literal"><span class="pre">expression</span></tt> with respect to <tt class="docutils literal"><span class="pre">variable</span></tt> in the direction <tt class="docutils literal"><span class="pre">direction</span></tt>.
+For instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Diff</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">u</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will result in:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>if <tt class="docutils literal"><span class="pre">v</span></tt> is any valid expression of the same dimension than <tt class="docutils literal"><span class="pre">u</span></tt>.</p>
+</div>
+<div class="section" id="explicit-gradient">
+<h2>Explicit Gradient<a class="headerlink" href="#explicit-gradient" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is possible to ask for symbolic computation of the gradient of an expression with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Grad</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It will be computed as far as it is possible. The limitations come from the fact that <em>GetFEM++</em> is limited to second order derivative of shape function and nonlinear operators are supposed to provide only first and second order derivatives.</p>
+<p>Of course:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Grad</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Grad_u</span>
+</pre></div>
+</div>
+<p>for a varible <tt class="docutils literal"><span class="pre">u</span></tt>.</p>
+</div>
+<div class="section" id="interpolate-transformations">
+<span id="ud-gasm-high-transf"></span><h2>Interpolate transformations<a class="headerlink" href="#interpolate-transformations" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">Interpolate</span></tt> operation allows to compute integrals between quantities which are either defined on different part of a mesh or even on different meshes. It is a powerful operation which allows to compute mortar matrices or take into account periodic conditions. However, one have to remember that it is based on interpolation which may have a non-negligible computational cost.</p>
+<p>In order to use this functionality, the user have first to declare to the workspace or to the model object an interpolate transformation which described the map between the current integration point and the point lying on the same mesh or on another mesh.</p>
+<p>Different kind of transformations can be described. Several kinds of transformations has been implemented. The first one, described hereafter is a transformation described by an expression. A second one corresponds to the raytracing contact detection (see <a class="reference internal" href="model_contact_friction_large_sliding.html#ud-model-contact-friction-raytrace-inter-trans"><em>Raytracing interpolate transformation</em></a>). Some other transformations (neighbour element and element extrapolation) are describe in the next sections.</p>
+<p>The transformation defined by an expression can be added to the workspace or the model thanks to the command:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_interpolate_transformation_from_expression</span>
+  <span class="p">(</span><span class="n">workspace</span><span class="p">,</span> <span class="n">transname</span><span class="p">,</span> <span class="n">source_mesh</span><span class="p">,</span> <span class="n">target_mesh</span><span class="p">,</span> <span class="n">expr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_interpolate_transformation_from_expression</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">transname</span><span class="p">,</span> <span class="n">source_mesh</span><span class="p">,</span> <span class="n">target_mesh</span><span class="p">,</span> <span class="n">expr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">workspace</span></tt> is a workspace object, <tt class="docutils literal"><span class="pre">md</span></tt> a model object, <tt class="docutils literal"><span class="pre">transname</span></tt> is the name given to the transformation, <tt class="docutils literal"><span class="pre">source_mesh</span></tt> the mesh on which the integration occurs, <tt class="docutils literal"><span class="pre">target_mesh</span></tt> the mesh on which the interpolation is performed and <tt class="docutils literal"><span class="pre">expr</span></tt> is a regular expression of the high-level generic weak form language which may contains reference to the variables of the workspace/model.</p>
+<p>For instance, an expression:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_interpolate_transformation_from_expression</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&quot;my_transformation&quot;</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="s">&quot;X-[1;0]&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>will allow to integrate some expressions at the current position with a shift of -1 with respect to the first coordinate. This simple kind of transformation can be used to prescribe a periodic condition.</p>
+<p>Of course, one may used more complex expressions such as:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_interpolate_transformation_from_expression</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&quot;my_transformation&quot;</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="n">my_second_mesh</span><span class="p">,</span> <span class="s">&quot;[X[1]cos(X[2]); X[1]sin(X[2])]&quot;</span><span class="p">);</span>
+
+<span class="n">add_interpolate_transformation_from_expression</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&quot;my_transformation&quot;</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="s">&quot;X+u&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">u</span></tt> is a vector variable of the workspace/model.</p>
+<p>Once a transformation is defined in the workspace/model, one can interpolate a variable or test functions, the position or the unit normal vector to a boundary thanks to one of these expressions:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Interpolate</span><span class="p">(</span><span class="n">Normal</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Div_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Hess_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Grad_Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Div_Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Hess_Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">u</span></tt> is the name of the variable to be interpolated.</p>
+<p>For instance, the assembly expression to prescribe the equality of a variable <tt class="docutils literal"><span class="pre">u</span></tt> with its interpolation (for instance for prescribing a periodic boundary condition) thanks to a multiplier <tt class="docutils literal"><span class="pre">lambda</span></tt> could be written:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="p">(</span><span class="n">Interpolate</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">my_transformation</span><span class="p">)</span><span class="o">-</span><span class="n">u</span><span class="p">)</span><span class="o">*</span><span class="n">lambda</span>
+</pre></div>
+</div>
+<p>(see <tt class="file docutils literal"><span class="pre">demo_periodic_laplacian.m</span></tt> in <tt class="file docutils literal"><span class="pre">interface/tests/matlab</span></tt> directory).</p>
+<p>In some situations, the interpolation of a point may fail if the transformed point is outside the target mesh. Both in order to treat this case and to allow the transformation to differentiate some other cases (see <a class="reference internal" href="model_contact_friction_large_sliding.html#ud-model-contact-friction-raytrace-inter-trans"><em>Raytracing interpolate transformation</em></a> for the differentiation between rigid bodies and deformable ones in the Raytracing_interpolate_transformation) the tranformation returns an integer identifiant to the weak form language. A value 0 of this identifiant means that no corresponding location on the target mesh has been found. A value of 1 means that a corresponding point has been found. This identifiant can be used thanks to the following special command of the weak form language:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Interpolate_filter</span><span class="p">(</span><span class="n">transname</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">transname</span></tt> is the name of the transformation, <tt class="docutils literal"><span class="pre">expr</span></tt> is the expression to be evaluated and <tt class="docutils literal"><span class="pre">i</span></tt> value of the returned integer identifiant for which the expression have to be computed. Note that <tt class="docutils literal"><span class="pre">i</span></tt> can be ommited, in that case, the expression is evaluated for a nonzero identifiant (i.e. when a corresponding point has been found). For instance, the previous assembly expression to prescribe the equality of a variable <tt class="docutils literal"><span class="pre">u</span></tt> with its interpolation could be writtne:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Interpolate_filter</span><span class="p">(</span><span class="n">transmane</span><span class="p">,</span> <span class="n">Interpolate</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">my_transformation</span><span class="p">)</span><span class="o">-</span><span class="n">u</span><span class="p">)</span><span class="o">*</span><span class="n">lambda</span><span class="p">)</span>
+<span class="o">+</span> <span class="n">Interpolate_filter</span><span class="p">(</span><span class="n">transmane</span><span class="p">,</span> <span class="n">lambda</span><span class="o">*</span><span class="n">lambda</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In that case, the equality will only be prescribed in the part of the domain where the transformation succeed and in the other part, the mulitplier is enforced to vanish.</p>
+<p><strong>CAUTION</strong>: You have to think that when some variables are used in the transformation, the computation of the tangent system takes into account these dependence. However, the second derivative of a transformation with respect to a variable used has not been implemented. Thus, such a transformation is not allowed in the definition of a potential since it cannot be derived twice.</p>
+</div>
+<div class="section" id="element-extrapolation-transformation">
+<h2>Element extrapolation transformation<a class="headerlink" href="#element-extrapolation-transformation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A specific transformation (see previous section) is defined in order to allows the evaluation of certain quantities by extrapolation with respect to another element (in general a neighbour element). This is not strictly speaking a transformation since the point location remain unchanged, but the evaluation is made on another element extrapolating the shape functions outside it. This transformation is used for stabilization term in fictitious domain applications (with cut elements) where it is more robust to extrapolate some quantities on a neighbour element having a sufficiently large intersection with the real domain than evaluating them on the current element if it has a small intersection with the real domain. The functions allowing to add such a transformation to a model or a workspace are:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_element_extrapolation_transformation</span>
+<span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">transname</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">size_type</span><span class="p">,</span> <span class="n">size_type</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">elt_corr</span><span class="p">);</span>
+
+<span class="n">add_element_extrapolation_transformation</span>
+<span class="p">(</span><span class="n">workspace</span><span class="p">,</span> <span class="n">transname</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">size_type</span><span class="p">,</span> <span class="n">size_type</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">elt_corr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The map elt_corr should contain the correspondances between the elements where the transformation is to be applied and the respective elements where the extrapolation has to be made. On the element not listed in the map, no transformation is applied and the evaluation is performed normally on the current element.</p>
+<p>The following functions allow to change the element correspondance of a previously added element extrapolation transformation:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">set_element_extrapolation_correspondance</span>
+<span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">transname</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">size_type</span><span class="p">,</span> <span class="n">size_type</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">elt_corr</span><span class="p">);</span>
+
+<span class="n">set_element_extrapolation_correspondance</span>
+<span class="p">(</span><span class="n">workspace</span><span class="p">,</span> <span class="n">transname</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">size_type</span><span class="p">,</span> <span class="n">size_type</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">elt_corr</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="evaluating-discontinuities-across-inter-element-edges-faces">
+<span id="ud-gasm-high-inter-elt-disc"></span><h2>Evaluating discontinuities across inter-element edges/faces<a class="headerlink" href="#evaluating-discontinuities-across-inter-element-edges-faces" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>A specific interpolate transformation (see previous sections), called <tt class="docutils literal"><span class="pre">neighbour_elt</span></tt> is defined by default in all models. This transformation can only be used when a computation is made on an internal edge/face of a mesh, i.e. an element face shared at least by two elements. It aims to compute discontinuity jumps of a variable across inter-element faces. It is particularly suitable to implement Discontinuous Galerkin and interior penalty methods, Ghost penalty terms or a posteriori estimators. The expressions:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Interpolate</span><span class="p">(</span><span class="n">Normal</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Div_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Hess_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Test_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Grad_Test_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Div_Test_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+<span class="n">Interpolate</span><span class="p">(</span><span class="n">Hess_Test_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>are available (as with any other interpolate transformation) and compute a field on the current point but on the neighbour element. Of course, <tt class="docutils literal"><span class="pre">Interpolate(X,</span> <span class="pre">neighbour_elt)</span></tt> as no specific interest since it returns the same result as <tt class="docutils literal"><span class="pre">X</span></tt>. Similarly, in most cases, <tt class="docutils literal"><span class="pre">Interpolate(Normal,</span> <span class="pre">neighbour_elt)</span></tt> will return the opposite of <tt class="docutils literal"><span class="pre">Normal</span></tt> except for instance for 2D shell element in a 3D mesh where it has an interest.</p>
+<p>The jump on a variable <tt class="docutils literal"><span class="pre">u</span></tt> can be computed with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">u</span><span class="o">-</span><span class="n">Interpolate</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and a penalisation term of the jump can be written:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="p">(</span><span class="n">u</span><span class="o">-</span><span class="n">Interpolate</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">Test_u</span><span class="o">-</span><span class="n">Interpolate</span><span class="p">(</span><span class="n">Test_u</span><span class="p">,</span> <span class="n">neighbour_elt</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Note that the region representing the set of all internal faces of a mesh can be obtained thanks to the function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mr_internal_face</span> <span class="o">=</span> <span class="n">inner_faces_of_mesh</span><span class="p">(</span><span class="n">my_mesh</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mr</span></tt> is an optional mesh region. If <tt class="docutils literal"><span class="pre">mr</span></tt> is specified only the face internal with respect to this region are returned. An important aspect is that  each face is represented only once and is arbitrarily chosen between the two neighbour elements.</p>
+<p>See for instance <tt class="file docutils literal"><span class="pre">interface/tests/python/demo_laplacian_DG.py</span></tt> or <tt class="file docutils literal"><span class="pre">interface/tests/matlab/demo_laplacian_DG.m</span></tt> for an example of use.</p>
+<p>Compared to other interpolate transformations, this transformation is more optimized and benefits from finite element and geometric transformation pre-computations.</p>
+</div>
+<div class="section" id="elementary-transformations">
+<span id="ud-gasm-high-elem-trans"></span><h2>Elementary transformations<a class="headerlink" href="#elementary-transformations" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>An elementary transformation is a linear transformation of the shape
+functions given by a matrix which may depend on the element which is applied
+to the local degrees of freedom at the element level. an example of definition
+of elementary transformation can be found in the file
+<tt class="file docutils literal"><span class="pre">src/getfem_linearized_plates.cc</span></tt>. It aims for instance to define a local
+projection of a finite element on a lower level element to perform a
+reduction such as the one used in MITC elements.</p>
+<p>Once a transformation is defined, it can be added to the model/workspace with
+the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">model</span><span class="p">.</span><span class="n">add_elementary_transformation</span><span class="p">(</span><span class="n">transname</span><span class="p">,</span> <span class="n">pelementary_transformation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">pelementary_transformation</span></tt> is a pointer to an object deriving from <tt class="docutils literal"><span class="pre">virtual_elementary_transformation</span></tt>. Once it is added to the model/workspace, it is possible to use the following expressions in the weak form language:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">Div_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">Hess_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">Grad_Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">Div_Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+<span class="n">Elementary_transformation</span><span class="p">(</span><span class="n">Hess_Test_u</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">u</span></tt> is one of the FEM variables of the model/workspace. For the moment, the only available elementary transformation is the the one for the projection on rotated RT0 element for two-dimensional elements which can be added thanks to the function (defined in <tt class="file docutils literal"><span class="pre">src/getfem/getfem_linearized_plates.h</span></tt>):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">add_2D_rotated_RT0_projection</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">transname</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="xfem-discontinuity-evaluation-with-mesh-fem-level-set">
+<span id="ud-gasm-high-xfem"></span><h2>Xfem discontinuity evaluation (with mesh_fem_level_set)<a class="headerlink" href="#xfem-discontinuity-evaluation-with-mesh-fem-level-set" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For <em>GetFEM++</em> 5.1. When using a fem cut by a level-set (using fem_level_set or mesh_fem_level_set objects), it is often interesting to integrate the discontinuity jump of a variable, or the jump in gradient or the average value. For this purpose, the weak form language furnishes the following expressions for <tt class="docutils literal"><span class="pre">u</span></tt> a FEM variable:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Xfem_plus</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="n">Xfem_plus</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">)</span>
+<span class="n">Xfem_plus</span><span class="p">(</span><span class="n">Div_u</span><span class="p">)</span>
+<span class="n">Xfem_plus</span><span class="p">(</span><span class="n">Hess_u</span><span class="p">)</span>
+<span class="n">Xfem_plus</span><span class="p">(</span><span class="n">Test_u</span><span class="p">)</span>
+<span class="n">Xfem_plus</span><span class="p">(</span><span class="n">Test_Grad_u</span><span class="p">)</span>
+<span class="n">Xfem_plus</span><span class="p">(</span><span class="n">Test_Div_u</span><span class="p">)</span>
+<span class="n">Xfem_plus</span><span class="p">(</span><span class="n">Test_Hess_u</span><span class="p">)</span>
+
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">)</span>
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">Div_u</span><span class="p">)</span>
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">Hess_u</span><span class="p">)</span>
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">Test_u</span><span class="p">)</span>
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">Test_Grad_u</span><span class="p">)</span>
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">Test_Div_u</span><span class="p">)</span>
+<span class="n">Xfem_minus</span><span class="p">(</span><span class="n">Test_Hess_u</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which are only available when the evaluation (integration) is made on the curve/surface separating two zones of continuity, i.e. on the zero level-set of a considered level-set function (using a <tt class="docutils literal"><span class="pre">mesh_im_level_set</span></tt> object). For instance, a jump in the variable <tt class="docutils literal"><span class="pre">u</span></tt> will be given by:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Xfem_plus</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">-</span><span class="n">Xfem_minus</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and the average by:</p>
+<div class="highlight-c++"><pre>(Xfem_plus(u)+Xfem_minus(u))/2
+
+The value ``Xfem_plus(u)`` is the value of ``u`` on the side where the corresponding level-set function is positive and ``Xfem_minus(u)`` the value of ``u`` on the side where the level-set function is negative.
+
+Additionally, note that, when integrating on a level-set with a ``mesh_im_level_set`` object, ``Normal`` stands for the normal unit vector to the level-set in the direction of the gradient of the level-set function.</pre>
+</div>
+</div>
+<div class="section" id="storage-of-sub-expressions-in-a-getfem-im-data-object-during-assembly">
+<h2>Storage of sub-expressions in a getfem::im_data object during assembly<a class="headerlink" href="#storage-of-sub-expressions-in-a-getfem-im-data-object-during-assembly" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>It is possible to store in a vector depending on a getfem::im_data object a part of an assembly computation, for instance in order to use this computation in another assembly. This is an alternative to the interpolation functions which allows not to compute twice the same expression.</p>
+<p>The method to add such an assignment in the assembly is the following for a model or a ga_workspace:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">model</span><span class="p">.</span><span class="n">add_assembly_assignments</span><span class="p">(</span><span class="n">dataname</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                               <span class="n">order</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">before</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+
+<span class="n">workspace</span><span class="p">.</span><span class="n">add_assignment_expression</span><span class="p">(</span><span class="n">dataname</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span>
+          <span class="n">region</span> <span class="o">=</span> <span class="n">mesh_region</span><span class="o">::</span><span class="n">all_convexes</span><span class="p">(),</span> <span class="n">order</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">before</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It adds expression <cite>expr</cite> to be evaluated at assembly time and being
+assigned to the data <cite>dataname</cite> which has to be of im_data type.
+<cite>order</cite> represents the order of assembly where this assignement has to be
+done (potential(0), weak form(1) or tangent system(2) or at each
+order(-1)). The default value is 1.
+If before = 1, the the assignement is performed before the computation
+of the other assembly terms, such that the data can be used in the
+remaining of the assembly as an intermediary result (be careful that it is
+still considered as a data, no derivation of the expression is performed for
+the tangent system).
+If before = 0 (default), the assignement is done after the assembly terms.</p>
+<p>Additionally, In a model, the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">model</span><span class="p">.</span><span class="n">clear_assembly_assignments</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>allows to cancel all the assembly assignments previously added.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Compute arbitrary terms - high-level generic assembly procedures</a><ul>
+<li><a class="reference internal" href="#differences-in-execution-time-between-high-and-low-level-generic-assembly">Differences in execution time between high and low level generic assembly</a></li>
+<li><a class="reference internal" href="#overview-of-the-weak-form-language-syntax">Overview of the weak form language syntax</a></li>
+<li><a class="reference internal" href="#some-basic-examples">Some basic examples</a></li>
+<li><a class="reference internal" href="#derivation-order-and-symbolic-differentiation">Derivation order and symbolic differentiation</a></li>
+<li><a class="reference internal" href="#c-call-of-the-assembly">C++ Call of the assembly</a></li>
+<li><a class="reference internal" href="#c-assembly-examples">C++ assembly examples</a></li>
+<li><a class="reference internal" href="#the-tensors">The tensors</a></li>
+<li><a class="reference internal" href="#the-variables">The variables</a></li>
+<li><a class="reference internal" href="#the-constants-or-data">The constants or data</a></li>
+<li><a class="reference internal" href="#test-functions">Test functions</a></li>
+<li><a class="reference internal" href="#gradient">Gradient</a></li>
+<li><a class="reference internal" href="#hessian">Hessian</a></li>
+<li><a class="reference internal" href="#predefined-scalar-functions">Predefined scalar functions</a></li>
+<li><a class="reference internal" href="#user-defined-scalar-functions">User defined scalar functions</a></li>
+<li><a class="reference internal" href="#derivatives-of-defined-scalar-functions">Derivatives of defined scalar functions</a></li>
+<li><a class="reference internal" href="#binary-operations">Binary operations</a></li>
+<li><a class="reference internal" href="#unary-operators">Unary operators</a></li>
+<li><a class="reference internal" href="#parentheses">Parentheses</a></li>
+<li><a class="reference internal" href="#explicit-vectors">Explicit vectors</a></li>
+<li><a class="reference internal" href="#explicit-matrices">Explicit matrices</a></li>
+<li><a class="reference internal" href="#explicit-tensors">Explicit tensors</a></li>
+<li><a class="reference internal" href="#access-to-tensor-components">Access to tensor components</a></li>
+<li><a class="reference internal" href="#constant-expressions">Constant expressions</a></li>
+<li><a class="reference internal" href="#special-expressions-linked-to-the-current-position">Special expressions linked to the current position</a></li>
+<li><a class="reference internal" href="#print-command">Print command</a></li>
+<li><a class="reference internal" href="#reshape-a-tensor">Reshape a tensor</a></li>
+<li><a class="reference internal" href="#trace-deviator-sym-and-skew-operators">Trace, Deviator, Sym and Skew operators</a></li>
+<li><a class="reference internal" href="#nonlinear-operators">Nonlinear operators</a></li>
+<li><a class="reference internal" href="#macro-definition">Macro definition</a></li>
+<li><a class="reference internal" href="#explicit-differentiation">Explicit Differentiation</a></li>
+<li><a class="reference internal" href="#explicit-gradient">Explicit Gradient</a></li>
+<li><a class="reference internal" href="#interpolate-transformations">Interpolate transformations</a></li>
+<li><a class="reference internal" href="#element-extrapolation-transformation">Element extrapolation transformation</a></li>
+<li><a class="reference internal" href="#evaluating-discontinuities-across-inter-element-edges-faces">Evaluating discontinuities across inter-element edges/faces</a></li>
+<li><a class="reference internal" href="#elementary-transformations">Elementary transformations</a></li>
+<li><a class="reference internal" href="#xfem-discontinuity-evaluation-with-mesh-fem-level-set">Xfem discontinuity evaluation (with mesh_fem_level_set)</a></li>
+<li><a class="reference internal" href="#storage-of-sub-expressions-in-a-getfem-im-data-object-during-assembly">Storage of sub-expressions in a getfem::im_data object during assembly</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="rmesh.html"
+                        title="前の章へ">Mesh refinement</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="gasm_low.html"
+                        title="次の章へ">Compute arbitrary terms - low-level generic assembly procedures</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="gasm_low.html" title="Compute arbitrary terms - low-level generic assembly procedures"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="rmesh.html" title="Mesh refinement"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

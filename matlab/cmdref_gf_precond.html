@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_precond &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_precond_get" href="cmdref_gf_precond_get.html" />
+    <link rel="prev" title="gf_poly" href="cmdref_gf_poly.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_precond_get.html" title="gf_precond_get"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_poly.html" title="gf_poly"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-precond">
+<h1>gf_precond<a class="headerlink" href="#gf-precond" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>PC = gf_precond(&#x27;identity&#x27;)
+PC = gf_precond(&#x27;cidentity&#x27;)
+PC = gf_precond(&#x27;diagonal&#x27;, vec D)
+PC = gf_precond(&#x27;ildlt&#x27;, spmat m)
+PC = gf_precond(&#x27;ilu&#x27;, spmat m)
+PC = gf_precond(&#x27;ildltt&#x27;, spmat m[, int fillin[, scalar threshold]])
+PC = gf_precond(&#x27;ilut&#x27;, spmat m[, int fillin[, scalar threshold]])
+PC = gf_precond(&#x27;superlu&#x27;, spmat m)
+PC = gf_precond(&#x27;spmat&#x27;, spmat m)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<p>General constructor for precond objects.</p>
+<blockquote>
+<div>The preconditioners may store REAL or COMPLEX values. They accept getfem
+sparse matrices and Matlab sparse matrices.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('identity')</span></tt></p>
+<blockquote>
+<div>Create a REAL identity precondioner.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('cidentity')</span></tt></p>
+<blockquote>
+<div>Create a COMPLEX identity precondioner.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('diagonal',</span> <span class="pre">vec</span> <span class="pre">D)</span></tt></p>
+<blockquote>
+<div>Create a diagonal precondioner.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('ildlt',</span> <span class="pre">spmat</span> <span class="pre">m)</span></tt></p>
+<blockquote>
+<div>Create an ILDLT (Cholesky) preconditioner for the (symmetric) sparse
+matrix <cite>m</cite>. This preconditioner has the same sparsity pattern than <cite>m</cite>
+(no fill-in).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('ilu',</span> <span class="pre">spmat</span> <span class="pre">m)</span></tt></p>
+<blockquote>
+<div>Create an ILU (Incomplete LU) preconditioner for the sparse
+matrix <cite>m</cite>. This preconditioner has the same sparsity pattern
+than <cite>m</cite> (no fill-in).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('ildltt',</span> <span class="pre">spmat</span> <span class="pre">m[,</span> <span class="pre">int</span> <span class="pre">fillin[,</span> <span class="pre">scalar</span> <span class="pre">threshold]])</span></tt></p>
+<blockquote>
+<div>Create an ILDLTT (Cholesky with filling) preconditioner for the
+(symmetric) sparse matrix <cite>m</cite>. The preconditioner may add at most
+<cite>fillin</cite> additional non-zero entries on each line. The default value
+for <cite>fillin</cite> is 10, and the default threshold is1e-7.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('ilut',</span> <span class="pre">spmat</span> <span class="pre">m[,</span> <span class="pre">int</span> <span class="pre">fillin[,</span> <span class="pre">scalar</span> <span class="pre">threshold]])</span></tt></p>
+<blockquote>
+<div>Create an ILUT (Incomplete LU with filling) preconditioner for the
+sparse matrix <cite>m</cite>. The preconditioner may add at most <cite>fillin</cite>
+additional non-zero entries on each line. The default value for
+<cite>fillin</cite> is 10, and the default threshold is 1e-7.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('superlu',</span> <span class="pre">spmat</span> <span class="pre">m)</span></tt></p>
+<blockquote>
+<div>Uses SuperLU to build an exact factorization of the sparse matrix <cite>m</cite>.
+This preconditioner is only available if the getfem-interface was
+built with SuperLU support. Note that LU factorization is likely to
+eat all your memory for 3D problems.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">PC</span> <span class="pre">=</span> <span class="pre">gf_precond('spmat',</span> <span class="pre">spmat</span> <span class="pre">m)</span></tt></p>
+<blockquote>
+<div>Preconditionner given explicitely by a sparse matrix.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_poly.html"
+                        title="前の章へ">gf_poly</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_precond_get.html"
+                        title="次の章へ">gf_precond_get</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_precond_get.html" title="gf_precond_get"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_poly.html" title="gf_poly"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>MatLab</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

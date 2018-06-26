@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_mesh_levelset_get &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_mesh_levelset_set" href="cmdref_gf_mesh_levelset_set.html" />
+    <link rel="prev" title="gf_mesh_levelset" href="cmdref_gf_mesh_levelset.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_levelset_set.html" title="gf_mesh_levelset_set"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_levelset.html" title="gf_mesh_levelset"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-mesh-levelset-get">
+<h1>gf_mesh_levelset_get<a class="headerlink" href="#gf-mesh-levelset-get" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>M = gf_mesh_levelset_get(mesh_levelset MLS, &#x27;cut_mesh&#x27;)
+LM = gf_mesh_levelset_get(mesh_levelset MLS, &#x27;linked_mesh&#x27;)
+nbls = gf_mesh_levelset_get(mesh_levelset MLS, &#x27;nb_ls&#x27;)
+LS = gf_mesh_levelset_get(mesh_levelset MLS, &#x27;levelsets&#x27;)
+CVIDs = gf_mesh_levelset_get(mesh_levelset MLS, &#x27;crack_tip_convexes&#x27;)
+SIZE = gf_mesh_levelset_get(mesh_levelset MLS, &#x27;memsize&#x27;)
+s = gf_mesh_levelset_get(mesh_levelset MLS, &#x27;char&#x27;)
+gf_mesh_levelset_get(mesh_levelset MLS, &#x27;display&#x27;)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function for querying information about mesh_levelset objects.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'cut_mesh')</span></tt></p>
+<blockquote>
+<div>Return a mesh cut by the linked levelset&#8217;s.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">LM</span> <span class="pre">=</span> <span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'linked_mesh')</span></tt></p>
+<blockquote>
+<div>Return a reference to the linked mesh.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">nbls</span> <span class="pre">=</span> <span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'nb_ls')</span></tt></p>
+<blockquote>
+<div>Return the number of linked levelset&#8217;s.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">LS</span> <span class="pre">=</span> <span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'levelsets')</span></tt></p>
+<blockquote>
+<div>Return a list of references to the linked levelset&#8217;s.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVIDs</span> <span class="pre">=</span> <span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'crack_tip_convexes')</span></tt></p>
+<blockquote>
+<div>Return the list of convex #id&#8217;s of the linked mesh on
+which have a tip of any linked levelset&#8217;s.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">SIZE</span> <span class="pre">=</span> <span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'memsize')</span></tt></p>
+<blockquote>
+<div>Return the amount of memory (in bytes) used by the mesh_levelset.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'char')</span></tt></p>
+<blockquote>
+<div><p>Output a (unique) string representation of the mesh_levelsetn.</p>
+<p>This can be used to perform comparisons between two
+different mesh_levelset objects.
+This function is to be completed.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_levelset_get(mesh_levelset</span> <span class="pre">MLS,</span> <span class="pre">'display')</span></tt></p>
+<blockquote>
+<div>displays a short summary for a mesh_levelset object.</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_levelset.html"
+                        title="前の章へ">gf_mesh_levelset</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_levelset_set.html"
+                        title="次の章へ">gf_mesh_levelset_set</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_levelset_set.html" title="gf_mesh_levelset_set"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_levelset.html" title="gf_mesh_levelset"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

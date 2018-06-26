@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Solving triangular systems &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Dense LU decomposition" href="denselu.html" />
+    <link rel="prev" title="Basic linear algebra operations" href="blas.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="denselu.html" title="Dense LU decomposition"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="blas.html" title="Basic linear algebra operations"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="solving-triangular-systems">
+<span id="gmm-triangular"></span><h1>Solving triangular systems<a class="headerlink" href="#solving-triangular-systems" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>If <tt class="docutils literal"><span class="pre">M</span></tt> is a triangular matrix (upper or lower) and <tt class="docutils literal"><span class="pre">X</span></tt> a vector containing the right hand side, the following procedures solve the system <img class="math" src="../_images/math/bf99991168d4ae89ea3489e3f5d5ef49a27f27cc.png" alt="x \leftarrow M^{-1}x" style="vertical-align: -1px"/>. The vector <tt class="docutils literal"><span class="pre">X</span></tt> contains the result:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">upper_tri_solve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="nb">false</span><span class="p">)</span> <span class="c1">// Solving an upper triangular system</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">upper_tri_solve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="nb">true</span><span class="p">)</span>  <span class="c1">// Solving an upper triangular system</span>
+                                  <span class="c1">// assuming there is 1 on the diagonal</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">lower_tri_solve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="nb">false</span><span class="p">)</span> <span class="c1">// Solving a lower triangular system</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">lower_tri_solve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="nb">true</span><span class="p">)</span>  <span class="c1">// Solving a lower triangular system</span>
+                                  <span class="c1">// assuming there is 1 on the diagonal</span>
+</pre></div>
+</div>
+<p>components which are lower the diagonal are ignored by <tt class="docutils literal"><span class="pre">gmm::upper_tri_solve</span></tt> and components which are upper the diagonal are ignored by <tt class="docutils literal"><span class="pre">gmm::lower_tri_solve</span></tt>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="blas.html"
+                        title="前の章へ">Basic linear algebra operations</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="denselu.html"
+                        title="次の章へ">Dense LU decomposition</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="denselu.html" title="Dense LU decomposition"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="blas.html" title="Basic linear algebra operations"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

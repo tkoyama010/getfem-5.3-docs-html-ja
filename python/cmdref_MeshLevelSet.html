@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MeshLevelSet &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="MesherObject" href="cmdref_MesherObject.html" />
+    <link rel="prev" title="MeshImData" href="cmdref_MeshImData.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_MesherObject.html" title="MesherObject"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_MeshImData.html" title="MeshImData"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="meshlevelset">
+<h1>MeshLevelSet<a class="headerlink" href="#meshlevelset" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.MeshLevelSet">
+<em class="property">class </em><tt class="descname">MeshLevelSet</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM MeshLevelSet object</p>
+<p>General constructor for mesh_levelset objects. The role of this object is
+to provide a mesh cut by a certain number of level_set. This object is
+used to build conformal integration method (object mim and enriched finite
+element methods (Xfem)).</p>
+<p>General constructor for MeshLevelSet objects</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">MLS</span> <span class="pre">=</span> <span class="pre">MeshLevelSet(Mesh</span> <span class="pre">m)</span></tt>
+Build a new MeshLevelSet object from a Mesh and returns its handle.</li>
+</ul>
+<dl class="method">
+<dt id="getfem.MeshLevelSet.adapt">
+<tt class="descname">adapt</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.adapt" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Do all the work (cut the convexes with the levelsets).</p>
+<p>To initialice the MeshLevelSet object or to actualize it when the
+value of any levelset function is modified, one has to call
+this method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.add">
+<tt class="descname">add</tt><big>(</big><em>ls</em><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.add" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Add a link to the LevelSet <cite>ls</cite>.</p>
+<p>Only a reference is kept, no copy is done. In order to indicate
+that the linked Mesh is cut by a LevelSet one has to call this
+method, where <cite>ls</cite> is an LevelSet object. An arbitrary number of
+LevelSet can be added.</p>
+<p><strong>WARNING</strong></p>
+<p>The Mesh of <cite>ls</cite> and the linked Mesh must be the same.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a (unique) string representation of the MeshLevelSetn.</p>
+<p>This can be used to perform comparisons between two
+different MeshLevelSet objects.
+This function is to be completed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.crack_tip_convexes">
+<tt class="descname">crack_tip_convexes</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.crack_tip_convexes" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the list of convex #id&#8217;s of the linked Mesh on
+which have a tip of any linked LevelSet&#8217;s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.cut_mesh">
+<tt class="descname">cut_mesh</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.cut_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a Mesh cut by the linked LevelSet&#8217;s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a MeshLevelSet object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.levelsets">
+<tt class="descname">levelsets</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.levelsets" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a list of references to the linked LevelSet&#8217;s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.linked_mesh">
+<tt class="descname">linked_mesh</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.linked_mesh" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a reference to the linked Mesh.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.memsize">
+<tt class="descname">memsize</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.memsize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the amount of memory (in bytes) used by the MeshLevelSet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.nb_ls">
+<tt class="descname">nb_ls</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.nb_ls" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the number of linked LevelSet&#8217;s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.MeshLevelSet.sup">
+<tt class="descname">sup</tt><big>(</big><em>ls</em><big>)</big><a class="headerlink" href="#getfem.MeshLevelSet.sup" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Remove a link to the LevelSet <cite>ls</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_MeshImData.html"
+                        title="前の章へ">MeshImData</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_MesherObject.html"
+                        title="次の章へ">MesherObject</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_MesherObject.html" title="MesherObject"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_MeshImData.html" title="MeshImData"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

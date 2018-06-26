@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gf_mesh_im_get &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Command reference" href="cmdref.html" />
+    <link rel="next" title="gf_mesh_im_set" href="cmdref_gf_mesh_im_set.html" />
+    <link rel="prev" title="gf_mesh_im" href="cmdref_gf_mesh_im.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_im_set.html" title="gf_mesh_im_set"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_im.html" title="gf_mesh_im"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">Command reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gf-mesh-im-get">
+<h1>gf_mesh_im_get<a class="headerlink" href="#gf-mesh-im-get" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>Synopsis</strong></p>
+<div class="highlight-python"><pre>{I, CV2I} = gf_mesh_im_get(mesh_im MI, &#x27;integ&#x27;[, mat CVids])
+CVids = gf_mesh_im_get(mesh_im MI, &#x27;convex_index&#x27;)
+M = gf_mesh_im_get(mesh_im MI, &#x27;eltm&#x27;, eltm em, int cv [, int f])
+Ip = gf_mesh_im_get(mesh_im MI, &#x27;im_nodes&#x27;[, mat CVids])
+gf_mesh_im_get(mesh_im MI, &#x27;save&#x27;,string filename[, &#x27;with mesh&#x27;])
+gf_mesh_im_get(mesh_im MI, &#x27;char&#x27;[,&#x27;with mesh&#x27;])
+gf_mesh_im_get(mesh_im MI, &#x27;display&#x27;)
+m = gf_mesh_im_get(mesh_im MI, &#x27;linked mesh&#x27;)
+z = gf_mesh_im_get(mesh_im MI, &#x27;memsize&#x27;)</pre>
+</div>
+<p><strong>Description :</strong></p>
+<blockquote>
+<div>General function extracting information from mesh_im objects.</div></blockquote>
+<p><strong>Command list :</strong></p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">{I,</span> <span class="pre">CV2I}</span> <span class="pre">=</span> <span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'integ'[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Return a list of integration methods used by the mesh_im.</p>
+<p>&lt;literal&gt;I&lt;/literal&gt; is an array of all integ objects found in the convexes
+given in &lt;literal&gt;CVids&lt;/literal&gt;. If &lt;literal&gt;CV2I&lt;/literal&gt; was supplied as an output argument, it
+contains, for each convex listed in &lt;literal&gt;CVids&lt;/literal&gt;, the index of its
+correspounding integration method in &lt;literal&gt;I&lt;/literal&gt;.</p>
+<p>Convexes which are not part of the mesh, or convexes which do
+not have any integration method have their correspounding entry
+in &lt;literal&gt;CV2I&lt;/literal&gt; set to -1.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">CVids</span> <span class="pre">=</span> <span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'convex_index')</span></tt></p>
+<blockquote>
+<div><p>Return the list of convexes who have a integration method.</p>
+<p>Convexes who have the dummy IM_NONE method are not listed.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'eltm',</span> <span class="pre">eltm</span> <span class="pre">em,</span> <span class="pre">int</span> <span class="pre">cv</span> <span class="pre">[,</span> <span class="pre">int</span> <span class="pre">f])</span></tt></p>
+<blockquote>
+<div><p>Return the elementary matrix (or tensor) integrated on the convex &lt;literal&gt;cv&lt;/literal&gt;.</p>
+<p><strong>WARNING</strong></p>
+<p>Be sure that the fem used for the construction of &lt;literal&gt;em&lt;/literal&gt; is compatible
+with the fem assigned to element &lt;literal&gt;cv&lt;/literal&gt; ! This is not checked by the
+function ! If the argument &lt;literal&gt;f&lt;/literal&gt; is given, then the elementary tensor
+is integrated on the face &lt;literal&gt;f&lt;/literal&gt; of &lt;literal&gt;cv&lt;/literal&gt; instead of the whole convex.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">Ip</span> <span class="pre">=</span> <span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'im_nodes'[,</span> <span class="pre">mat</span> <span class="pre">CVids])</span></tt></p>
+<blockquote>
+<div><p>Return the coordinates of the integration points, with their weights.</p>
+<p>&lt;literal&gt;CVids&lt;/literal&gt; may be a list of convexes, or a list of convex faces, such
+as returned by gf_mesh_get(mesh M, &#8216;region&#8217;)</p>
+<p><strong>WARNING</strong></p>
+<p>Convexes which are not part of the mesh, or convexes which
+do not have an approximate integration method do not have
+their corresponding entry (this has no meaning for exact
+integration methods!).</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'save',string</span> <span class="pre">filename[,</span> <span class="pre">'with</span> <span class="pre">mesh'])</span></tt></p>
+<blockquote>
+<div>Saves a mesh_im in a text file (and optionaly its linked mesh object).</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'char'[,'with</span> <span class="pre">mesh'])</span></tt></p>
+<blockquote>
+<div><p>Output a string description of the mesh_im.</p>
+<p>By default, it does not include the description of the linked
+mesh object.</p>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'display')</span></tt></p>
+<blockquote>
+<div>displays a short summary for a mesh_im object.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'linked</span> <span class="pre">mesh')</span></tt></p>
+<blockquote>
+<div>Returns a reference to the mesh object linked to &lt;literal&gt;mim&lt;/literal&gt;.</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">gf_mesh_im_get(mesh_im</span> <span class="pre">MI,</span> <span class="pre">'memsize')</span></tt></p>
+<blockquote>
+<div><p>Return the amount of memory (in bytes) used by the mesh_im object.</p>
+<p>The result does not take into account the linked mesh object.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_im.html"
+                        title="前の章へ">gf_mesh_im</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_gf_mesh_im_set.html"
+                        title="次の章へ">gf_mesh_im_set</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_im_set.html" title="gf_mesh_im_set"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_gf_mesh_im.html" title="gf_mesh_im"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >SciLab Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >Command reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

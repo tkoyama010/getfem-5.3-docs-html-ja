@@ -1,0 +1,454 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Finite strain Elasticity bricks &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Small strain plasticity" href="model_plasticity_small_strain.html" />
+    <link rel="prev" title="Numerical continuation and bifurcation" href="model_continuation.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_plasticity_small_strain.html" title="Small strain plasticity"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_continuation.html" title="Numerical continuation and bifurcation"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="finite-strain-elasticity-bricks">
+<span id="ud-model-nonlinear-elasticity"></span><span id="index-0"></span><h1>Finite strain Elasticity bricks<a class="headerlink" href="#finite-strain-elasticity-bricks" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This brick implements some classical hyperelastic constitutive law for large deformation elasticity.</p>
+<div class="section" id="some-recalls-on-finite-strain-elasticity">
+<h2>Some recalls on finite strain elasticity<a class="headerlink" href="#some-recalls-on-finite-strain-elasticity" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Let <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> be the reference configuration and <img class="math" src="../_images/math/f71d06d762a6c84475cc4a89a032b5f41fef60b1.png" alt="\Omega_t" style="vertical-align: -3px"/> the deformed configuration of an elastic media. Then for <img class="math" src="../_images/math/c4a661b220602f094f97ce8a017bc5266343aded.png" alt="X \in \Omega" style="vertical-align: -1px"/> we will denote by <img class="math" src="../_images/math/bc50f4941c3d98dedc27603538e97aa1f04cad7b.png" alt="\Phi(x) = u(X) + X" style="vertical-align: -4px"/> the deformation. the vector field <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is the displacement with respect to the initial position.</p>
+<p>The Cauchy-Green tensor is defined by</p>
+<div class="math">
+<p><img src="../_images/math/3f097bf02f102cfdc7665805e8c067f141fecb4b.png" alt="C = \nabla\Phi^T\nabla\Phi"/></p>
+</div><p>The deformation tensor (Green-Lagrange)</p>
+<div class="math">
+<p><img src="../_images/math/1350f75f5189cf1f067d83b1898640804033f10d.png" alt="E = \frac{1}{2}\left(\nabla\Phi^T\nabla\Phi - I)\right)
+  = \frac{1}{2}\left({\nabla u^T}{\nabla u} + {\nabla u^T} + {\nabla u}\right)"/></p>
+</div><p>(In the case of linear elasticity, <img class="math" src="../_images/math/5c38d8777c50fa046c72bd2f55405b4bea4f5de0.png" alt="{\nabla u^T}{\nabla u}" style="vertical-align: -1px"/> is neglected).</p>
+<p>One has</p>
+<div class="math">
+<p><img src="../_images/math/86e7f00b581b514aecfc2453353f10b361f08f65.png" alt="C = \nabla\Phi^T\nabla\Phi = 2 E + I."/></p>
+</div><p>Both tensors <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C" style="vertical-align: 0px"/> are used to describe finite strain elasticity constitutive laws.</p>
+<div class="section" id="main-invariants-and-derivatives">
+<h3>Main invariants and derivatives<a class="headerlink" href="#main-invariants-and-derivatives" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The description of finite strain elasticity constitutive laws often requires the principal invariants of the deformation tensors:</p>
+<p><img class="math" src="../_images/math/aad712550620d442cd1dba2000d7e26d96c25349.png" alt="i_1,i_2,i_3" style="vertical-align: -4px"/> are the invariants of orders <img class="math" src="../_images/math/2d338f393d100febd19e4284537ac40517b48340.png" alt="1,2" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/7cde695f2e4542fd01f860a89189f47a27143b66.png" alt="3" style="vertical-align: 0px"/>:</p>
+<div class="math">
+<p><img src="../_images/math/46629e01039e03d9b3068e054eb59700b5a00de9.png" alt="i_1( E) = \mbox{tr } E \hspace{5cm} &amp;i_1( C) = 2\mbox{tr } E + 3\\
+i_2( E) = \frac{(\mbox{tr } E)^2 - \mbox{tr } E^2}{2}\quad\hspace{3cm}&amp; i_2( C)=4i_2( E)+4i_1( E)+3\\
+i_3( E) = \det E \hspace{5cm} &amp;i_3( C) = 8i_3( E) + 4i_2( E) + 2i_1( E) + 1"/></p>
+</div><p>The derivatives of the invariants with respect to the tensor <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> in the direction <img class="math" src="../_images/math/b1902d279ba37d60bdce4e0e987b7cd19d48974e.png" alt="H" style="vertical-align: 0px"/> are:</p>
+<div class="math">
+<p><img src="../_images/math/89d6539bb463e455633ff222f5254e1d8f49c332.png" alt="&amp;\frac{\partial i_1}{\partial E}(E;H) = I:H = \mbox{tr } H\\
+&amp;\frac{\partial i_2}{\partial E}(E;H) = (i_1( E)I -  E^T):H = (\mbox{tr }  E)(\mbox{tr } H) -  E^T:H\\
+&amp;\frac{\partial i_3}{\partial E}(E;H) = i_3( E)(E^{-T}):H  = (i_2( E)I - i_1( E) E +  E^2):H \mbox{ in 3D}."/></p>
+</div><p>We will write</p>
+<div class="math">
+<p><img src="../_images/math/30430968063e97d4f0db95d05d9111fac70306fa.png" alt="&amp;\frac{\partial i_1}{\partial E}(E) = I\\
+&amp;\frac{\partial i_2}{\partial E}(E) = i_1( E)I -  E^T\\
+&amp;\frac{\partial i_3}{\partial E}(E) = i_3( E)E^{-T}."/></p>
+</div><p>Let us also recall that</p>
+<div class="math">
+<p><img src="../_images/math/b02b0b19fd103b8d4906b1ae44293ef4c69ece41.png" alt="\frac{\partial (M^{-1})}{\partial M}(M;H) = -M^{-1}HM^{-1}"/></p>
+</div><p>The second derivatives of the invariants are fourth order tensors defined by</p>
+<div class="math">
+<p><img src="../_images/math/aa064c692d8db6e8aeef9a155ba5a0ba35291220.png" alt="&amp;\frac{\partial^2 i_1}{\partial E^2}(E) = 0\\
+&amp;\frac{\partial^2 i_2}{\partial E^2}(E)_{ijkl} = \delta_{ij}\delta_{kl} - \delta_{il}\delta_{jk} \\
+&amp;\frac{\partial^2 i_3}{\partial E^2}(E)_{ijkl} = i_3(E) (E^{-1}_{ji}E^{-1}_{lk} - E^{-1}_{jk}E^{-1}_{li})."/></p>
+</div><p>The notation <img class="math" src="../_images/math/0a04f4e905bfccb0efbe137bc83a2e29f1f4165c.png" alt="A:B" style="vertical-align: 0px"/> denotes the Frobenius product <img class="math" src="../_images/math/7b9d8a57a295862c92d388eba4df2d4b63e3bbcb.png" alt="A:B = \displaystyle\sum_{ij}A_{ij}B_{ij}" style="vertical-align: -24px"/>. This product has the following properties:</p>
+<div class="math">
+<p><img src="../_images/math/b401b6ff52234e6c878ab4e6e3129bfbf0beefec.png" alt="A:B &amp;= \mbox{tr }(A^TB) = \mbox{tr }(AB^T) = \mbox{tr }(BA^T) = \mbox{tr }(B^TA),\\
+A:BC &amp;= B^TA:C,\\
+A:BC &amp;= AC^T:B,\\
+\mbox{tr }(ABC) &amp;= \mbox{tr }(B^TA^TC^T)"/></p>
+</div><p>Note also that</p>
+<div class="math">
+<p><img src="../_images/math/8de5af15f838a02c278cea32ef6f4055a964f5e8.png" alt="\frac{\partial i_j}{\partial E}(C;H) = 2 \frac{\partial i_j}{\partial C}(C;H)."/></p>
+</div><p>This property enables us to write the constitutive laws as a function of the Cauchy-Green tensor invariants, especially for the case of the generalized Blatz-Ko strain energy.</p>
+</div>
+<div class="section" id="potential-elastic-energy-and-its-derivative">
+<h3>Potential elastic energy and its derivative<a class="headerlink" href="#potential-elastic-energy-and-its-derivative" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The stress in the reference configuration can be describe by the second Piola-Kirchhoff stress tensor <img class="math" src="../_images/math/325966eb469d7d35962cf32755f26b384aa77805.png" alt="{\hat{\hat{\sigma}}} = \nabla\Phi^{-1}\sigma\nabla\Phi^{-t}~\det \nabla\Phi" style="vertical-align: -1px"/> where <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> is the Cauchy stress tensor in the deformed configuration <img class="math" src="../_images/math/f71d06d762a6c84475cc4a89a032b5f41fef60b1.png" alt="\Omega_t" style="vertical-align: -3px"/>. An hyper-elastic constitutive law is given by</p>
+<div class="math">
+<p><img src="../_images/math/838b98cfa099f9fa8b28fb0a41e578eed41e501f.png" alt="{\hat{\hat{\sigma}}} &amp;= \frac{\partial}{\partial E} {W}(E) = 2\frac{\partial}{\partial C} {W}(C)"/></p>
+</div><p>where <img class="math" src="../_images/math/f1d4712e95baabf79529ab6c25828dded7524f31.png" alt="{W}" style="vertical-align: 0px"/> is the density of strain energy of the material. The total strain energy is given by</p>
+<div class="math">
+<p><img src="../_images/math/a90f58b87c61d67bc7ee9fe7ef6296d0fa42038b.png" alt="\mathcal{I}(u) = \int_{\Omega} W( E(u)) dX"/></p>
+</div><p>and the derivative of the energy in a direction <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> can be writen</p>
+<div class="math">
+<p><img src="../_images/math/04786515f54bcb24c08f407bc8aa9018b44bbf98.png" alt="D\mathcal{I}(u;v) = \int_{\Omega} \frac{\partial W}{\partial E}( E(u)):(I+{\nabla u^T}){\nabla v}  dX"/></p>
+</div><p>because in particular</p>
+<div class="math">
+<p><img src="../_images/math/fc64af0255f9b36b56fe49954a33650d7749a9c5.png" alt="D E(u;v) &amp;= \frac{1}{2}({\nabla u^T}{\nabla v} + {\nabla v^T}{\nabla u} + {\nabla v^T} + {\nabla v})\\
+&amp;= \frac{1}{2}({\nabla v^T}(I+{\nabla u}) + (I+{\nabla u^T}){\nabla v})"/></p>
+</div><p>and <img class="math" src="../_images/math/1fffd6303d8f516675b30d49b12eb1ab3a209f69.png" alt="A:B = A:(B+B^T)/2" style="vertical-align: -5px"/> when A is symmetric which is the case for <img class="math" src="../_images/math/9ea7c045c90139adf2d10941b0f58e55193b866c.png" alt="{\hat{\hat{\sigma}}}" style="vertical-align: 0px"/>.</p>
+<p>Another way is to consider the static equilibrium which can be written as follows in the reference configuration:</p>
+<div class="math">
+<p><img src="../_images/math/6025090de515ab5b50b27e717a596005f9ed6205.png" alt="-\mbox{div } \left((I+{\nabla u}){\hat{\hat{\sigma}}}\right) = f."/></p>
+</div><p>Integrating by parts, one obtains:</p>
+<div class="math">
+<p><img src="../_images/math/e71eccca569d449f056850d6d280caa9ecac4509.png" alt="\int_{\Omega}(I + {\nabla u}){\hat{\hat{\sigma}}} : {\nabla v}  dX = l(v)."/></p>
+</div></div>
+<div class="section" id="tangent-matrix">
+<h3>Tangent matrix<a class="headerlink" href="#tangent-matrix" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The displacement <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> is fixed. In order to obtain the tangent matrix, one subsitutes <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> with <img class="math" src="../_images/math/857b17ce0c831ab583fbcf6dda773232000986b6.png" alt="u+h" style="vertical-align: -2px"/></p>
+<div class="math">
+<p><img src="../_images/math/9addac54712d7ef6d393471d3b367e01cb9e5424.png" alt="\int_\Omega(I + {\nabla u} + {\nabla h}){\hat{\hat{\sigma}}}( E(u)+ E(h) + \frac{1}{2}({\nabla h^T}{\nabla u}+{\nabla u^T}{\nabla h})) : {\nabla v}  dX = l(v)"/></p>
+</div><p>and considers the linear part w.r.t. <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/>, which is</p>
+<div class="math">
+<p><img src="../_images/math/67c667e30f3d5151403eef367841fe81a530b982.png" alt="\int_\Omega{\nabla h}~{\hat{\hat{\sigma}}}( E(u)) : {\nabla v}  dX +\\
+\int_\Omega \frac{\partial^2 W}{\partial E^2}\left(\frac{{\nabla h}+{\nabla h^T}+{\nabla h^T}{\nabla u}+{\nabla u^T}{\nabla h}}{2}\right) : (I+{\nabla u}^T){\nabla v}  dX"/></p>
+</div><p>which is symmetric w.r.t. <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/>. It can be rewritten as</p>
+<div class="math">
+<p><img src="../_images/math/c075b559d3b117c757002c24e0bee5bba7b01783.png" alt="\int_\Omega {\nabla h}~{\hat{\hat{\sigma}}}( E(u)) : {\nabla v}  + \mathcal{A}((I+{\nabla u^T}){\nabla h}):(I+{\nabla u}^T){\nabla v}~ dX"/></p>
+</div><p>where <img class="math" src="../_images/math/0b7bf42db84e4d2dbb7bf55476c12bf9f6233bc5.png" alt="\mathcal{A}" style="vertical-align: -1px"/> is the symmetric <img class="math" src="../_images/math/f9d7366cd7c1954726cfc28fdd14cef3563b3736.png" alt="3\times3\times3\times3" style="vertical-align: 0px"/> tensor given by <img class="math" src="../_images/math/e5031871a272a4d70352a868858a757d1a1b3774.png" alt="\mathcal{A}_{ijkl} = ((\frac{\partial^2 W}{\partial E^2})_{ijkl} + (\frac{\partial^2 W}{\partial E^2})_{ijlk})/2" style="vertical-align: -7px"/>.</p>
+</div>
+<div class="section" id="some-classical-constitutive-laws">
+<h3>Some classical constitutive laws<a class="headerlink" href="#some-classical-constitutive-laws" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="section" id="linearized-saint-venant-kirchhoff-law-small-deformations">
+<h4><tt class="docutils literal"><span class="pre">Linearized:</span> <span class="pre">Saint-Venant</span> <span class="pre">Kirchhoff</span>&nbsp; <span class="pre">law</span> <span class="pre">(small</span> <span class="pre">deformations)</span></tt><a class="headerlink" href="#linearized-saint-venant-kirchhoff-law-small-deformations" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<div class="math">
+<p><img src="../_images/math/1316a38cbd7bff5fa65babea0033373d24b43088.png" alt="{W} &amp;= \frac{\lambda}{2}i_1( E)^2 + \mu i_1( E^2)\\
+{\hat{\hat{\sigma}}}   &amp;= \lambda i_1( E)I + 2\mu E\\
+\mathcal{A} &amp;= \lambda i_1(H)I + \mu (H + H^T)"/></p>
+</div></div>
+<div class="section" id="three-parameters-mooney-rivlin-law">
+<h4><tt class="docutils literal"><span class="pre">Three</span> <span class="pre">parameters</span> <span class="pre">Mooney-Rivlin</span> <span class="pre">law</span></tt><a class="headerlink" href="#three-parameters-mooney-rivlin-law" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>Compressible material.</p>
+<div class="math">
+<p><img src="../_images/math/9e074efd5abd45151d1c904fe5a81d8ed895a5c8.png" alt="{W} = c_1(j_1( C) - 3) + c_2(j_2( C)-3) + d_1(i_3( C)^{1/2}-1)^2"/></p>
+</div><p>where <img class="math" src="../_images/math/00322295674c54c5413520f7493470ff32ae3cec.png" alt="c_1" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/a6d4142d351ef99cc26a94e44c1912d904dd4a0c.png" alt="c_2" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/44612d9d6ec37da7f4edd0f205d65cdac5954dc0.png" alt="d_1" style="vertical-align: -4px"/> are given coefficients and</p>
+<div class="math">
+<p><img src="../_images/math/e04b5f0d3d855be50038a34863899fb633323d54.png" alt="j_1(C) &amp;= i_1(C) i_3(C)^{-1/3}\\
+j_2(C) &amp;= i_2(C) i_3(C)^{-2/3}\\
+\frac{\partial j_1}{\partial C}(C) &amp;= i_3(C)^{-1/3}\left(\frac{\partial i_1}{\partial C}(C) - \frac{i_1(C)}{3i_3(C)} \frac{\partial i_3}{\partial C}(C)\right)\\
+\frac{\partial j_2}{\partial C}(C) &amp;= i_3(C)^{-2/3}\left(\frac{\partial i_2}{\partial C}(C) - \frac{2i_2(C)}{3i_3(C)} \frac{\partial i_3}{\partial C}(C)\right)\\
+\frac{\partial^2 j_1}{\partial C^2}(C) &amp;= i_3(C)^{-1/3}\left(\frac{4i_1(C)}{9i_3(C)^2} \frac{\partial i_3}{\partial C}(C) \otimes \frac{\partial i_3}{\partial C}(C) - \frac{1}{3i_3(C)}\left(\frac{\partial i_3}{\partial C}(C) \otimes \frac{\partial i_1}{\partial C}(C)\right.\right. \\
+&amp; ~~~~~~~~~~~~~~~~\left.\left. + \frac{\partial i_1}{\partial C}(C) \otimes \frac{\partial i_3}{\partial C}(C)\right) - \frac{i_1(C)}{3i_3(C)} \frac{\partial^2 i_3}{\partial C^2}(C)\right)\\
+\frac{\partial^2 j_2}{\partial C^2}(C) &amp;= i_3(C)^{-2/3}\left(\frac{\partial^2 i_2}{\partial C^2}(C) + \frac{10i_2(C)}{9i_3(C)^2} \frac{\partial i_3}{\partial C}(C) \otimes \frac{\partial i_3}{\partial C}(C) \right. \\
+&amp; ~~~~~~~~~~~~~~~~\left. - \frac{2}{3i_3(C)}(\frac{\partial i_3}{\partial C}(C) \otimes \frac{\partial i_2}{\partial C}(C) + \frac{\partial i_2}{\partial C}(C) \otimes \frac{\partial i_3}{\partial C}(C)) - \frac{2i_2(C)}{3i_3(C)} \frac{\partial^2 i_3}{\partial C^2}(C)\right)"/></p>
+</div><p>and then</p>
+<div class="math">
+<p><img src="../_images/math/a68a68c9e3d7223a538d0368e81c1e29679f691c.png" alt="{\hat{\hat{\sigma}}}   &amp;= 2c_1 \frac{\partial j_1}{\partial C}(C) + 2c_2 \frac{\partial j_2}{\partial C}(C)  + 2d_1\left(1-i_3(C)^{-1/2}\right)\frac{\partial i_3}{\partial C}(C) \\
+\mathcal{B} &amp;= 4 c_1 \frac{\partial^2 j_1}{\partial C^2}(C) + 4c_2 \frac{\partial^2 j_2}{\partial C^2}(C) + 4d_1\left(\left(1-i_3(C)^{-1/2}\right)\frac{\partial^2 i_3}{\partial C^2}(C) + \frac{1}{2}i_3(C)^{-3/2} \frac{\partial i_3}{\partial C}(C) \otimes \frac{\partial i_3}{\partial C}(C)\right) \\
+\mathcal{A}_{ijkl} &amp;= (\mathcal{B}_{ijkl} + \mathcal{B}_{jikl})/2"/></p>
+</div><p>Incompressible material.</p>
+<div class="math">
+<p><img src="../_images/math/013a6d39743e220b23a00e7d1fb1c45d0521f1f5.png" alt="{d_1} = 0
+\intertext{with the additional constraint:}
+i_3( C) = 1"/></p>
+</div><p>The incompressibility constraint <img class="math" src="../_images/math/efb51acbeaed0a754c9a157b060ddd1bfdd54776.png" alt="i_3( C) = 1" style="vertical-align: -4px"/> is handled with a Lagrange multiplier <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> (the pressure)</p>
+<p>constraint: <img class="math" src="../_images/math/28da3b453bbd23dba9dd296e2a2e272981664d33.png" alt="\sigma = -pI \Rightarrow {\hat{\hat{\sigma}}} = -p\nabla\Phi\nabla\Phi^{-T}\det\nabla\Phi" style="vertical-align: -4px"/></p>
+<div class="math">
+<p><img src="../_images/math/37d10e5b8554cbe036735f0de1b274381f90d92c.png" alt="1 - i_3(\nabla\Phi) &amp;= 0 \\
+-\int_{\Omega_0} (\det\nabla\Phi  -1) q  dX &amp;= 0 ~~~ \forall q"/></p>
+</div><div class="math">
+<p><img src="../_images/math/c9fc5b03d0f04f25e900b876da4b260472e58444.png" alt="B &amp;= -\int_{\Omega_0} p(\nabla\Phi)^{-T} \det \nabla\Phi : \nabla v  dX \\
+K &amp;= \int_{\Omega_0} \left( p(\nabla\Phi)^{-T}(\nabla h)^{T}(\nabla\Phi)^{-T}\det\nabla\Phi : \nabla v  dX -
+p(\nabla\Phi)^{-T}(\det \nabla\Phi(\nabla\Phi)^{-T}:\nabla h) : \nabla v \right)  dX\\
+&amp;= \int_{\Omega_0} p(\nabla h^T\nabla\Phi^{-T}):(\nabla\Phi^{-1}\nabla v)\det\nabla\Phi dX - \int_{\Omega_0} p(\nabla\Phi^{-T}:\nabla h)(\nabla\Phi^{-T}:\nabla v)\det\nabla\Phi dX"/></p>
+</div></div>
+<div class="section" id="ciarlet-geymonat-law">
+<h4><tt class="docutils literal"><span class="pre">Ciarlet-Geymonat</span> <span class="pre">law</span></tt><a class="headerlink" href="#ciarlet-geymonat-law" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<div class="math">
+<p><img src="../_images/math/9f9650bf4ccc720103064237e4999acdd4964997.png" alt="{W} &amp;= a\; i_1(C) + (\frac{\mu}{2} - a)i_2(C) + (\frac{\lambda}{4} - \frac{\mu}{2} + a)i_3(C) - (\frac{\mu}{2}+\frac{\lambda}{4})\log \det(C)"/></p>
+</div><p>with  <img class="math" src="../_images/math/9a15a07f3bbe7e6adf0fea5f58e4559bcfb45037.png" alt="\lambda, \mu" style="vertical-align: -4px"/> the Lame coefficients and <img class="math" src="../_images/math/5aefc45b8e00aaef7009dcf5ac37a695af630d41.png" alt="\max(0,\frac{\mu}{2}-\frac{\lambda}{4})&lt;a&lt;\frac{\mu}{2}" style="vertical-align: -6px"/> (see <a class="reference internal" href="../biblio.html#ciarlet1988" id="id1">[ciarlet1988]</a>).</p>
+</div>
+<div class="section" id="generalized-blatz-ko-law">
+<h4><tt class="docutils literal"><span class="pre">Generalized</span> <span class="pre">Blatz-Ko</span> <span class="pre">law</span></tt><a class="headerlink" href="#generalized-blatz-ko-law" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<div class="math">
+<p><img src="../_images/math/8a1b81b17f5dc4f7e56ea02011550182b093174e.png" alt="{W} &amp;= (ai_1(C) + bi_3(C)^{1/2} + c\frac{\i_2(C)}{\i_3(C)} + d)^n"/></p>
+</div><p>Since <img class="math" src="../_images/math/bee0dacb55fc9d80d1dfea22f83dd99ba31608cd.png" alt="\frac{\partial}{\partial C} {W}(C) = \displaystyle\sum_{j}\frac{\partial W}{\partial i_j(C)} \frac{\partial i_j(C)}{\partial C}" style="vertical-align: -24px"/>, and <img class="math" src="../_images/math/f0d91edfeee06494e10802f14d001424ee9974f3.png" alt="\frac{\partial^2}{\partial C^2} {W}(C) = \displaystyle\sum_{j} \displaystyle\sum_{k} \frac{\partial^2 W}{\partial i_j(C) \partial i_k(C)} \frac{\partial i_k(C)}{\partial C} \otimes \frac{\partial i_j(C)}{\partial C} + \displaystyle\sum_{j} \frac{\partial W}{\partial i_j(C)} \frac{\partial^2 i_j(C)}{\partial C^2}" style="vertical-align: -24px"/> we must compute the derivatives of the strain energy function with respect to the Cauchy-Green tensor invariants (we don&#8217;t need to compute the invariants derivatives with respect to <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> since <img class="math" src="../_images/math/eda042c8c974ff5cb6dc9aa485f5734d9a0d91ea.png" alt="\frac{\partial i_j}{\partial E}(C;H) = 2 \frac{\partial i_j}{\partial C}(C;H)" style="vertical-align: -7px"/>) :</p>
+<div class="math">
+<p><img src="../_images/math/283ec53b8252a302ed17e5f0cef05114c2ae675b.png" alt="\begin{array}{l}
+\frac{\partial W}{\partial i_1(C)} = naZ^{n-1}
+~~~~\mbox{with } Z = (ai_1(C) + bi_3(C)^{1/2} + c\frac{\i_2(C)}{\i_3(C)} + d)\\
+\frac{\partial W}{\partial i_2(C)} = n\frac{c}{i_3(C)}Z^{n-1}\\
+\frac{\partial W}{\partial i_3(C)} = n(\frac{b}{2i_3(C)^{1/2}}-\frac{ci_2(C)}{i_3(C)^2})Z^{n-1}\\
+\frac{\partial W^2}{\partial^2 i_1(C)} = n(n-1)A^2Z^{n-2}\\
+\frac{\partial W^2}{\partial i_1(C) \partial i_2(C)} = n(n-1)A\frac{c}{i_3(C)}Z^{n-2}\\
+\frac{\partial W^2}{\partial i_1(C) \partial i_3(C)} = n(n-1)A(\frac{b}{2i_3(C)^{1/2}}-\frac{ci_2(C)}{i_3(C)^2})Z^{n-2}\\
+\frac{\partial W^2}{\partial^2 i_2(C)} = n(n-1)\frac{c^2}{i_3(C)^2}Z^{n-2}\\
+\frac{\partial W^2}{\partial i_2(C) \partial i_3(C)} = n(n-1)(\frac{b}{2i_3(C)^{1/2}}-\frac{ci_2(C)}{i_3(C)^2})Z^{n-2} - n\frac{c^2}{i_3(C)^2}Z^{n-1}\\
+\frac{\partial W^2}{\partial i_3(C)^2} = n(n-1)(\frac{b}{2i_3(C)^{1/2}}-\frac{ci_2(C)}{i_3(C)^2})^2Z^{n-2} + n(-\frac{b}{4i_3(C)^{3/2}}+2\frac{ci_2(C)}{i_3(C)^4})Z^{n-1}
+\end{array}"/></p>
+</div></div>
+<div class="section" id="plane-strain-hyper-elasticity">
+<h4><tt class="docutils literal"><span class="pre">Plane</span> <span class="pre">strain</span> <span class="pre">hyper-elasticity</span></tt><a class="headerlink" href="#plane-strain-hyper-elasticity" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>All previous models are valid in volumic domains. Corresponding plane strain 2D models can be obtained by restricting the stress tensor and the fourth order tensor <img class="math" src="../_images/math/0b7bf42db84e4d2dbb7bf55476c12bf9f6233bc5.png" alt="\mathcal{A}" style="vertical-align: -1px"/> to their plane components.</p>
+</div>
+</div>
+</div>
+<div class="section" id="add-an-nonlinear-elasticity-brick-to-a-model">
+<h2>Add an nonlinear elasticity brick to a model<a class="headerlink" href="#add-an-nonlinear-elasticity-brick-to-a-model" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This brick represents a large strain elasticity problem. It is defined in the files <tt class="file docutils literal"><span class="pre">getfem/getfem_nonlinear_elasticity.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem/getfem_nonlinear_elasticity.cc</span></tt>. The function adding this brick to a model is</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">add_nonlinear_elasticity_brick</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">AHL</span><span class="p">,</span> <span class="n">dataname</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">AHL</span></tt> is an object of type <tt class="docutils literal"><span class="pre">getfem::abstract_hyperelastic_law</span></tt> which represents the considered hyperelastic law. It has to be chosen between:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">SaintVenant_Kirchhoff_hyperelastic_law</span> <span class="n">AHL</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">Ciarlet_Geymonat_hyperelastic_law</span> <span class="n">AHL</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">Mooney_Rivlin_hyperelastic_law</span> <span class="n">AHL</span><span class="p">(</span><span class="n">compressible</span><span class="p">,</span> <span class="n">neohookean</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">plane_strain_hyperelastic_law</span> <span class="n">AHL</span><span class="p">(</span><span class="n">pAHL</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">generalized_Blatz_Ko_hyperelastic_law</span> <span class="n">AHL</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The Saint-Venant Kirchhoff law is a linearized law defined with the two Lame coefficients, Ciarlet Geymonat law is defined with the two Lame coefficients and an additional coefficient (<img class="math" src="../_images/math/303e84ba3b57e6db0c9e4f0425c695a8044763b1.png" alt="\lambda, \mu, a" style="vertical-align: -4px"/>).</p>
+<p>The Mooney-Rivlin law accepts two optional flags, the first one determines if the material will be compressible (<img class="math" src="../_images/math/93a57585da5a8f56fb4c1ca24557aef4251e0500.png" alt="d_1 \neq 0" style="vertical-align: -4px"/>) and the second one determines if the material is neo Hookean (<img class="math" src="../_images/math/4d4d2a846997f0071179079867053aa8dfee5266.png" alt="c_2 = 0" style="vertical-align: -3px"/>). Depending on these flags one to three coefficients may be necessary. By default it is defined as incompressible and non neo Hookean, thus it needs two material coefficients (<img class="math" src="../_images/math/00322295674c54c5413520f7493470ff32ae3cec.png" alt="c_1" style="vertical-align: -4px"/>, <img class="math" src="../_images/math/a6d4142d351ef99cc26a94e44c1912d904dd4a0c.png" alt="c_2" style="vertical-align: -3px"/>). In this case, it is to be used with the large strain incompressibility condition.</p>
+<p>The plane strain hyperelastic law takes a pointer on a hyperelastic law as a parameter and performs a 2D plane strain approximation.</p>
+<p><tt class="docutils literal"><span class="pre">md</span></tt> is the model variable, <tt class="docutils literal"><span class="pre">mim</span></tt> the integration method, <tt class="docutils literal"><span class="pre">varname</span></tt> the string being the name of the variable on which the term is added, <tt class="docutils literal"><span class="pre">dataname</span></tt> the string being the name of the data in the model representing the coefficients of the law (can be constant or decribe on a finite element method) and <tt class="docutils literal"><span class="pre">region</span></tt> is the region on which the term is considered (by default, all the mesh).</p>
+<p>The program <tt class="file docutils literal"><span class="pre">nonlinear_elastostatic.cc</span></tt> in <tt class="file docutils literal"><span class="pre">tests</span></tt> directory and <tt class="file docutils literal"><span class="pre">demo_nonlinear_elasticity.m</span></tt> in <tt class="file docutils literal"><span class="pre">interface/tests/matlab</span></tt> directory are some examples of use of this brick with or without an incompressibility condition.</p>
+<p>Note that the addition of a new hyperelastic constitutive law consists in furnishing the expression of the strain energy, the stress tensor and the derivative of the stress tensor. See the file  <tt class="file docutils literal"><span class="pre">getfem/getfem_nonlinear_elasticity.cc</span></tt> for more details. In particular, expression of the invariants and their derivatives are available.</p>
+<p>A function which computes the Von Mises or Tresca stresses is also available:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">VM</span> <span class="o">=</span> <span class="n">compute_Von_Mises_or_Tresca</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">AHL</span><span class="p">,</span> <span class="n">dataname</span><span class="p">,</span> <span class="n">mf_vm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="n">tresca</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It returns a vector of the degrees of freedom of the Von Mises or Tresca stress on the finite element method mf_vm. <tt class="docutils literal"><span class="pre">tresca</span></tt> is a boolean whose value should be <tt class="docutils literal"><span class="pre">true</span></tt> for Tresca stress and <tt class="docutils literal"><span class="pre">false</span></tt> for Von Mises stress.</p>
+</div>
+<div class="section" id="add-a-large-strain-incompressibility-brick-to-a-model">
+<h2>Add a large strain incompressibility brick to a model<a class="headerlink" href="#add-a-large-strain-incompressibility-brick-to-a-model" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This brick adds an incompressibility condition in a large strain problem of type</p>
+<div class="math">
+<p><img src="../_images/math/41006d6d245c49473e6e285cafeec7b1a59e9ee8.png" alt="\mbox{det}(I+\nabla u) = 1,"/></p>
+</div><p>A Lagrange multiplier representing the pressure is introduced in a mixed formulation. The function adding this brick to a model is</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind</span> <span class="o">=</span> <span class="n">add_nonlinear_incompressibility_brick</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">multname</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md</span></tt> is the model, <tt class="docutils literal"><span class="pre">mim</span></tt> the integration method, <tt class="docutils literal"><span class="pre">varname</span></tt> the variable of the model on which the incompressibility condition is added, <tt class="docutils literal"><span class="pre">multanme</span></tt> the multiplier variable corresponding to the pressure (be aware that at least a linear Ladyzhenskaja-Babuska-Brezzi inf-sup condition is satisfied between the f.e.m. of the variable and the one of the multiplier). <tt class="docutils literal"><span class="pre">region</span></tt> is an optional parameter correponding to the mesh region on which the term is considered (by default, all the mesh).</p>
+</div>
+<div class="section" id="high-level-generic-assembly-versions">
+<h2>High-level generic assembly versions<a class="headerlink" href="#high-level-generic-assembly-versions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The weak form language gives access to the hyperelastic potential and constitutive laws implemented in <em>GetFEM++</em>. This allows to directly use them in the language, for instance using a generic assembly brick in a model or for interpolation of certain quantities (the stress for instance).</p>
+<p>Here is the list of nonlinear operators in the language which can be useful for nonlinear elasticity:</p>
+<div class="highlight-c++"><pre>Det(M)                                % determinant of the matrix M
+Trace(M)                              % trace of the matrix M
+Matrix_i2(M)                          % second invariant of M (in 3D): (sqr(Trace(m)) - Trace(m*m))/2
+Matrix_j1(M)                          % modified first invariant of M: Trace(m)pow(Det(m),-1/3).
+Matrix_j2(M)                          % modified second invariant of M: Matrix_I2(m)*pow(Det(m),-2/3).
+Right_Cauchy_Green(F)                 % F&#x27; * F
+Left_Cauchy_Green(F)                  % F * F&#x27;
+Green_Lagrangian(F)                   % (F&#x27;F - Id(meshdim))/2
+Cauchy_stress_from_PK2(sigma, Grad_u) % (Id+Grad_u)*sigma*(I+Grad_u&#x27;)/det(I+Grad_u)</pre>
+</div>
+<p>The potentials:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Saint_Venant_Kirchhoff_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span> <span class="n">mu</span><span class="p">])</span>
+<span class="n">Plane_Strain_Saint_Venant_Kirchhoff_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span> <span class="n">mu</span><span class="p">])</span>
+<span class="n">Generalized_Blatz_Ko_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">;</span><span class="n">b</span><span class="p">;</span><span class="n">c</span><span class="p">;</span><span class="n">d</span><span class="p">;</span><span class="n">n</span><span class="p">])</span>
+<span class="n">Plane_Strain_Generalized_Blatz_Ko_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">;</span><span class="n">b</span><span class="p">;</span><span class="n">c</span><span class="p">;</span><span class="n">d</span><span class="p">;</span><span class="n">n</span><span class="p">])</span>
+<span class="n">Ciarlet_Geymonat_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">;</span><span class="n">a</span><span class="p">])</span>
+<span class="n">Plane_Strain_Ciarlet_Geymonat_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">;</span><span class="n">a</span><span class="p">])</span>
+<span class="n">Incompressible_Mooney_Rivlin_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">])</span>
+<span class="n">Plane_Strain_Incompressible_Mooney_Rivlin_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">])</span>
+<span class="n">Compressible_Mooney_Rivlin_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Mooney_Rivlin_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Incompressible_Neo_Hookean_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">])</span>
+<span class="n">Plane_Strain_Incompressible_Neo_Hookean_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">])</span>
+<span class="n">Compressible_Neo_Hookean_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Neo_Hookean_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Compressible_Neo_Hookean_Bonet_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Neo_Hookean_Bonet_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+<span class="n">Compressible_Neo_Hookean_Ciarlet_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Neo_Hookean_Ciarlet_potential</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The second Piola-Kirchhoff stress tensors:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">Saint_Venant_Kirchhoff_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span> <span class="n">mu</span><span class="p">])</span>
+<span class="n">Plane_Strain_Saint_Venant_Kirchhoff_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span> <span class="n">mu</span><span class="p">])</span>
+<span class="n">Generalized_Blatz_Ko_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">;</span><span class="n">b</span><span class="p">;</span><span class="n">c</span><span class="p">;</span><span class="n">d</span><span class="p">;</span><span class="n">n</span><span class="p">])</span>
+<span class="n">Plane_Strain_Generalized_Blatz_Ko_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">;</span><span class="n">b</span><span class="p">;</span><span class="n">c</span><span class="p">;</span><span class="n">d</span><span class="p">;</span><span class="n">n</span><span class="p">])</span>
+<span class="n">Ciarlet_Geymonat_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">;</span><span class="n">a</span><span class="p">])</span>
+<span class="n">Plane_Strain_Ciarlet_Geymonat_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">;</span><span class="n">a</span><span class="p">])</span>
+<span class="n">Incompressible_Mooney_Rivlin_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">])</span>
+<span class="n">Plane_Strain_Incompressible_Mooney_Rivlin_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">])</span>
+<span class="n">Compressible_Mooney_Rivlin_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Mooney_Rivlin_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">c2</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Incompressible_Neo_Hookean_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">])</span>
+<span class="n">Plane_Strain_Incompressible_Neo_Hookean_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">])</span>
+<span class="n">Compressible_Neo_Hookean_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Neo_Hookean_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">;</span><span class="n">d1</span><span class="p">])</span>
+<span class="n">Compressible_Neo_Hookean_Bonet_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Neo_Hookean_Bonet_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+<span class="n">Compressible_Neo_Hookean_Ciarlet_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+<span class="n">Plane_Strain_Compressible_Neo_Hookean_Ciarlet_sigma</span><span class="p">(</span><span class="n">Grad_u</span><span class="p">,</span> <span class="p">[</span><span class="n">lambda</span><span class="p">;</span><span class="n">mu</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Note that the derivatives with respect to the material parameters have not been implemented apart for the Saint Venant Kirchhoff hyperelastic law. Therefore, it is not possible to make the parameter depend on other variables of a model (derivatives are not necessary complicated to implement but for the moment, only a wrapper with old implementations has been written).</p>
+<p>Note that the coupling of models is to be done at the weak formulation level. In a general way, it is recommended not to use the potential to define a problem. Two reasons are first that the second order derivative of the potential (necessary to obtain the tangent system) can be very complicated and non-optimized and main couplings cannot be obtained at the potential level. Thus the use of potential should be restricted to the actual computation of the potential.</p>
+<p>An example of use to add a Saint Venant-Kirchhoff hyperelastic term to a variable <tt class="docutils literal"><span class="pre">u</span></tt> in a model or a ga_workspace is given by the addition of the following assembly string:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="s">&quot;((Id(meshdim)+Grad_u)*(Saint_Venant_Kirchhoff_sigma(Grad_u,[lambda;mu]))):Grad_Test_u&quot;</span>
+</pre></div>
+</div>
+<p>Note that in that case, <tt class="docutils literal"><span class="pre">lambda</span></tt> and <tt class="docutils literal"><span class="pre">mu</span></tt> have to be declared data of the model/ga_workspace. It is of course possible to replace them by explicit constants or expressions depending on several data.</p>
+<p>Concerning the incompressible Mooney-Rivlin law, it has to be completed by an incompressibility term. For instance by adding the following incompressibility brick:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind</span> <span class="o">=</span> <span class="n">add_finite_strain_incompressibility_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">multname</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This brick just adds the term <tt class="docutils literal"><span class="pre">p*(1-Det(Id(meshdim)+Grad_u))</span></tt> if <tt class="docutils literal"><span class="pre">p</span></tt> is the multiplier and <tt class="docutils literal"><span class="pre">u</span></tt> the variable which represents the displacement.</p>
+<p>The addition of an hyperelastic term to a model can also be done thanks to the following function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">ind</span> <span class="o">=</span> <span class="n">add_finite_strain_elasticity_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">lawname</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
+                                         <span class="n">region</span> <span class="o">=</span> <span class="n">size_type</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md</span></tt> is the model, <tt class="docutils literal"><span class="pre">mim</span></tt> the integration method, <tt class="docutils literal"><span class="pre">varname</span></tt> the variable of the model representing the large strain displacement, <tt class="docutils literal"><span class="pre">lawname</span></tt> is the constitutive law name which could be <tt class="docutils literal"><span class="pre">Saint_Venant_Kirchhoff</span></tt>, <tt class="docutils literal"><span class="pre">Generalized_Blatz_Ko</span></tt>, <tt class="docutils literal"><span class="pre">Ciarlet_Geymonat</span></tt>, <tt class="docutils literal"><span class="pre">Incompressible_Mooney_Rivlin</span></tt>, <tt class="docutils literal"><span class="pre">Compressible_Mooney_Rivlin</span></tt>, <tt class="docutils literal"><span class="pre">Incompressible_Neo_Hookean</span></tt>, <tt class="docutils literal"><span class="pre">Compressible_Neo_Hookean</span></tt>, <tt class="docutils literal"><span class="pre">Compressible_Neo_Hookean_Bonet</span></tt> or <tt class="docutils literal"><span class="pre">Compressible_Neo_Hookean_Ciarlet</span></tt>. <tt class="docutils literal"><span class="pre">params</span></tt> is a string representing the parameters of the law defined as a small vector or a vector field.</p>
+<p>The Von Mises stress can be interpolated with the following function:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">compute_finite_strain_elasticity_Von_Mises</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">lawname</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">mf_vm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span>
+                                                <span class="n">rg</span><span class="o">=</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">all_convexes</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">md</span></tt> is the model, <tt class="docutils literal"><span class="pre">varname</span></tt> the variable of the model representing the large strain displacement, <tt class="docutils literal"><span class="pre">lawname</span></tt> is the constitutive law name (see previou brick), <tt class="docutils literal"><span class="pre">params</span></tt> is a string representing the parameters of the law, <tt class="docutils literal"><span class="pre">mf_vm</span></tt> a (preferably discontinuous) Lagrange  finite element method on which the interpolation will be done and <tt class="docutils literal"><span class="pre">VM</span></tt> a vector of type <tt class="docutils literal"><span class="pre">model_real_plain_vector</span></tt> in which the interpolation will be stored.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Finite strain Elasticity bricks</a><ul>
+<li><a class="reference internal" href="#some-recalls-on-finite-strain-elasticity">Some recalls on finite strain elasticity</a><ul>
+<li><a class="reference internal" href="#main-invariants-and-derivatives">Main invariants and derivatives</a></li>
+<li><a class="reference internal" href="#potential-elastic-energy-and-its-derivative">Potential elastic energy and its derivative</a></li>
+<li><a class="reference internal" href="#tangent-matrix">Tangent matrix</a></li>
+<li><a class="reference internal" href="#some-classical-constitutive-laws">Some classical constitutive laws</a><ul>
+<li><a class="reference internal" href="#linearized-saint-venant-kirchhoff-law-small-deformations"><tt class="docutils literal"><span class="pre">Linearized:</span> <span class="pre">Saint-Venant</span> <span class="pre">Kirchhoff</span>&nbsp; <span class="pre">law</span> <span class="pre">(small</span> <span class="pre">deformations)</span></tt></a></li>
+<li><a class="reference internal" href="#three-parameters-mooney-rivlin-law"><tt class="docutils literal"><span class="pre">Three</span> <span class="pre">parameters</span> <span class="pre">Mooney-Rivlin</span> <span class="pre">law</span></tt></a></li>
+<li><a class="reference internal" href="#ciarlet-geymonat-law"><tt class="docutils literal"><span class="pre">Ciarlet-Geymonat</span> <span class="pre">law</span></tt></a></li>
+<li><a class="reference internal" href="#generalized-blatz-ko-law"><tt class="docutils literal"><span class="pre">Generalized</span> <span class="pre">Blatz-Ko</span> <span class="pre">law</span></tt></a></li>
+<li><a class="reference internal" href="#plane-strain-hyper-elasticity"><tt class="docutils literal"><span class="pre">Plane</span> <span class="pre">strain</span> <span class="pre">hyper-elasticity</span></tt></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#add-an-nonlinear-elasticity-brick-to-a-model">Add an nonlinear elasticity brick to a model</a></li>
+<li><a class="reference internal" href="#add-a-large-strain-incompressibility-brick-to-a-model">Add a large strain incompressibility brick to a model</a></li>
+<li><a class="reference internal" href="#high-level-generic-assembly-versions">High-level generic assembly versions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_continuation.html"
+                        title="前の章へ">Numerical continuation and bifurcation</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_plasticity_small_strain.html"
+                        title="次の章へ">Small strain plasticity</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_plasticity_small_strain.html" title="Small strain plasticity"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_continuation.html" title="Numerical continuation and bifurcation"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

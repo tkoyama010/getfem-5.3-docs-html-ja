@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Miscellaneous methods &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Basic linear algebra operations" href="blas.html" />
+    <link rel="prev" title="sub-vectors and sub-matrices" href="sub-matrix.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="blas.html" title="Basic linear algebra operations"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="sub-matrix.html" title="sub-vectors and sub-matrices"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="miscellaneous-methods">
+<span id="gmm-misc"></span><h1>Miscellaneous methods<a class="headerlink" href="#miscellaneous-methods" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">vect_size</span><span class="p">(</span><span class="n">V</span><span class="p">);</span> <span class="c1">// gives the size of the vector V.</span>
+</pre></div>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">resize</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span> <span class="c1">// Change the size of the vector V.</span>
+                   <span class="c1">// Preserve the min(n, vect_size(V)) first components.</span>
+                   <span class="c1">// Do not work for references.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">resize</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span> <span class="c1">// Change the dimensions of matrix M.</span>
+                      <span class="c1">// Preserve the</span>
+                      <span class="c1">// min(m, mat_nrows(M)) x min(n, mat_ncols(M))</span>
+                      <span class="c1">// first components. Do not work for references.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">reshape</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>  <span class="c1">// returns the m-by-n matrix whose elements</span>
+                        <span class="c1">// are taken columnwise from M.</span>
+                        <span class="c1">// An error results if M does not have m*m</span>
+                        <span class="c1">// elements. Works only with dense_matrix&lt;T&gt; for</span>
+                        <span class="c1">// the moment.</span>
+</pre></div>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">nnz</span><span class="p">(</span><span class="n">V</span><span class="p">);</span> <span class="c1">// gives the number of stored components of the vector V.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">nnz</span><span class="p">(</span><span class="n">M</span><span class="p">);</span> <span class="c1">// gives the total number of stored components of the matrix M.</span>
+</pre></div>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">mat_nrows</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="c1">// gives the number of rows of a matrix M.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">mat_ncols</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="c1">// gives the number of columns of a matrix M.</span>
+</pre></div>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span> <span class="c1">// print the vector V to the output stream o.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">M</span><span class="p">);</span> <span class="c1">// print the matrix M to the output stream o.</span>
+</pre></div>
+</div>
+<p>Most of the time it is more convenient to use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">gmm</span><span class="o">::</span><span class="n">vref</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">M</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">clear</span><span class="p">(</span><span class="n">V</span><span class="p">);</span> <span class="c1">// set to zero all the components of the vector V;</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">clear</span><span class="p">(</span><span class="n">M</span><span class="p">);</span> <span class="c1">// set to zero all the components of the matrix M;</span>
+</pre></div>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">clean</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="mf">1E-10</span><span class="p">);</span> <span class="c1">// set to zero all the components of the vector V</span>
+                      <span class="c1">// whose modulus is less or equal to 1E-10</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">clean</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="mf">1E-10</span><span class="p">);</span> <span class="c1">// idem for a matrix M.</span>
+</pre></div>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">fill_random</span><span class="p">(</span><span class="n">V</span><span class="p">);</span> <span class="c1">// fill a dense vector V with random number</span>
+                     <span class="c1">//  between -1 and 1</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">fill_random</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">cfill</span><span class="p">);</span> <span class="c1">// fill a dense or sparse vector with random</span>
+                     <span class="c1">// numbers. cfill should be between 0.0 qnd 1.0 and</span>
+                     <span class="c1">// represent the ratio of filled components.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">fill_random</span><span class="p">(</span><span class="n">M</span><span class="p">);</span> <span class="c1">// fill a dense matrix M with random number</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">fill_random</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">cfill</span><span class="p">);</span> <span class="c1">// fill a dense or sparse matrix M with random</span>
+                     <span class="c1">// numbers.</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="sub-matrix.html"
+                        title="前の章へ">sub-vectors and sub-matrices</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="blas.html"
+                        title="次の章へ">Basic linear algebra operations</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="blas.html" title="Basic linear algebra operations"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="sub-matrix.html" title="sub-vectors and sub-matrices"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

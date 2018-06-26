@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Gmm++ Library &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="next" title="Introduction" href="intro.html" />
+    <link rel="prev" title="References" href="../biblio.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="../biblio.html" title="References"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/gmmlogo.png"><img alt="../_images/gmmlogo.png" src="../_images/gmmlogo.png" style="width: 300pt;" /></a>
+</div>
+<div class="section" id="gmm-library">
+<span id="gmm"></span><h1>Gmm++ Library<a class="headerlink" href="#gmm-library" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matrix.html">Matrix and Vector type provided by <em>Gmm++</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matrix.html#dense-vectors">dense vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix.html#sparse-vectors">sparse vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix.html#skyline-vectors">skyline vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix.html#generic-row-and-column-matrices">generic row and column matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix.html#dense-matrices">dense matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix.html#sparse-matrices">sparse matrices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="export.html">Input and output with Harwell-Boeing and Matrix Market formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sub-matrix.html">sub-vectors and sub-matrices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sub-matrix.html#row-and-column-of-a-matrix">row and column of a matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blas.html">Basic linear algebra operations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#scale-and-scaled">scale and scaled</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#transposition">transposition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#imaginary-and-real-part">imaginary and real part</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#conjugate">conjugate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#add">add</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#mult">mult</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#norms">norms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#trace">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blas.html#scalar-product">scalar product</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="triangular.html">Solving triangular systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="denselu.html">Dense LU decomposition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="denseqr.html">Dense QR factorisation, eigenvalues and eigenvectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="iter.html">Iterative solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="iter.html#iterations">iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iter.html#linear-solvers">Linear solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iter.html#preconditioners">Preconditioners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iter.html#additive-schwarz-method">Additive Schwarz method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iter.html#range-basis-function">Range basis function</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="catch.html">Catch errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blas_interface.html">Interface with BLAS, LAPACK or ATLAS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superlu.html">Interface with SuperLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qd.html">How to use <em>Gmm++</em> with QD type (double-double and quad-double)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="first-step.html">First steps with <em>Gmm++</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="first-step.html#how-can-i-invert-a-matrix">How can I invert a matrix ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first-step.html#how-can-i-solve-a-linear-system">How can I solve a linear system ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first-step.html#how-can-i-transform-a-vector-into-a-matrix-and-reshape-it">How can I transform a vector into a matrix and reshape it ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first-step.html#what-is-the-better-way-to-resize-a-matrix">What is the better way to resize a matrix ?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inside.html">Deeper inside <em>Gmm++</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#the-linalg-traits-structure">The linalg_traits structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#how-to-iterate-on-the-components-of-a-vector">How to iterate on the components of a vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#how-to-iterate-on-a-matrix">How to iterate on a matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inside.html#how-to-make-your-algorithm-working-on-all-type-of-matrices">How to make your algorithm working on all type of matrices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="noverif.html">How to disable verifications</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="../biblio.html"
+                        title="前の章へ">References</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="intro.html"
+                        title="次の章へ">Introduction</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="#"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="../biblio.html" title="References"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

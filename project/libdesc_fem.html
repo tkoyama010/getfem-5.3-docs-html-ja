@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fem module &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="next" title="Integ module" href="libdesc_im.html" />
+    <link rel="prev" title="Mesh module" href="libdesc_mesh.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc_im.html" title="Integ module"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_mesh.html" title="Mesh module"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" accesskey="U">Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fem-module">
+<span id="dp-libdesc-fem"></span><h1>Fem module<a class="headerlink" href="#fem-module" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The Fem module is the part of <em>GetFEM++</em> which describes the finite elements at the
+element level and the degrees of freedom. Finite element methods can be of
+different types. They could be scalar or vectorial, polynomial, piecewise
+polynomial or non-polynomial, equivalent via the geometric transformation or not.
+Moreover, the description of the degrees of freedom have to be such that it is
+possible to gather the compatible degrees of freedom between two neighbour
+elements in a generic way (for instance connecting a Lagrange 2D element to
+another Lagrange 1D element).</p>
+</div>
+<div class="section" id="files">
+<h2>Files<a class="headerlink" href="#files" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File(s)</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">bgeot_poly.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_poly_composite.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_poly.cc</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_poly_composite.cc</span></tt></td>
+<td>Some classes to represent polynomials and piecewise polynomials in order to describe shape functions of a finite element method on the reference element.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_fem.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_fem.cc</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_fem_composite.cc</span></tt></td>
+<td>Descriptors for finite element and a degree of freedom. Polynomial finite elements are defined in <tt class="file docutils literal"><span class="pre">getfem_fem.cc</span></tt> and piecewise polynomial finite elements in <tt class="file docutils literal"><span class="pre">getfem_fem_composite.cc</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_fem_global_function.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_fem_global_function.cc</span></tt></td>
+<td>Defines a fem with base functions defined as global functions given by the user. Useful for enrichment with singular functions and for implementation of meshless methods.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_projected_fem.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_projected_fem.cc</span></tt></td>
+<td>Defines a fem which is the projection of a finite element space (represented by a mesh_fem) on a different mesh. Note that the high-generic assembly language offers also this functionality by means of the interpolated transformations.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_interpolated_fem.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_interpolated_fem.cc</span></tt></td>
+<td>Dsfines a fem which is the interpolation of a finite element space (represented by a mesh_fem) on a different mesh. Note that the high-generic assembly language offers also this functionality by means of the interpolated transformations.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="state">
+<h2>State<a class="headerlink" href="#state" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The two files <tt class="file docutils literal"><span class="pre">getfem_fem.cc</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_fem_composite.cc</span></tt> mainly
+contains all the finite element description for basic elements. A exhaustive list
+of the defined finite elements is given in <a class="reference internal" href="../userdoc/appendixA.html#ud-appendixa"><em>Appendix A. Finite element method list</em></a>.</p>
+<p>Some other files define some specific finite element such as
+<tt class="file docutils literal"><span class="pre">getfem_fem_level_set.h</span></tt> which is a complex construction which allows to
+&#8220;cut&#8221; a existing element by one or several level sets.</p>
+<p>The manner to describe the degrees of freedom globally satisfies the needing
+(connecting dof from an element to another in a generic way) but is a little bit
+obscure and too much complicated.</p>
+<p>Conversely, the way to represent non-equivalent elements with the supplementary
+matrix <tt class="docutils literal"><span class="pre">M</span></tt> has proven its efficiency on several elements (Hermites elements,
+Argyris, etc.).</p>
+</div>
+<div class="section" id="perspectives">
+<h2>Perspectives<a class="headerlink" href="#perspectives" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The principal dissatisfaction of this module is that description of the degrees
+of freedom is not completely satisfactory. It is the principal reason why one
+documentation on how to build an element from A to Z was not made for the moment
+because description of the degrees of freedom was conceived to be temporary. An
+effort of design is thus to be provided to completely stabilize this module
+mainly thus with regard to the description of degrees of freedom but also perhaps
+the description of finite elements which could be partially externalized in a
+similar way to the cubature methods , at least for the simplest finite elements
+(equivalent and polynomial finite elements).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fem module</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#files">Files</a></li>
+<li><a class="reference internal" href="#state">State</a></li>
+<li><a class="reference internal" href="#perspectives">Perspectives</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="libdesc_mesh.html"
+                        title="前の章へ">Mesh module</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc_im.html"
+                        title="次の章へ">Integ module</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc_im.html" title="Integ module"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_mesh.html" title="Mesh module"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" >Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

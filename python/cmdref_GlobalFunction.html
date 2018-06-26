@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GlobalFunction &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="API reference" href="cmdref.html" />
+    <link rel="next" title="Integ" href="cmdref_Integ.html" />
+    <link rel="prev" title="GeoTrans" href="cmdref_GeoTrans.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Integ.html" title="Integ"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_GeoTrans.html" title="GeoTrans"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="globalfunction">
+<h1>GlobalFunction<a class="headerlink" href="#globalfunction" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="class">
+<dt id="getfem.GlobalFunction">
+<em class="property">class </em><tt class="descname">GlobalFunction</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#getfem.GlobalFunction" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>GeFEM GlobalFunction object</p>
+<p>Global function object is represented by three functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The function <cite>val</cite>.</li>
+<li>The function gradient <cite>grad</cite>.</li>
+<li>The function Hessian <cite>hess</cite>.</li>
+</ul>
+</div></blockquote>
+<p>this type of function is used as local and global enrichment function. The
+global function Hessian is an optional parameter (only for fourth order
+derivative problems).</p>
+<p>General constructor for GlobalFunction objects</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">GlobalFunction('cutoff',</span> <span class="pre">int</span> <span class="pre">fn,</span> <span class="pre">scalar</span> <span class="pre">r,</span> <span class="pre">scalar</span> <span class="pre">r1,</span> <span class="pre">scalar</span> <span class="pre">r0)</span></tt>
+Create a cutoff global function.</li>
+<li><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">GlobalFunction('crack',</span> <span class="pre">int</span> <span class="pre">fn)</span></tt>
+Create a near-tip asymptotic global function for modelling cracks.</li>
+<li><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">GlobalFunction('parser',</span> <span class="pre">string</span> <span class="pre">val[,</span> <span class="pre">string</span> <span class="pre">grad[,</span> <span class="pre">string</span> <span class="pre">hess]])</span></tt>
+Create a global function from strings <cite>val</cite>, <cite>grad</cite> and <cite>hess</cite>.
+This function could be improved by using the derivation of the generic
+assembly language ... to be done.</li>
+<li><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">GlobalFunction('product',</span> <span class="pre">GlobalFunction</span> <span class="pre">F,</span> <span class="pre">GlobalFunction</span> <span class="pre">G)</span></tt>
+Create a product of two global functions.</li>
+<li><tt class="docutils literal"><span class="pre">GF</span> <span class="pre">=</span> <span class="pre">GlobalFunction('add',</span> <span class="pre">GlobalFunction</span> <span class="pre">gf1,</span> <span class="pre">GlobalFunction</span> <span class="pre">gf2)</span></tt>
+Create a add of two global functions.</li>
+</ul>
+<dl class="method">
+<dt id="getfem.GlobalFunction.char">
+<tt class="descname">char</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GlobalFunction.char" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Output a (unique) string representation of the GlobalFunction.</p>
+<p>This can be used to perform comparisons between two
+different GlobalFunction objects.
+This function is to be completed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GlobalFunction.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="headerlink" href="#getfem.GlobalFunction.display" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>displays a short summary for a GlobalFunction object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GlobalFunction.grad">
+<tt class="descname">grad</tt><big>(</big><em>PTs</em><big>)</big><a class="headerlink" href="#getfem.GlobalFunction.grad" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return <cite>grad</cite> function evaluation in <cite>PTs</cite> (column points).</p>
+<p>On return, each column of <cite>GRADs</cite> is of the
+form [Gx,Gy].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GlobalFunction.hess">
+<tt class="descname">hess</tt><big>(</big><em>PTs</em><big>)</big><a class="headerlink" href="#getfem.GlobalFunction.hess" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return <cite>hess</cite> function evaluation in <cite>PTs</cite> (column points).</p>
+<p>On return, each column of <cite>HESSs</cite> is of the
+form [Hxx,Hxy,Hyx,Hyy].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="getfem.GlobalFunction.val">
+<tt class="descname">val</tt><big>(</big><em>PTs</em><big>)</big><a class="headerlink" href="#getfem.GlobalFunction.val" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return <cite>val</cite> function evaluation in <cite>PTs</cite> (column points).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="cmdref_GeoTrans.html"
+                        title="前の章へ">GeoTrans</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="cmdref_Integ.html"
+                        title="次の章へ">Integ</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="cmdref_Integ.html" title="Integ"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="cmdref_GeoTrans.html" title="GeoTrans"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>Python</em> Interface</a> &raquo;</li>
+          <li><a href="cmdref.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to use Gmm++ with QD type (double-double and quad-double) &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="First steps with Gmm++" href="first-step.html" />
+    <link rel="prev" title="Interface with SuperLU" href="superlu.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="first-step.html" title="First steps with Gmm++"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="superlu.html" title="Interface with SuperLU"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="how-to-use-gmm-with-qd-type-double-double-and-quad-double">
+<span id="gmm-qd"></span><h1>How to use <em>Gmm++</em> with QD type (double-double and quad-double)<a class="headerlink" href="#how-to-use-gmm-with-qd-type-double-double-and-quad-double" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The QD library (see <a class="reference external" href="http://www.cs.berkeley.edu/verb~yozo">http://www.cs.berkeley.edu/verb~yozo</a> or <a class="reference external" href="http://www.nersc.gov/verb~dhb/mpdist/mpdist.html">http://www.nersc.gov/verb~dhb/mpdist/mpdist.html</a>) is an efficient library for double-double (32 decimal digits) and quad-double (approx. 64 decimal digits). Once you installed this library on your system you have to link your program with QD library (with -lqd). In your program, include the header files of QD with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &lt;qd/dd.h&gt;</span>
+<span class="cp">#include &lt;qd/qd.h&gt;</span>
+<span class="cp">#include &lt;qd/fpu.h&gt;</span>
+</pre></div>
+</div>
+<p>Then the two type <tt class="docutils literal"><span class="pre">dd_real</span></tt> and <tt class="docutils literal"><span class="pre">qd_real</span></tt> will be usable with <em>Gmm++</em>. You will also be able to use <tt class="docutils literal"><span class="pre">std::complex&lt;dd_real&gt;</span></tt> and <tt class="docutils literal"><span class="pre">std::complex&lt;qdreal&gt;</span></tt></p>
+<p>IMPORTANT : do not forget to initialize QD before using it with the following call:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">old_cw</span><span class="p">;</span>
+<span class="n">fpu_fix_start</span><span class="p">(</span><span class="o">&amp;</span><span class="n">old_cw</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This disables the 80 bits precision of x86 processors which conflicts with QD. Once you finished to use QD you can reactivate it with:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">fpu_fix_end</span><span class="p">(</span><span class="o">&amp;</span><span class="n">old_cw</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>(see the QD documentation for more details).</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="superlu.html"
+                        title="前の章へ">Interface with SuperLU</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="first-step.html"
+                        title="次の章へ">First steps with <em>Gmm++</em></a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="first-step.html" title="First steps with Gmm++"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="superlu.html" title="Interface with SuperLU"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

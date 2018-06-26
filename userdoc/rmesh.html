@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mesh refinement &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Compute arbitrary terms - high-level generic assembly procedures" href="gasm_high.html" />
+    <link rel="prev" title="Selecting integration methods" href="binteg.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="gasm_high.html" title="Compute arbitrary terms - high-level generic assembly procedures"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="binteg.html" title="Selecting integration methods"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mesh-refinement">
+<span id="ud-rmesh"></span><h1>Mesh refinement<a class="headerlink" href="#mesh-refinement" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Mesh refinement with the Bank et all method (see <a class="reference internal" href="../biblio.html#bank1983" id="id1">[bank1983]</a>) is available in
+dimension 1, 2 or 3 for simplex meshes (segments, triangles and tetrahedrons).
+For a given object <tt class="docutils literal"><span class="pre">mymesh</span></tt> of type <tt class="docutils literal"><span class="pre">getfem::mesh</span></tt>, the method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">mymesh</span><span class="p">.</span><span class="n">Bank_refine</span><span class="p">(</span><span class="n">bv</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>refines the elements whose indices are stored in <tt class="docutils literal"><span class="pre">bv</span></tt> (a <tt class="docutils literal"><span class="pre">dal::bit_vector</span></tt> object). The
+conformity of the mesh is kept thanks to additional refinement (the so called
+green triangles). Information about green triangles (in Figure
+<a class="reference internal" href="#ud-fig-refine"><em>Example of Bank refinement in 2D</em></a>) is stored on the mesh object to gather them for further
+refinements (see <a class="reference internal" href="../biblio.html#bank1983" id="id2">[bank1983]</a>).</p>
+<div class="figure align-center" id="ud-fig-refine">
+<a class="reference internal image-reference" href="../_images/getfemuserrefine.png"><img alt="../_images/getfemuserrefine.png" src="../_images/getfemuserrefine.png" style="width: 7cm;" /></a>
+<p class="caption">Example of Bank refinement in 2D</p>
+</div>
+<p>Mesh refinement is most of the time coupled with an <em>a posteriori</em> error
+estimate. A very basic error estimate is available in the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_error_estimate.h</span></tt>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">error_estimate</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="n">mf</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">rg</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">mim</span></tt> is the integration method (a <tt class="docutils literal"><span class="pre">getfem::mesh_im</span></tt> object), <tt class="docutils literal"><span class="pre">mf</span></tt> is the finite
+element method on which the unknown has been computed (a <tt class="docutils literal"><span class="pre">getfem::mesh_fem</span></tt> object), <tt class="docutils literal"><span class="pre">U</span></tt> is
+the vector of degrees of freedom of the unknown, <tt class="docutils literal"><span class="pre">err</span></tt> is a sufficiently large
+vector in which the error estimate is computed for each element of the mesh, and
+<tt class="docutils literal"><span class="pre">rg</span></tt> is a mesh region bulild from elements on which the error estimate should be computed (a <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt> object).</p>
+<p>This basic error estimate is only valid for order two problems and just compute
+the sum of the jump in normal derivative across the elements on each edge (for
+two-dimensional problems) or each face (for three-dimensional problems). This
+means that for each face <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" style="vertical-align: 0px"/> of the mesh the following quantity is
+computed:</p>
+<div class="math">
+<p><img src="../_images/math/ce936de0228eaf54fab078cf5077b29d939c8a91.png" alt="\int_e |\hspace{0.01em}[\hspace{-0.12em}[
+\partial_n u ]\hspace{-0.12em}]\hspace{0.01em}|^2 d \Gamma,"/></p>
+</div><p>where <img class="math" src="../_images/math/6b7fb647f0e5a51f94021fd1faafab264e4b66bf.png" alt="[\hspace{-0.12em}[\partial_n u]\hspace{-0.12em}]" style="vertical-align: -5px"/> is the jump of the normal derivative. Then, the error estimate for a given element is the sum of the computed quantities on each internal face multiplied by the element diameter. This basic error estimate can be taken as a model for more elaborated ones. It uses the high-level generic assembly and the <tt class="docutils literal"><span class="pre">neighbour_elt</span></tt> interpolate transformation (see <a class="reference internal" href="gasm_high.html#ud-gasm-high-inter-elt-disc"><em>Evaluating discontinuities across inter-element edges/faces</em></a>).</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="binteg.html"
+                        title="前の章へ">Selecting integration methods</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="gasm_high.html"
+                        title="次の章へ">Compute arbitrary terms - high-level generic assembly procedures</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="gasm_high.html" title="Compute arbitrary terms - high-level generic assembly procedures"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="binteg.html" title="Selecting integration methods"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

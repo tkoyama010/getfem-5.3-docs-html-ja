@@ -1,0 +1,1124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Example of Thermo-elastic and electrical coupling (simple nonlinear coupled problem, model object, generic assembly, solve and visualization) &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="GetFEM++ Tutorial" href="index.html" />
+    <link rel="next" title="Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)" href="wheel.html" />
+    <link rel="prev" title="Basic Usage of GetFEM++" href="basic_usage.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="wheel.html" title="Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="basic_usage.html" title="Basic Usage of GetFEM++"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U"><em>GetFEM++</em> Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="example-of-thermo-elastic-and-electrical-coupling-simple-nonlinear-coupled-problem-model-object-generic-assembly-solve-and-visualization">
+<span id="tut-thermo-elec-coupling"></span><h1>Example of Thermo-elastic and electrical coupling (simple nonlinear coupled problem, model object, generic assembly, solve and visualization)<a class="headerlink" href="#example-of-thermo-elastic-and-electrical-coupling-simple-nonlinear-coupled-problem-model-object-generic-assembly-solve-and-visualization" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This example aims to present a simple example of a multiphysics problem with a nonlinear coupling of a displacement field, a temperature field and an electric potential field. It also aims to compare the use of the C++ library and the different interfaces. The corresponding demo files are present in the test directories of <em>GetFEM++</em> (<cite>tests/</cite>, <cite>interface/tests/python</cite>, <cite>interface/scr/scilab/demos</cite> and <cite>interface/tests/matlab</cite>).</p>
+<div class="section" id="the-problem-setting">
+<h2>The problem setting<a class="headerlink" href="#the-problem-setting" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Let <img class="math" src="../_images/math/34351db8edc91cfb50b5af8de09529d0749640b6.png" alt="\Omega \subset \R^2" style="vertical-align: -1px"/> be the reference configuration of a 2D plate (see the geometry <a class="reference internal" href="#tut-fig-meshthermo"><em>here</em></a>) of thickness <img class="math" src="../_images/math/e2a63918a6fa75b62ad87ad17aaf65f782d71546.png" alt="\varepsilon" style="vertical-align: 0px"/> submitted to external forces, electric potential and heating. We will denote by  <img class="math" src="../_images/math/e12a8af9b8f2086ce34f3e02c89d08ada2196878.png" alt="\theta : \Omega \rightarrow \R" style="vertical-align: -1px"/> the temperature field (in °C),  <img class="math" src="../_images/math/0023b81a095415f3c7a3804f54889dd50c74d4cc.png" alt="V : \Omega \rightarrow \R" style="vertical-align: -1px"/> the electric potential field and <img class="math" src="../_images/math/2a5413a809159a22a4d5aee9cdfc6bb4183d57d2.png" alt="u : \Omega \rightarrow \R^2" style="vertical-align: -1px"/> the membrane displacement field.</p>
+<div class="section" id="thermal-problem">
+<h3>Thermal problem<a class="headerlink" href="#thermal-problem" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The lateral faces of the plates are supposed to be in thermal insulation since the front and back faces of the plate are supposed to be in thermal exchange with the air (supposed at 20 °C) with a heat transfer coefficient <img class="math" src="../_images/math/9ffb448918db29f2a72f8f87f421b3b3cad18f95.png" alt="D" style="vertical-align: 0px"/>.</p>
+<p>The equation on the temperature <img class="math" src="../_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta" style="vertical-align: 0px"/> and boundary condition can be written as follows:</p>
+<div class="math">
+<p><img src="../_images/math/21f096380e3c73a1f4556157ed61ae2993aab0e4.png" alt="\left\{\begin{array}{l}
+-\mbox{div}(\varepsilon\kappa(\nabla \theta)) + 2D(\theta - T_0) - \varepsilon\sigma|\nabla V|^2 = 0 ~~ \mbox{ in } \Omega, \\
+\kappa\nabla \theta \cdot n = 0 ~~ \mbox{ on } \partial \Omega,
+\end{array} \right."/></p>
+</div><p>where the thermal conductivity is designed by <img class="math" src="../_images/math/da61bb0fa48fe71269aebf9c8e56b39275813994.png" alt="\kappa" style="vertical-align: 0px"/>, <img class="math" src="../_images/math/6801c07694edb238c4a095956d8bf46ccdb38fcc.png" alt="T_0" style="vertical-align: -3px"/> is the temperature of the air, <img class="math" src="../_images/math/8e8ad6e6563df57ba65066164700f8005af358ef.png" alt="\partial \Omega" style="vertical-align: -1px"/> the boundary of the domain <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> the outward unit normal vector to <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> on <img class="math" src="../_images/math/8e8ad6e6563df57ba65066164700f8005af358ef.png" alt="\partial \Omega" style="vertical-align: -1px"/>.</p>
+<p>The term <img class="math" src="../_images/math/6d2aa0f2f47ea4c258351586351607471876996f.png" alt="\sigma|\nabla V|^2" style="vertical-align: -5px"/> is a nonlinear coupling term corresponding to the Joule heating term, where <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> is the electrical conductivity.</p>
+</div>
+<div class="section" id="electric-potential-problem">
+<h3>Electric potential problem<a class="headerlink" href="#electric-potential-problem" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We consider a potential difference of <img class="math" src="../_images/math/21d4a8d43e8c83d941598c902f1d51a81558711d.png" alt="0.1V" style="vertical-align: -1px"/> between the right and left lateral face of the plate. The other faces are considered electrically insulated. The equation for the electric potential reads as</p>
+<div class="math">
+<p><img src="../_images/math/228d208aa67c1abbda089d030b386cfa28058a09.png" alt="\left\{\begin{array}{l}
+-\mbox{div}(\varepsilon\sigma(\nabla V)) = 0 ~~ \mbox{ in } \Omega, \\
+\sigma\nabla V \cdot n = 0 ~~ \mbox{ on the top an bottom lateral faces}, \\
+V = 0 ~~ \mbox{ on the right lateral face}, \\
+V = 0.1 ~~ \mbox{ on the left lateral face}, \\
+\end{array} \right."/></p>
+</div><p>where <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> is still the electrical conductivity. Moreover, we consider that <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> depends on the temperature as follows:</p>
+<div class="math">
+<p><img src="../_images/math/1fcd45830529fae6543dd7e3604b74c2e8355a99.png" alt="\sigma = \Frac{1}{\rho_0(1+\alpha(\theta - T_0))},"/></p>
+</div><p>where <img class="math" src="../_images/math/6801c07694edb238c4a095956d8bf46ccdb38fcc.png" alt="T_0" style="vertical-align: -3px"/> is a reference temperature (air temperature here), <img class="math" src="../_images/math/10b071702fff383bdcbc7bbaee13f6beeae9fd7f.png" alt="\rho_0" style="vertical-align: -4px"/> the resistance temperature coefficient at <img class="math" src="../_images/math/6801c07694edb238c4a095956d8bf46ccdb38fcc.png" alt="T_0" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha" style="vertical-align: 0px"/> a second resistance temperature coefficient.</p>
+</div>
+<div class="section" id="deformation-problem">
+<h3>Deformation problem<a class="headerlink" href="#deformation-problem" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We consider the membrane small deformation of the plate under a force applied on the right lateral face and influenced by the heating of the plate. The displacement <img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" style="vertical-align: 0px"/> will be solution of the following problem (linearized elasticity):</p>
+<div class="math">
+<p><img src="../_images/math/6e21f54c88108e97c48123fa3e4a5694ac874395.png" alt="\left\{\begin{array}{l}
+-\mbox{div}(\bar{\sigma}(u)) = 0 ~~ \mbox{ in } \Omega, \\
+\bar{\sigma}\ n = 0 ~~ \mbox{ on the top an bottom lateral faces}, \\
+\bar{\sigma}\ n = F ~~ \mbox{ on the right lateral face}, \\
+u = 0 ~~ \mbox{ on the left lateral face},
+\end{array} \right."/></p>
+</div><p>where <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" style="vertical-align: 0px"/> is the force density applied on the right lateral boundary and <img class="math" src="../_images/math/12afdcbe343f8c19498315ecedfddf832ee97b4f.png" alt="\bar{\sigma}(u)" style="vertical-align: -4px"/> is the Cauchy stress tensor defined by</p>
+<div class="math">
+<p><img src="../_images/math/a7351de7f14eb96bd24887fefeafc27fcea4c1e5.png" alt="\bar{\sigma}(u) = \lambda^* \mbox{div}(u) I + 2\mu \bar{\varepsilon}(u) + \beta(T_0-\theta) I,"/></p>
+</div><p><img class="math" src="../_images/math/7a31a024cda0a4fb9e32b880b9ef853f4b5251ff.png" alt="\bar{\varepsilon}(u) = (\nabla u + (\nabla u)^T)/2" style="vertical-align: -5px"/> being the linearized strain tensor, <img class="math" src="../_images/math/027f4a11d6090f9eac0ce2488df6384dad1263ea.png" alt="I" style="vertical-align: 0px"/> the identity second order tensor and <img class="math" src="../_images/math/928ed15c5cfb1301f19a695f24dcdd8d9e7bc84a.png" alt="\lambda^*, \mu" style="vertical-align: -4px"/> being the Lamé coefficients defined  by</p>
+<div class="math">
+<p><img src="../_images/math/06d7859343b74ef363af001d62ccd17f7d7434e1.png" alt="&amp;\lambda = \Frac{E\nu}{(1+\nu)(1-2\nu)}, \\
+&amp;\mu = \Frac{E}{2(1+\nu)}, \\
+&amp;\lambda^* = \Frac{2\lambda\mu}{\lambda+2*\mu},"/></p>
+</div><p>from <img class="math" src="../_images/math/fa2fa899f0afb05d6837885523503a2d4df434f9.png" alt="E" style="vertical-align: 0px"/> the Young modulus and <img class="math" src="../_images/math/d6a7ccf879c4a4fe694033606332cb83806db296.png" alt="\nu" style="vertical-align: 0px"/> the Poisson ratio of the material.</p>
+<p>The term <img class="math" src="../_images/math/a91e01c92de562ecfc5d082c2d1334ea441aa25f.png" alt="\beta(T_0-\theta) I" style="vertical-align: -4px"/> corresponds to the thermal expansion term, where <img class="math" src="../_images/math/8ee78acaa7dcac5fbf8b981be39a4d79c05c3489.png" alt="\beta = \alpha_{th} E/(1-2\nu)" style="vertical-align: -5px"/>, <img class="math" src="../_images/math/2130776379db7207c8e6d93192affc75db35d635.png" alt="\alpha_{th}" style="vertical-align: -3px"/> being the thermal expansion coefficient.</p>
+</div>
+</div>
+<div class="section" id="the-weak-formulation">
+<h2>The weak formulation<a class="headerlink" href="#the-weak-formulation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>An important step is to obtain the weak formulation of the coupled system of equations. This is a crucial step since the finite element formulation is based on the weak formulation (Galerkin approximation) and the weak formulation is the only one which can give us the expression of the terms to be added.</p>
+<p>Weak formulation of each partial differential equation is obtained by multiplying the equation with a test function corresponding to the main unknown satisfying homogeneous Dirichlet conditions where the main unknown satisfies a Dirichlet condition, then integrating over the domain <img class="math" src="../_images/math/9e2b196e9b7e57d1ec99f6534c581ea9759d2170.png" alt="\Omega" style="vertical-align: 0px"/> and performing some integrations by parts (using Green&#8217;s formula). The weak formulation of the system of partial differential equations reads:</p>
+<div class="math">
+<p><img src="../_images/math/07635cc1ae68c52b7548f1a5508d9768c3c5b199.png" alt="&amp;\mbox{Find } \theta, V, u \mbox{ with } V = 0.1, u = 0 \mbox{ on the left face}, V = 0 \mbox{ on the right face}, \\
+&amp;\ds \int_{\Omega} \varepsilon\kappa\nabla\theta\cdot\nabla\delta_{\theta} + 2D\theta\delta_{\theta}dx = \int_{\Omega} (2DT_0 + \varepsilon\sigma|\nabla V|^2)\delta_{\theta} dx ~~~\mbox{ for all } \delta_{\theta}, \\
+&amp;\ds \int_{\Omega} \varepsilon\sigma\nabla V\cdot\nabla\delta_V = 0 dx ~~~ \mbox{ for all } \delta_V \mbox{ satisfying } \delta_V = 0 \mbox{ on the left and right faces}, \\
+&amp;\ds \int_{\Omega} \bar{\sigma}(u):\bar{\varepsilon}(\delta_u)dx = \int_{\Gamma_N} F\cdot \delta_u d\Gamma ~~~ \mbox{ for all } \delta_{u} \mbox{ satisfying } \delta_u = 0 \mbox{ on the left face},"/></p>
+</div><p>where <img class="math" src="../_images/math/6a322aecf0783913607e61d7554bb96705d13baf.png" alt="\delta_{\theta}, \delta_V, \delta_u" style="vertical-align: -4px"/> are the test functions corresponding to <img class="math" src="../_images/math/d16772d1c29fb5174dbc12259590b15ded8fabde.png" alt="\theta, V, u" style="vertical-align: -4px"/>, respectively, <img class="math" src="../_images/math/0b983602095bda2a85dd1b0c177f154eaffbecbd.png" alt="\Gamma_N" style="vertical-align: -3px"/> denotes the right boundary where the density of force <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" style="vertical-align: 0px"/> is applied and <img class="math" src="../_images/math/5abb503bf21fd3ce5ed2e4f936193c6304d5a024.png" alt="\bar{\sigma}:\bar{\varepsilon}" style="vertical-align: 0px"/> is the Frobenius scalar product between second order tensors.</p>
+</div>
+<div class="section" id="implementation-in-c-and-with-the-interface">
+<h2>Implementation in C++ and with the interface<a class="headerlink" href="#implementation-in-c-and-with-the-interface" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Let us now make a detailed presentation of the use of <em>GetFEM++</em> to approximate the problem. We build simultaneously a C++, Python, Scilab and Matlab program. For Matlab and Scilab programs, we will not use the oriented object commands (see <a class="reference internal" href="../matlab/oocmd.html#mlab-oocmd"><em>GetFEM++ OO-commands</em></a> how to use them)</p>
+<div class="section" id="initialization">
+<h3>Initialization<a class="headerlink" href="#initialization" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>First, in C++, ones has to include a certain number of headers for the model object, the generic assembly, the linear interface (Gmm++), the experimental mesher and the export facilities. For Python, this is simpler, <em>GetFEM++</em> can be imported globally (numpy has also to be imported). For Scilab, the library has first to be loaded in the Scilab console (this is not described here) and for Matlab, nothing is necessary, except a <cite>gf_workspace(&#8216;clear all&#8217;)</cite> which allows to clear all <em>GetFEM++</em> variables.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;getfem/getfem_model_solvers.h&quot;</span>
+<span class="cp">#include &quot;getfem/getfem_export.h&quot;</span>
+<span class="cp">#include &quot;gmm/gmm.h&quot;</span>
+<span class="cp">#include &quot;getfem/getfem_mesher.h&quot;</span>
+<span class="cp">#include &quot;getfem/getfem_generic_assembly.h&quot;</span>
+
+<span class="k">using</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">size_type</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_node</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_small_vector</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">getfem</span><span class="o">::</span><span class="n">model_real_plain_vector</span> <span class="n">plain_vector</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">getfem</span> <span class="kn">as</span> <span class="nn">gf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_workspace</span><span class="p">(</span><span class="s">&#39;clear all&#39;</span><span class="p">);</span> <span class="o">//</span> <span class="n">In</span> <span class="k">case</span> <span class="n">of</span> <span class="n">multiple</span> <span class="n">runs</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_workspace</span><span class="p">(</span><span class="s">&#39;clear all&#39;</span><span class="p">);</span> <span class="c">% In case of multiple runs</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parameters-of-the-model">
+<h3>Parameters of the model<a class="headerlink" href="#parameters-of-the-model" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Let us now define the different physical and numerical parameters of the problem. For script languages (Python, Scilab and Matlab) there is no differences.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="kt">double</span> <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span> <span class="c1">// Thickness of the plate (cm)</span>
+<span class="kt">double</span> <span class="n">E</span> <span class="o">=</span> <span class="mf">21E6</span><span class="p">;</span>     <span class="c1">// Young Modulus (N/cm^2)</span>
+<span class="kt">double</span> <span class="n">nu</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">;</span>     <span class="c1">// Poisson ratio</span>
+<span class="kt">double</span> <span class="n">clambda</span> <span class="o">=</span> <span class="n">E</span><span class="o">*</span><span class="n">nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">));</span>
+<span class="kt">double</span> <span class="n">cmu</span> <span class="o">=</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">));</span>
+<span class="kt">double</span> <span class="n">clambdastar</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">clambda</span><span class="o">*</span><span class="n">cmu</span><span class="o">/</span><span class="p">(</span><span class="n">clambda</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">cmu</span><span class="p">);</span>
+<span class="kt">double</span> <span class="n">F</span> <span class="o">=</span> <span class="mf">100E2</span><span class="p">;</span>    <span class="c1">// Force density at the right boundary (N/cm^2)</span>
+<span class="kt">double</span> <span class="n">kappa</span> <span class="o">=</span> <span class="mf">4.</span><span class="p">;</span>   <span class="c1">// Thermal conductivity (W/(cm K))</span>
+<span class="kt">double</span> <span class="n">D</span> <span class="o">=</span> <span class="mf">10.</span><span class="p">;</span>      <span class="c1">// Heat transfer coefficient (W/(K cm^2))</span>
+<span class="kt">double</span> <span class="n">air_temp</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span><span class="c1">// Temperature of the air in oC.</span>
+<span class="kt">double</span> <span class="n">alpha_th</span> <span class="o">=</span> <span class="mf">16.6E-6</span><span class="p">;</span> <span class="c1">// Thermal expansion coefficient (/K)</span>
+<span class="kt">double</span> <span class="n">T0</span> <span class="o">=</span> <span class="mf">20.</span><span class="p">;</span>     <span class="c1">// Reference temperature in oC</span>
+<span class="kt">double</span> <span class="n">rho_0</span> <span class="o">=</span> <span class="mf">1.754E-8</span><span class="p">;</span> <span class="c1">// Resistance temperature coefficient at T0</span>
+<span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.0039</span><span class="p">;</span> <span class="c1">// Second resistance temperature coefficient</span>
+
+<span class="kt">double</span> <span class="n">h</span> <span class="o">=</span> <span class="mf">2.</span>        <span class="c1">// Approximate mesh size</span>
+<span class="n">bgeot</span><span class="o">::</span><span class="n">dim_type</span> <span class="n">elements_degree</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// Degree of the finite element methods</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Scripts</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span> <span class="n">E</span> <span class="o">=</span> <span class="mf">21E6</span><span class="p">;</span> <span class="n">nu</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">;</span>
+<span class="n">clambda</span> <span class="o">=</span> <span class="n">E</span><span class="o">*</span><span class="n">nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">));</span>
+<span class="n">cmu</span> <span class="o">=</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">nu</span><span class="p">));</span>
+<span class="n">clambdastar</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">clambda</span><span class="o">*</span><span class="n">cmu</span><span class="o">/</span><span class="p">(</span><span class="n">clambda</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">cmu</span><span class="p">);</span>
+<span class="n">F</span> <span class="o">=</span> <span class="mf">100E2</span><span class="p">;</span> <span class="n">kappa</span> <span class="o">=</span> <span class="mf">4.</span><span class="p">;</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="n">air_temp</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="n">alpha_th</span> <span class="o">=</span> <span class="mf">16.6E-6</span><span class="p">;</span>
+<span class="n">T0</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="n">rho_0</span> <span class="o">=</span> <span class="mf">1.754E-8</span><span class="p">;</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.0039</span><span class="p">;</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">elements_degree</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="mesh-generation">
+<h3>Mesh generation<a class="headerlink" href="#mesh-generation" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p><em>GetFEM++</em> has some limited meshing facilities which are described here. We are going to use them. However, there is no guaranty of the quality and conformity of the obtained mesh, so it is better to verify the mesh if you use <em>GetFEM++</em> meshing facilities. You can also use external meshers (GiD or Gmsh for instance) and import them (see <a class="reference internal" href="../userdoc/bmesh.html#ud-load-save-mesh"><em>Save and load meshes</em></a>).</p>
+<p>The geometry of the domain is supposed to be a rectangle with three circular holes (see <a class="reference internal" href="#tut-fig-meshthermo"><em>The obtained mesh.</em></a>). The geometry is described thanks to some geometrical primitives and union/setminus operations (see <tt class="file docutils literal"><span class="pre">src/getfem/getfem)_mesher.h</span></tt> file. In the following, <cite>h</cite> stands for the mesh size and <cite>2</cite> is the degree of the mesh (this means that the transformation is of degree two, we used curved edges).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh</span> <span class="n">mesh</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">pmesher_signed_distance</span>
+<span class="n">mo1</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">new_mesher_rectangle</span><span class="p">(</span><span class="n">base_node</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="n">base_node</span><span class="p">(</span><span class="mf">100.</span><span class="p">,</span> <span class="mf">25.</span><span class="p">)),</span>
+<span class="n">mo2</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">new_mesher_ball</span><span class="p">(</span><span class="n">base_node</span><span class="p">(</span><span class="mf">25.</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">),</span> <span class="mf">8.</span><span class="p">),</span>
+<span class="n">mo3</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">new_mesher_ball</span><span class="p">(</span><span class="n">base_node</span><span class="p">(</span><span class="mf">50.</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">),</span> <span class="mf">8.</span><span class="p">),</span>
+<span class="n">mo4</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">new_mesher_ball</span><span class="p">(</span><span class="n">base_node</span><span class="p">(</span><span class="mf">75.</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">),</span> <span class="mf">8.</span><span class="p">),</span>
+<span class="n">mo5</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">new_mesher_union</span><span class="p">(</span><span class="n">mo2</span><span class="p">,</span> <span class="n">mo3</span><span class="p">,</span> <span class="n">mo4</span><span class="p">),</span>
+<span class="n">mo</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">new_mesher_setminus</span><span class="p">(</span><span class="n">mo1</span><span class="p">,</span> <span class="n">mo5</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">getfem</span><span class="o">::</span><span class="n">base_node</span><span class="o">&gt;</span> <span class="n">fixed</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">build_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fixed</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">mo1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;rectangle&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.</span><span class="p">,</span> <span class="mf">25.</span><span class="p">])</span>
+<span class="n">mo2</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">25.</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mf">8.</span><span class="p">)</span>
+<span class="n">mo3</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">50.</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mf">8.</span><span class="p">)</span>
+<span class="n">mo4</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">75.</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mf">8.</span><span class="p">)</span>
+<span class="n">mo5</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;union&#39;</span><span class="p">,</span> <span class="n">mo2</span><span class="p">,</span> <span class="n">mo3</span><span class="p">,</span> <span class="n">mo4</span><span class="p">)</span>
+<span class="n">mo</span>  <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MesherObject</span><span class="p">(</span><span class="s">&#39;set minus&#39;</span><span class="p">,</span> <span class="n">mo1</span><span class="p">,</span> <span class="n">mo5</span><span class="p">)</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s">&#39;generate&#39;</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">mo1</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;rectangle&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span> <span class="mi">25</span><span class="p">]);</span>
+<span class="n">mo2</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">25</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">mo3</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">50</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">mo4</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">75</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">mo5</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;union&#39;</span><span class="p">,</span> <span class="n">mo2</span><span class="p">,</span> <span class="n">mo3</span><span class="p">,</span> <span class="n">mo4</span><span class="p">);</span>
+<span class="n">mo</span>  <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;set minus&#39;</span><span class="p">,</span> <span class="n">mo1</span><span class="p">,</span> <span class="n">mo5</span><span class="p">);</span>
+
+<span class="n">mesh</span> <span class="p">=</span> <span class="n">gf_mesh</span><span class="p">(</span><span class="s">&#39;generate&#39;</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">mo1</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;rectangle&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span> <span class="mi">25</span><span class="p">]);</span>
+<span class="n">mo2</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">25</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">mo3</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">50</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">mo4</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;ball&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">75</span> <span class="mf">12.5</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">mo5</span> <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;union&#39;</span><span class="p">,</span> <span class="n">mo2</span><span class="p">,</span> <span class="n">mo3</span><span class="p">,</span> <span class="n">mo4</span><span class="p">);</span>
+<span class="n">mo</span>  <span class="p">=</span> <span class="n">gf_mesher_object</span><span class="p">(</span><span class="s">&#39;set minus&#39;</span><span class="p">,</span> <span class="n">mo1</span><span class="p">,</span> <span class="n">mo5</span><span class="p">);</span>
+
+<span class="n">mesh</span> <span class="p">=</span> <span class="n">gf_mesh</span><span class="p">(</span><span class="s">&#39;generate&#39;</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure align-center" id="tut-fig-meshthermo">
+<a class="reference internal image-reference" href="../_images/mesh_thermo.png"><img alt="../_images/mesh_thermo.png" src="../_images/mesh_thermo.png" style="width: 975.0px; height: 344.0px;" /></a>
+<p class="caption">The obtained mesh.</p>
+</div>
+</div>
+<div class="section" id="boundary-selection">
+<h3>Boundary selection<a class="headerlink" href="#boundary-selection" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Since we have different boundary conditions on the different parts of the boundary, we have to number the different parts of the boundary (in the hole, thermal and electrical insulation together with a stress free boundary conditions are assumed). Thus, we have to select the element faces on the mesh and define mesh regions (see <a class="reference internal" href="../userdoc/bmesh.html#ud-mesh-regions"><em>Mesh regions</em></a>) 1, 2, 3, 4 to be the right boundary, the left one, the top one and the bottom one respectively. These boundary numbers will be used in the model bricks.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span> <span class="n">border_faces</span><span class="p">;</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">outer_faces_of_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">border_faces</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span> <span class="n">fb1</span>
+  <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">select_faces_in_box</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">border_faces</span><span class="p">,</span> <span class="n">base_node</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span>
+                 <span class="n">base_node</span><span class="p">(</span><span class="mf">99.</span><span class="p">,</span> <span class="mf">24.</span><span class="p">));</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span> <span class="n">fb2</span>
+  <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">select_faces_of_normal</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">border_faces</span><span class="p">,</span>
+                     <span class="n">base_small_vector</span><span class="p">(</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span> <span class="n">fb3</span>
+  <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">select_faces_of_normal</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">border_faces</span><span class="p">,</span>
+                     <span class="n">base_small_vector</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span> <span class="n">fb4</span>
+  <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">select_faces_of_normal</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">border_faces</span><span class="p">,</span>
+                     <span class="n">base_small_vector</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">),</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span> <span class="n">fb5</span>
+  <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">select_faces_of_normal</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">border_faces</span><span class="p">,</span>
+                     <span class="n">base_small_vector</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">),</span> <span class="mf">0.01</span><span class="p">);</span>
+
+<span class="n">size_type</span> <span class="n">RIGHT_BOUND</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">LEFT_BOUND</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">TOP_BOUND</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">BOTTOM_BOUND</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span>
+<span class="n">mesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span> <span class="n">RIGHT_BOUND</span><span class="p">)</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">subtract</span><span class="p">(</span><span class="n">fb2</span><span class="p">,</span> <span class="n">fb1</span><span class="p">);</span>
+<span class="n">mesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span>  <span class="n">LEFT_BOUND</span><span class="p">)</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">subtract</span><span class="p">(</span><span class="n">fb3</span><span class="p">,</span> <span class="n">fb1</span><span class="p">);</span>
+<span class="n">mesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span>   <span class="n">TOP_BOUND</span><span class="p">)</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">subtract</span><span class="p">(</span><span class="n">fb4</span><span class="p">,</span> <span class="n">fb1</span><span class="p">);</span>
+<span class="n">mesh</span><span class="p">.</span><span class="n">region</span><span class="p">(</span><span class="n">BOTTOM_BOUND</span><span class="p">)</span> <span class="o">=</span> <span class="n">getfem</span><span class="o">::</span><span class="n">mesh_region</span><span class="o">::</span><span class="n">subtract</span><span class="p">(</span><span class="n">fb5</span><span class="p">,</span> <span class="n">fb1</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">fb1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">outer_faces_in_box</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">99.</span><span class="p">,</span> <span class="mf">24.</span><span class="p">])</span>
+<span class="n">fb2</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">outer_faces_with_direction</span><span class="p">([</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">fb3</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">outer_faces_with_direction</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">fb4</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">outer_faces_with_direction</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">fb5</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">outer_faces_with_direction</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">RIGHT_BOUND</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">LEFT_BOUND</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span> <span class="n">TOP_BOUND</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span> <span class="n">BOTTOM_BOUND</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span> <span class="n">HOLE_BOUND</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span>
+
+<span class="n">mesh</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span> <span class="n">RIGHT_BOUND</span><span class="p">,</span> <span class="n">fb2</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span>  <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="n">fb3</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span>   <span class="n">TOP_BOUND</span><span class="p">,</span> <span class="n">fb4</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">BOTTOM_BOUND</span><span class="p">,</span> <span class="n">fb5</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span>  <span class="n">HOLE_BOUND</span><span class="p">,</span> <span class="n">fb1</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">region_subtract</span><span class="p">(</span> <span class="n">RIGHT_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">region_subtract</span><span class="p">(</span>  <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">region_subtract</span><span class="p">(</span>   <span class="n">TOP_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">region_subtract</span><span class="p">(</span><span class="n">BOTTOM_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">fb1</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces in box&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">99</span> <span class="mi">24</span><span class="p">]);</span>
+<span class="n">fb2</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">fb3</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">fb4</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span>  <span class="mi">1</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">fb5</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+
+<span class="n">RIGHT_BOUND</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">LEFT_BOUND</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span> <span class="n">TOP_BOUND</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span> <span class="n">BOTTOM_BOUND</span><span class="p">=</span><span class="mi">4</span><span class="p">;</span> <span class="n">HOLE_BOUND</span><span class="p">=</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>  <span class="n">RIGHT_BOUND</span><span class="p">,</span> <span class="n">fb2</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>   <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="n">fb3</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>    <span class="n">TOP_BOUND</span><span class="p">,</span> <span class="n">fb4</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span> <span class="n">BOTTOM_BOUND</span><span class="p">,</span> <span class="n">fb5</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>   <span class="n">HOLE_BOUND</span><span class="p">,</span> <span class="n">fb1</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span>  <span class="n">RIGHT_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span>   <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span>    <span class="n">TOP_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span> <span class="n">BOTTOM_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">fb1</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces in box&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">99</span> <span class="mi">24</span><span class="p">]);</span>
+<span class="n">fb2</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">fb3</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">fb4</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span>  <span class="mi">1</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">fb5</span> <span class="p">=</span> <span class="n">gf_mesh_get</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;outer faces with direction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">);</span>
+
+<span class="n">RIGHT_BOUND</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">LEFT_BOUND</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span> <span class="n">TOP_BOUND</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span> <span class="n">BOTTOM_BOUND</span><span class="p">=</span><span class="mi">4</span><span class="p">;</span> <span class="n">HOLE_BOUND</span><span class="p">=</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>  <span class="n">RIGHT_BOUND</span><span class="p">,</span> <span class="n">fb2</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>   <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="n">fb3</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>    <span class="n">TOP_BOUND</span><span class="p">,</span> <span class="n">fb4</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span> <span class="n">BOTTOM_BOUND</span><span class="p">,</span> <span class="n">fb5</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region&#39;</span><span class="p">,</span>   <span class="n">HOLE_BOUND</span><span class="p">,</span> <span class="n">fb1</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span>  <span class="n">RIGHT_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span>   <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span>    <span class="n">TOP_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+<span class="n">gf_mesh_set</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;region subtract&#39;</span><span class="p">,</span> <span class="n">BOTTOM_BOUND</span><span class="p">,</span> <span class="n">HOLE_BOUND</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="mesh-draw">
+<h3>Mesh draw<a class="headerlink" href="#mesh-draw" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>In order to preview the mesh and to control its validity, the following instructions can be used:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">vtk_export</span> <span class="n">exp</span><span class="p">(</span><span class="s">&quot;mesh.vtk&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">mesh</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_mesh</span><span class="p">();</span>
+<span class="c1">// You can view the mesh for instance with</span>
+<span class="c1">// mayavi2 -d mesh.vtk -f ExtractEdges -m Surface</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">mesh</span><span class="o">.</span><span class="n">export_to_vtk</span><span class="p">(</span><span class="s">&#39;mesh.vtk&#39;</span><span class="p">);</span>
+<span class="c"># You can view the mesh for instance with</span>
+<span class="c"># mayavi2 -d mesh.vtk -f ExtractEdges -m Surface</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">scf</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">gf_plot_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;curved&#39;</span><span class="p">,</span> <span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;regions&#39;</span><span class="p">,</span> <span class="c">...</span>
+             <span class="p">[</span><span class="n">RIGHT_BOUND</span> <span class="n">LEFT_BOUND</span> <span class="n">TOP_BOUND</span> <span class="n">BOTTOM_BOUND</span><span class="p">]);</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Mesh&#39;</span><span class="p">);</span>
+<span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_plot_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;curved&#39;</span><span class="p">,</span> <span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;regions&#39;</span><span class="p">,</span> <span class="c">...</span>
+             <span class="p">[</span><span class="n">RIGHT_BOUND</span> <span class="n">LEFT_BOUND</span> <span class="n">TOP_BOUND</span> <span class="n">BOTTOM_BOUND</span><span class="p">]);</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Mesh&#39;</span><span class="p">);</span>
+<span class="n">pause</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>In C++ and with the Python interface, an external graphical post-processor has to be used (for instance, gmsh, Mayavi2 or Paraview). With Scilab and Matlab interfaces, the internal plot facilities can be used (see the result <a class="reference internal" href="#tut-fig-meshthermo"><em>The obtained mesh.</em></a>).</p>
+</div>
+<div class="section" id="definition-of-finite-element-methods-and-integration-method">
+<h3>Definition of finite element methods and integration method<a class="headerlink" href="#definition-of-finite-element-methods-and-integration-method" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>We will define three finite element methods. The first one, <cite>mfu</cite> is to approximate the displacement field. This is a vector field. This is defined in C++ by</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="n">mfu</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">mfu</span><span class="p">.</span><span class="n">set_classical_finite_element</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where the <cite>2</cite> stands for the dimension of the vector field. The second line sets the finite element used. <cite>classical_finite_element</cite> means a continuous Lagrange element and remember that <cite>elements_degree</cite> has been set to <cite>2</cite> which means that we will use quadratic (isoparametric) elements.</p>
+<p>There is a wide choice of pre-existing finite element methods in <em>GetFEM++</em>, see <a class="reference internal" href="../userdoc/appendixA.html#ud-appendixa"><em>Appendix A. Finite element method list</em></a>. However, Lagrange finite element methods are the most used in practice.</p>
+<p>The second finite element method is a scalar one, <cite>mft</cite> with which we will approximate both the temperature field and the electric potential field. A single finite element method can serve to approximate an arbitrary number of finite element variables.</p>
+<p>The third finite element method is a discontinuous scalar Lagrange one which will allow us to interpolate the derivative of one of the variables (for instance to interpolate the Von Mises stress).</p>
+<p>The last thing to define is an integration method <cite>mim</cite>. There is no default integration method in <em>GetFEM++</em> so this is mandatory to define an integration method. Of course, the order of the integration method have to be chosen sufficient to make a convenient integration of the selected finite element method. Here, the square of <cite>elements_degree</cite> is sufficient.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="n">mfu</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">mfu</span><span class="p">.</span><span class="n">set_classical_finite_element</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="n">mft</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">mft</span><span class="p">.</span><span class="n">set_classical_finite_element</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_fem</span> <span class="n">mfvm</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">mfvm</span><span class="p">.</span><span class="n">set_classical_discontinuous_finite_element</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">);</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">mesh_im</span>  <span class="n">mim</span><span class="p">(</span><span class="n">mesh</span><span class="p">);</span>
+<span class="n">mim</span><span class="p">.</span><span class="n">set_integration_method</span><span class="p">(</span><span class="n">bgeot</span><span class="o">::</span><span class="n">dim_type</span><span class="p">(</span><span class="n">gmm</span><span class="o">::</span><span class="n">sqr</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)));</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">mfu</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">mfu</span><span class="o">.</span><span class="n">set_classical_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)</span>
+<span class="n">mft</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mft</span><span class="o">.</span><span class="n">set_classical_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)</span>
+<span class="n">mfvm</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshFem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mfvm</span><span class="o">.</span><span class="n">set_classical_discontinuous_fem</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">)</span>
+<span class="n">mim</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">MeshIm</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="nb">pow</span><span class="p">(</span><span class="n">elements_degree</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">mfu</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;classical fem&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="p">);</span>
+<span class="n">mft</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="s">&#39;classical fem&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="p">);</span>
+<span class="n">mfvm</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="s">&#39;classical discontinuous fem&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">mim</span> <span class="p">=</span> <span class="n">gf_mesh_im</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">elements_degree</span>^<span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">mfu</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;classical fem&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="p">);</span>
+<span class="n">mft</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="s">&#39;classical fem&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="p">);</span>
+<span class="n">mfvm</span> <span class="p">=</span> <span class="n">gf_mesh_fem</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">gf_mesh_fem_set</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="s">&#39;classical discontinuous fem&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">mim</span> <span class="p">=</span> <span class="n">gf_mesh_im</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">elements_degree</span>^<span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="model-definition">
+<h3>Model definition<a class="headerlink" href="#model-definition" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The model object in <em>GetFEM++</em> gather the variables of the models (the unknowns), the data and what is called the model bricks. The model bricks are some parts of the model (linear or nonlinear terms) applied on a single variable or linking several variables. They are used to make the assembly of the (tangent) linear system (see <a class="reference internal" href="../userdoc/model_object.html#ud-model-object"><em>The model object</em></a> for more details).</p>
+<p>This is not strictly mandatory to use the model object since one may use directly the assembly procedures and build by it own the (tangent) linear system. The model object allows a rapid build of the model since most classical parts of a model are pre-programmed: standard boundary conditions, standard partial differential equations, use of multipliers to prescribe a constraint ... Moreover, some bricks are designed to extend the possibilities of the standard bricks (generic assembly bricks, explicit matrix brick ...). Thus, it is recommended to use the framework of the model object.</p>
+<p>There are two versions of the model: the real one and the complex one. Complex models have to be reserved for special applications (some electromagnetism problems for instance) where it is advantageous to solve a complex linear system.</p>
+<p>Let us declare a real model with the three variables corresponding to the three fields to be computed:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">model</span> <span class="n">md</span><span class="p">;</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;theta&quot;</span><span class="p">,</span> <span class="n">mft</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">,</span> <span class="n">mft</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">=</span><span class="n">gf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">);</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">md</span><span class="p">=</span><span class="n">gf_model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">md</span><span class="p">=</span><span class="n">gf_model</span><span class="p">(</span><span class="s">&#39;real&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add fem variable&#39;</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="membrane-elastic-deformation-problem">
+<h3>Membrane elastic deformation problem<a class="headerlink" href="#membrane-elastic-deformation-problem" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Let us now begin by the elastic deformation problem. We will use the predefined brick added by <cite>add_isotropic_linearized_elasticity_brick</cite> below. Basically it adds the term corresponding to</p>
+<div class="math">
+<p><img src="../_images/math/b8a15b79aa8793124675da9b1c74bdb0a4191310.png" alt="\int_{\Omega} (\lambda^* \mbox{div}(u) I + 2\mu \bar{\varepsilon}(u)):\bar{\varepsilon}(\delta_u)dx,"/></p>
+</div><p>to the tangent linear system. In order to use this model brick, the data corresponding to he Lamé coefficient have to be added to the model first. Here, the Lamé coefficients are constant over the domain. However, it it also possible to define some non-constant data. Note also that instead of using this predefined brick, one can use equivalently the weak form language term <cite>add_linear_term(md mim, &#8220;lambda*(Div_u*Div_Test_u) + mu*((Grad_u + Grad_u&#8217;):Grad_Test_u)&#8221;</cite>.</p>
+<p>Concerning the coupling term</p>
+<div class="math">
+<p><img src="../_images/math/2562e1e538a37c6d30d57352772d9a0d13364e59.png" alt="\int_{\Omega} (\beta\theta I) :\bar{\varepsilon}(\delta_u)dx,"/></p>
+</div><p>there is no predefined brick and we use directly a weak form language term <cite>add_linear_term(md mim, &#8220;beta*theta*Div_Test_u)&#8221;</cite>. See <a class="reference internal" href="../userdoc/gasm_high.html#ud-gasm-high"><em>Compute arbitrary terms - high-level generic assembly procedures</em></a> for more details on the weak form language. Basically, the principle is that the assembly string is compiled into a list of optimized assembly instructions which are executed on each Gauss point.</p>
+<p>The following program allows to take into account the whole elastic deformation equation. Note the use of specific brick to prescribe the Dirichlet condition on the left boundary. There is several option to prescribe a Dirichlet condition (see <a class="reference internal" href="../userdoc/model_dirichlet.html#ud-model-dirichlet"><em>Dirichlet condition brick</em></a>).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;cmu&quot;</span><span class="p">,</span> <span class="n">cmu</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;clambdastar&quot;</span><span class="p">,</span> <span class="n">clambdastar</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;T0&quot;</span><span class="p">,</span> <span class="n">T0</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_isotropic_linearized_elasticity_brick</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;clambdastar&quot;</span><span class="p">,</span> <span class="s">&quot;cmu&quot;</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_Dirichlet_condition_with_multipliers</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">dim_type</span><span class="p">(</span><span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">LEFT_BOUND</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_fixed_size_data</span><span class="p">(</span><span class="s">&quot;Fdata&quot;</span><span class="p">,</span> <span class="n">base_small_vector</span><span class="p">(</span><span class="n">F</span><span class="o">*</span><span class="n">epsilon</span><span class="p">,</span><span class="mf">0.</span><span class="p">));</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;Fdata&quot;</span><span class="p">,</span> <span class="n">RIGHT_BOUND</span><span class="p">);</span>
+
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;beta&quot;</span><span class="p">,</span> <span class="n">alpha_th</span><span class="o">*</span><span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">));</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_linear_term</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;beta*(T0-theta)*Div_Test_u&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">cmu</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">clambdastar</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;T0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">T0</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_isotropic_linearized_elasticity_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">)</span>
+
+<span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">LEFT_BOUND</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;Fdata&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">F</span><span class="o">*</span><span class="n">epsilon</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;Fdata&#39;</span><span class="p">,</span> <span class="n">RIGHT_BOUND</span><span class="p">)</span>
+
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;beta&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_th</span><span class="o">*</span><span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">)])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_linear_term</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;beta*(T0-theta)*Div_Test_u&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">cmu</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">clambdastar</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;T0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">T0</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add isotropic linearized elasticity brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">);</span>
+
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">LEFT_BOUND</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;Fdata&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">F</span><span class="o">*</span><span class="n">epsilon</span><span class="p">,</span> <span class="mi">0</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add source term brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;Fdata&#39;</span><span class="p">,</span> <span class="n">RIGHT_BOUND</span><span class="p">);</span>
+
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;beta&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_th</span><span class="o">*</span><span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">)]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add linear term&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;beta*(T0-theta)*Div_Test_u&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">cmu</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">clambdastar</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;T0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">T0</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add isotropic linearized elasticity brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">);</span>
+
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">LEFT_BOUND</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;Fdata&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">F</span><span class="o">*</span><span class="n">epsilon</span><span class="p">,</span> <span class="mi">0</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add source term brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;Fdata&#39;</span><span class="p">,</span> <span class="n">RIGHT_BOUND</span><span class="p">);</span>
+
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;beta&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_th</span><span class="o">*</span><span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">)]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add linear term&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;beta*(T0-theta)*Div_Test_u&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id1">
+<h3>Electric potential problem<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Similarly, the following program take into account the electric potential equation. Note the definition of the  electrical conductivity <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> and again the use of weak form language terms.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">sigmaeps</span> <span class="o">=</span> <span class="s">&quot;(eps/(rho_0*(1+alpha*(theta-T0))))&quot;</span><span class="p">;</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;eps&quot;</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;rho_0&quot;</span><span class="p">,</span> <span class="n">rho_0</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_nonlinear_term</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">sigmaeps</span><span class="o">+</span><span class="s">&quot;*(Grad_V.Grad_Test_V)&quot;</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_Dirichlet_condition_with_multipliers</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;V&quot;</span><span class="p">,</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">dim_type</span><span class="p">(</span><span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">RIGHT_BOUND</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;DdataV&quot;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_Dirichlet_condition_with_multipliers</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;V&quot;</span><span class="p">,</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">dim_type</span><span class="p">(</span><span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="s">&quot;DdataV&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">sigmaeps</span> <span class="o">=</span> <span class="s">&#39;(eps/(rho_0*(1+alpha*(theta-T0))))&#39;</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;eps&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">epsilon</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;rho_0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">rho_0</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_nonlinear_term</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="n">sigmaeps</span><span class="o">+</span><span class="s">&#39;*(Grad_V.Grad_Test_V)&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">RIGHT_BOUND</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;DdataV&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_Dirichlet_condition_with_multipliers</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="s">&#39;DdataV&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">sigmaps</span> <span class="p">=</span> <span class="s">&#39;(eps/(rho_0*(1+alpha*(theta-T0))))&#39;</span><span class="p">;</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;eps&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">epsilon</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;rho_0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">rho_0</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;alpha&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add nonlinear term&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="n">sigmaeps</span><span class="o">+</span><span class="s">&#39;*(Grad_V.Grad_Test_V)&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">RIGHT_BOUND</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;DdataV&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="s">&#39;DdataV&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">sigmaps</span> <span class="p">=</span> <span class="s">&#39;(eps/(rho_0*(1+alpha*(theta-T0))))&#39;</span><span class="p">;</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;eps&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">epsilon</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;rho_0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">rho_0</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;alpha&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add nonlinear term&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="p">[</span><span class="n">sigmaeps</span> <span class="s">&#39;*(Grad_V.Grad_Test_V)&#39;</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">RIGHT_BOUND</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;DdataV&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add Dirichlet condition with multipliers&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="n">elements_degree</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">LEFT_BOUND</span><span class="p">,</span> <span class="s">&#39;DdataV&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h3>Thermal problem<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Now, the program to take into account the thermal problem:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;kaeps&quot;</span><span class="p">,</span> <span class="n">kappa</span><span class="o">*</span><span class="n">epsilon</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_generic_elliptic_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;theta&quot;</span><span class="p">,</span> <span class="s">&quot;kaeps&quot;</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;D2&quot;</span><span class="p">,</span> <span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">add_initialized_scalar_data</span><span class="p">(</span><span class="s">&quot;D2airt&quot;</span><span class="p">,</span> <span class="n">air_temp</span><span class="o">*</span><span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_mass_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;theta&quot;</span><span class="p">,</span> <span class="s">&quot;D2&quot;</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;theta&quot;</span><span class="p">,</span> <span class="s">&quot;D2airt&quot;</span><span class="p">);</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">add_nonlinear_term</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="o">+</span><span class="n">sigmaeps</span><span class="o">+</span><span class="s">&quot;*Norm_sqr(Grad_V)*Test_theta&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;kaeps&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">kappa</span><span class="o">*</span><span class="n">epsilon</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_generic_elliptic_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;kaeps&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;D2&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_initialized_data</span><span class="p">(</span><span class="s">&#39;D2airt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">air_temp</span><span class="o">*</span><span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_mass_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;D2&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;D2airt&#39;</span><span class="p">)</span>
+
+<span class="n">md</span><span class="o">.</span><span class="n">add_nonlinear_term</span><span class="p">(</span><span class="n">mim</span><span class="p">,</span> <span class="s">&#39;-&#39;</span><span class="o">+</span><span class="n">sigmaeps</span><span class="o">+</span><span class="s">&#39;*Norm_sqr(Grad_V)*Test_theta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;kaeps&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">kappa</span><span class="o">*</span><span class="n">epsilon</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add generic elliptic brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;kaeps&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;D2&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;D2airt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">air_temp</span><span class="o">*</span><span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add mass brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;D2&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add source term brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;D2airt&#39;</span><span class="p">);</span>
+
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add nonlinear term&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;-&#39;</span><span class="o">+</span><span class="n">sigmaeps</span><span class="o">+</span><span class="s">&#39;*Norm_sqr(Grad_V)*Test_theta&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;kaeps&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">kappa</span><span class="o">*</span><span class="n">epsilon</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add generic elliptic brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;kaeps&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;D2&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add initialized data&#39;</span><span class="p">,</span> <span class="s">&#39;D2airt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">air_temp</span><span class="o">*</span><span class="n">D</span><span class="o">*</span><span class="mi">2</span><span class="p">]);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add mass brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;D2&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add source term brick&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;D2airt&#39;</span><span class="p">);</span>
+
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;add nonlinear term&#39;</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;-&#39;</span> <span class="n">sigmaeps</span> <span class="s">&#39;*Norm_sqr(Grad_V)*Test_theta&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="model-solve">
+<h3>Model solve<a class="headerlink" href="#model-solve" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Once the model is correctly defined, we can simply solve it by:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="mf">1E-9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">standard_solve</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Since the problem is globally nonlinear, a Newton method is used to iteratively solve the problem. It needs a few iterations (about 4 in that case).</p>
+</div>
+<div class="section" id="model-solve-with-two-steps">
+<h3>Model solve with two steps<a class="headerlink" href="#model-solve-with-two-steps" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Another option to solve the problem is to solve first the thermal and electric potential problems. Indeed, in our model, the thermal and  electric potential do not depend on the deformation. Once the  thermal and electric potential problem, we then solve the deformation problem. This can be done as follows:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="mf">1E-9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">disable_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">standard_solve</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">enable_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">disable_variable</span><span class="p">(</span><span class="s">&quot;theta&quot;</span><span class="p">);</span>
+<span class="n">md</span><span class="p">.</span><span class="n">disable_variable</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">);</span>
+<span class="n">iter</span><span class="p">.</span><span class="n">init</span><span class="p">();</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">standard_solve</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">md</span><span class="o">.</span><span class="n">disable_variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">enable_variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">disable_variable</span><span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">disable_variable</span><span class="p">(</span><span class="s">&#39;V&#39;</span><span class="p">)</span>
+<span class="n">md</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;disable variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;enable variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;disable variable&#39;</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;disable variable&#39;</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">);</span>
+<span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;disable variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;enable variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;disable variable&#39;</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">);</span>
+<span class="n">gf_model_set</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;disable variable&#39;</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">);</span>
+<span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;solve&#39;</span><span class="p">,</span> <span class="s">&#39;max_res&#39;</span><span class="p">,</span> <span class="mf">1E-9</span><span class="p">,</span> <span class="s">&#39;max_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;noisy&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="export-visualization-of-the-solution">
+<h3>Export/visualization of the solution<a class="headerlink" href="#export-visualization-of-the-solution" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The finite element problem is now solved. We can plot the solution as follows. Note that for the C++ and Python programs, it is necessary to use an external external graphical post-processor. Note also that arbitrary quantities can be post-processed using the generic interpolation (see <cite>ga_interpolation_Lagrange_fem</cite> below). It is also possible to make complex exports and slices (see <a class="reference internal" href="../userdoc/export.html#ud-export"><em>Export and view a solution</em></a>).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="94%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>C++</strong></td>
+<td><div class="first last highlight-c++"><div class="highlight"><pre><span class="n">plain_vector</span> <span class="nf">U</span><span class="p">(</span><span class="n">mfu</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span> <span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="n">real_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+<span class="n">plain_vector</span> <span class="nf">V</span><span class="p">(</span><span class="n">mft</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span> <span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="n">real_variable</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span> <span class="n">V</span><span class="p">);</span>
+<span class="n">plain_vector</span> <span class="nf">THETA</span><span class="p">(</span><span class="n">mft</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span> <span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">md</span><span class="p">.</span><span class="n">real_variable</span><span class="p">(</span><span class="s">&quot;theta&quot;</span><span class="p">),</span><span class="n">THETA</span><span class="p">);</span>
+<span class="n">plain_vector</span> <span class="nf">VM</span><span class="p">(</span><span class="n">mfvm</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">compute_isotropic_linearized_Von_Mises_or_Tresca</span>
+  <span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;clambdastar&quot;</span><span class="p">,</span> <span class="s">&quot;cmu&quot;</span><span class="p">,</span> <span class="n">mfvm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="n">plain_vector</span> <span class="nf">CO</span><span class="p">(</span><span class="n">mfvm</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">getfem</span><span class="o">::</span><span class="n">ga_interpolation_Lagrange_fem</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="o">+</span><span class="n">sigmaeps</span><span class="o">+</span><span class="s">&quot;*Grad_V&quot;</span><span class="p">,</span>  <span class="n">mfvm</span><span class="p">,</span> <span class="n">CO</span><span class="p">);</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">vtk_export</span> <span class="n">exp</span><span class="p">(</span><span class="s">&quot;displacement_with_von_mises.vtk&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">mfu</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;elastostatic displacement&quot;</span><span class="p">);</span>
+<span class="n">exp</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="s">&quot;Von Mises stress&quot;</span><span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">You can view solutions with for instance:</span><span class="se">\n\n</span><span class="s">mayavi2 &quot;</span>
+  <span class="s">&quot;-d displacement_with_von_mises.vtk -f WarpVector -m Surface</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">vtk_export</span> <span class="n">exp2</span><span class="p">(</span><span class="s">&quot;temperature.vtk&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="n">exp2</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">mft</span><span class="p">);</span>
+<span class="n">exp2</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="n">THETA</span><span class="p">,</span> <span class="s">&quot;Temperature&quot;</span><span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;mayavi2 -d temperature.vtk -f WarpScalar -m Surface</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+<span class="n">getfem</span><span class="o">::</span><span class="n">vtk_export</span> <span class="n">exp3</span><span class="p">(</span><span class="s">&quot;electric_potential.vtk&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="n">exp3</span><span class="p">.</span><span class="n">exporting</span><span class="p">(</span><span class="n">mft</span><span class="p">);</span>
+<span class="n">exp3</span><span class="p">.</span><span class="n">write_point_data</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s">&quot;Electric potential&quot;</span><span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;mayavi2 -d electric_potential.vtk -f WarpScalar -m Surface</span><span class="se">\n</span><span class="s">&quot;</span>
+     <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Python</strong></td>
+<td><div class="first last highlight-python"><div class="highlight"><pre><span class="n">U</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s">&#39;V&#39;</span><span class="p">)</span>
+<span class="n">THETA</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">)</span>
+<span class="n">VM</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">compute_isotropic_linearized_Von_Mises_or_Tresca</span><span class="p">(</span><span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="n">mfvm</span><span class="p">)</span>
+<span class="n">CO</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">interpolation</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="o">+</span><span class="n">sigmaeps</span><span class="o">+</span><span class="s">&#39;*Grad_V&#39;</span><span class="p">,</span> <span class="n">mfvm</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">mfvm</span><span class="o">.</span><span class="n">nbdof</span><span class="p">()),</span> <span class="s">&#39;F&#39;</span><span class="p">)</span>
+
+<span class="n">mfvm</span><span class="o">.</span><span class="n">export_to_vtk</span><span class="p">(</span><span class="s">&#39;displacement_with_von_mises.vtk&#39;</span><span class="p">,</span> <span class="n">mfvm</span><span class="p">,</span>
+                   <span class="n">VM</span><span class="p">,</span> <span class="s">&#39;Von Mises Stresses&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;Displacements&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">&#39;You can view solutions with for instance:&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">&#39;mayavi2 -d displacement_with_von_mises.vtk -f WarpVector -m Surface&#39;</span><span class="p">)</span>
+<span class="n">mft</span><span class="o">.</span><span class="n">export_to_vtk</span><span class="p">(</span><span class="s">&#39;temperature.vtk&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">,</span> <span class="n">THETA</span><span class="p">,</span> <span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">&#39;mayavi2 -d temperature.vtk -f WarpScalar -m Surface&#39;</span><span class="p">)</span>
+<span class="n">mft</span><span class="o">.</span><span class="n">export_to_vtk</span><span class="p">(</span><span class="s">&#39;electric_potential.vtk&#39;</span><span class="p">,</span> <span class="n">mft</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s">&#39;Electric potential&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">&#39;mayavi2 -d electric_potential.vtk -f WarpScalar -m Surface&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Scilab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">U</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="n">V</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">);</span>
+<span class="n">THETA</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">);</span>
+<span class="n">VM</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;compute_isotropic_linearized_Von_Mises_or_Tresca&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="n">mfvm</span><span class="p">);</span>
+<span class="n">CO</span> <span class="p">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;interpolation&#39;</span><span class="p">,</span> <span class="s">&#39;-&#39;</span><span class="o">+</span><span class="n">sigmaeps</span><span class="o">+</span><span class="s">&#39;*Grad_V&#39;</span><span class="p">,</span> <span class="n">mfvm</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span> <span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="s">&#39;nbdof&#39;</span><span class="p">)]);</span>
+
+<span class="n">hh</span> <span class="p">=</span> <span class="n">scf</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">hh</span><span class="p">.</span><span class="n">color_map</span> <span class="p">=</span> <span class="n">jetcolormap</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">min</span><span class="p">(</span><span class="n">VM</span><span class="p">),</span><span class="n">max</span><span class="p">(</span><span class="n">VM</span><span class="p">));</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Von Mises stress in N/cm^2 (on the deformed configuration, scale factor x100)&#39;</span><span class="p">);</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">drawlater</span><span class="p">;</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">min</span><span class="p">(</span><span class="n">V</span><span class="p">),</span><span class="n">max</span><span class="p">(</span><span class="n">V</span><span class="p">));</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="n">CO</span><span class="p">,</span> <span class="s">&#39;quiver&#39;</span><span class="p">,</span> <span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;quiver_density&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="c">...</span>
+        <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Electric potential in Volt (on the deformed configuration, scale factor x100)&#39;</span><span class="p">);</span>
+<span class="n">drawnow</span><span class="p">;</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="n">THETA</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">min</span><span class="p">(</span><span class="n">THETA</span><span class="p">),</span><span class="n">max</span><span class="p">(</span><span class="n">THETA</span><span class="p">));</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Temperature in °C (on the deformed configuration, scale factor x100)&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>Matlab</strong></td>
+<td><div class="first last highlight-matlab"><div class="highlight"><pre><span class="n">U</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">);</span>
+<span class="n">V</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;V&#39;</span><span class="p">);</span>
+<span class="n">THETA</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">);</span>
+<span class="n">VM</span> <span class="p">=</span> <span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;compute_isotropic_linearized_Von_Mises_or_Tresca&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;clambdastar&#39;</span><span class="p">,</span> <span class="s">&#39;cmu&#39;</span><span class="p">,</span> <span class="n">mfvm</span><span class="p">);</span>
+<span class="n">CO</span> <span class="p">=</span> <span class="nb">reshape</span><span class="p">(</span><span class="n">gf_model_get</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s">&#39;interpolation&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;-&#39;</span> <span class="n">sigmaeps</span> <span class="s">&#39;*Grad_V&#39;</span><span class="p">],</span> <span class="n">mfvm</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span> <span class="n">gf_mesh_fem_get</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="s">&#39;nbdof&#39;</span><span class="p">)]);</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="n">VM</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">colorbar</span><span class="p">;</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Von Mises stress in N/cm^2 (on the deformed configuration, scale factor x100)&#39;</span><span class="p">);</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">hold</span> <span class="n">on</span><span class="p">;</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">colorbar</span><span class="p">;</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mfvm</span><span class="p">,</span> <span class="n">CO</span><span class="p">,</span> <span class="s">&#39;quiver&#39;</span><span class="p">,</span> <span class="s">&#39;on&#39;</span><span class="p">,</span> <span class="s">&#39;quiver_density&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="c">...</span>
+        <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">colorbar</span><span class="p">;</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Electric potential in Volt (on the deformed configuration, scale factor x100)&#39;</span><span class="p">);</span>
+<span class="n">hold</span> <span class="n">off</span><span class="p">;</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">gf_plot</span><span class="p">(</span><span class="n">mft</span><span class="p">,</span> <span class="n">THETA</span><span class="p">,</span> <span class="s">&#39;mesh&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformed_mesh&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;deformation&#39;</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&#39;deformation_mf&#39;</span><span class="p">,</span> <span class="n">mfu</span><span class="p">,</span> <span class="s">&#39;deformation_scale&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;refine&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="n">colorbar</span><span class="p">;</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;Temperature in ?C (on the deformed configuration, scale factor x100)&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure align-center" id="tut-fig-solthermo">
+<a class="reference internal image-reference" href="../_images/solution_thermo.png"><img alt="../_images/solution_thermo.png" src="../_images/solution_thermo.png" style="width: 774.0px; height: 796.0px;" /></a>
+<p class="caption">Plot of the solution.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Example of Thermo-elastic and electrical coupling (simple nonlinear coupled problem, model object, generic assembly, solve and visualization)</a><ul>
+<li><a class="reference internal" href="#the-problem-setting">The problem setting</a><ul>
+<li><a class="reference internal" href="#thermal-problem">Thermal problem</a></li>
+<li><a class="reference internal" href="#electric-potential-problem">Electric potential problem</a></li>
+<li><a class="reference internal" href="#deformation-problem">Deformation problem</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-weak-formulation">The weak formulation</a></li>
+<li><a class="reference internal" href="#implementation-in-c-and-with-the-interface">Implementation in C++ and with the interface</a><ul>
+<li><a class="reference internal" href="#initialization">Initialization</a></li>
+<li><a class="reference internal" href="#parameters-of-the-model">Parameters of the model</a></li>
+<li><a class="reference internal" href="#mesh-generation">Mesh generation</a></li>
+<li><a class="reference internal" href="#boundary-selection">Boundary selection</a></li>
+<li><a class="reference internal" href="#mesh-draw">Mesh draw</a></li>
+<li><a class="reference internal" href="#definition-of-finite-element-methods-and-integration-method">Definition of finite element methods and integration method</a></li>
+<li><a class="reference internal" href="#model-definition">Model definition</a></li>
+<li><a class="reference internal" href="#membrane-elastic-deformation-problem">Membrane elastic deformation problem</a></li>
+<li><a class="reference internal" href="#id1">Electric potential problem</a></li>
+<li><a class="reference internal" href="#id2">Thermal problem</a></li>
+<li><a class="reference internal" href="#model-solve">Model solve</a></li>
+<li><a class="reference internal" href="#model-solve-with-two-steps">Model solve with two steps</a></li>
+<li><a class="reference internal" href="#export-visualization-of-the-solution">Export/visualization of the solution</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="basic_usage.html"
+                        title="前の章へ">Basic Usage of <em>GetFEM++</em></a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="wheel.html"
+                        title="次の章へ">Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="wheel.html" title="Example of wheel in contact (Assembly between two meshes, transformations, use of fixed size variables)"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="basic_usage.html" title="Basic Usage of GetFEM++"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" ><em>GetFEM++</em> Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

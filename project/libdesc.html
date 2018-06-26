@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Description of the different parts of the library &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the Project" href="index.html" />
+    <link rel="next" title="Gmm library" href="libdesc_gmm.html" />
+    <link rel="prev" title="The FEM description in GetFEM++" href="femdesc.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc_gmm.html" title="Gmm library"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="femdesc.html" title="The FEM description in GetFEM++"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="description-of-the-different-parts-of-the-library">
+<span id="dp-libdesc"></span><h1>Description of the different parts of the library<a class="headerlink" href="#description-of-the-different-parts-of-the-library" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Figure <a class="reference internal" href="#dp-fig-diagram"><em>Diagram of GetFEM++ library</em></a> describes the diagram of the different modules of
+the <em>GetFEM++</em> library. The current state and perspective for each module is
+described in section <a class="reference internal" href="#dp-libdesc"><em>Description of the different parts of the library</em></a>.</p>
+<div class="figure align-center" id="dp-fig-diagram">
+<a class="reference internal image-reference" href="../_images/getfem_structure.png"><img alt="../_images/getfem_structure.png" src="../_images/getfem_structure.png" style="width: 985.0px; height: 1003.0px;" /></a>
+<p class="caption">Diagram of <em>GetFEM++</em> library</p>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_gmm.html">Gmm library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_gmm.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_gmm.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_gmm.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_gmm.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_dal.html">Dal library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_dal.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_dal.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_dal.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_dal.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_misc.html">Miscellaneous algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_misc.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_misc.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_misc.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_misc.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_event.html">Events management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_event.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_event.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_event.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_event.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_mesh.html">Mesh module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mesh.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mesh.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mesh.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mesh.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_fem.html">Fem module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_fem.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_fem.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_fem.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_fem.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_im.html">Integ module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_im.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_im.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_im.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_im.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_meshfem.html">MeshFem module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_meshfem.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_meshfem.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_meshfem.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_meshfem.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_mim.html">MeshIm module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mim.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mim.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mim.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_mim.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_levelset.html">Level-set module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_levelset.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_levelset.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_levelset.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_levelset.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_high_gen_assemb.html">The high-level generic assembly module in <em>GetFEM++</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#a-few-implementation-details">A few implementation details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#assembly-tree">Assembly tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#assembly-tensors">Assembly tensors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#optimized-instructions">Optimized instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#predefined-functions">Predefined functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#predefined-nonlinear-operators">Predefined nonlinear operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_high_gen_assemb.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_low_gen_assemb.html">The low-level generic assembly module in <em>GetFEM++</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_low_gen_assemb.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_low_gen_assemb.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_low_gen_assemb.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_low_gen_assemb.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_model.html">Model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_model.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_model.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_model.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_model.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_cont.html">Continuation module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_cont.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_cont.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_cont.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_cont.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libdesc_interface.html">Interface with scripts languages (Python, Scilab and Matlab)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html#objects-methods-and-functions-of-the-interface">Objects, methods and functions of the interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html#adding-a-new-function-or-object-method-to-the-getfem-interface">Adding a new function or object method to the getfem interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html#adding-a-new-object-to-the-getfem-interface">Adding a new object to the getfem interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libdesc_interface.html#perspectives">Perspectives</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="femdesc.html"
+                        title="前の章へ">The FEM description in <em>GetFEM++</em></a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc_gmm.html"
+                        title="次の章へ">Gmm library</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc_gmm.html" title="Gmm library"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="femdesc.html" title="The FEM description in GetFEM++"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Iterative solvers &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Gmm++ Library" href="index.html" />
+    <link rel="next" title="Catch errors" href="catch.html" />
+    <link rel="prev" title="Dense QR factorisation, eigenvalues and eigenvectors" href="denseqr.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="denseqr.html" title="Dense QR factorisation, eigenvalues and eigenvectors"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="iterative-solvers">
+<span id="gmm-iter"></span><h1>Iterative solvers<a class="headerlink" href="#iterative-solvers" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Most of the solvers provided in <em>Gmm++</em> come form ITL with slight modifications (gmres has been optimized and adapted for complex matrices). Include the file <tt class="docutils literal"><span class="pre">gmm/gmm_iter_solvers.h</span></tt> to use them.</p>
+<div class="section" id="iterations">
+<h2>iterations<a class="headerlink" href="#iterations" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div>The iteration object of <em>Gmm++</em> is a modification of the one in ITL. This is not a template type as in ITL.</div></blockquote>
+<p>The simplest initialization is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="mf">2.0E-10</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">2.0E-10</span></tt> is the (relative) residual to be obtained to have the convergence.
+Some possibilities:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">iter</span><span class="p">.</span><span class="n">set_noisy</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1">// n = 0 : no output</span>
+                  <span class="c1">// n = 1 : output of iterations on the standard output</span>
+                  <span class="c1">// n = 2 : output of iterations and sub-iterations</span>
+                  <span class="c1">//         on the standard output</span>
+                  <span class="c1">// ...</span>
+<span class="n">iter</span><span class="p">.</span><span class="n">get_iteration</span><span class="p">()</span> <span class="c1">// after a computation, gives the number of</span>
+                     <span class="c1">// iterations made.</span>
+<span class="n">iter</span><span class="p">.</span><span class="n">converged</span><span class="p">()</span>     <span class="c1">// true if the method converged.</span>
+<span class="n">iter</span><span class="p">.</span><span class="n">set_maxiter</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>  <span class="c1">// Set the maximum of iterations.</span>
+                     <span class="c1">// A solver stops if the maximum of iteration is</span>
+                     <span class="c1">// reached, iter.converged() is then false.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="linear-solvers">
+<h2>Linear solvers<a class="headerlink" href="#linear-solvers" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Here is the list of available linear solvers:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">row_matrix</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>  <span class="c1">// The matrix</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span> <span class="c1">// Right hand side</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">X</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span> <span class="c1">// Unknown</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">identity_matrix</span> <span class="n">PS</span><span class="p">;</span>   <span class="c1">// Optional scalar product for cg</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">identity_matrix</span> <span class="n">PR</span><span class="p">;</span>   <span class="c1">// Optional preconditioner</span>
+<span class="p">...</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="mf">10E-9</span><span class="p">);</span><span class="c1">// Iteration object with the max residu</span>
+<span class="kt">size_t</span> <span class="n">restart</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>       <span class="c1">// restart parameter for GMRES</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">cg</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">PS</span><span class="p">,</span> <span class="n">PR</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span> <span class="c1">// Conjugate gradient</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">bicgstab</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">PR</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span> <span class="c1">// BICGSTAB BiConjugate Gradient Stabilized</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">gmres</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">PR</span><span class="p">,</span> <span class="n">restart</span><span class="p">,</span> <span class="n">iter</span><span class="p">)</span> <span class="c1">// GMRES generalized minimum residual</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">qmr</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">PR</span><span class="p">,</span> <span class="n">iter</span><span class="p">)</span> <span class="c1">// Quasi-Minimal Residual method.</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">least_squares_cg</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">iter</span><span class="p">)</span> <span class="c1">// unpreconditionned least square CG.</span>
+</pre></div>
+</div>
+<p>The solver <tt class="docutils literal"><span class="pre">gmm::constrained_cg(A,</span> <span class="pre">C,</span> <span class="pre">X,</span> <span class="pre">B,</span> <span class="pre">PS,</span> <span class="pre">PR,</span> <span class="pre">iter);</span></tt> solve a system with linear constaints, <tt class="docutils literal"><span class="pre">C</span></tt> is a matrix which represents the constraints. But it is still experimental.</p>
+<p>(Version 1.7) The solver <tt class="docutils literal"><span class="pre">gmm::bfgs(F,</span> <span class="pre">GRAD,</span> <span class="pre">X,</span> <span class="pre">restart,</span> <span class="pre">iter)</span></tt> is a BFGS quasi-Newton algorithm with a Wolfe line search for large scale problems. It minimizes the function <tt class="docutils literal"><span class="pre">F</span></tt> without constraints, be given its gradient <tt class="docutils literal"><span class="pre">GRAD</span></tt>. <tt class="docutils literal"><span class="pre">restart</span></tt> is the max number of stored update vectors.</p>
+</div>
+<div class="section" id="preconditioners">
+<h2>Preconditioners<a class="headerlink" href="#preconditioners" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The following preconditioners, to be used with linear solvers, are available:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">identity_matrix</span> <span class="n">P</span><span class="p">;</span>   <span class="c1">// No preconditioner</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">diagonal_precond</span><span class="o">&lt;</span><span class="n">matrix_type</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">SM</span><span class="p">);</span> <span class="c1">// diagonal preconditioner</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">mr_approx_inverse_precond</span><span class="o">&lt;</span><span class="n">matrix_type</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">SM</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">10E-17</span><span class="p">);</span>
+                                             <span class="c1">// preconditioner based on MR</span>
+                                             <span class="c1">// iterations</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">ildlt_precond</span><span class="o">&lt;</span><span class="n">matrix_type</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">SM</span><span class="p">);</span> <span class="c1">// incomplete (level 0) ldlt</span>
+                                      <span class="c1">// preconditioner. Fast to be</span>
+                                      <span class="c1">// computed but less efficient than</span>
+                                      <span class="c1">// gmm::ildltt_precond.</span>
+
+<span class="c1">// incomplete ldlt with k fill-in and threshold preconditioner.</span>
+<span class="c1">// Efficient but could be costly.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">ildltt_precond</span><span class="o">&lt;</span><span class="n">matrix_type</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">SM</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">threshold</span><span class="p">);</span>
+
+<span class="n">gmm</span><span class="o">::</span><span class="n">ilu_precond</span><span class="o">&lt;</span><span class="n">matrix_type</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">SM</span><span class="p">);</span>  <span class="c1">// incomplete (level 0) ilu</span>
+                                      <span class="c1">// preconditioner. Very fast to be</span>
+                                      <span class="c1">// computed but less efficient than</span>
+                                      <span class="c1">// gmm::ilut_precond.</span>
+
+
+<span class="c1">// incomplete LU with k fill-in and threshold preconditioner.</span>
+<span class="c1">// Efficient but could be costly.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">ilut_precond</span><span class="o">&lt;</span><span class="n">matrix_type</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">SM</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">threshold</span><span class="p">);</span>
+
+<span class="c1">// incomplete LU with k fill-in, threshold and column pivoting preconditioner.</span>
+<span class="c1">// Try it when ilut encounter too small pivots.</span>
+<span class="n">gmm</span><span class="o">::</span><span class="n">ilutp_precond</span><span class="o">&lt;</span><span class="n">matrix_type</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">SM</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">threshold</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Except <tt class="docutils literal"><span class="pre">ildltt\_precond</span></tt>, all these precontionners come from ITL. <tt class="docutils literal"><span class="pre">ilut_precond</span></tt> has been optimized and simplified and <tt class="docutils literal"><span class="pre">cholesky_precond</span></tt> has been corrected and transformed in an incomplete LDLT preconditionner for stability reasons (similarly, we add <tt class="docutils literal"><span class="pre">choleskyt_precond</span></tt> which is in fact an incomplete LDLT with threshold preconditionner). Of course, <tt class="docutils literal"><span class="pre">ildlt\_precond</span></tt> and <tt class="docutils literal"><span class="pre">ildltt_precond</span></tt> are designed for symmetric real or hermitian complex matrices to be use principaly with cg.</p>
+</div>
+<div class="section" id="additive-schwarz-method">
+<h2>Additive Schwarz method<a class="headerlink" href="#additive-schwarz-method" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The additive Schwarz method is a decomposition domain method allowing the resolution of huge linear systems (see <a class="reference internal" href="../biblio.html#schadd" id="id1">[SCHADD]</a> for the principle of the method).</p>
+<p>For the moment, the method is not parallelized (this should be done ...). The call is the following:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">gmm</span><span class="o">::</span><span class="n">sequential_additive_schwarz</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">vB</span><span class="p">,</span> <span class="n">iter</span><span class="p">,</span> <span class="n">local_solver</span><span class="p">,</span> <span class="n">global_solver</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">A</span></tt> is the matrix of the linear system. <tt class="docutils literal"><span class="pre">u</span></tt> is the unknown vector. <tt class="docutils literal"><span class="pre">f</span></tt> is the right hand side. <tt class="docutils literal"><span class="pre">P</span></tt> is an eventual preconditioner for the local solver. <tt class="docutils literal"><span class="pre">vB</span></tt> is a vector of rectangular sparse matrices (<tt class="docutils literal"><span class="pre">of</span> <span class="pre">type</span> <span class="pre">const</span> <span class="pre">std::vector&lt;vBMatrix&gt;</span></tt>, where <tt class="docutils literal"><span class="pre">vBMatrix</span></tt> is a sparse matrix type), each of these matrices is of size <img class="math" src="../_images/math/2e87e7dc7593eb6e6cc606baa1d9c6cd90cb9508.png" alt="N \times N_i" style="vertical-align: -3px"/> where <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> is the size of <tt class="docutils literal"><span class="pre">A</span></tt> and <img class="math" src="../_images/math/9f09d622cd7ebd49e20b2e20717869bf2ee2aa5a.png" alt="N_i" style="vertical-align: -3px"/> the number of variables in the <img class="math" src="../_images/math/ffbd55597272a9914166c5dd1e71a5d23d842ddd.png" alt="i^{th}" style="vertical-align: 0px"/> sub-domain ; each column of the matrix is a base vector of the sub-space representing the <img class="math" src="../_images/math/ffbd55597272a9914166c5dd1e71a5d23d842ddd.png" alt="i^{th}" style="vertical-align: 0px"/> sub-domain. <tt class="docutils literal"><span class="pre">iter</span></tt> is an iteration object. <tt class="docutils literal"><span class="pre">local_solver</span></tt> has to be chosen in the list <tt class="docutils literal"><span class="pre">gmm::using_gmres(),</span> <span class="pre">gmm::using_bicgstab(),</span> <span class="pre">gmm::using_cg(),</span> <span class="pre">gmm::using_qmr()</span></tt> and  <tt class="docutils literal"><span class="pre">gmm::using_superlu()</span></tt> if SuperLu is installed. <tt class="docutils literal"><span class="pre">global_solver</span></tt> has to be chosen in the list <tt class="docutils literal"><span class="pre">gmm::using_gmres(),</span> <span class="pre">gmm::using_bicgstab(),</span> <span class="pre">gmm::using_cg(),</span> <span class="pre">gmm::using_qmr()</span></tt>.</p>
+<p>The test program <tt class="docutils literal"><span class="pre">schwarz_additive.C</span></tt> is the directory <tt class="docutils literal"><span class="pre">tests</span></tt> of GetFEM++ is an example of the resolution with the additive Schwarz method of an elastostatic problem with the use of coarse mesh to make a better preconditioning (i.e. one of the sub-domains represents in fact a coarser mesh).</p>
+<p>In the case of multiple solves with the same linear system, it is possible to store the preconditioners or the LU factorisations to save computation time.</p>
+<p>A (too) simple program in <tt class="docutils literal"><span class="pre">gmm/gmm_domain_decomp.h</span></tt> allows to build a regular domain decomposition with a certain ratio of overlap. It directly produces the vector of matrices <tt class="docutils literal"><span class="pre">vB</span></tt> for the additive Schwarz method.</p>
+</div>
+<div class="section" id="range-basis-function">
+<h2>Range basis function<a class="headerlink" href="#range-basis-function" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>The function <tt class="docutils literal"><span class="pre">gmm\_range\_basis(B,</span> <span class="pre">columns,</span> <span class="pre">EPS=1e-12)</span></tt> defined in <tt class="docutils literal"><span class="pre">gmm/gmm\_range\_basis.h</span></tt> allows to select from the columns of a sparse matrix <tt class="docutils literal"><span class="pre">B</span></tt> a basis of the range of this matrix. The result is returned in <tt class="docutils literal"><span class="pre">columns</span></tt> which should be of type <tt class="docutils literal"><span class="pre">std::set&lt;size_type&gt;</span></tt> and which contains the indices of the selected columns.</p>
+<p>The algorithm is specially designed to select independent constraints from a large matrix with linearly dependent columns.</p>
+<p>There is four step in the implemented algorithm</p>
+<blockquote>
+<div><ul class="simple">
+<li>Elimination of null columns.</li>
+<li>Selection of a set of already orthogonal columns.</li>
+<li>Elimination of locally dependent columns by a blockwise Gram-Schmidt algorithm.</li>
+<li>Computation of vectors of the remaining null space by a global restarted Lanczos algorithm and deduction of some columns to be eliminated.</li>
+</ul>
+</div></blockquote>
+<p>The algorithm is efficient if after the local Gram-Schmidt algorithm it remains a low dimension null space. The implemented restarted Lanczos algorithm find the null space vectors one by one.</p>
+<p>The Global restarted Lanczos algorithm may be improved or replaced by
+a block Lanczos method (see <a class="reference internal" href="../biblio.html#ca-re-so1994" id="id2">[ca-re-so1994]</a> for instance), a block
+Wiedelann method (in order to be parallelized) or simply
+the computation of more than one vector of the null space at each
+iteration.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Iterative solvers</a><ul>
+<li><a class="reference internal" href="#iterations">iterations</a></li>
+<li><a class="reference internal" href="#linear-solvers">Linear solvers</a></li>
+<li><a class="reference internal" href="#preconditioners">Preconditioners</a></li>
+<li><a class="reference internal" href="#additive-schwarz-method">Additive Schwarz method</a></li>
+<li><a class="reference internal" href="#range-basis-function">Range basis function</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="denseqr.html"
+                        title="前の章へ">Dense QR factorisation, eigenvalues and eigenvectors</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="catch.html"
+                        title="次の章へ">Catch errors</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="catch.html" title="Catch errors"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="denseqr.html" title="Dense QR factorisation, eigenvalues and eigenvectors"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Gmm++ Library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

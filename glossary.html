@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Glossary &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="about.html" />
+    <link rel="copyright" title="著作権" href="copyright.html" />
+    <link rel="top" title="GetFEM++" href="index.html" />
+    <link rel="next" title="About these documents" href="about.html" />
+    <link rel="prev" title="Differences to the LaTeX markup" href="documenting/fromlatex.html" />
+    <link rel="shortcut icon" type="image/png" href="_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="about.html" title="About these documents"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="documenting/fromlatex.html" title="Differences to the LaTeX markup"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="glossary">
+<span id="id1"></span><h1>Glossary<a class="headerlink" href="#glossary" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="glossary docutils">
+<dt id="term-convex">Convex</dt>
+<dd>See <strong>element</strong></dd>
+<dt id="term-cubature-method">Cubature method</dt>
+<dd>A cubature method on an <strong>element</strong> consists in a set of nodes
+(generally called gauss points) and corresponding loads which
+define a approximated integration method. In <em>GetFEM++</em> it is defined
+on the <strong>reference elements</strong>.</dd>
+<dt id="term-degree-of-freedom">Degree of freedom</dt>
+<dd>The degrees of freedom for a finite element method is the coefficients
+which multiply the shape functions in order to describe a
+(scalar or vector) field. Generally, they are the unknowns of the
+problem in general.</dd>
+<dt id="term-element">Element</dt>
+<dd>An element is a small piece of a domain with a special shape (a segment,
+a triangle, a quadrilateron, an tetrahedron, a hexahedron or a prism
+for dimensions less or equal to three. A mesh is the union of
+non intersecting elements.</dd>
+<dt id="term-finite-element-method-fem">Finite element method (fem)</dt>
+<dd>A finite element method is defined on a real element. It consist on a
+certain number of degrees of freedom linked to the corresponding shape
+functions and a manner to glue the degrees of freedom from a element
+to a neighbour element.</dd>
+<dt id="term-integration-method">Integration method</dt>
+<dd>See <strong>cubature method</strong>.</dd>
+<dt id="term-quadrature-method">Quadrature method</dt>
+<dd>See <strong>cubature method</strong>.</dd>
+<dt id="term-mesh">Mesh</dt>
+<dd>The mesh is composed of <strong>elements</strong>. in <em>GetFEM++</em>, these elements are
+often called <strong>convexes</strong>. A mesh can be composed of elements of different
+dimensions (triangles, segments, quadrilaters, tetrahedra,
+hexahedra ...).</dd>
+<dt id="term-mesh-fem">Mesh_Fem</dt>
+<dd>The mesh_fem object is a mesh with a <strong>finite element method</strong> defined
+on each <strong>element</strong>. This
+represent a finite element space on which a unknown or a data on the
+considered domain will be discribed.</dd>
+<dt id="term-mesh-im">Mesh_Im</dt>
+<dd>The mesh_im object is a mesh with a <strong>cubature method</strong> defined on
+each <strong>element</strong>. It is used in assembly procedures.</dd>
+<dt id="term-reference-element">Reference element</dt>
+<dd>A reference element or a convex of reference is a special <strong>element</strong>
+on which the elementary computations (integrals) are performed.
+For instance, the reference segment in <em>GetFEM++</em> is the segment [0,1].
+The reference triangle is the triangle (0,0), (0,1), (1,0). etc.</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="index.html">
+    <img class="logo" src="_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="documenting/fromlatex.html"
+                        title="前の章へ">Differences to the LaTeX markup</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="about.html"
+                        title="次の章へ">About these documents</a></p>            <h3>Download</h3>
+            <p><a href="download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="python/index.html">Python Interface</a></li>
+	      <li><a href="matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="gmm/index.html"> Gmm++</a></li>
+	      <li><a href="project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="screenshots/shots.html">Screenshots</a></li>
+              <li><a href="links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="about.html" title="About these documents"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="documenting/fromlatex.html" title="Differences to the LaTeX markup"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="index.html">GetFEM++</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

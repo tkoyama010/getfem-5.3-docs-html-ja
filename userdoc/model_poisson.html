@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Example of a complete Poisson problem &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="The model description and basic model bricks" href="model.html" />
+    <link rel="next" title="Nitsche’s method for dirichlet and contact boundary conditions" href="model_Nitsche.html" />
+    <link rel="prev" title="Predefined solvers" href="model_solvers.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="model_Nitsche.html" title="Nitsche’s method for dirichlet and contact boundary conditions"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="model_solvers.html" title="Predefined solvers"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" accesskey="U">The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="example-of-a-complete-poisson-problem">
+<span id="ud-model-poisson"></span><span id="index-0"></span><h1>Example of a complete Poisson problem<a class="headerlink" href="#example-of-a-complete-poisson-problem" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>The following example is a part of the test program
+<tt class="file docutils literal"><span class="pre">tests/laplacian_with_bricks.cc</span></tt>. Construction of the mesh and finite
+element methods are omitted. It is assumed that a mesh is build and two finite
+element methods <tt class="docutils literal"><span class="pre">mf_u</span></tt> and <tt class="docutils literal"><span class="pre">mf_rhs</span></tt> are build on this mesh. Is is also
+assumed that <tt class="docutils literal"><span class="pre">NEUMANN_BOUNDARY_NUM</span></tt> and <tt class="docutils literal"><span class="pre">DIRICHLET_BOUNDARY_NUM</span></tt> are two
+valid boundary indices on that mesh. The code begins by the definition of three
+functions which are interpolated on <tt class="docutils literal"><span class="pre">mf_rhs</span></tt> in order to build the data for the
+source term, the Neumann condition and the Dirichlet condition. Follows the
+declaration of the model object, the addition of the bricks and the solving of
+the problem:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">bgeot</span><span class="o">::</span><span class="n">base_small_vector</span><span class="p">;</span>
+<span class="c1">// Exact solution. Allows an interpolation for the Dirichlet condition.</span>
+<span class="n">scalar_type</span> <span class="nf">sol_u</span><span class="p">(</span><span class="k">const</span> <span class="n">base_node</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="p">}</span>
+<span class="c1">// Right hand side. Allows an interpolation for the source term.</span>
+<span class="n">scalar_type</span> <span class="nf">sol_f</span><span class="p">(</span><span class="k">const</span> <span class="n">base_node</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="p">}</span>
+<span class="c1">// Gradient of the solution. Allows an interpolation for the Neumann term.</span>
+<span class="n">base_small_vector</span> <span class="nf">sol_grad</span><span class="p">(</span><span class="k">const</span> <span class="n">base_node</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">)</span>
+<span class="p">{</span> <span class="k">return</span> <span class="n">base_small_vector</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="c1">// ... definition of a mesh</span>
+  <span class="c1">// ... definition of a finite element method mf_u</span>
+  <span class="c1">// ... definition of a finite element method mf_rhs</span>
+  <span class="c1">// ... definition of an integration method mim</span>
+  <span class="c1">// ... definition of boundaries NEUMANN_BOUNDARY_NUM</span>
+  <span class="c1">//                        and DIRICHLET_BOUNDARY_NUM</span>
+
+  <span class="c1">// Model object</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">model</span> <span class="n">laplacian_model</span><span class="p">;</span>
+
+  <span class="c1">// Main unknown of the problem</span>
+  <span class="n">laplacian_model</span><span class="p">.</span><span class="n">add_fem_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">);</span>
+
+  <span class="c1">// Laplacian term on u.</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">add_Laplacian_brick</span><span class="p">(</span><span class="n">laplacian_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">);</span>
+
+  <span class="c1">// Volumic source term.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">F</span><span class="p">(</span><span class="n">mf_rhs</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">interpolation_function</span><span class="p">(</span><span class="n">mf_rhs</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">sol_f</span><span class="p">);</span>
+  <span class="n">laplacian_model</span><span class="p">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&quot;VolumicData&quot;</span><span class="p">,</span> <span class="n">mf_rhs</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">add_source_term_brick</span><span class="p">(</span><span class="n">laplacian_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;VolumicData&quot;</span><span class="p">);</span>
+
+  <span class="c1">// Neumann condition.</span>
+  <span class="n">gmm</span><span class="o">::</span><span class="n">resize</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">mf_rhs</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">()</span><span class="o">*</span><span class="n">N</span><span class="p">);</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">interpolation_function</span><span class="p">(</span><span class="n">mf_rhs</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">sol_grad</span><span class="p">);</span>
+  <span class="n">laplacian_model</span><span class="p">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&quot;NeumannData&quot;</span><span class="p">,</span> <span class="n">mf_rhs</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">add_normal_source_term_brick</span>
+  <span class="p">(</span><span class="n">laplacian_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="s">&quot;NeumannData&quot;</span><span class="p">,</span> <span class="n">NEUMANN_BOUNDARY_NUM</span><span class="p">);</span>
+
+  <span class="c1">// Dirichlet condition.</span>
+  <span class="n">gmm</span><span class="o">::</span><span class="n">resize</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">mf_rhs</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">interpolation_function</span><span class="p">(</span><span class="n">mf_rhs</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">sol_u</span><span class="p">);</span>
+  <span class="n">laplacian_model</span><span class="p">.</span><span class="n">add_initialized_fem_data</span><span class="p">(</span><span class="s">&quot;DirichletData&quot;</span><span class="p">,</span> <span class="n">mf_rhs</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">add_Dirichlet_condition_with_multipliers</span>
+  <span class="p">(</span><span class="n">laplacian_model</span><span class="p">,</span> <span class="n">mim</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="n">mf_u</span><span class="p">,</span> <span class="n">DIRICHLET_BOUNDARY_NUM</span><span class="p">,</span> <span class="s">&quot;DirichletData&quot;</span><span class="p">);</span>
+
+  <span class="n">gmm</span><span class="o">::</span><span class="n">iteration</span> <span class="n">iter</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">40000</span><span class="p">);</span>
+  <span class="n">getfem</span><span class="o">::</span><span class="n">standard_solve</span><span class="p">(</span><span class="n">laplacian_model</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">U</span><span class="p">(</span><span class="n">mf_u</span><span class="p">.</span><span class="n">nb_dof</span><span class="p">());</span>
+  <span class="n">gmm</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">laplacian_model</span><span class="p">.</span><span class="n">real_variable</span><span class="p">(</span><span class="s">&quot;u&quot;</span><span class="p">),</span> <span class="n">U</span><span class="p">);</span>
+
+  <span class="c1">// ... doing something with the solution ...</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that the brick can be added in an arbitrary order.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="model_solvers.html"
+                        title="前の章へ">Predefined solvers</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="model_Nitsche.html"
+                        title="次の章へ">Nitsche&#8217;s method for dirichlet and contact boundary conditions</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="model_Nitsche.html" title="Nitsche’s method for dirichlet and contact boundary conditions"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="model_solvers.html" title="Predefined solvers"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li>
+          <li><a href="model.html" >The model description and basic model bricks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

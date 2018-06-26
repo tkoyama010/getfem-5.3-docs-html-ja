@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Gmm library &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="next" title="Dal library" href="libdesc_dal.html" />
+    <link rel="prev" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc_dal.html" title="Dal library"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc.html" title="Description of the different parts of the library"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" accesskey="U">Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gmm-library">
+<span id="dp-libdesc-gmm"></span><h1>Gmm library<a class="headerlink" href="#gmm-library" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><em>Gmm++</em> is a template linear algebra library which was originally designed to make an
+interface between the need in linear algebra procedures of <em>GetFEM++</em> and existing free
+linear algebra libraries (MTL, Superlu, Blas, Lapack originally). It rapidly
+evolves to an independent self-consistent library with its own vector and matrix
+types. It is now used as a base linear algebra library by several other projects.</p>
+<p>However, it preserves the characteristic to be a potential interface for more
+specific packages. Any vector or matrix type having the minimum of compatibility
+can be used by generic algorithms of <em>Gmm++</em> writing a <tt class="docutils literal"><span class="pre">linalg_traits</span></tt> structure.</p>
+<p>A <em>Gmm++</em> standalone version is distributed since release 1.5 of <em>GetFEM++</em>. It is
+however developed inside the <em>GetFEM++</em> project even though since release 3.0 it is
+completely independent of any <em>GetFEM++</em> file.</p>
+<p>In addition to the linear algebra procedures, it furnishes also the following
+utilities to <em>GetFEM++</em>.</p>
+<ul class="simple">
+<li>Fix some eventual compatibility problems in <tt class="file docutils literal"><span class="pre">gmm_std.h</span></tt>.</li>
+<li>Error, warning and trace management in <tt class="file docutils literal"><span class="pre">gmm_except.h</span></tt>.</li>
+<li>Some extended math definitions in <tt class="file docutils literal"><span class="pre">gmm_def.h</span></tt>.</li>
+</ul>
+<p>See <a class="reference internal" href="../gmm/index.html#gmm"><em>Gmm++ Library</em></a> documenation for more details.</p>
+</div>
+<div class="section" id="files">
+<h2>Files<a class="headerlink" href="#files" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>All files in src/gmm</p>
+</div>
+<div class="section" id="state">
+<h2>State<a class="headerlink" href="#state" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For the moment, <em>Gmm++</em> cover the needs of <em>GetFEM++</em> concerning the basic linear algebra
+procedures.</p>
+</div>
+<div class="section" id="perspectives">
+<h2>Perspectives<a class="headerlink" href="#perspectives" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>There is potentatialy several points to be improved in <em>Gmm++</em> (partial
+introduction of expression template for some base types of matrix and vectors,
+think about the way to represent in a more coherent manner sparse sub-vectors
+and sub-matrices, introduction of C++ concepts, etc.). However, since <em>Gmm++</em>
+globally cover the needs of <em>GetFEM++</em> and since there exists some other project like
+<a class="reference external" href="http://glas.sourceforge.net/">Glas</a> to build a reference C++ library for
+linear algebra, a global change seem to be unnecessary. This part
+is considered to be stabilized.</p>
+<p>The current vocation of <em>Gmm++</em> is to continue to collect generic algorithms and
+interfaces to some other packages (DIFFPACK for instance) in order to cover new needs of the whole
+project. The library is now frequently used as a separate package and has also
+the vocation to collect the contribution of any person who propose some
+improvements, new algorithms or new interfaces.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Gmm library</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#files">Files</a></li>
+<li><a class="reference internal" href="#state">State</a></li>
+<li><a class="reference internal" href="#perspectives">Perspectives</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="libdesc.html"
+                        title="前の章へ">Description of the different parts of the library</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc_dal.html"
+                        title="次の章へ">Dal library</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc_dal.html" title="Dal library"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc.html" title="Description of the different parts of the library"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" >Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

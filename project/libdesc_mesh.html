@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mesh module &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="Description of the different parts of the library" href="libdesc.html" />
+    <link rel="next" title="Fem module" href="libdesc_fem.html" />
+    <link rel="prev" title="Events management" href="libdesc_event.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="libdesc_fem.html" title="Fem module"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_event.html" title="Events management"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" accesskey="U">Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mesh-module">
+<span id="dp-libdesc-mesh"></span><h1>Mesh module<a class="headerlink" href="#mesh-module" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>This part of the library has the role to store and manage the meshes, i.e. a
+collection of elements (real elements) connected to each other by some of their
+faces. For that, it develops concepts of elements, elements of reference,
+structure of meshes, collection of nodes, geometric transformations, subpart of
+the boundary or subzone of the mesh.</p>
+<p>There is no really effective meshing capabilities available for the moment in
+<em>GetFEM++</em>. The meshes of complex objects must be imported from existing meshers such
+as <a class="reference external" href="http://www.geuz.org/gmsh">Gmsh</a> or <a class="reference external" href="http://gid.cimne.upc.es">GiD</a>. Some importing functions of meshes have been written and
+can be easily extended for other formats.</p>
+<p>The object which represents a mesh declared in the file <tt class="file docutils literal"><span class="pre">getfem_mesh.h</span></tt> and
+which is used as a basis for handling of the meshes in <em>GetFEM++</em> manages also the
+possibility for the structures depending on a mesh (see MESHFEM and MESHIM
+modules) to react to the evolution of the mesh (addition or removal of elements,
+etc.).</p>
+</div>
+<div class="section" id="files">
+<h2>Files<a class="headerlink" href="#files" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File(s)</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">bgeot_convex_structure.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_convex_structure.cc</span></tt></td>
+<td>Describes the structure of an element disregarding the coordinates of its vertices.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">bgeot_mesh_structure.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_mesh_structure.cc</span></tt></td>
+<td>Describes the structure of a mesh disregarding the coordinates of the nodes.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">bgeot_node_tab.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_node_tab.cc</span></tt></td>
+<td>A node container allowing the fast search of a node and store nodes identifying the too much close nodes.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">bgeot_convex.h</span></tt></td>
+<td>Describes an element with its vertices.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">bgeot_convex_ref.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_convex_ref.cc</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_convex_structure.cc</span></tt></td>
+<td>Describe reference elements.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">bgeot_mesh.h</span></tt></td>
+<td>Describes a mesh with the collection of node (but without the description of geometric transformations).</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_mesh_region.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_mesh_region.cc</span></tt></td>
+<td>Object representing a mesh region (boundary or part of a mesh).</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">bgeot_geometric_trans.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_geometric_trans.cc</span></tt></td>
+<td>Describes geometric transformations.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">bgeot_geotrans_inv.h</span></tt> and <tt class="file docutils literal"><span class="pre">bgeot_geotrans_inv.cc</span></tt></td>
+<td>A tool to invert geometric transformations.</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_mesh.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_mesh.cc</span></tt></td>
+<td>Fully describes a mesh (with the geometric transformations, subparts of the mesh, support for parallelization). Includes the Bank algorithm to refine a mesh.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_deformable_mesh.h</span></tt></td>
+<td>defines an object capable to deform a mesh with respect to a displacement field and capable to restore it</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_mesher.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_mesher.cc</span></tt></td>
+<td>An experimental mesher, in arbitrary dimension. To be used with care and  quite slow (because of node optimization). it meshes geometries defined by some level sets.</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_import.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_import.cc</span></tt></td>
+<td>Import mesh files in various formats</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_regular_meshes.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_regular_meshes.cc</span></tt></td>
+<td>Produces structured meshes</td>
+</tr>
+<tr class="row-even"><td><tt class="file docutils literal"><span class="pre">getfem_mesh_slicers.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_mesh_slicers.cc</span></tt></td>
+<td>A slice is built from a mesh, by applying some slicing operations (cut the mesh with a plane, intersect with a sphere, take the boundary faces, etc..). They are used for post-treatment (exportation of results to VTK or OpenDX,  etc.).</td>
+</tr>
+<tr class="row-odd"><td><tt class="file docutils literal"><span class="pre">getfem_mesh_slice.h</span></tt> and <tt class="file docutils literal"><span class="pre">getfem_mesh_slice.cc</span></tt></td>
+<td>Store mesh slices.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="state">
+<h2>State<a class="headerlink" href="#state" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Stable and not evolving so much.</p>
+</div>
+<div class="section" id="perspectives">
+<h2>Perspectives<a class="headerlink" href="#perspectives" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>For the moment, the module is split into two parts which lie into two different
+namespaces. Of course, It would be more coherent to gather the module in only one
+namespace (<tt class="docutils literal"><span class="pre">getfem</span></tt>).</p>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">The file <tt class="file docutils literal"><span class="pre">bgeot_mesh.h</span></tt> could be renamed <tt class="file docutils literal"><span class="pre">getfem_basic_mesh.h</span></tt>.</p>
+</div>
+<p>A  bibliographical review on how to efficiently store a mesh and implement the main opertions (add a node, an element, deal with faces, find the neighbour elements, the isolated faces ...) would be interesting to make the mesh structure evolve.</p>
+<p>A senstive algorithm is the one (in bgeot_node_tab.cc) which identify the too much close nodes. More investigations (and documentation) are probably necessary.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Mesh module</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#files">Files</a></li>
+<li><a class="reference internal" href="#state">State</a></li>
+<li><a class="reference internal" href="#perspectives">Perspectives</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="libdesc_event.html"
+                        title="前の章へ">Events management</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="libdesc_fem.html"
+                        title="次の章へ">Fem module</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="../userdoc/index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="libdesc_fem.html" title="Fem module"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="libdesc_event.html" title="Events management"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >Description of the Project</a> &raquo;</li>
+          <li><a href="libdesc.html" >Description of the different parts of the library</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>

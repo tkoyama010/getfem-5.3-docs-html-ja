@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Compute arbitrary terms - low-level generic assembly procedures &mdash; GetFEM++</title>
+    
+    <link rel="stylesheet" href="../_static/getfem.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="GetFEM++" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Some Standard assembly procedures (low-level generic assembly)" href="asm.html" />
+    <link rel="prev" title="Compute arbitrary terms - high-level generic assembly procedures" href="gasm_high.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/icon.png" />
+ 
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="asm.html" title="Some Standard assembly procedures (low-level generic assembly)"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="gasm_high.html" title="Compute arbitrary terms - high-level generic assembly procedures"
+             accesskey="P">前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="compute-arbitrary-terms-low-level-generic-assembly-procedures">
+<span id="ud-gasm-low"></span><span id="index-0"></span><h1>Compute arbitrary terms - low-level generic assembly procedures<a class="headerlink" href="#compute-arbitrary-terms-low-level-generic-assembly-procedures" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>This section present the first version of generic assembly procedure which has been implemented in <em>GetFEM++</em>. It allows to easily make the assembly of arbitrary matrices in the linear case. In the nonlinear case, some special &#8220;non_linear_term&#8221; object have to be implemented, which could be a bit tricky and obliges to use very low-level internal tools of <em>GetFEM++</em>. The high-level generic assembly has been developped to circumvent these difficulties (see <a class="reference internal" href="gasm_high.html#ud-gasm-high"><em>Compute arbitrary terms - high-level generic assembly procedures</em></a>).</p>
+<p>As it can be seen in the file <tt class="file docutils literal"><span class="pre">getfem/getfem_assembling.h</span></tt>, all the
+previous assembly procedures use a <tt class="docutils literal"><span class="pre">getfem::generic_assembly</span></tt> object and provide it an adequate
+description of what must be done. For example, the assembly of a volumic source
+term for a scalar FEM is done with the following excerpt of code:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">generic_assembly</span> <span class="n">assem</span><span class="p">;</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_im</span><span class="p">(</span><span class="n">mim</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_mf</span><span class="p">(</span><span class="n">mf</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_mf</span><span class="p">(</span><span class="n">mfdata</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_data</span><span class="p">(</span><span class="n">F</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_vec</span><span class="p">(</span><span class="n">B</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Z=data(#2);&quot;</span>
+          <span class="s">&quot;V(#1)+=comp(Base(#1).Base(#2))(:,j).Z(j);&quot;</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">assembly</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>The first instructions declare the object, and set the data that it will use: a
+<cite>mesh_im</cite> object which holds the integration methods, two <cite>mesh_fem</cite> objects, the input data
+<tt class="docutils literal"><span class="pre">F</span></tt>, and the destination vector <tt class="docutils literal"><span class="pre">B</span></tt>.</p>
+<p>The input data is the vector <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" style="vertical-align: 0px"/>, defined on <tt class="docutils literal"><span class="pre">mfdata</span></tt>. One wants to
+evaluate <img class="math" src="../_images/math/2a2e3c206d0e57c4f94f2b33119fce066ee89555.png" alt="\sum_{j} f_j (\int_\Omega \phi^i \psi^j)" style="vertical-align: -8px"/>. The instruction must be
+seen as something that will be executed for each convex <tt class="docutils literal"><span class="pre">cv</span></tt> of the mesh. The
+terms <tt class="docutils literal"><span class="pre">#1</span></tt> and <tt class="docutils literal"><span class="pre">#2</span></tt> refer to the first <cite>mesh_fem</cite> and the second one (i.e. <tt class="docutils literal"><span class="pre">mf</span></tt>
+and <tt class="docutils literal"><span class="pre">mfdata</span></tt>).  The instruction <tt class="docutils literal"><span class="pre">Z=data(#2);</span></tt> means that for each convex, the
+&#8220;tensor&#8221; <tt class="docutils literal"><span class="pre">Z</span></tt> will receive the values of the first data argument provided with
+<tt class="docutils literal"><span class="pre">push_data</span></tt>, at indexes corresponding to the degrees of freedom attached to the
+convex of the second (<tt class="docutils literal"><span class="pre">#2</span></tt>) <cite>mesh_fem</cite> (here, <tt class="docutils literal"><span class="pre">Z</span> <span class="pre">=</span>
+<span class="pre">F[mfdata.ind_dof_of_element(cv)]</span></tt>.</p>
+<p>The part <tt class="docutils literal"><span class="pre">V(#1)+=...</span></tt> means that the result of the next expression will be
+accumulated into the output vector (provided with <tt class="docutils literal"><span class="pre">push_vec</span></tt>). Here again,
+<tt class="docutils literal"><span class="pre">#1</span></tt> means that we will write the result at indexes corresponding to the degrees
+of freedom of the current convex with respect to the first (<tt class="docutils literal"><span class="pre">#1</span></tt>) <cite>mesh_fem</cite>.</p>
+<p>The right hand side <tt class="docutils literal"><span class="pre">comp(Base(#1).Base(#2))(:,j).Z(j)</span></tt> contains two operations.
+The first one is a computation of a tensor on the convex:
+<tt class="docutils literal"><span class="pre">comp(Base(#1).Base(#2))</span></tt> is evaluated as a 2-dimensions tensor,
+<img class="math" src="../_images/math/02425f28820e111e74f67b09c2ed97af3e200e91.png" alt="\int\phi^i \psi^j" style="vertical-align: -6px"/>, for all degrees of freedom <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" style="vertical-align: 0px"/> of <tt class="docutils literal"><span class="pre">mf</span></tt> and
+<img class="math" src="../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j" style="vertical-align: -4px"/> of <tt class="docutils literal"><span class="pre">mfdata</span></tt> attached to the current convex. The next part is a
+reduction operation, <tt class="docutils literal"><span class="pre">C(:,j).Z(j)</span></tt>: each named index (here <img class="math" src="../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j" style="vertical-align: -4px"/>) is summed,
+i.e. the result is <img class="math" src="../_images/math/53d92e17e478e36bc7c7c3648425a50e73ad81d9.png" alt="\sum_j c_{i,j} z_j" style="vertical-align: -8px"/>.</p>
+<p>The integration method used inside <tt class="docutils literal"><span class="pre">comp(Base(#1).Base(#2))</span></tt> is taken from
+<tt class="docutils literal"><span class="pre">mim</span></tt>. If you need to use integration methods from another <cite>mesh_im</cite> object, you can
+specify it as the first argument of <tt class="docutils literal"><span class="pre">comp</span></tt>, for example <tt class="docutils literal"><span class="pre">comp(\%2,</span>
+<span class="pre">Base(#1).Grad(#2))</span></tt> will use the second <cite>mesh_im</cite> object (New in getfem++-2.0).</p>
+<p>An other example is the assembly of the stiffness matrix for a vector Laplacian:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">getfem</span><span class="o">::</span><span class="n">generic_assembly</span> <span class="n">assem</span><span class="p">;</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_im</span><span class="p">(</span><span class="n">mim</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_mf</span><span class="p">(</span><span class="n">mf</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_mf</span><span class="p">(</span><span class="n">mfdata</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_data</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_mat</span><span class="p">(</span><span class="n">SM</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;a=data$1(#2);&quot;</span>
+          <span class="s">&quot;M$1(#1,#1)+=sym(comp(vGrad(#1).vGrad(#1).Base(#2))(:,j,k,:,j,k,p).a(p))&quot;</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">assembly</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Now the output is written in a sparse matrix, inserted with
+<tt class="docutils literal"><span class="pre">assem.push_mat(SM)</span></tt>. The <tt class="docutils literal"><span class="pre">$1</span></tt> in <tt class="docutils literal"><span class="pre">M$1(#1,#1)</span></tt> just indicates that we refer
+to the first matrix &#8220;pushed&#8221; (it is optional, but if the assembly builds two
+matrices, the second one must be referred this way). The <tt class="docutils literal"><span class="pre">sym</span></tt> function ensure
+that the result is symmetric (if this is not done, some round-off errors may
+cancel the symmetricity, and the assembly will be a little bit slower). Next, the
+<tt class="docutils literal"><span class="pre">comp</span></tt> part evaluates a 7D tensor,</p>
+<div class="math">
+<p><img src="../_images/math/1a0f2ef86f64fc744959d5ec2748a297c7cfefce.png" alt="\int\partial_k\varphi^{i}_{j}\partial_n\varphi^l_m\psi^p,"/></p>
+</div><p>where <img class="math" src="../_images/math/677d3579b632acd0e5e6fd39e47b3d46a2ae6493.png" alt="\varphi^i_j" style="vertical-align: -8px"/> is a <img class="math" src="../_images/math/f281d2d3dff2b15548ab8351979787651cf79f54.png" alt="jth" style="vertical-align: -4px"/> component of the <img class="math" src="../_images/math/efc66c8b3a3779f27f0927b47a901b0b1c6d5315.png" alt="ith" style="vertical-align: 0px"/> base
+function of <tt class="docutils literal"><span class="pre">mf</span></tt> and <img class="math" src="../_images/math/703bc8604f06ff55b92c606c79b6621c03c61057.png" alt="\psi^p" style="vertical-align: -4px"/> is a (scalar) base function of the second
+<cite>mesh_fem</cite>. Since we want to assemble</p>
+<div class="math">
+<p><img src="../_images/math/338c27bd3aa16e4bee7516b032088bf3a674b05b.png" alt="\int a(x).\nabla\phi^i.\nabla\phi^j,
+\quad\text{with}\quad
+a(x)=\sum_p a^p \psi^p(x),"/></p>
+</div><p>the reduction is:</p>
+<div class="math">
+<p><img src="../_images/math/95320980d6e4dba608192a367551a52cd852734a.png" alt="\sum_{j,k,p}\left(
+\int \partial_k\varphi^{i}_{j} \partial_k\varphi^m_j \psi^p
+\right)a^p"/></p>
+</div><p>In the <tt class="docutils literal"><span class="pre">comp</span></tt> function, <tt class="docutils literal"><span class="pre">vGrad</span></tt> was used instead of <tt class="docutils literal"><span class="pre">Grad</span></tt> since we said
+that we were assembling a <em>vector</em> Laplacian: that is why each <tt class="docutils literal"><span class="pre">vGrad</span></tt> part has
+three dimensions (dof number, component number, and derivative number). For a
+scalar Laplacian, we could have used
+<tt class="docutils literal"><span class="pre">comp(Grad(#1).Grad(#1).Base(#2))(:,k,:,k,p).a(p)</span></tt>. But the vector form has the
+advantage to work in both vector and scalar case.</p>
+<p>The last instruction, <tt class="docutils literal"><span class="pre">assem.assembly()</span></tt>, does evaluate the expression on each
+convex. For an assembly over a boundary just call <tt class="docutils literal"><span class="pre">assem.assembly(rg)</span></tt>, where
+<tt class="docutils literal"><span class="pre">rg</span></tt> is a <tt class="docutils literal"><span class="pre">getfem::mesh_region</span></tt> object.  <tt class="docutils literal"><span class="pre">rg</span></tt> might also be a number, in that case the mesh
+region taken into account is <tt class="docutils literal"><span class="pre">mim.linked_mesh().region(rg)</span></tt>.</p>
+<p>The third example shows how to compute the <img class="math" src="../_images/math/07c3de5211dc08b13546363f8b139700a16dd963.png" alt="L^2" style="vertical-align: 0px"/> norm of a scalar or vector
+field on a mesh boundary:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">assem</span><span class="p">.</span><span class="n">push_im</span><span class="p">(</span><span class="n">mim</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_mf</span><span class="p">(</span><span class="n">mf</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_data</span><span class="p">(</span><span class="n">U</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">push_vec</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;u=data(#1);&quot;</span>
+          <span class="s">&quot;V()+=u(i).u(j).comp(vBase(#1).vBase(#1))(i,k,j,k)&quot;</span><span class="p">);</span>
+<span class="n">assem</span><span class="p">.</span><span class="n">assembly</span><span class="p">(</span><span class="n">boundary_number</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This one is easy to read. When <tt class="docutils literal"><span class="pre">assembly</span></tt> returns, <tt class="docutils literal"><span class="pre">v[0]</span></tt> will contain</p>
+<div class="math">
+<p><img src="../_images/math/f6f88ddcacd5030b5c9568bebbca9d617afb0bb0.png" alt="\sum_{i,j,k}\left(\int_{boundary} u_i \varphi^{i}_{k} u_j \varphi^j_k \right)"/></p>
+</div><p>The fourth and last example shows an (sub-optimal) assembly of the linear
+elasticity problem with a complete Hooke tensor:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">assem</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;h=data$1(qdim(#1),qdim(#1),qdim(#1),qdim(#1),#2);&quot;</span>
+          <span class="s">&quot;t=comp(vGrad(#1).vGrad(#1).Base(#2));&quot;</span>
+          <span class="s">&quot;e=(t{:,2,3,:,5,6,:}+t{:,3,2,:,5,6,:}+t{:,2,3,:,6,5,:}+t{:,3,2,:,6,5,:})/4;&quot;</span>
+          <span class="s">&quot;M(#1,#1)+= sym(e(:,j,k,:,m,n,p).h(j,k,m,n,p))&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The original equations are:</p>
+<div class="math">
+<p><img src="../_images/math/aa5a5f06f7b23d0b9c4599a5068f83dcf47fcfdf.png" alt="\int\varepsilon(\varphi^i):\sigma(\phi^j),
+\quad\text{with}\quad
+\sigma(u)_{ij}=\sum_{kl} h_{ijkl}(x) \varepsilon_{kl}(u)"/></p>
+</div><p>where <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/> is the Hooke tensor, and <img class="math" src="../_images/math/9e89270aa29dd200d6388cdaf4b31cb721b62ba8.png" alt=":" style="vertical-align: 0px"/> means the scalar product
+between matrices. Since we assume it is not constant, <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/> is given on the
+second <cite>mesh_fem</cite>: <img class="math" src="../_images/math/00458f29e5e2fc5e5fdcd26d61cef27920ff29db.png" alt="h_{ijkl}(x)=\sum_p h_{ijkl}^p \psi^p" style="vertical-align: -8px"/>. Hence the first line
+declares that the first data &#8220;pushed&#8221; is indeed a five-dimensions tensor, the
+first fourth ones being all equal to the target dimension of the first <cite>mesh_fem</cite>, and
+the last one being equal to the number of degrees of freedom of the second <cite>mesh_fem</cite>.
+The <tt class="docutils literal"><span class="pre">comp</span></tt> part still computes the same 7D tensor than for the vector Laplacian
+case. From this tensor, one evaluates
+<img class="math" src="../_images/math/bb2f13727922cacb774b1a3255eaefe68179ff98.png" alt="\varepsilon(\varphi^i)_{jk}\varepsilon(\phi^l)_{mn}\psi^p" style="vertical-align: -6px"/> via
+permutations, and finally the expression is reduced against the hook tensor.</p>
+<div class="section" id="available-operations-inside-the-comp-command">
+<h2>available operations inside the <tt class="docutils literal"><span class="pre">comp</span></tt> command<a class="headerlink" href="#available-operations-inside-the-comp-command" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">Base(#i)</span></tt>: evaluate the value of the base functions of the <em>ith</em> <cite>mesh_fem</cite></li>
+<li><tt class="docutils literal"><span class="pre">Grad(#i)</span></tt>: evaluate the value of the gradient of the base functions of the
+<em>ith</em> <cite>mesh_fem</cite></li>
+<li><tt class="docutils literal"><span class="pre">Hess(#i)</span></tt>: evaluate the value of the Hessian of the base functions of the
+<em>ith</em> <cite>mesh_fem</cite></li>
+<li><tt class="docutils literal"><span class="pre">Normal()</span></tt>: evaluate the unit normal (should not be used for volumic
+integrations !)</li>
+<li><tt class="docutils literal"><span class="pre">NonLin$x(#mf1,...</span> <span class="pre">#mfn)</span></tt>: evaluate the <em>xth</em> non-linear term (inserted
+with <tt class="docutils literal"><span class="pre">push_nonlinear_term(pnonlinear_elem_term)</span></tt>) using the listed <cite>mesh_fem</cite>
+objects.</li>
+<li><tt class="docutils literal"><span class="pre">GradGT()</span></tt>, <tt class="docutils literal"><span class="pre">GradGTInv()</span></tt>: evaluate the gradient (and its inverse) of the
+geometric transformation of the current convex.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">you may reference any data object inside the <tt class="docutils literal"><span class="pre">comp</span></tt> command, and perform
+reductions inside the <tt class="docutils literal"><span class="pre">comp()</span></tt>. This feature is mostly interesting for
+speeding up assembly of nonlinear terms (see the file
+<tt class="file docutils literal"><span class="pre">getfem/getfem_nonlinear_elasticity.h</span></tt> for an example of use).</p>
+</div>
+</div>
+<div class="section" id="others-operations">
+<h2>others operations<a class="headerlink" href="#others-operations" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Slices may be mixed with reduction operations <tt class="docutils literal"><span class="pre">t(:,4,i,i)</span></tt> takes a slice at
+index 4 of the second dimension, and reduces the diagonal of dimension 3 and 4.
+<em>Please note that index numbers for slices start at 1 and not 0 !!</em></p>
+<p><tt class="docutils literal"><span class="pre">mdim(#2)</span></tt> is evaluated as the mesh dimension associated to the second <cite>mesh_fem</cite>,
+while <tt class="docutils literal"><span class="pre">qdim(#2)</span></tt> is the target dimension of the <cite>mesh_fem</cite>.</p>
+<p>The diagonal of a tensor can be obtained with <tt class="docutils literal"><span class="pre">t{:,:,3,3}</span></tt> (which is strictly
+equivalent to <tt class="docutils literal"><span class="pre">t{1,2,3,3}</span></tt>: the colon is just here to improve the readability).
+This is the same operator than for permutation operations. Note that
+<tt class="docutils literal"><span class="pre">t{:,:,1,1}</span></tt> or <tt class="docutils literal"><span class="pre">t{:,:,4,4}</span></tt> are not valid operations.</p>
+<p>The <tt class="docutils literal"><span class="pre">print</span></tt> command can be used to see the tensor: <tt class="docutils literal"><span class="pre">&quot;print</span> <span class="pre">comp(Base(#1));&quot;</span></tt>
+will print the integrals of the base functions for each convex.</p>
+<p>If there is more than one data array, output array or output sparse
+matrix, one can use <tt class="docutils literal"><span class="pre">data$2</span></tt>, <tt class="docutils literal"><span class="pre">data$3,</span> <span class="pre">``V$2</span></tt>, <tt class="docutils literal"><span class="pre">M$2</span></tt>,...</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <p class="logo"><a href="../index.html">
+    <img class="logo" src="../_static/logo_getfem_small.png" alt="Logo"/>
+  </a></p>
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Compute arbitrary terms - low-level generic assembly procedures</a><ul>
+<li><a class="reference internal" href="#available-operations-inside-the-comp-command">available operations inside the <tt class="docutils literal"><span class="pre">comp</span></tt> command</a></li>
+<li><a class="reference internal" href="#others-operations">others operations</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="gasm_high.html"
+                        title="前の章へ">Compute arbitrary terms - high-level generic assembly procedures</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="asm.html"
+                        title="次の章へ">Some Standard assembly procedures (low-level generic assembly)</a></p>            <h3>Download</h3>
+            <p><a href="../download.html">Download GetFEM++ </a></p>
+	    <h3>Main documentations</h3>
+	    <ul>
+              
+	      <li><a href="index.html">GetFEM++ User documentation</a></li>
+              <li><a href="../python/index.html">Python Interface</a></li>
+	      <li><a href="../matlab/index.html">Matlab Interface</a></li>
+	      <li><a href="../scilab/index.html">Scilab Interface</a></li>
+	      <li><a href="../gmm/index.html"> Gmm++</a></li>
+	      <li><a href="../project/index.html"> GetFEM++ project</a></li>
+            </ul>
+
+            <h3>Other resources</h3>
+            <ul>
+              <li><a href="../screenshots/shots.html">Screenshots</a></li>
+              <li><a href="../links.html">Related links</a></li>
+	      <li><a href="https://savannah.nongnu.org/projects/getfem">Hosted by Savannah </a></li>
+              
+              
+            </ul>
+<div id="searchbox" style="display: none">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="asm.html" title="Some Standard assembly procedures (low-level generic assembly)"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="gasm_high.html" title="Compute arbitrary terms - high-level generic assembly procedures"
+             >前へ</a> |</li>
+        <li><a href="https://savannah.nongnu.org/projects/getfem" <img src="../_static/icon.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li></a>
+        <li><a href="../index.html">GetFEM++</a> &raquo;</li>
+
+          <li><a href="index.html" >User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; <a href="../copyright.html">Copyright</a> 2004-2018 GetFEM++ project.
+    </div>
+  </body>
+</html>
